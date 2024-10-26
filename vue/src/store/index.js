@@ -5,8 +5,8 @@ import axios from 'axios';
 
 export default createStore({
 	state: {
-		baseUrl:"http://localhost/bidsportal_new/bidsportal-laravel-app/public/",
-		// baseUrl:"https://bidsportal.com/",
+		baseUrl:"http://localhost/bidsportal_new/laravel2/public/",
+		// baseUrl:"http://139.59.39.99/",
 		token:null,
 		user:null,
 		cart:[],
@@ -213,7 +213,7 @@ export default createStore({
                     headers: {
                         'Authorization': 'Bearer' + ' ' + context.getters.token
                     },
-					cancelToken: payload.cancelToken,
+					cancelToken: payload.cancel_token,
                 }).then(function (response) {
 					resolve(response);
 				})

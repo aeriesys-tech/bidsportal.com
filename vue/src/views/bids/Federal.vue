@@ -900,10 +900,10 @@
         },
 
         watch: {
-            'meta.response_date': 'triggerFederalTenders',
+            'meta.response_date': 'triggerFederalTendersForDates',
             'meta.response_from_date': 'triggerFederalTendersWithCondition',
             'meta.response_to_date': 'triggerFederalTendersWithCondition',
-            'meta.posted_date': 'triggerFederalTenders',
+            'meta.posted_date': 'triggerFederalTendersForDates',
             'meta.posted_from_date': 'triggerFederalTenders',
             'meta.posted_to_date': 'triggerFederalTenders',
             'meta.active': 'triggerFederalTenders',
@@ -941,23 +941,31 @@
         methods: {
 
             triggerFederalTenders() {
-                this.cancelPreviousRequest();
                 if(this.auto_call){
+                    this.cancelPreviousRequest();
                     this.getFederalTenders()
                 }
             },
 
+            triggerFederalTendersForDates() {
+                if (((this.meta.posted_date && this.meta.posted_date != 'custom') || 
+                    (this.meta.response_date && this.meta.response_date != 'custom')) 
+                    && this.auto_call) {
+                    this.cancelPreviousRequest();
+                    this.getFederalTenders();
+                }
+            },
+
             triggerFederalTendersWithCondition() {
-                if (this.meta.response_from_date && this.meta.response_to_date) {
+                if ((this.meta.posted_from_date && this.meta.posted_to_date)||(this.meta.response_from_date && this.meta.response_to_date) && this.auto_call) {
                     this.cancelPreviousRequest()
-                    if(this.auto_call){
-                        this.getFederalTenders()
-                    }
+                    this.getFederalTenders()
                 }
             },
 
             cancelPreviousRequest() {
                 if (this.cancel_token_source) {
+                    console.log('Cancelling previous request');
                     this.cancel_token_source.cancel('Operation canceled due to new request.');
                     this.cancel_token_source = null;  // Reset after cancellation
                 }
@@ -1113,7 +1121,7 @@
             },
             removeFilter(filter){
                 console.log(filter)
-                if(filter.id == 'status'){
+                if(filter.id == 'status' || filter.id == 'date'){
                     this.meta[filter.module] = false
                 }else if (typeof filter.id === 'number') {
                     if(Array.isArray(this.meta[filter.module])){
@@ -1141,14 +1149,14 @@
                 if(vm.meta.active){
                     vm.filters.push({
                         name: 'active',
-                        id: 'active',
+                        id: 'status',
                         module:'active'
                     })
                 }
                 if(vm.meta.expired){
                     vm.filters.push({
                         name: 'expired',
-                        id: 'expired',
+                        id: 'status',
                         module:'expired'
                     })
                 }
@@ -1182,7 +1190,7 @@
                 if(vm.meta.posted_date){
                     vm.filters.push({
                         name:vm.meta.posted_date,
-                        id:vm.meta.posted_date,
+                        id:'date',
                         module:'posted_date'
                     })
                 }
@@ -1190,7 +1198,7 @@
                 if(vm.meta.response_date){
                     vm.filters.push({
                         name:vm.meta.response_date,
-                        id:vm.meta.response_date,
+                        id:'date',
                         module:'response_date'
                     })
                 }
@@ -1223,6 +1231,7 @@
                     this.cancel_token_source.cancel('Operation canceled due to new request.');
                 }
                 this.cancel_token_source = axios.CancelToken.source();
+                console.log('cancel token source:', this.cancel_token_source)
                 this.paginateFederalTenders(this.cancel_token_source.token)
             },
 
@@ -1376,7 +1385,7 @@
                         vm.meta.page = response.data.meta.current_page
                     })
                     .catch(function (error) {
-                        if (error.isCancel(error)) {
+                        if (axios.isCancel(error)) {
                             console.log('Previous request was canceled:', error.message);
                         } else {
                             vm.errors = error.response.data.errors;
