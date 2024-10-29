@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 use App\Models\FederalTender;
+use App\Models\User;
 use App\Http\Resources\FederalTenderResource;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FederalTenderMail;
 
 class FederalTenderController extends Controller
 {
@@ -87,5 +90,18 @@ class FederalTenderController extends Controller
 	    $query->orderBy('federal_tender_id', 'DESC');
     	$federal_tenders = $query->paginate($request->per_page); 
         return FederalTenderResource::collection($federal_tenders);
+    }
+
+    public function sendFederalTenderMail(Request $request)
+    {
+        $data = [
+            'name' => 'Recipient Name',
+            'message' => 'This is a test message.'
+        ];
+        $bids = FederalTender::limit(1)->get();
+        $user = User::first();
+        Mail::to('ajitkundgol@gmail.com')->send(new FederalTenderMail($bids, $user, $request));
+
+        return response()->json(['status' => 'Email sent successfully!']);
     }
 }
