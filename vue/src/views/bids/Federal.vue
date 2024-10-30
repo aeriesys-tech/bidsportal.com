@@ -445,7 +445,7 @@
                                             <div class="mt-3">
                                                 <ul class="list-inline mb-0 z-index-2 small">
                                                     <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                                        <a href="javascript:void(0)" @click.prevent="shareBidfed(federal_tender)" v-modal="shareBid.bids" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
+                                                        <a href="javascript:void(0)" @click.prevent="shareTender(federal_tender)" v-modal="shareBid.bids" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
                                                     <li class="list-inline-item" v-if="checkCartItem(federal_tender.federal_tender_id)">
@@ -703,6 +703,76 @@
             </div>
         </div>
     </teleport>
+    <teleport to="#modals" v-disabled="!share_tender" v-if="share_tender">
+        <div class="modal-overlay">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header m-header"></div>
+                    <div class="modal-body">
+                        <div class="card border">
+                            <div class="card-body vstack gap-4">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center p-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-sm">
+                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
+                                            </div>
+
+                                            <div class="ms-2">
+                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                            </div>
+                                        </div>
+
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
+                                    </div>
+
+                                    <form class="card-body" style="min-width: 350px;">
+                                        <div class="mb-3">
+                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="mails" ref="mails" />
+                                            <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0] }}</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input
+                                                class="form-control"
+                                                type="text"
+                                                name="email_subject"
+                                                :class="{ 'is-invalid': errors.subject }"
+                                                placeholder="Subject of Email"
+                                                autocomplet="off"
+                                                id="email_subject"
+                                                v-model="shareBid.subject"
+                                                ref="subject"
+                                            />
+                                            <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <textarea
+                                                class="form-control"
+                                                rows="3"
+                                                name="email_message"
+                                                :class="{ 'is-invalid': errors.message }"
+                                                placeholder="Brief Messsage/Note"
+                                                autocomplet="off"
+                                                id="email_message"
+                                                v-model="shareBid.message"
+                                            ></textarea>
+                                            <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <a href="javascript:void(0)" @click="shareMail()" class="mybutton-secondary2">Send</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer m-foot"></div>
+                </div>
+            </div>
+        </div>
+    </teleport>
 </template>
 
 <script>
@@ -742,6 +812,7 @@
                 federal_agencies:[],
                 sorted_federal_agencies:[],
                 federal_tenders:[],
+                share_tender:false,
                 meta: {
                     federal_filter_name:'',
                     active:false,
@@ -940,6 +1011,12 @@
 
         methods: {
 
+            shareTender(federal_tender){
+                this.share_tender = true
+            },
+            emailmodalpop(){
+                this.share_tender = true
+            },
             triggerFederalTenders() {
                 if(this.auto_call){
                     this.cancelPreviousRequest();
@@ -1014,9 +1091,11 @@
                     }
                     this.login_modal = false;
                 } else this.save_search = false;
-                this.userModal = false;
-                this.alertModal = false;
+                this.userModal = false
+                this.alertModal = false
+                this.share_tender = false
             },
+            
             tenderDetails(federal_tender){
                 this.$store.commit("setBidsDetails", federal_tender);
                 this.$store.commit("setSearchFilter", this.searchfilter);

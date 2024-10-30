@@ -90,7 +90,7 @@
             isSeletedItem() {
                 const selected_naics = this.$store.getters.selected_naics
                 if (selected_naics.length) {
-                    this.item.selected = selected_naics.includes(this.item.naics_id)
+                    this.item.selected = true
                 } else {
                     this.item.selected = false
                 }
@@ -143,20 +143,25 @@
                 }
             },
             pushSpliceItem(item) {
+                console.log(item)
                 let naics_id = item.naics_id
                 let selected_naicses = []
                 selected_naicses = this.$store.getters.selected_naicses
-                if (item.selected) {
-                    if (!selected_naicses.includes(naics_id)) {
-                        selected_naicses.push(naics_id)
+                if(selected_naicses?.length){
+                    let loader = vm.$loading.show();
+                    if (item.selected) {
+                        if (!selected_naicses.includes(naics_id)) {
+                            selected_naicses.push(naics_id)
+                        }
+                    } else {
+                        let naics = selected_naicses.filter(function(element){
+                            return element != naics_id
+                        })
+                        selected_naicses = naics
                     }
-                } else {
-                    let naics = selected_naicses.filter(function(element){
-                        return element != naics_id
-                    })
-                    selected_naicses = naics
+                    this.$store.dispatch("setSelectedNaics", selected_naicses);
+                    loader.hide()
                 }
-                this.$store.dispatch("setSelectedNaics", selected_naicses);
             },
 
             toggleSelectedChildren(item, selected) {
