@@ -38,31 +38,19 @@ import 'vue-loading-overlay/dist/css/index.css';
                 this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
                 this.$store.dispatch("setCartProducts", JSON.parse(localStorage.getItem("cartItems")));
                 this.$store.dispatch("setAlert", JSON.parse(localStorage.getItem("alert")));
-                this.$store.dispatch("setBidsDetails", JSON.parse(localStorage.getItem("bidsdetails")));
+                this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
+                this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
                 this.$store.dispatch("setToken", localStorage.getItem("token"));
-                this.$store.dispatch("setNaics", JSON.parse(localStorage.getItem("naics")))
-                this.$store.dispatch("setPscs", JSON.parse(localStorage.getItem("pscs")))
-                // localStorage.removeItem("user");
-                // localStorage.removeItem("token");
-                // localStorage.removeItem("cartItems")
-                // localStorage.removeItem("alert")
-                // localStorage.removeItem("bidsdetails")
-                // localStorage.removeItem("naicses")
-                // localStorage.removeItem("psces")
                 
             }
-            // if(!this.$store.getters.user){
-            //     vm.$store.dispatch("auth", { uri: "logout" })
-            // }
+
             //Save the information in vuex to localStorage when the page is refreshed
-                window.addEventListener("beforeunload", () => {
+            window.addEventListener("beforeunload", () => {
                 localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
                 localStorage.setItem("token", this.$store?.getters?.token);
                 localStorage.setItem("cartItems", JSON.stringify(this.$store?.getters?.cartItems))
                 localStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
-                localStorage.setItem("bidsdetails", JSON.stringify(this.$store?.getters?.bidsdetails))
-                localStorage.setItem("naicss", JSON.stringify(this.$store?.getters?.naics))
-                localStorage.setItem("pscs", JSON.stringify(this.$store?.getters?.pscs))
+                localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
             });
 			
         },

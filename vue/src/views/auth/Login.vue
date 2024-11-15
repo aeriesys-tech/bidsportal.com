@@ -109,7 +109,7 @@ export default {
                 vm.$store.dispatch('success','Successfully logged in');
                 vm.$store.commit("setUser", response.data.user);
                 vm.$store.commit("setToken", response.data.access_token);
-                vm.$router.push("/bids")
+                vm.$router.push("/bids/state-opportunities")
             })
             .catch(function (error) {
                 vm.isLoading=false

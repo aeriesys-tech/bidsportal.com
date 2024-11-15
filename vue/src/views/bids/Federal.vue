@@ -23,7 +23,7 @@
                             <a href="javascript:void(0)" class="" style="color: #747579;" @click.prevent="showModal()"><i class="fa fa-save fa-fw fs-6 cursor-pointer text-primary me-1"></i>Save Search</a>
                         </li>
                         <li class="cursor list-inline-item mb-0">
-                            <a href="javascript:void(0)" style="color: #747579;" data-bs-toggle="modal"><i class="fa fa-bell fa-fw fs-6 text-dark me-1"></i>Set Alert</a>
+                            <a href="javascript:void(0)" style="color: #747579;" data-bs-toggle="modal" @click.prevent="setAletModal()"><i class="fa fa-bell fa-fw fs-6 text-dark me-1"></i>Set Alert</a>
                         </li>
                         <li class="cursor list-inline-item mb-0 s-dropdown dropdown hover1 mb-0 dropdown-toggle" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-save fa-fw text-success me-1"></i>Saved search
@@ -40,8 +40,8 @@
                         </li>
 
                         <li class="list-inline-item mb-0">
-                            <a href=""> <i :class="{ gridblockcolor: gridview }" class="fa fa-th-large me-3"></i></a>
-                            <a href="" ><i :class="{ gridblockcolor: listview }" class="fa fa-bars text-gray me-1"></i></a>
+                            <a href="" @click.prevent="gridviewgrid()"> <i :class="{ gridblockcolor: gridview }" class="fa fa-th-large me-3"></i></a>
+                            <a href="" @click.prevent="listviewgrid()"><i :class="{ gridblockcolor: listview }" class="fa fa-bars text-gray me-1"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -399,7 +399,7 @@
                                                     <a href="javascript:void(0)" @click="tenderDetails(federal_tender)" style="text-transform: uppercase;"><div v-html="highlight(federal_tender.title)"></div></a>
                                                 </div>
                                                 <div v-else>
-                                                    <a href="javascript:void(0)" @click="showModal()"><div v-html="highlight(federal_tender.title)"></div></a>
+                                                    <a href="javascript:void(0)" @click="showModal(federal_tender)"><div v-html="highlight(federal_tender.title)"></div></a>
                                                 </div>
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
@@ -413,9 +413,9 @@
                                         </div>
 
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ federal_tender.tender_no }}</li>
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.posted_date) }} &nbsp;<span>{{federal_tender.time_ago  }} </span></li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{federal_tender.time_ago  }} </span></li>
                                             <li class="nav-item">
                                                 <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" /> {{ dateFormat(federal_tender.expiry_date) }}
                                                 <span class="col-green" v-if="federal_tender.days_difference">
@@ -436,7 +436,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary"><i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name}}</span></li>
 
-                                                    <li class="nav-item" v-if="federal_tender.place_of_performance!=''">
+                                                    <li class="nav-item" v-if="federal_tender.place_of_performance">
                                                         <i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{federal_tender.place_of_performance}}</span>
                                                     </li>
                                                 </ul>
@@ -493,19 +493,19 @@
                                                                         <div v-if="$store.getters.user !==null && $store.getters.user.subscription_id !==0">
                                                                             <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
                                                                         </div>
-                                                                        <div v-else><a href="javascript:void(0)" @click="showModal()">{{ federal_tender.tender_no }}</a></div>
+                                                                        <div v-else><a href="javascript:void(0)" @click="showModal(federal_tender)">{{ federal_tender.tender_no }}</a></div>
                                                                     </div>
 
                                                                     <div class="column">
-                                                                        <a :style="{color:federal_tender.notice.backround_color}" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice.notice_name }}</a>
+                                                                        <a :style="{color:federal_tender.federal_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice.notice_name }}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td><div v-html="highlight(federal_tender.title)"></div></td>
-                                                        <td>{{ federal_tender.tdr_agency }}</td>
+                                                        <td>{{ federal_tender.federal_agency?.agency_name }}</td>
                                                         <td>{{ federal_tender.place_of_performance }}</td>
-                                                        <td style="width: 110px;">{{ federal_tender.tdr_expiry_date }}</td>
+                                                        <td style="width: 110px;">{{ federal_tender.expiry_date }}</td>
                                                         <td>
                                                             <span v-if="checkCartItem(federal_tender.federal_tender_id)">
                                                                 <div v-if="$store.getters.user?.subscription_id ===0">
@@ -660,49 +660,7 @@
             </div>
         </div>
     </teleport>
-    <teleport to="#modals" v-if="add_federal_filters">
-        <div class="modal-overlay">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <div class="card border">
-                            <div class="card-body vstack gap-4">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center p-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="ms-2">
-                                                <h5 class="modal-title" id="exampleModalLabel11">Save Search</h5>
-                                            </div>
-                                        </div>
 
-                                        <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
-                                    </div>
-
-                                    <form class="card-body">
-                                        <div class="field-wrapper">
-                                            <div class="field-placeholder">Label <span class="text-danger">*</span></div>
-                                            <input class="form-control" type="text" placeholder="Name" :class="{'is-invalid': errors.alert_label}" v-model="savesearch.alert_label" ref="alert_label" />
-                                            <span v-if="errors.alert_label" class="invalid-feedback">{{ errors.alert_label[0] }}</span>
-                                        </div>
-                                        <div class="modal-footer pt-3">
-                                            <button type="button" style="margin-right: 3px;" class="btn btn-secondary" @click.prevent="closemodal()" ref="Close">
-                                                Close
-                                            </button>
-                                            <button type="button" class="btn btn-primary" @click.prevent="saveSearch()">
-                                                Save
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer m-foot"></div>
-                </div>
-            </div>
-        </div>
-    </teleport>
     <teleport to="#modals" v-disabled="!share_tender" v-if="share_tender">
         <div class="modal-overlay">
             <div class="modal-dialog">
@@ -813,8 +771,30 @@
                 sorted_federal_agencies:[],
                 federal_tenders:[],
                 share_tender:false,
+                savealert: {
+                    id: "",
+                    user_id: "",
+                    on_off: 1,
+                    alert_label: "",
+                    region_id: "",
+                    state_id: "",
+                    frequency: "",
+                    keywords: "",
+                    country_id: "",
+                    naics_id: "",
+                    notice_type: "",
+                    psc: "",
+                    set_aside_status: "",
+                    category_name: "",
+                    state_fedral: "",
+                    created_on: "",
+                    updated_on: "",
+                },
                 meta: {
                     federal_filter_name:'',
+                    alert_title:'',
+                    region:'',
+                    frequency:'',
                     active:false,
                     expired:false,
                     response_date:false,
@@ -861,43 +841,16 @@
                     psc_code: "Select All",
                     children: [],
                 },
-                selectedNaicses: [],
-                childItems: [],
                 errors: [],
-                allFilterState: [],
-
                 tags: [],
-                tag: "",
                 limit: 3,
-                user: {
-                    email: "",
-                    password: "",
-                },
                 userModal: false,
                 alertModal: false,
-                arraylen: [],
                 listview: true,
                 gridview: false,
-                blurmodal: false,
-                alertmodal: false,
-                emailmodal: false,
-                userlogin: false,
-                sharealertmodal: false,
-                erroralertmodal: false,
-                saveSearchbid: false,
                 modal1: false,
                 modal2: false,
-                setalert: false,
-                sharebid: false,
-                alertSubscribe: false,
                 status: false,
-                savedserachbids: [],
-                subscriptions: {},
-                savedserach: {
-                    user_id: "",
-                    region_id: "",
-                    id: "",
-                },
                 searchstate: "",
                 federal_agency_keword: "",
                 sendMails: {
@@ -909,43 +862,7 @@
                     bid_or_doc: "bid",
                     region_id: 2,
                 },
-                shareBid: {
-                    bids: [],
-                    mails: [],
-                    email: "",
-                    subject: "",
-                    message: "",
-                    bid_or_doc: "bid",
-                    region_id: 2,
-                },
-                naics: [],    
-                alert: {
-                    tdr_naics: [],
-                },
-                savealert: {
-                    id: "",
-                    user_id: "",
-                    on_off: 1,
-                    alert_label: "",
-                    region_id: "",
-                    state_id: "",
-                    frequency: "",
-                    keywords: "",
-                    country_id: "",
-                    naics_id: "",
-                    notice_type: "",
-                    psc: "",
-                    set_aside_status: "",
-                    agency_fedral: "",
-                    created_on: "",
-                    updated_on: "",
-                },
-                deleteduser: "",
-                savedserach: {
-                    user_id: "",
-                    region_id: "",
-                    id: "",
-                },
+                naics: [],
                 filters: [],
                 errors: [],
                 naics_code: {
@@ -960,13 +877,25 @@
                     save_bid_id: "",
                     tdr_psc: [],
                 },
+                shareBid: {
+                    bids: [],
+                    mails: [],
+                    email: "",
+                    subject: "",
+                    message: "",
+                    bid_or_doc: "bid",
+                    region_id: 2,
+                },
                 hidecartstatue: false,
                 savedbids: "",
                 save_search:false,
                 clear_all_naics: false,
                 clear_all_psc: false,
                 pageChangeInProgress: false,
-                auto_call:true
+                auto_call:true,
+                login:{
+                    federal_tender:null
+                }
             };
         },
 
@@ -986,7 +915,26 @@
             'meta.federal_agencies': 'triggerFederalTenders',
             'meta.naics': 'triggerFederalTenders',
             'meta.pscs': 'triggerFederalTenders',
+            'store.getters.page_redirect' : 'pageRedirect'
         },
+
+        beforeRouteEnter(to, from, next) {
+            next((vm) => {
+                if(from.name == 'saveAlert' && vm.$store.getters.alert){
+                    vm.getAlert()
+                }else{
+                    vm.$store.commit("setAlert", null);
+                }
+            })
+        },
+
+        // created() {
+        //     let path = localStorage.getItem('page_redirect_path')
+        //     console.log(path) 
+        //     if (path) {
+        //         window.open(path, '_blank');
+        //     }
+        // },
 
         mounted() {
             this.meta.time_zone = moment.tz.guess() 
@@ -994,7 +942,9 @@
             this.getFederalNotices()
             this.getPscs()
             this.getNaics()
-            this.$store.commit("setSelectedNaics", [])
+            this.$store.commit("setSelectedNaics", null)
+            this.$store.commit("setFederalTender", null)
+            this.$store.commit("setStateTender", null)
         },
 
         computed: {
@@ -1010,6 +960,50 @@
         },
 
         methods: {
+
+            listviewgrid() {
+                this.listview = false;
+                this.gridview = true;
+                this.meta.per_page = 38;
+                this.getFederalTenders()
+            },
+            gridviewgrid() {
+                this.listview = true;
+                this.gridview = false;
+                this.meta.per_page = 10;
+                this.getFederalTenders()
+            },
+
+            getAlert(){
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "getAlert", data: vm.$store.getters.alert })
+                    .then(function (response) {
+                        vm.showFederalFilter(response.data.data)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            setAletModal() {
+                this.alertModal = true;
+                if (this.$store.getters.user === null) {
+                    this.login_modal = true;
+                } else {
+                    if (this.$store.getters.user.subscription_id !== 0) {
+                        this.set_alert = true;
+                    }
+                    if (this.$store.getters.user?.subscription_id === 0) {
+                        this.alertSubscribe = true;
+                        this.login_modal = false;
+                        this.set_alert = false;
+                        this.alertModal = false;
+                    }
+                }
+            },
 
             shareTender(federal_tender){
                 this.share_tender = true
@@ -1083,6 +1077,24 @@
                     });
             },
 
+            addAlert(alert){
+                let vm = this
+                vm.meta.alert_title = alert.alert_label
+                vm.meta.frequency = alert.frequency
+                vm.meta.region = 'Federal'
+                vm.$store
+                    .dispatch("post", { uri: "addAlerts", data: vm.meta })
+                    .then(function (response) {
+                        vm.$store.dispatch("success", "Filters saved successfully");
+                        vm.closeModal()
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
             closeModal(modal) {
                 console.log(modal)
                 if (modal == "login_modal") {
@@ -1097,13 +1109,17 @@
             },
             
             tenderDetails(federal_tender){
-                this.$store.commit("setBidsDetails", federal_tender);
-                this.$store.commit("setSearchFilter", this.searchfilter);
-                this.$store.commit("setCurrentPage", this.meta.currentPage);
-                this.$router.push("/bids/" + "federal-opportunities" + "/" + federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no);
+                localStorage.setItem("federal_tender", JSON.stringify(federal_tender));
+                this.$store.commit("setCurrentPage", this.meta.currentPage)
+                window.open(this.$store.getters.appUrl+"bids/federal-opportunities/" + federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no, '_blank');
             },
 
             showModal() {
+                // if(federal_tender){
+                //     let page_redirect_path =  this.$store.getters.appUrl+'bids/federal-opportunities/'+ federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no   
+                //     localStorage.setItem("federal_tender", JSON.stringify(federal_tender))
+                //     localStorage.setItem('page_redirect_path', page_redirect_path)   
+                // }
                 this.userModal = true;
                 if (this.$store.getters.user == null) {
                     this.login_modal = true;
@@ -1140,7 +1156,7 @@
                 let vm = this;
                 vm.tags = tags;
                 vm.meta.keywords = vm.tags;
-            },
+            },  
 
             searchStates(){
                 let vm = this
@@ -1193,6 +1209,8 @@
                 this.meta.keywords = [],
                 this.tags = [],
                 this.meta.federal_notices = [],
+                this.meta.naics = [],
+                this.meta.pscs = [],
                 this.meta.set_asides = [],
                 this.meta.states = [],
                 this.meta.federal_agencies = []
@@ -1422,7 +1440,9 @@
                     .then(function (response) {
                         vm.federal_agencies = response.data
                         vm.sorted_federal_agencies = vm.federal_agencies
-                        vm.getFederalFilters()
+                        if(vm.$store.getters.user){
+                            vm.getFederalFilters()
+                        }
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;

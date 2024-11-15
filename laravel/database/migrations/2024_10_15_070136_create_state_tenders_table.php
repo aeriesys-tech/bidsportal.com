@@ -33,12 +33,6 @@ class CreateStateTendersTable extends Migration
             $table->foreign('category_id')->references('category_id')->on('categories');
             $table->foreignId('state_agency_id')->nullable()->index();
             $table->foreign('state_agency_id')->references('state_agency_id')->on('state_agencies');
-            $table->foreignId('set_aside_id')->nullable()->index();
-            $table->foreign('set_aside_id')->references('set_aside_id')->on('set_asides');
-            $table->foreignId('naics_id')->nullable()->index();
-            $table->foreign('naics_id')->references('naics_id')->on('naics');
-            $table->foreignId('psc_id')->nullable()->index();
-            $table->foreign('psc_id')->references('psc_id')->on('pscs');
             $table->string('tender_url', 255)->nullable();
             $table->double('fees')->nullable();
             $table->string('type_of_award', 255)->nullable();

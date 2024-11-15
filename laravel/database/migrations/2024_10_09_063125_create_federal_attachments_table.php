@@ -20,6 +20,7 @@ class CreateFederalAttachmentsTable extends Migration
             $table->text('attachment_name');
             $table->string('attachment_size', 100)->nullable();
             $table->date('attachment_date')->nullable();
+            $table->string('attachment_url', 255)->nullable();
             $table->timestamps();
         });
     }

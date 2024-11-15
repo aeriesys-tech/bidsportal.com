@@ -2,25 +2,21 @@
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <section class="pt-4 pt-lg-5">
         <div class="container position-relative">
-            <!-- Title and button START -->
             <div class="row">
                 <div class="col-12">
                     <ul class="list-inline text-end">
-                        <!-- Heart icon -->
                         <li class="list-inline-item">
                             <button class="mybutton-secondary mybutton-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
                         </li>
-                        <!-- Share icon -->
-                        <li class="list-inline-item" v-if="biddetail?.tdr_region ==2">
+                        <li class="list-inline-item" v-if="federal_tender?.tdr_region ==2">
                             <a :href="openWebSite()" target="blank" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
                         <li class="list-inline-item" v-else>
-                            <a :href="biddetail?.tdr_posting_link" target="blank" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
+                            <a :href="federal_tender?.tdr_posting_link" target="blank" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
 
                         <li class="list-inline-item" v-if="$store.getters.user">
-                            <button class="mybutton-secondary2 mybutton-success" @click.prevent="shareBidDetails()" v-modal="shareBid.bids"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
-                            <!-- <a  href="javascript:void(0)" @click.prevent="shareBidDetails()" v-modal ="shareBid.bids" class="btn btn-xs bg-primary bg-opacity-10 text-primary px-2"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</a> -->
+                            <button class="mybutton-secondary2 mybutton-success" @click.prevent="sharefederal_tenders()" v-modal="shareBid.bids"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                         </li>
                         <li class="list-inline-item">
                             <a href="javascript:void(0)" @click="backToBids()" type="button" class="mb-0 btn btn-sm btn-primary backbidbtn">
@@ -30,136 +26,93 @@
                     </ul>
                 </div>
                 <div class="col-12">
-                    <!-- Meta -->
                     <div class="d-md-flex justify-content-md-between">
-                        <!-- Title -->
                         <div>
                             <p class="" style="color: black; font-size: 18px;">
-                                <img v-if="biddetail.region?.region_id ==2" class="icon" src="/img/federalblue.6e218214.svg" alt="icon" />
-                                <img class="icon" v-if="biddetail.region?.region_id ==1" src="/img/stateblue.16cfab6e.svg" alt="icon" />
-                                <img class="icon" v-if="biddetail.region?.region_id ==3" src="/img/privateblue.c4518422.svg" alt="icon" />
-                                <img class="icon" v-if="biddetail.region?.region_id ==4" src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                {{biddetail.region?.region_name}}-Opportunities <span v-if="biddetail.region?.region_id==2"> > SAM.Gov Details</span>
+                                <img v-if="federal_tender.region?.region_id ==2" class="icon" src="/img/federalblue.6e218214.svg" alt="icon" />
+                                <img class="icon" v-if="federal_tender.region?.region_id ==1" src="/img/stateblue.16cfab6e.svg" alt="icon" />
+                                <img class="icon" v-if="federal_tender.region?.region_id ==3" src="/img/privateblue.c4518422.svg" alt="icon" />
+                                <img class="icon" v-if="federal_tender.region?.region_id ==4" src="/img/internationalblue.2bdbd466.svg" alt="icon" />
+                                Federal Opportunities  > SAM.Gov Details
                             </p>
-                            <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{biddetail.tdr_title}}</h5>
+                            <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{federal_tender.tdr_title}}</h5>
                             <ul class="nav nav-divider text-body mb-0">
-                                <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{biddetail.tdr_no}}</li>
-                                <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{format_date(biddetail.tdr_posted_date)}}</li>
+                                <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{federal_tender.tender_no}}</li>
+                                <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{format_date(federal_tender.posted_date)}}</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Title and button END -->
         </div>
     </section>
     <section class="py-0">
         <div class="container">
-            <!-- Tabs START -->
             <div class="row">
                 <div class="col-12">
-                    <!-- Outer tabs START -->
                     <ul class="nav nav-tabs nav-bottom-line" id="tour-pills-tab" role="tablist">
-                        <!-- Tab item -->
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active mb-0" id="tour-pills-tab-1" data-bs-toggle="pill" data-bs-target="#tour-pills-tab1" type="button" role="tab" aria-controls="tour-pills-tab1" aria-selected="true">
                                 Notice Details
                             </button>
                         </li>
-                        <!-- Tab item -->
-                        <li class="nav-item" role="presentation" v-if="biddetail?.tdr_requirement !==null && biddetail?.tdr_requirement !==''">
-                            <button class="nav-link mb-0" id="tour-pills-tab-2" data-bs-toggle="pill" data-bs-target="#tour-pills-tab2" type="button" role="tab" aria-controls="tour-pills-tab2" aria-selected="false">Requirements</button>
-                        </li>
-                        <!-- Tab item -->
-                        <li class="nav-item" role="presentation" v-if="biddetail?.tdr_prog_information !==null && biddetail?.tdr_prog_information !=='' ">
-                            <button class="nav-link mb-0" id="tour-pills-tab-3" data-bs-toggle="pill" data-bs-target="#tour-pills-tab3" type="button" role="tab" aria-controls="tour-pills-tab3" aria-selected="false">
-                                Program Information
-                            </button>
-                        </li>
-                        <!-- Tab item -->
                         <li class="nav-item" role="presentation">
                             <button class="nav-link mb-0" id="tour-pills-tab-4" data-bs-toggle="pill" data-bs-target="#tour-pills-tab4" type="button" role="tab" aria-controls="tour-pills-tab4" aria-selected="false">
                                 Vendors & Teaming
                             </button>
                         </li>
                     </ul>
-                    <!-- Outer tabs END -->
                 </div>
             </div>
-            <!-- Tabs END -->
         </div>
     </section>
     <section class="pt-4">
         <div class="container">
             <div class="row g-4 g-md-5">
-                <!-- Tabs Content START -->
                 <div class="col-xl-8">
-                    <!-- Outer tabs contents START -->
                     <div class="tab-content mb-0" id="tour-pills-tabContent">
-                        <!-- Content item START -->
                         <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
                             <div class="card bg-transparent p-4">
-                                <!-- Card header -->
-
-                                <!-- Card body START -->
                                 <div class="card-body p-0">
                                     <ul class="list-group list-group-borderless mb-3">
                                         <li class="list-group-item">
                                             <span class="mb-0 me-1 text-dark">Department/Ind. Agency :</span>
-                                            <span class="fw-light mb-0">{{biddetail.tdr_agency}}</span>
+                                            <span class="fw-light mb-0">{{federal_tender.federal_agency?.agency_name}}</span>
                                         </li>
                                     </ul>
-                                    <h6 class="" v-if="biddetail.tdr_desc!='0' && biddetail.tdr_desc!='-'">Synopis:</h6>
-                                    <p class="mb-4 text-align-justify" v-html="biddetail.tdr_desc" v-if="biddetail.tdr_desc!='0' && biddetail.tdr_desc!='-'"></p>
+                                    <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
 
                                     <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                        <div v-if='biddetail.tdr_place_of_performance!=""'>
+                                        <div v-if='federal_tender.place_of_performance'>
                                             <h6 class="fw-normal mb-0">Place of Performance:</h6>
-                                            <p>{{biddetail.tdr_place_of_performance}}</p>
+                                            <p>{{federal_tender.place_of_performance}}</p>
                                         </div>
-                                        <div v-if="biddetail.tdr_contracting_office_address">
+                                        <div v-if="federal_tender.federal_office_address">
                                             <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
-                                            <!-- <p>
-                                                {{ biddetail.tdr_contracting_office_address.city}}<span v-if="biddetail.tdr_contracting_office_address.city">,</span>
-                                                <spa>{{biddetail.tdr_contracting_office_address.state+' '+biddetail.tdr_contracting_office_address.countryCode}}</spa>
-                                            </p> -->
-
                                             <p>
-                                                {{ biddetail.tdr_contracting_office_address.city}}<span v-if="biddetail.tdr_contracting_office_address.city">,</span>
-                                                <spa>{{biddetail.tdr_contracting_office_address.state+' '+biddetail.tdr_contracting_office_address.countryCode}}</spa>
+                                                {{ federal_tender.federal_office_address.city}}<span v-if="federal_tender.federal_office_address.city">, </span>
+                                                <spa>{{federal_tender.federal_office_address.state+' '+federal_tender.federal_office_address.country}}</spa>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Card body END -->
                             </div>
-
                             <div class="card shadow mt-1">
-                                <!-- Card body START -->
                                 <div class="card-body">
-                                    <!-- Search and select START -->
                                     <div class="row g-3 align-items-center justify-content-between mb-3">
-                                        <!-- Search -->
-                                        <div class="col-md-6" v-if="biddetail?.attachments?.length">
-                                            <strong>Downloads ({{ biddetail?.attachments?.length}})</strong>
+                                        <div class="col-md-6" v-if="federal_tender?.attachments?.length">
+                                            <strong>Downloads ({{ federal_tender?.attachments?.length}})</strong>
                                         </div>
-
-                                        <!-- Select option -->
                                         <div class="col-md-6 text-end">
-                                            <!-- Short by filter -->
-                                            <span v-if="biddetail?.attachments?.length">
-                                                <a target="_blank" :href="$store.state.baseUrl+'bidZipDownloadFromS3/'+ biddetail.region?.region_id +'/'+ biddetail.tdr_id" class="mybutton-secondary1 mb-0">
+                                            <span v-if="federal_tender?.attachments?.length">
+                                                <a target="_blank" :href="$store.state.baseUrl+'bidZipDownloadFromS3/'+ federal_tender.region?.region_id +'/'+ federal_tender.tdr_id" class="mybutton-secondary1 mb-0">
                                                     <i class="bi bi-cloud-download"></i> Download All Attachments/Links
                                                 </a>
                                             </span>
                                         </div>
                                     </div>
-                                    <!-- Search and select END -->
-
-                                    <!-- try starts -->
                                     <div class="table-responsive border-0">
                                         <table class="table align-middle p-4 mb-0 table-hover table-shrink">
-                                            <!-- Table head -->
                                             <thead class="table-light">
                                                 <tr>
                                                     <th scope="col" class="border-0 rounded-start"></th>
@@ -170,29 +123,20 @@
                                                     <th scope="col" class="border-0 rounded-end text-center">Action</th>
                                                 </tr>
                                             </thead>
-
-                                            <!-- Table body START -->
                                             <tbody class="border-top-0">
-                                                <!-- Table item -->
-                                                <!-- <tr v-if="biddetail.tdr_documents==''">
-                                                    <td colspan="5" class="text-center">No attachments provided by the agency for this opportunity</td>
-                                                </tr> -->
-
-                                        
-                                                <!-- <tr v-else v-for="(value,key) in biddetail.tdr_documents?.split('@')" :key="key"  > -->
-                                                <tr v-if="!biddetail?.attachments?.length">
+                                                <tr v-if="!federal_tender?.federal_attachments?.length">
                                                     <td class="text-center" colspan="5">No Attachments Available</td>
                                                 </tr>
-                                                <tr v-for="attachment, att_key in biddetail.attachments" :key="att_key">
+                                                <tr v-for="federal_attachment, att_key in federal_tender.federal_attachments" :key="att_key">
                                                     <td>
-                                                        <img class="" width="25" :src="attachment.image" alt="avatar" />
+                                                        <img class="" width="25" :src="federal_attachment.image" alt="avatar" />
                                                     </td>
-                                                    <td id="demo-3">{{ attachment.name }}</td>
-                                                    <td class="text-center">{{ attachment.size }}</td>
-                                                    <td class="text-center">{{ attachment.date }}</td>
-                                                    <td class="text-center" v-if="attachment.url">
+                                                    <td id="demo-3">{{ federal_attachment.attachment_name }}</td>
+                                                    <td class="text-center">{{ federal_attachment.attachment_size }}</td>
+                                                    <td class="text-center">{{ federal_attachment.attachment_date }}</td>
+                                                    <td class="text-center" v-if="federal_attachment.url">
                                                         <a
-                                                            :href="attachment.url"
+                                                            :href="federal_attachment.url"
                                                             target="_blank"
                                                             class="btn btn-light btn-round mb-0"
                                                             data-bs-toggle="tooltip"
@@ -203,8 +147,8 @@
                                                         </a>
                                                     </td>  
                                                     <td class="text-center" v-else>
-                                                        <a
-                                                            :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ biddetail.region.region_id +'/'+ attachment.name+'/'+biddetail.tdr_id"
+                                                        <!-- <a
+                                                            :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ federal_tender.region.region_id +'/'+ attachment.name+'/'+federal_tender.tdr_id"
                                                             target="_blank"
                                                             class="btn btn-light btn-round mb-0"
                                                             data-bs-toggle="tooltip"
@@ -212,122 +156,36 @@
                                                             data-bs-title="Download"
                                                         >
                                                             <i class="bi bi-cloud-download"></i>
-                                                        </a>
+                                                        </a> -->
                                                     </td>                                               
                                                 </tr>    
-                                                <!-- <tr v-for="(value,key) in getDocuments(biddetail.tdr_documents)" :key="key">
-                                                    <td>
-                                                        <div class="flex-shrink-0">
-                                                            <div v-if="getFileExtension(value) == 'ppt' || getFileExtension(value) == 'PPT'">
-                                                                <img class="" width="25" src="assets/icons/ppt.png" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'pptx' || getFileExtension(value) == 'PPTX'">
-                                                                <img class="" width="25" src="assets/icons/ppt.png" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'pdf' || getFileExtension(value) == 'PDF'">
-                                                                <img class="" width="25" src="assets/icons/PDF.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'docx' || getFileExtension(value) == 'DOCX'">
-                                                                <img class="" width="25" src="assets/icons/DOCX.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'doc' || getFileExtension(value) == 'DOC'">
-                                                                <img class="" width="25" src="assets/icons/DOC.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'png' || getFileExtension(value) == 'PNG'">
-                                                                <img class="" width="25" src="assets/icons/PNG.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'xls' || getFileExtension(value) == 'XLS'">
-                                                                <img class="" width="25" src="assets/icons/XLS.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'xlsx' || getFileExtension(value) == 'XLSX'">
-                                                                <img class="" width="25" src="assets/icons/XLSX.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'csv' || getFileExtension(value) == 'CSV'">
-                                                                <img class="" width="25" src="assets/icons/PNG.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'jpg' || getFileExtension(value) == 'JPG'">
-                                                                <img class="" width="25" src="assets/icons/JPEG.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'txt' || getFileExtension(value) == 'TXT'">
-                                                                <img class="" width="25" src="assets/icons/PNG.svg" alt="avatar" />
-                                                            </div>
-                                                            <div v-else-if="getFileExtension(value) == 'zip' || getFileExtension(value) == 'ZIP'">
-                                                                <img class="" width="30" src="assets/icons/Zip.png" alt="avatar" />
-                                                            </div>
-                                                            <div v-else>
-                                                                <img class="" width="30" src="assets/icons/default_file_icon.png" alt="avatar" />
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td id="demo-3">{{ replaceSpecialCharacters(value)}}</td> -->
-                                                    <!-- <td>{{biddetail.tdr_documents_size.split('@')[key]}} </td>
-                                                    <td>{{biddetail.tdr_documents_date.split('@')[key]}}</td> -->
-
-                                                    <!-- <td>{{getDocumentSize(biddetail.tdr_documents_size, key)}}</td> -->
-                                                    <!-- <td>{{getDocumentDate(biddetail.tdr_documents_date, key)}}</td> -->
-
-                                                    <!-- <td class="text-center"> -->
-                                                        <!-- <a href="#" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download"><i class="bi bi-cloud-download"></i></a> -->
-                                                        <!-- <a :href="$store.state.pdfUrl+'singleBidDownloadFromS3/'+ biddetail.region.region_id +'/'+ value" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download"><i class="bi bi-cloud-download"></i></a> -->
-                                                        <!-- <a
-                                                            :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ biddetail.region.region_id +'/'+ value+'/'+biddetail.tdr_id"
-                                                            target="_blank"
-                                                            class="btn btn-light btn-round mb-0"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            data-bs-title="Download"
-                                                        >
-                                                            <i class="bi bi-cloud-download"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr> -->
                                             </tbody>
-                                            <!-- Table body END -->
                                         </table>
                                     </div>
-                                    <!-- end starts -->
                                 </div>
-                                <!-- Card body END -->
                             </div>
                         </div>
-                        <!-- Content item END -->
-
-                        <!-- Content item START -->
                         <div class="tab-pane fade" id="tour-pills-tab2" role="tabpanel" aria-labelledby="tour-pills-tab-2">
                             <div class="card bg-transparent p-4">
-                                <!-- Card body START -->
                                 <div class="card-body p-0">
                                     <h6 class="">Synopis:</h6>
-                                    <p class="mb-4" v-html="biddetail.tdr_requirement"></p>
+                                    <p class="mb-4" v-html="federal_tender.tdr_requirement"></p>
                                 </div>
-                                <!-- Card body END -->
                             </div>
                         </div>
-                        <!-- Content item END -->
-
-                        <!-- Content item START -->
                         <div class="tab-pane fade" id="tour-pills-tab3" role="tabpanel" aria-labelledby="tour-pills-tab-3">
                             <div class="card bg-transparent p-4">
-                                <!-- Card body START -->
                                 <div class="card-body p-0">
                                     <h6 class="">Synopis:</h6>
-                                    <p class="mb-4" v-html="biddetail.tdr_prog_information"></p>
+                                    <p class="mb-4" v-html="federal_tender.tdr_prog_information"></p>
                                 </div>
-                                <!-- Card body END -->
                             </div>
                         </div>
-                        <!-- Content item END -->
-
-                        <!-- Content item START -->
                         <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
                             <div class="card bg-transparent p-4">
-                                <!-- Card header -->
-
                                 <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
-                                    <!-- test interested vendor -->
                                     <div class="bg-body rounded">
                                         <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
-                                            <!-- <li class="list-inline-item h6 fw-normal mb-0"><h6 class="card-header-title">Interested Vendors</h6></li> -->
                                             <li class="list-inline-item h6 fw-normal mb-0">
                                                 <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                             </li>
@@ -337,10 +195,7 @@
                                         </ul>
                                     </div>
                                 </div>
-
                                 <div class="card-body p-0" style="margin-top: -4px;">
-                                    <!-- Hotel room list START -->
-
                                     <div class="rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="userinteresd.length==0">
                                         No records found
                                     </div>
@@ -350,12 +205,8 @@
                                         v-for="bidintersed in userinteresd"
                                         :key="bidintersed.bid_interest_id"
                                     >
-                                        <!-- Review item START -->
                                         <div class="d-sm-flex justify-content-between">
-                                            <!-- Avatar image -->
                                             <div class="d-sm-flex align-items-center mb-3">
-                                                <!-- <img class="avatar avatar-md rounded-circle float-start me-3" src="assets/images/avatar/07.jpg" alt="avatar"> -->
-                                                <!-- Title -->
                                                 <div>
                                                     <h6 class="m-0 mb-2">{{bidintersed.user_details.company_name}}</h6>
                                                     <span class="me-3">User Name : {{ bidintersed.user_details.name }}</span><br />
@@ -366,19 +217,10 @@
                                                     <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ bidintersed.user_details.email }}</span><br />
                                                 </div>
                                             </div>
-                                            <!-- Review star -->
                                             <ul class="list-inline mb-2 mb-sm-0">
-                                                <!-- <li class="list-inline-item me-0"> <a href="javascript:void(0)" v-if="bidintersed.bid_interested_user == $store.getters.user.id" @click.prevent="edit(bidintersed)" class="btn btn-xs btn-success-soft" style="margin:5px"><i class="bi bi-pencil-square"></i></a></li>
-									<li class="list-inline-item me-0"> <span v-if="bidintersed.bid_interested_user == $store.getters.user.id" ><a href="javascript:void(0)" @click.prevent="deleteInteresedUser(bidintersed.bid_interest_id)" class="btn btn-xs btn-danger-soft" style="margin:5px"><i class="bi bi-trash"></i></a></span></li> -->
-                                                <!-- <li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-									<li class="list-inline-item me-0"><i class="fas fa-star text-warning"></i></li>
-									<li class="list-inline-item me-0"><i class="far fa-star text-warning"></i></li> -->
                                             </ul>
                                         </div>
-
-                                        <!-- Content -->
                                         <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
-                                        <!-- Buttons -->
                                         <ul>
                                             <li
                                                 type="1"
@@ -397,110 +239,97 @@
                                             <span v-if="bidintersed.bid_interested_user == $store.getters.user.id">
                                                 <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(bidintersed.bid_interest_id)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
                                             </span>
-                                            <!-- @click.prevent="deleteAlertpopup(intersted.id)" -->
-                                            <!-- @click.prevent="deleteInteresedUser(bidintersed.bid_interest_id)" -->
                                         </div>
-                                        <!-- Review item END -->
                                     </div>
-                                    <!-- <hr /> -->
                                     <div class="kt-portlet mb-0">
                                         <div class="kt-portlet__body" v-if="userinteresd.length==0">
                                             <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.currentPage" @pagechanged="onPageChange" />
                                         </div>
                                     </div>
-                                    <!-- Hotel room list END -->
                                 </div>
-                                <!-- Card body END -->
                             </div>
                         </div>
-                        <!-- Content item END -->
                     </div>
                 </div>
-                <!-- Tabs Content END -->
-
-                <!-- Right side content START -->
                 <aside class="col-xl-4">
                     <div class="row g-4">
                         <div class="col-md-6 col-xl-12">
                             <div class="card card-body bg-light p-4">
-                                <!-- Title -->
                                 <h6 class="text-success" style="font-size: 18px;">GENERAL INFORMATION</h6>
-
-                                <!-- List -->
                                 <ul class="list-group list-group-borderless mb-0">
                                     <li class="list-group-item">
                                         <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Notice Type</div>
-                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ biddetail.notice?.notice_type }}</div>
+                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.federal_notice?.notice_name }}</div>
                                     </li>
                                     <li class="list-group-item">
                                         <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Posted Date</div>
-                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(biddetail.tdr_posted_date) }}</div>
+                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.posted_date) }}</div>
                                     </li>
                                     <li class="list-group-item">
                                         <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Response Date</div>
-                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(biddetail.tdr_expiry_date) }}</div>
+                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.expiry_date) }}</div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.region?.region_id !==2">
+                                        <div>
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Category</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{ biddetail.category?.category_name}}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.category?.category_name}}</div>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.region?.region_id ==2">
+                                        <div>
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Set Aside</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{ biddetail.setAsideStatus?.status_name? biddetail.setAsideStatus?.status_name:'---' }}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.set_aside?.set_aside_name }}</div>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.region?.region_id ==2">
+                                        <div>
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">PSC Code</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{biddetail.psc?.psc_code}}-{{biddetail.psc?.name?biddetail.psc.name:'---'}}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{federal_tender.psc?.psc_code}}-{{federal_tender.psc?.psc_description }}</div>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.region?.region_id ==2 ">
+                                        <div>
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">NAICS Code</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{biddetail.naics?.naics_code}}-{{ biddetail.naics?.name?biddetail.naics.name:'---'}}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{federal_tender.naics?.naics_code}}-{{ federal_tender.naics?.naics_description }}</div>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.tender_type && biddetail.tender_type != 25 && biddetail.region?.region_id ==2 ">
+                                        <div v-if="federal_tender.tender_type && federal_tender.tender_type != 25 && federal_tender.region?.region_id ==2 ">
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Contract Type</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{biddetail.tenderType?.tdr_type_name}}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{federal_tender.tenderType?.tdr_type_name}}</div>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <div v-if="biddetail.TypeOfAward !==null && biddetail.region?.region_id ==2 ">
+                                        <div>
                                             <div class="h6 fw-light mb-0" style="font-weight: 600 !important;">Type of Award</div>
-                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{biddetail.TypeOfAward?.type_of_award_name}}</div>
+                                            <div class="mb-0" style="color: #747579; font-size: 16px;">{{federal_tender.type_of_award }}</div>
                                         </div>
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-md-6 col-xl-12" v-if="biddetail?.point_of_contact?.length">
+                        <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
                             <div class="card card-body border bg-transparent">
                                 <div class="hstack gap-2 mb-1">
                                     <h6 class="card-title mb-0">Contact Information</h6>
                                 </div>
-                                <div v-for="contact, key in biddetail.point_of_contact" :key="key">
-                                    <strong class="mb-1 text-primary" v-if="contact.type=='primary'">Primary Contact:</strong>
-                                    <strong class="mb-1 text-primary" v-if="contact.type=='secondary'">Secondary Contact:</strong>
+                                <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
+                                    <strong class="mb-1 text-primary" v-if="federal_contact.type=='Primary'">Primary Contact:</strong>
+                                    <strong class="mb-1 text-primary" v-if="federal_contact.type=='Secondary'">Secondary Contact:</strong>
                                     <ul lass="list-group list-group-borderless" style="border-top: none;">
-                                        <li class="list-group-item py-1" v-if="contact.fullName">
-                                            <span class="text-info fw-light me -1 mb-0">{{ contact.fullName }}</span>
+                                        <li class="list-group-item py-1" v-if="federal_contact.fullName">
+                                            <span class="text-info fw-light me -1 mb-0">{{ federal_contact.full_name }}</span>
                                         </li>
-                                        <li class="list-group-item py-1" v-if="contact.phone">
+                                        <li class="list-group-item py-1" v-if="federal_contact.phone">
                                             <span href="#" class="mb-0">
                                                 <i class="fa-solid fa-fw fa-phone text-warning fs-6"></i>
-                                                {{ contact.phone }}
+                                                {{ federal_contact.phone }}
                                             </span>
                                         </li>
-                                        <li class="list-group-item py-1" v-if="contact.email">
+                                        <li class="list-group-item py-1" v-if="federal_contact.email">
                                             <span href="#" class="mb-0">
                                                 <i class="fa-solid fa-fw fa-envelope text-warning fs-6"></i>
-                                                {{ contact.email }}
+                                                {{ federal_contact.email }}
                                             </span>
                                         </li>
                                     </ul>
@@ -694,6 +523,7 @@
         props: ["items"],
         data() {
             return {
+                federal_tender:'',
                 meta: {
                     search: "",
                     order_by: "asc",
@@ -710,7 +540,7 @@
                 status: true,
                 addinterestmodal: false,
                 interstmodal: false,
-                biddetail: {},
+                federal_tender: {},
                 userinteresd: [],
                 userinteresed_id: "",
                 alertmodal: false,
@@ -750,23 +580,46 @@
         
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                if(to.params.id) {
-                    vm.$store.commit("setBidsDetails", {tdr_id:to.params.id});
-                }
-                vm.from_path = from.path;
-                console.log('searchfileter')
-                console.log(vm.$store.getters.searchfilter)
-                window.scrollTo(0, 0);
-                // vm.checklogin();
-                vm.index();
-                vm.getBidInterest();
-                moment.updateLocale("language_code", {
-                    invalidDate: "--",
-                });
+                console.log('bid details')
+                console.log(vm.$store.getters.bidsdetails)
+                vm.federal_tender = vm.$store.getters.bidsdetails
+                vm.getFederalTender()
+                // if(to.params.id) {
+                //     vm.$store.commit("setBidsDetails", {tdr_id:to.params.id});
+                // }
+                // vm.from_path = from.path;
+                // console.log('searchfileter')
+                // console.log(vm.$store.getters.searchfilter)
+                // window.scrollTo(0, 0);
+                // // vm.checklogin();
+                // vm.index();
+                // vm.getBidInterest();
+                // moment.updateLocale("language_code", {
+                //     invalidDate: "--",
+                // });
             });
         },
 
         methods: {
+
+            getFederalTender(){
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "getFederalTender", data: vm.federal_tender })
+                    .then(function (response) {
+                        vm.federal_tender = response.data.data
+                        vm.federal_tender.federal_attachments.map(function(element){
+                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
+                            element.image = vm.getFileExtension(file_extension)
+                        })
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
             backToBids() {
                 let vm = this;
                 vm.$router.push(vm.from_path);
@@ -778,7 +631,7 @@
                 return value;
             },
             openWebSite() {
-                return "https://sam.gov/opp/" + this.biddetail.noticeId + "/view";
+                return "https://sam.gov/opp/" + this.federal_tender.noticeId + "/view";
             },
             checkIfEmpty(str) {
                 if (str?.trim()) {
@@ -804,7 +657,7 @@
                 return moment(String(value)).format("MMMM D, YYYY");
             },
             checkContact() {
-                if (this.biddetail?.tdr_pri_fullname !== "" || this.biddetail?.tdr_pri_phone !== "" || this.biddetail?.tdr_pri_email !== "" || this.biddetail?.tdr_sec_phone !== "" || this.biddetail?.tdr_sec_email !== "") {
+                if (this.federal_tender?.tdr_pri_fullname !== "" || this.federal_tender?.tdr_pri_phone !== "" || this.federal_tender?.tdr_pri_email !== "" || this.federal_tender?.tdr_sec_phone !== "" || this.federal_tender?.tdr_sec_email !== "") {
                     return true;
                 }
             },
@@ -821,13 +674,13 @@
                 }
             },
             //  window.location.reload();
-            shareBidDetails() {
+            sharefederal_tenders() {
                 let vm = this;
                 vm.errors = [];
                 vm.shareBid.bids = [];
                 vm.shareBid.mails = [];
-                vm.shareBid.region_id = vm.biddetail.tdr_region;
-                vm.shareBid.bids.push(vm.biddetail.tdr_id);
+                vm.shareBid.region_id = vm.federal_tender.tdr_region;
+                vm.shareBid.bids.push(vm.federal_tender.tdr_id);
 
                 if (vm.$store.getters.user == null) {
                     vm.userlogin = true;
@@ -889,81 +742,11 @@
                     .dispatch("post", { uri: "getBid", data: vm.tdr })
                     .then(function (response) {
                         vm.isLoading = false;
-                        vm.biddetail = response.data.data
-                        vm.biddetail.attachments = []
-                        console.log("typeofdoc", typeof vm.biddetail.tdr_documents)
-                        if (typeof vm.biddetail.tdr_documents === 'string' && vm.biddetail.tdr_documents.includes('url')) {
-                            vm.biddetail.tdr_documents = vm.biddetail.tdr_documents.replace(/'/g, '"');
-                            document_names_link = JSON.parse(vm.biddetail.tdr_documents)
-                        }else if (typeof vm.biddetail.tdr_documents === 'string' && vm.biddetail.tdr_documents.includes('@')){
-                            document_names = vm.biddetail.tdr_documents.split('@');
-                        }else if (typeof vm.biddetail.tdr_documents === 'string' && vm.biddetail.tdr_documents.includes(',')){
-                            document_names = vm.biddetail.tdr_documents.split(',');
-                        }else if(vm.biddetail.tdr_documents && vm.biddetail.tdr_documents!=0 && typeof vm.biddetail.tdr_documents === 'string'){
-                            document_names.push(vm.biddetail.tdr_documents)
-                        }else{
-                            document_names = []
-                            document_names_link = []
-                        }
-
-                        if(vm.biddetail.tdr_documents_size && vm.biddetail.tdr_documents_size.includes('@')){
-                            document_sizes = vm.biddetail.tdr_documents_size.split('@')
-                        }else if(vm.biddetail.tdr_documents_size && vm.biddetail.tdr_documents_size.includes(',')){
-                            document_sizes = vm.biddetail.tdr_documents_size.split(',')
-                        }else if(vm.biddetail.tdr_documents_size && !vm.biddetail.tdr_documents_size.includes(',') && !vm.biddetail.tdr_documents_size.includes('@')){
-                            document_sizes = [vm.biddetail.tdr_documents_size]
-                        }
-
-                        if(vm.biddetail.tdr_documents_date && vm.biddetail.tdr_documents_date.includes('@')){
-                            document_dates = vm.biddetail.tdr_documents_date.split('@')
-                        }else if(vm.biddetail.tdr_documents_date){
-                            document_dates = [vm.biddetail.tdr_documents_date]
-                        }
-
-                        const formatSize = (sizeInBytes) => {
-                            if (sizeInBytes < 1024) {
-                                return sizeInBytes + ' Bytes';
-                            } else if (sizeInBytes < 1048576) { // 1024 * 1024
-                                return (sizeInBytes / 1024).toFixed(2) + ' KB';
-                            } else if (sizeInBytes < 1073741824) { // 1024 * 1024 * 1024
-                                return (sizeInBytes / 1048576).toFixed(2) + ' MB';
-                            } else {
-                                return (sizeInBytes / 1073741824).toFixed(2) + ' GB';
-                            }
-                        };
-                        console.log('document_names')
-                        console.log(document_names.length)
-                        if(document_names.length){
-                            vm.biddetail.attachments = document_names.map((name, index) => {
-                                let date = document_dates[index] !== undefined ? document_dates[index] : "-";
-                                let size = document_sizes[index] !== undefined ? formatSize(parseInt(document_sizes[index])) : "-";
-                                let file_extension = name.slice(((name.lastIndexOf(".") - 1) >>> 0) + 2);
-                                let image = vm.getFileExtension(file_extension)
-                                return {
-                                    image:image,
-                                    name: name,
-                                    url:'',
-                                    date: date,
-                                    size: size
-                                };
-                            })
-                        }
-
-                        if(document_names_link.length){
-                            vm.biddetail.attachments = document_names_link.map((document, index) => {
-                                let date = document_dates[index] !== undefined ? document_dates[index] : "-";
-                                let size = document_sizes[index] !== undefined ? formatSize(parseInt(document_sizes[index])) : "-";
-                                let file_extension = document.name.slice(((document.name.lastIndexOf(".") - 1) >>> 0) + 2);
-                                let image = vm.getFileExtension(file_extension)
-                                return {
-                                    image:image,
-                                    name: document.name,
-                                    url:document.url,
-                                    date: date,
-                                    size: size
-                                };
-                            })
-                        }
+                        vm.federal_tender = response.data.data
+                        vm.federal_tender.federal_attachments.map(function(element){
+                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
+                            element.image = vm.getFileExtension(file_extension)
+                        })
                     })
                     .catch(function (error) {
                         vm.isLoading = false;

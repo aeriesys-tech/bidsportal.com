@@ -15,7 +15,7 @@
     "moment-timezone": "^0.5.46",
     "mosha-vue-toastify": "^1.0.23",
     "vue": "^3.2.13",
-    "vue-loading-overlay": "6.0",
+    "vue-loading-overlay": "^6.0.6",
     "vue-router": "^4.0.3",
     "vue3-tags-input": "^1.0.6",
     "vuex": "^4.0.0"

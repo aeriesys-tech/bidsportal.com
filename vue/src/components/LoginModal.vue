@@ -104,22 +104,12 @@ export default {
             // let loader = vm.$loading.show();
             vm.$store.dispatch("auth", { uri:"login", data: vm.user })
             .then(function (response) {
-                vm.isLoading = false;
-                // loader.hide();
+                vm.isLoading = false
+                vm.closeModal('login_modal')
                 vm.$store.dispatch('success','Successfuly logged in');
                 vm.$store.commit("setUser", response.data.user);
-                vm.$store.commit("setToken", response.data.access_token);
-               
-            //    if(vm.$store.getters.user){
-                    vm.$router.push("/bids");
-                    vm.$router.go()
-            //    }
-            //    if(vm.$store.getters.user?.subscription_id === 0){
-            //          vm.$router.push("/plans_pricing");
-            //    }
-                
-                vm.closeModal('login_modal');
-                
+                vm.$store.commit("setToken", response.data.access_token)
+                vm.$router.go()
             })
             .catch(function (error) {
                 vm.isLoading = false;

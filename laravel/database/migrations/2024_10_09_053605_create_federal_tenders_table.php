@@ -16,7 +16,7 @@ class CreateFederalTendersTable extends Migration
         Schema::create('federal_tenders', function (Blueprint $table) {
             $table->id('federal_tender_id');
             $table->string('tender_no', 255)->index();
-            $table->string('title', 255)->index();
+            $table->text('title')->index();
             $table->text('description')->index();
             $table->date('opening_date')->index();
             $table->timestamp('posted_date')->nullable()->index();
@@ -44,12 +44,12 @@ class CreateFederalTendersTable extends Migration
             $table->string('type_of_award', 255)->nullable();
             $table->string('place_of_performance', 255)->nullable();
             $table->string('notice_id', 255)->nullable();
-            $table->text('description_link')->nullable();
+            $table->text('tender_link')->nullable();
             $table->string('category_name',255)->nullable();
             $table->string('notice_name', 255)->nullable();
             $table->string('agency_name', 255)->nullable();
+            $table->boolean('is_latest')->default(1);
             $table->timestamps();
-            $table->fullText(['tender_no', 'title'], 'idx_tender_fulltext');
         });
     }
 

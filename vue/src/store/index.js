@@ -5,24 +5,69 @@ import axios from 'axios';
 
 export default createStore({
 	state: {
-		baseUrl:"http://localhost/bidsportal_new/laravel2/public/",
+		baseUrl:"http://192.168.0.174/bidsportal_new/laravel2/public/",
 		// baseUrl:"http://139.59.39.99/",
+		appUrl:'http://192.168.0.174:8080/#/',
 		token:null,
 		user:null,
 		cart:[],
 		alert:[],
 		bidsdetails:[],
-		naics:[],
-		pscs:[],
+		federal_tender:null,
+		state_tender:null,
+		naics:null,
+		pscs:null,
 		selected_naics:[],
 		selected_pscs:[],
 		page:'',
 		filters:[],
 		searchfilter:{},
-		current_page:''
+		current_page:'',
+		federal_notices:[],
+		states:[],
+		federal_agencies:[],
+		state_notices:[],
+		categories:[],
+		state_agencies:[],
+		page_redirect:null
 	}, 
 	
 	mutations: {
+		setPageRedirect(state, page_redirect){
+			state.page_redirect = page_redirect
+		},
+		setFederalTender(state, federal_tender){
+			state.federal_tender = federal_tender
+		},
+
+		setStateTender(state, state_tender){
+			state.state_tender = state_tender
+		},
+
+		setFederalNotices(state, federal_notices){
+			state.federal_notices = federal_notices
+		},
+
+		setStates(state, states){
+			state.states = states
+		},
+
+		setFederalAgencies(state, federal_agencies){
+			state.federal_agencies = federal_agencies
+		},
+
+		setStateNotices(state, state_notices){
+			state.state_notices = state_notices
+		},
+
+		setCategories(state, categories){
+			state.categories = categories
+		},
+
+		setStateAgencies(state, state_agencies){
+			state.state_agencies = state_agencies
+		},
+
 		setFilters(state, filters){
 			state.filters = filters
 		},
@@ -76,6 +121,38 @@ export default createStore({
 	},
 
 	getters: {
+		page_redirect(state){
+			return state.page_redirect
+		},
+		federal_tender(state){
+			return state.federal_tender
+		},
+
+		state_tender(state){
+			return state.state_tender
+		},
+
+		federal_notices(state){
+			return state.federal_notices
+		},
+		states(state){
+			return state.states
+		},
+		federal_agencies(state){
+			return state.federal_agencies
+		},
+		state_notices(state){
+			return state.state_notices
+		},
+
+		categories(state){
+			return state.categories
+		},
+
+		state_agencies(state){
+			return state.federal_agencies
+		},
+
 		filters(state){
 			return state.filters
 		},
@@ -87,6 +164,9 @@ export default createStore({
 		},
 		pscs(state){
 			return state.pscs
+		},
+		appUrl(state){
+			return state.appUrl;
 		},
 		baseUrl(state){
 			return state.baseUrl;
@@ -121,6 +201,44 @@ export default createStore({
 	},
 
 	actions: {
+		
+		async setPageRedirect(context,payload) {
+			await context.commit('setPageRedirect', payload);
+		},
+
+		async setFederalTender(context,payload) {
+			await context.commit('setFederalTender', payload);
+		},
+
+		async setStateTender(context,payload) {
+			await context.commit('setStateTender', payload);
+		},
+
+		async setFederalNotices(context,payload) {
+			await context.commit('setFederalNotices', payload);
+		},
+
+		async setStates(context,payload) {
+			await context.commit('setStates', payload);
+		},
+
+		async setFederalAgencies(context,payload) {
+			await context.commit('setFederalAgencies', payload);
+		},
+
+		async setStateNotices(context,payload) {
+			await context.commit('setStateNotices', payload);
+		},
+
+		async setCategories(context,payload) {
+			await context.commit('setCategories', payload);
+		}, 
+
+		async setStateAgencies(context,payload) {
+			await context.commit('setStateAgencies', payload);
+		},
+
+
 		async setFilters(context,payload) {
 			await context.commit('setFilters',payload);
 		},

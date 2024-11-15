@@ -33,14 +33,60 @@ class FederalTenderResource extends JsonResource
             $date2 = Carbon::parse($this->expiry_date);
 
             if ($date1->lessThan($date2)) {
-                $days_difference = $date1->diffInDays($date2) + 1; 
+                $days_difference = round($date1->diffInDays($date2) + 1); 
             } else if ($date2->lessThan($date1)){
-                $days_difference = $date2->diffInDays($date1) + 1; 
+                $days_difference = round($date2->diffInDays($date1) + 1); 
             } else  {
                 $days_difference = null; 
             }
         } else {
             $days_difference = null;
+        }
+
+        $place_of_performance = null;
+        if($this->FederalPlaceOfPerformance){
+            if($this->FederalPlaceOfPerformance->city_name){
+                $place_of_performance = $this->FederalPlaceOfPerformance->city_name;                
+            }
+
+            if($this->FederalPlaceOfPerformance->state_name){
+                if($place_of_performance){
+                    $place_of_performance = $place_of_performance .', '.$this->FederalPlaceOfPerformance->state_name;
+                }else{
+                    $place_of_performance = $this->FederalPlaceOfPerformance->state_name;
+                }
+            }
+
+            if($this->FederalPlaceOfPerformance->country_name){
+                if($place_of_performance){
+                    $place_of_performance = $place_of_performance .', '.$this->FederalPlaceOfPerformance->country_name;
+                }else{
+                    $place_of_performance = $this->FederalPlaceOfPerformance->country_name;
+                }
+            }
+
+        } else if($this->FederalOfficeAddress && !$place_of_performance){
+            if($this->FederalOfficeAddress->city){
+                $place_of_performance = $this->FederalOfficeAddress->city;                
+            }
+
+            if($this->FederalOfficeAddress->state){
+                if($place_of_performance){
+                    $place_of_performance = $place_of_performance .', '.$this->FederalOfficeAddress->state;
+                }else{
+                    $place_of_performance = $this->FederalOfficeAddress->state;
+                }
+            }
+
+            if($this->FederalOfficeAddress->country){
+                if($place_of_performance){
+                    $place_of_performance = $place_of_performance .', '.$this->FederalOfficeAddress->country;
+                }else{
+                    $place_of_performance = $this->FederalOfficeAddress->country;
+                }
+            }            
+        } else{
+            $place_of_performance = null;
         }
 
         return [
@@ -65,14 +111,16 @@ class FederalTenderResource extends JsonResource
             'tender_url' => $this->tender_url,
             'fees' => $this->fees,
             'type_of_award' => $this->type_of_award,
-            'place_of_performance' => $this->place_of_performance,
+            'place_of_performance' => $place_of_performance,
             'notice_id' => $this->notice_id,
             'description_link' => $this->description_link,
             'category_name' => $this->category_name,
             'notice_name' => $this->notice_name,
             'agency_name' => $this->agency_name,
             'time_ago'  => $time_ago,
-            'days_difference' => $days_difference
+            'days_difference' => $days_difference,
+            'federal_attachments' => $this->FederalAttachments,
+            'federal_office_address' => $this->FederalOfficeAddress
 
         ];
     }

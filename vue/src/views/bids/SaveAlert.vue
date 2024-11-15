@@ -2,20 +2,14 @@
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :on-cancel="onCancel" :is-full-page="fullPage" />
     <section class="pt-0">
         <div class="container vstack gap-3">
-            <!-- tooltip -->
             <div class="row align-items-center mt-3">
                 <div class="col-12">
                     <div class="card border rounded-3">
                         <div class="">
-                            <!-- Review item START -->
                             <div class="rounded p-3" style="padding: 5px !important;">
-                                <!-- Review item START -->
                                 <div class="d-sm-flex justify-content-between">
-                                    <!-- Avatar image -->
                                     <div class="d-sm-flex align-items-center ">
                                         <img class="avatar avatar-md rounded-circle float-start me-3" src="assets/images/bulb.png" alt="tips" />
-                                        <!-- <img class="avatar avatar-md rounded-circle float-start me-3" src="assets/images/avatar/07.jpg" alt="avatar"> -->
-                                        <!-- Title -->
                                         <div class="align-items-center mt-3">
                                             <p>
                                                 <span class="text-body"></span>About Scheduled Emails: Scheduled emails include only opportunites that are new or have been modified since the last scheduled run. You can view all matches
@@ -29,35 +23,25 @@
                     </div>
                 </div>
             </div>
-            <!-- tooltip end -->
-            <!-- Title START -->
             <div class="row">
                 <div class="col-12">
-                    <!-- <h1 class="fs-4 mb-0"><i class="bi bi-house-door fa-fw me-1"></i>Dashboard</h1> -->
                 </div>
             </div>
-            <!-- Title END -->
-
-            <!-- Booking table START -->
             <div class="row">
                 <div class="col-12">
                     <div class="card border rounded-3">
-                        <!-- Card header START -->
                         <div class="card-header border-bottom p-3">
                             <div class="d-sm-flex justify-content-between align-items-center">
                                 <h5 class="mb-2 mb-sm-0">Alerts</h5>
-                                <!-- <a href="#" class="btn btn-sm btn-primary mb-0">Add Alert</a> -->
                                 <div>
                                     <label class="dropdown me-2">
                                         <div class="dd-button">
                                             Add Alert
                                         </div>
-
                                         <input type="checkbox" class="dd-input" id="test" />
-
                                         <ul class="dd-menu">
-                                            <li v-for="userregion in region" :key="userregion.region_id">
-                                                <router-link class="dropdown-item" :to="'bid-alert/'+userregion.region_id +'/Create'">{{userregion.region_name}} </router-link>
+                                            <li>
+                                                <router-link class="dropdown-item" :to="'bid-alert/Federal/Create'"> Federal </router-link>
                                             </li>
                                         </ul>
                                     </label>
@@ -65,18 +49,12 @@
                                      <a href="javascript:void(0)" @click="backgoBidsPage()" type="button" class="mb-0 btn btn-sm btn-primary" style="border-radius: 4px;padding:5px; font-weight:400;">
                                         Back To Bids
                                     </a>
-
-
                                 </div>
                             </div>
                         </div>
-                        <!-- Card header END -->
-
-                        <!-- Card body START -->
                         <div class="card-body pb-2">
                             <div class="table-responsive border-0">
                                 <table class="table align-middle p-4 mb-0 table-hover table-shrink">
-                                    <!-- Table head -->
                                     <thead class="table-light">
                                         <tr>
                                             <th scope="col" class="border-0 rounded-start">Alert Title</th>
@@ -88,55 +66,40 @@
                                             <th scope="col" class="border-0 rounded-end">Set Alert</th>
                                         </tr>
                                     </thead>
-
-                                    <!-- Table body START -->
                                     <tbody class="border-top-0">
-                                        <!-- Table item -->
-                                        <tr v-if="userintersted.length==0">
+                                        <tr v-if="alerts.length==0">
                                             <td colspan="8" class="text-center">No records found</td>
                                         </tr>
-                                        <tr v-for="intersted in userintersted" :key="intersted.id">
-                                            <!-- <td> 
-                                                <h6 class="mb-0"><a href="#" @click.prevent="runAlert(intersted)" style="margin-right:10px"> <i class="fas fa-caret-right blue-arrow"></i></a><a href="#">{{intersted.alert_label}}</a></h6>
-                                            </td> -->
+                                        <tr v-for="alert, key in alerts" :key="key">
                                             <td>
                                                 <div class="text-primary">
                                                     <i class="fas fa-caret-right blue-arrow me-2"></i>
-                                                     {{intersted.alert_label}}
+                                                     {{ alert.alert_title }}
                                                 </div>
                                             </td>
-
-                                            <td v-if="intersted.region">{{intersted.region.region_name}}</td>
+                                            <td>{{ alert.region }}</td>
                                             <td>-</td>
                                             <td>-</td>
-                                            <td>{{intersted.frequency}}</td>
+                                            <td>{{alert.frequency}}</td>
                                             <td>
                                                 <div class="hstack gap-2 mt-3 mt-sm-0 " style="justify-content: center;">
-                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-primary" @click.prevent="runAlert(intersted)"><i class="fa fa-search" aria-hidden="true"></i></a>
-                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-success" @click.prevent="edit(intersted)"><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-danger" @click.prevent="deleteAlertpopup(intersted.id)"><i class="bi bi-trash"></i></a>
+                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-primary" @click.prevent="showTenders(alert)"><i class="fa fa-search" aria-hidden="true"></i></a>
+                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-success" @click.prevent="edit(alert)"><i class="bi bi-pencil-square"></i></a>
+                                                    <a href="#" class="btn btn-xs p-1 mb-0 text-danger" @click.prevent="deleteAlertpopup(alert)"><i class="bi bi-trash"></i></a>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch text-center form-check-md mb-0">
-                                                    <input class="form-check-input" type="checkbox" :id="'alert' + intersted.id" :checked="intersted.on_off" :value="intersted.on_off" @change="updateAlert(intersted)" />
+                                                    <input class="form-check-input" type="checkbox" v-model="alert.status" :value="alert.status" @change="updateAlert(alert)" />
                                                 </div>
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <!-- Table body END -->
                                 </table>
                             </div>
                         </div>
-                        <!-- Card body END -->
-
-                        <!-- Card footer START -->
                         <div class="card-footer pt-0">
-                            <!-- Pagination and content -->
-
-
                             <div class="d-sm-flex justify-content-sm-between align-items-sm-center">
-                                
                                 <div class="d-sm-flex" style="align-items: center;">
                                 <p class="mb-sm-0 text-center text-sm-start">
                                     <select class="form-select formpage flex align-items-sm-center" aria-label="Default select example" v-model="meta.per_page" @change="onPerPageChange">
@@ -144,25 +107,17 @@
                                         <option>20</option>
                                         <option>30</option>
                                     </select>
-                                    <!-- showing {{meta.to}} of {{meta.totalRows}} -->
                                 </p>
                                 <span style="margin-left:10px"> showing {{meta.to}} of {{meta.totalRows}}</span>
                                 </div>
-                               
-                                <!-- Pagination -->
                                 <nav class="mb-sm-0 d-flex justify-content-center" aria-label="navigation">
                                     <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.currentPage" @pagechanged="onPageChange" />
                                 </nav>
-                            </div>
-
-
-                            
+                            </div>                            
                         </div>
-                        <!-- Card footer END -->
                     </div>
                 </div>
             </div>
-            <!-- Booking table END -->
         </div>
     </section>
      <teleport to="#modals" :disabled="!erroralertmodal" v-if="erroralertmodal">
@@ -171,7 +126,7 @@
                 <h1>Are you sure?</h1>
                 <p>Do you really want to delete these records? This process cannot be undone.</p>
                 <button @click.prevent="closemodal()">Cancel</button>
-                <button style="color:red !important" @click.prevent="deleteAlert(deleteduser)">Confirm</button>
+                <button style="color:red !important" @click.prevent="deleteAlert(delete_alert)">Confirm</button>
             </div>
           
         </div>
@@ -186,6 +141,7 @@
         name: "saveAlert",
         data() {
             return {
+                alerts:[],
                  naics_code: {
                     search: "",
                     alert_id:''
@@ -202,11 +158,11 @@
                 },
                 region: [],
                 userintersted: [],
-                deleteduser:"",
+                delete_alert:"",
                 meta: {
                     search: "",
-                    order_by: "asc",
-                    field: "id",
+                    order_by: "DESC",
+                    field: "federal_alert_id",
                     per_page: 10,
                     totalRows: 0,
                     currentPage: 1,
@@ -220,16 +176,66 @@
             };
         },
         mounted() {
-            let vm = this;
-            vm.interstedUser.user_id = vm.$store.getters.user.id;
-            vm.getInterstedUser();
-            vm.getRegion();
-            vm.checklogin();
+            this.index()
+            // vm.interstedUser.user_id = vm.$store.getters.user.id;
+            // vm.getInterstedUser();
+            // vm.getRegion();
+            // vm.checklogin();
         },
 
         methods: {
+            index(){
+                let vm = this
+                // vm.isLoading = true;
+                vm.$store
+                    .dispatch("post", { uri: "paginateAlerts", data:vm.meta })
+                    .then(function (response) {
+                        // vm.isLoading = false
+                        vm.alerts = response.data.data
+                        vm.meta.totalRows = response.data.total;
+                        vm.meta.lastPage = response.data.last_page;
+                        vm.meta.from = response.data.from;
+                        vm.meta.to = response.data.to;
+                        vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
+                    })
+            },
+
+            deleteAlertpopup(alert){
+                this.erroralertmodal = true
+                this.delete_alert = alert;
+            },
+            deleteAlert() {
+                let vm = this;
+                    vm.isLoading = true;
+                    vm.$store
+                        .dispatch("post", {uri: "deleteAlert", data:vm.delete_alert})
+                        .then(function () {
+                            vm.isLoading = false;
+                            vm.$store.dispatch("success", "BidsAlert is successfully deleted");
+                            vm.erroralertmodal = false
+                            vm.index();
+
+                        })
+                        .catch(function (error) {
+                            vm.isLoading = false;
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+              
+                // if (confirm("Do you want to delete this entry ?")) {
+                   
+                // }
+            },
+
+            showTenders(alert) {
+                this.$store.commit("setAlert", alert);
+                if(alert.region == 'Federal'){
+                    this.$router.push('/bids')
+                }
+            },
+
             backgoBidsPage(){
-                 this.$store.commit("setAlert",[]);
+                 this.$store.commit("setAlert", null);
                  this.$router.push('/bids')
             },
              closemodal() {
@@ -242,31 +248,19 @@
                     vm.$router.push("/bids");
                 }
             },
-            runAlert(intersted) {
-                this.$store.commit("setAlert", intersted);
-                if (intersted.region_id == 2) {
-                    this.$router.push("/bids?region_id=" + intersted.region_id);
-                }
-                if (intersted.region_id == 1) {
-                    this.$router.push("/bids/state?region_id=" + intersted.region_id);
-                }
-                if (intersted.region_id == 3) {
-                    this.$router.push("/bids/private?region_id=" + intersted.region_id);
-                }
-                if (intersted.region_id == 4) {
-                    this.$router.push("/bids/international?region_id=" + intersted.region_id);
-                }
+
+            search(alert) {
+                vm.$store.commit("setAlert", alert);
+                this.$router.push("/bids");
             },
-            search(intersted) {
-                this.$router.push("/bids/" + intersted.id);
+
+            edit(alert) {
+                // this.$store.commit("setAlert", intersted);
+                // this.$store.commit("setSelectedNaics",intersted.naics_id ? intersted.naics_id.split(","):[]);
+                // this.$store.commit("setSelectedPsces",intersted.psc ? intersted.psc.split(","):[]);
+                this.$router.push("/bids/bid-alert/Federal/" + alert.alert_id + "/edit");
             },
-            edit(intersted) {
-             
-                this.$store.commit("setAlert", intersted);
-                this.$store.commit("setSelectedNaics",intersted.naics_id ? intersted.naics_id.split(","):[]);
-                this.$store.commit("setSelectedPsces",intersted.psc ? intersted.psc.split(","):[]);
-                this.$router.push("/bids/bid-alert/" + intersted.id + "/" + intersted.region_id + "/edit");
-            },
+
             getInterstedUser() {
                 let vm = this;
 
@@ -304,35 +298,6 @@
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-            },
-             deleteAlertpopup(userintersted){
-                this.erroralertmodal = true
-                this.deleteduser=userintersted;
-                },
-            deleteAlert(deleteduser) {
-              
-                let vm = this;
-                    vm.isLoading = true;
-                    let uri = { uri: "deleteAlert/" + deleteduser };
-                    // console.log(uri);
-                    vm.$store
-                        .dispatch("delete", uri)
-                        .then(function () {
-                            vm.isLoading = false;
-                            vm.$store.dispatch("success", "BidsAlert is successfully deleted");
-                            vm.erroralertmodal = false
-                            vm.getInterstedUser();
-
-                        })
-                        .catch(function (error) {
-                            vm.isLoading = false;
-                            vm.errors = error.response.data.errors;
-                            vm.$store.dispatch("error", error.response.data.message);
-                        });
-              
-                // if (confirm("Do you want to delete this entry ?")) {
-                   
-                // }
             },
 
             updateAlert(interested) {

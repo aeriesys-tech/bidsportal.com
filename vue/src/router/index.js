@@ -5,8 +5,9 @@ import State from "@/views/bids/State.vue";
 import Private from "@/views/bids/Private.vue";
 import International from "@/views/bids/International.vue";
 import Document from "@/views/bids/Document.vue";
+import FederalTenderDetails from '@/views/tender_details/Federal.vue'
+import StateTenderDetails from '@/views/tender_details/State.vue'
 import BidsDetailsPage from '@/views/bids/BidsDetailsPage.vue'
-import BidsDetailsPage1 from '@/views/bids/BidsDetailsPage.vue'
 // auth
 import Login from "@/views/auth/Login.vue";
 import SignUp from "@/views/auth/SignUp.vue";
@@ -83,12 +84,12 @@ const routes = [
     },
 	{
          
-        path:'/bids/bid-alert/:region_id/Create',
+        path:'/bids/bid-alert/:region/Create',
         name:'CreateBidAlert',
         component:CreateBidAlert
     },
 	{
-		path:'/bids/bid-alert/:id/:region_id/edit',
+		path:'/bids/bid-alert/:region/:alert_id/edit',
 	   name:'EditBidAlert',
 	   component:CreateBidAlert
    },
@@ -123,8 +124,16 @@ const routes = [
 		component: Federal
 	},
 	{
-		path: "/bids/federal-opportunities", name: "federalOpportunities",
+		path: "/bids/federal-opportunities", name: "federal_opportunities",
 		component: Federal,
+	},
+	{
+		path: "/bids/federal-opportunities/:tender_id", name: "federal_tender_details",
+		component: FederalTenderDetails,
+	},
+	{
+		path: "/bids/state-opportunities/:tender_id", name: "state_tender_details",
+		component: StateTenderDetails,
 	},
 	{
 		path: "/bids/:tdr_region/:tdr_id", name: "bidsDetailsPage",
@@ -133,11 +142,6 @@ const routes = [
 	{
 		path: "/bids/:tdr_region/:tdr_id/:id", name: "bidsDetailsPageOutside",
 		component: BidsDetailsPage,
-	},
-	{
-		
-		path: "/bids/bids-details-page/:tdr_id", name: "bidsDetailsPage1",
-		component: BidsDetailsPage1,
 	},
 
 	// {
@@ -150,7 +154,7 @@ const routes = [
 		component: State,
 	},
 	{
-		path: "/bids/state-opportunities", name: "stateOpportunities",
+		path: "/bids/state-opportunities", name: "state_opportunities",
 		component: State,
 	},
 	{
@@ -158,7 +162,7 @@ const routes = [
 		component: Private,
 	},
 	{
-		path: "/bids/private-commercial", name: "privateCommercial",
+		path: "/bids/private-commercial", name: "private_opportunities",
 		component: Private,
 	},
 	{
@@ -166,7 +170,7 @@ const routes = [
 		component: International,
 	},
 	{
-		path: "/bids/international-opportunities", name: "internationalOpportunities",
+		path: "/bids/international-opportunities", name: "international_opportunities",
 		component: International,
 	},
 	{

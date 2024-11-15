@@ -11,7 +11,7 @@
                                 <span style="font-size: 13px;" class="cv-catalog-list-item__fake-checkbox"></span>
                             </label>
                             <div class="cv-catalog-list-item__expand-button">
-                                <span v-if="item.children.length!=0" class="cv-expand-button">
+                                <span v-if="item.children?.length!=0" class="cv-expand-button">
                                     <i class="fa fa-minus-circle" @click="toggle()" v-if="isOpen" aria-hidden="true" style="font-size: 13px;"></i>
                                     <i class="fa fa-plus-circle" @click="toggle()" v-else aria-hidden="true" style="font-size: 13px;"></i>
                                 </span>
@@ -87,7 +87,7 @@
      
         computed: {
             isFolder: function () {
-                return this.item.children && this.item.children.length;
+                return this.item.children && this.item.children?.length;
             },
         },
         mounted() {},
@@ -107,19 +107,25 @@
                 return name;
             },
             toggleSelectedItem(item) {
+                console.log('item2')
+                console.log(item)
                 item.selected = !item.selected;
                 this.pushSpliceItem(item);
                 this.setSelectedItem(item);
             },
             setSelectedItem(item) {
+                console.log('item1')
+                console.log(item)
                 let vm = this;
-                if (item.children.length) {
+                if (item.children?.length) {
                     item.children.map(function (element) {
                         vm.toggleSelectedChildren(element, item.selected);
                     });
                 }
             },
             pushSpliceItem(item) {
+                console.log('item')
+                console.log(item)
                 let naics_id = item.naics_id;
                 let selected_naicses = [];
                 let selected_naics_items = [];

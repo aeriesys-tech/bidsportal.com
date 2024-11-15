@@ -3,25 +3,16 @@
     <section class="pt-5">
         <div class="container">
             <div class="row">
-                <!-- Main content START -->
                 <div class="col-lg-12 col-xl-12">
-                    <!-- Offcanvas menu button -->
                     <div class="d-grid mb-0 d-lg-none w-100">
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
 
                     <div class="vstack gap-4">
                         <div class="card border">
-                            <!-- Card header -->
                             <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center p-2">
                                 <h5 class="card-header-title" v-if="status">
-                                    Create
-                                    <label v-if="$route.params.region_id==2">Federal</label>
-                                    <label v-if="$route.params.region_id==4">International</label>
-                                    <label v-if="$route.params.region_id==3">Private</label>
-                                    <label v-if="$route.params.region_id==1">State</label>
-                                    <!-- Form START -->
-                                    Alert
+                                    Create {{ $route.params.region }} Alert
                                 </h5>
                                 <h5 class="card-header-title" v-else>Update Alert</h5>
 
@@ -30,135 +21,97 @@
                                     <a href="javascript:void(0)" class="btn btn-sm btn-primary" @click="backSaveAlert()" style="padding: 5px; font-weight: 400;">Back</a>
                                 </span>
                             </div>
-
-                            <!-- Card body START -->
                             <div class="card-body">
                                 <form class="row g-3">
                                     <div class="col-md-3">
-                                        <label class="form-label">Alert Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" :class="{'is-invalid': errors.alert_label}" v-model="savealert.alert_label" placeholder="Enter your Alert" />
-                                        <span v-if="errors.alert_label" class="invalid-feedback">{{ errors.alert_label[0] }}</span>
+                                        <label class="form-label">Alert Title <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" :class="{'is-invalid': errors.alert_title}" v-model="alert.alert_title" placeholder="Alert Title" />
+                                        <span v-if="errors.alert_title" class="invalid-feedback">{{ errors.alert_title[0] }}</span>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label">Frequency <span class="text-danger">*</span></label>
-                                        <select class="form-select" style="color: var(--bs-gray-500);" :class="{'is-invalid': errors.frequency}" v-model="frequency">
+                                        <select class="form-select" style="color: var(--bs-gray-500);" v-model="alert.frequency" :class="{'is-invalid': errors.frequency}">
                                             <option selected="" value="">Select your Frequency</option>
                                             <option value:daily>Daily</option>
                                             <option value:weekly>Weekly</option>
                                         </select>
                                         <span v-if="errors.frequency" class="invalid-feedback">{{ errors.frequency[0] }}</span>
                                     </div>
-                                    <!-- position -->
-
-                                    <div class="col-md-3" v-if="$route.params.region_id==4 || savealert.region_id==4">
-                                        <label for="inputfrequen1" class="form-label head1">Country<span class="text-danger">*</span></label>
-                                        <select id="inputfrequency1" class="form-select" @change="getSate()" v-model="liststate.country_id">
-                                            <option vlaue="">Select Country</option>
-                                            <option v-for="country,key in countrys" :key="key" :value="country.country_id">{{country.country_name}}</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- test stat -->
                                     <div class="col-md-3">
-                                        <label for="inputfrequen1" class="form-label head1">State <span class="text-danger">*</span> </label> <label class="form-label">{{ selected.length }} of {{ state_country.length }} Selected</label>
-
+                                        <label for="inputfrequen1" class="form-label head1">State <span class="text-danger">*</span> </label> <label class="form-label">{{ alert.states.length }} of {{ sorted_states.length }} Selected</label>
                                         <div class="">
-                                            <button type="button" class="btn btnwht10 form-select" data-bs-toggle="dropdown" :class="{'is-invalid': errors.state_id}">
+                                            <button type="button" class="btn btnwht10 form-select" data-bs-toggle="dropdown" :style="state_border_red">
                                                 <span class="text-center" style="float: left;color: var(--bs-gray-500); font-weight: 400;">Select State</span>
                                             </button>
-                                            <span v-if="errors.state_id" style="color: #dc3545;font-size:11pt;">{{ errors.state_id[0] }}</span>
+                                            <span v-if="errors.states" style="color: #dc3545;font-size:11pt;">{{ errors.states[0] }}</span>
                                             <label for="inputfrequen1" class="form-label"> </label>
                                             <ul class="dropdown-menu">
                                                 <li class="dropdown-item" >
                                                     <div class="">
-                                                        {{ selected.length }} of {{ state_country.length }}
-                                                        <!-- <input type="checkbox" v-model="this.selectAll" @click="select" class="hidden"/> Select all -->
-                                                       <span v-if="selected.length !==state_country.length"> <router-link to="" v-model="selectAll" @click="select()" class="" ref="selectState">
-                                                            Select All /
-                                                        </router-link></span>
-                                                      <span>  <router-link to="" v-model="selectAll" @click="Deselect()" class="" ref="selectState">
-                                                            Reset all
-                                                        </router-link> </span>
+                                                        {{ alert.states.length }} of {{ sorted_states.length }}
+                                                        <span v-if="alert.states.length !==sorted_states.length"> 
+                                                            <a href="javascript:void(0)" @click="selectAllStates()" class="" ref="selectState">
+                                                                Select All /
+                                                            </a>
+                                                        </span>
+                                                        <span>  
+                                                            <a href="javascript:void(0)" @click="deselectAllStates()" class="" ref="selectState">
+                                                                Reset all
+                                                            </a> 
+                                                        </span>
                                                         <div class="ss-filter-search">
-                                                            <input autocomplete="off" class="form-control" type="text" v-model="searchstate" placeholder="Search organizations" />
+                                                            <input autocomplete="off" class="form-control" type="text" v-model="state_keyword" placeholder="Search state" @keyup="sortStates()" />
                                                             <div class="liststate" id="style-3">
-                                                                <ul class="checkbox" style="padding-left: 10px;" v-for="state in filterState" :key="state.state_id">
+                                                                <ul class="checkbox" style="padding-left: 10px;" v-for="state in sorted_states" :key="state.state_id">
                                                                     <li class="list-group-item">
-                                                                        <input class="form-check-input me-1" id="federalcheck" type="checkbox" :value="state.state_id" v-model="selected" @change="updateCheckall" aria-label="..." />
-
+                                                                        <input class="form-check-input me-1" id="federalcheck" type="checkbox" :value="state.state_id" v-model="alert.states" @click="updateStates(state, $event)" />
                                                                         {{ state.state_name }}
                                                                     </li>
                                                                 </ul>
                                                             </div>
-                                                            <!-- <span v-if="errors.state_id" class="invalid-feedback">{{ errors.state_id[0] }}</span> -->
-                                                            <!-- list end -->
                                                         </div>
                                                     </div>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
-
                                     <hr />
-                                    <!-- Email -->
-
-                                    <!-- list notice type -->
                                     <label class="form-label" style="font-size: 20px; font-weight: 600;">Notice type <span class="text-danger">*</span></label>
-                                    <span v-if="errors.notice_type" style="color: #dc3545;">{{ errors.notice_type[0] }}</span>
+                                    <span v-if="errors.federal_notices" style="color: #dc3545;margin-top:-10px">{{ errors.federal_notices[0] }}</span>
                                     <div class="row">
-                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in notices" :key="notice.notice_id">
+                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in federal_notices" :key="notice.notice_id">
                                             <ul class="list-group list-group-borderless mb-0">
                                                 <li class="list-group-item">
-                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.notice_id" v-model="notice_type" />
+                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.federal_notice_id" v-model="alert.federal_notices"  @click="updateFederalNotices(notice, $event)"/>
                                                     <label class="form-check-label" for="flexRadioDefault1">
-                                                        {{notice.notice_type}}
+                                                        {{notice.notice_name}}
                                                     </label>
-
-                                                    <!-- <a href="#" class="h6 fw-normal mb-0"> <i class="bi fa-fw bi-arrow-right me-1"></i>Foot Treatments </a> -->
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <hr />
-                                    <div v-if="$route.params.region_id==2">
+                                    <div>
                                         <label class="form-label" style="font-size: 20px; font-weight: 600;">Set-Aside Code <span class="text-danger">*</span></label>
-                                        <br />
-                                        <span v-if="errors.set_aside_status" style="color: #dc3545;">{{ errors.set_aside_status[0] }}<br/></span>
+                                        <div v-if="errors.set_asides" style="color: #dc3545;margin-top:-10px">{{ errors.set_asides[0] }}</div>
                                         <a class="inf" href="javascript:void(0)">More Information about Set-Aside Codes</a>
                                         <div class="row">
-                                            <div class="col-sm-6 col-lg-6 col-xl-6" v-for="set_side in sideStatus" :key="set_side.status_id">
+                                            <div class="col-sm-6 col-lg-6 col-xl-6" v-for="set_aside in set_asides" :key="set_aside.set_aside_id">
                                                 <ul class="list-group list-group-borderless mb-0">
-                                                    <!-- <li class="list-group-item">
-                                                        <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="set_side.status_id" v-model="set_aside_status" />
-                                                        <label class="form-check-label" for="flexRadioDefault1">
-                                                            {{set_side.status_name}}
-                                                        </label>
-                                                    </li> -->
-
-                                                    <!-- try starts -->
-
                                                     <li class="list-group-item d-flex">
-                                                        <span><input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="set_side.status_id" v-model="set_aside_status" /></span>
+                                                        <span><input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="set_aside.set_aside_id" v-model="alert.set_asides" @click="updateSetAsides(set_aside, $event)" /></span>
                                                         <label class="form-check-label" for="flexRadioDefault1">
-                                                            {{set_side.status_name}}
+                                                            {{set_aside.set_aside_name}}
                                                         </label>
                                                     </li>
-
-                                                    <!-- try ends -->
-
-
                                                 </ul>
                                             </div>
                                         </div>
                                         <hr />
                                     </div>
-                                    <!-- end -->
-
-                                    <!-- Mobile -->
                                     <div class="col-md-12" v-if="$route.params.region_id ==1 || $route.params.region_id ==3 || $route.params.region_id ==4 ">
                                         <label class="form-label" style="font-size: 20px; font-weight: 600;">Category</label><br />
                                         <br />
-
                                         <div class="collapse show" id="collapseExample7">
                                             <div class="">
                                                 {{ selectedcategory.length }} of {{ categorycount }}
@@ -171,11 +124,7 @@
                                                 </router-link>
                                                 <div class="col-md-6">
                                                     <div class="ss-filter-search">
-                                                        <!-- <input autocomplete="off" class="ss-filter-search__input" type="text" v-model="searchagencyState" @keyup="filter1Agency()" placeholder="Search organizations" /> -->
                                                         <input class="form-control pe-5" type="search" placeholder="Search" aria-label="Search" @keyup="filterCategory()" v-model="searchagencycategory" style="border-radius: 0.5rem 0.5rem 0px 0px;"/>
-
-                                                        <!-- list state -->
-
                                                         <div class="liststate scroll1 hgt" id="style-3" style="border-top:0px">
                                                             <ul class="list-group checkbox" v-for="category in  categorys " :key="category.category_id">
                                                                 <li class="list-group-item d-flex  ">
@@ -193,25 +142,19 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                    </div>
-                                               
+                                                    </div>                                               
                                                 </div>
                                             </div>
                                         </div>
                                         <hr />
                                     </div>
-
                                     <div class="col-md-12">
-                                        
                                             <label class="form-label b1" v-if="$route.params.region_id==2">Federal</label>
                                             <label class="form-label b1" v-if="$route.params.region_id==4">International</label>
                                             <label class="form-label b1" v-if="$route.params.region_id==3">Private</label>
                                             <label class="form-label b1" v-if="$route.params.region_id==1">State</label>
-                                    
                                         &nbsp;<label class="form-label" style="font-size: 20px; font-weight: 600;">Agency</label><br />
-                                       
                                         <div>
-                                           
                                             <span class="greentitle"> About Scheduled Emails:</span>
                                             <span class="text-center mt-2">
                                                 Type in a partial agency name below and then choose a match to add it to your selection.
@@ -221,79 +164,49 @@
                                         </div>
                                     </div>
                                     <br />
-                                   
-                                    <!-- selected federal Agency -->
                                     <div class="collapse show" id="collapseExample7">
                                         <div class="collapse show" id="collapseExample7">
                                             <div class="">
-                                                {{selectedState.length}} of {{agencycount}}
-
-                                              <span v-if="selectedState.length!==agencycount">  <router-link to="" v-model="selectAllState" @click="selectState()" class="" ref="selectState">
-                                                    Select All /
-                                                </router-link></span>
-                                                <router-link to="" v-model="selectAllState" @click="DeselectState()" class="" ref="selectState">
-                                                    Reset all
-                                                </router-link>
+                                                {{alert.federal_agencies.length}} of {{sorted_federal_agencies.length}}
+                                                <span v-if="alert.federal_agencies.length!== sorted_federal_agencies.length">  
+                                                    <a href="javascript:void(0)" @click="selectAllFederalAgencies()" class="" ref="selectState">
+                                                        Select All /
+                                                    </a></span>
+                                                    <a href="javascript:void(0)" @click="deselectFederalAgencies()" class="" ref="selectState">
+                                                        Reset all
+                                                    </a>
                                                 <div class="col-md-6">
                                                     <div class="ss-filter-search">
-                                                        <!-- <input autocomplete="off" class="ss-filter-search__input" type="text" v-model="searchagencyState" @keyup="filter1Agency()" placeholder="Search organizations" /> -->
-                                                        <input class="form-control pe-5" type="search" placeholder="Search" aria-label="Search" v-model="searchagencyState" @keyup="filter1Agency()" style="border-radius: 0.5rem 0.5rem 0px 0px;"/>
-
-                                                        <!-- list state -->
-
+                                                        <input class="form-control pe-5" type="search" placeholder="Search" aria-label="Search" v-model="federal_agency_keyword" @keyup="sortFederalAgency()" style="border-radius: 0.5rem 0.5rem 0px 0px;"/>
                                                         <div class="liststate scroll1 hgt" id="style-3" style="border:1px solid #c5c5c7; border-top:0px">
-                                                            <ul class="list-group checkbox" v-for="statefederal in filterAgency" :key="statefederal.agency_id">
+                                                            <ul class="list-group checkbox" v-for="federal_agency in sorted_federal_agencies" :key="federal_agency.agency_id">
                                                                 <li class="list-group-item d-flex border-0 border-bottom">
-                                                                    &nbsp; <input class="form-check-input me-1" type="checkbox" :value="statefederal.agency_name" v-model="selectedState" @change="updateCheckallState" aria-label="..." />
-                                                                    &nbsp; {{statefederal.agency_name}}
+                                                                    &nbsp; <input class="form-check-input me-1" type="checkbox" :value="federal_agency.federal_agency_id" v-model="alert.federal_agencies" @click="updateFederalAgencies(federal_agency, $event)" />
+                                                                    &nbsp; {{federal_agency.agency_name}}
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- <div class="row mt-3">
-                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency,index in agency_fedral" :key="agency">
-                                                        <ul class="list-group list-group-borderless mb-0">
-                                                            <li class="list-group-item">
-                                                                <div class="alert alert-warning alert-dismissible fade show" style=" font-size:13px">
-                                                                    <strong>{{agency}}</strong>
-                                                                    
-                                                                    <button type="button" @click="removeTag(index)" class="btn-close" aria-label="Close"></button>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- try -->
-                                                <div class="row mt-5 scroll1" v-if="selectedState.length !==0">
-                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency,index in agency_fedral" :key="agency">
+                                                <div class="row mt-5 scroll1">
+                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency,index in selected_federal_agencies" :key="index">
                                                         <div class="bg-warning bg-opacity-10 text-warning d-flex justify-content-between align-items-center mb-3">
-                                                            <!-- Number -->
                                                             <div class="" style="padding-left: 10px;">
-                                                                <span>{{agency}}</span>
-                                                                <!-- <h3 class="mb-0 mt-2">{{agency}}</h3> -->
+                                                                <span>{{agency.agency_name}}</span>
                                                             </div>
-                                                            <!-- Icon -->
-                                                            <div class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0" @click="removeTag1(index)">
+                                                            <a href="javascript:void(0)" class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0" @click="removeFederalAgency(agency)">
                                                                 <i class="bi bi-x fa-fw"></i>
-                                                            </div>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- ends -->
-                                                <!-- remove tag -->
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- <hr /> -->
-                                    <!-- nics code -->
-                                    <div v-if="$route.params.region_id ==2">
+                                    <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">NAICS Code: <span class="text-danger">*</span></label><br />
-                                            <span v-if="errors.naics_id" style="color: #dc3545;">{{ errors.naics_id[0] }}<br/></span>
+                                            <span v-if="errors.naics" style="color: #dc3545;margin-top:-10px">{{ errors.naics[0] }}<br/></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
                                                 <span class="mt-2">
                                                     Use the search box to find NAICS Codes and mark one or more checkboxes to add to your selection. Note:Changing your search criteria does not remove items from your selection.
@@ -302,8 +215,7 @@
                                         </div>
                                         <br />
                                         <div class="col-md-8">
-                                            <div class="tab-content mb-0" id="flight-pills-tabContent">
-                                                
+                                            <div class="tab-content mb-0" id="flight-pills-tabContent">                                                
                                                 <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
                                                     <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
                                                         <div class="col-md-8 small">
@@ -320,7 +232,6 @@
                                                             </form>
                                                         </div>
                                                         <div class="col-md-4 small d-flex">
-                                                            <!-- <div class="search-left1 me-2"><a class="my-auto me-2 dotted" href="javascript:void(0)">show selected</a></div> -->
                                                             <div>
                                                                 <a class="my-auto dotted" href="javascript:void(0)" @click="clearAllNaics()" style="color: rgb(64, 164, 241);">Deselect All</a>
                                                             </div>
@@ -333,7 +244,7 @@
                                                             <ul class="list-style-none" style="padding-left: 0px;">
                                                                 <li>
                                                                     <ul id="demo">
-                                                                          <TreeItem class="item" :item="treeData" :tdr_naics="naics_id" :clear_all_naics="clear_all_naics" > </TreeItem>
+                                                                          <TreeItem class="item" :item="treeData" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics" > </TreeItem>
                                                                     </ul>
                                                                 </li>
                                                             </ul>
@@ -345,15 +256,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- nics end -->
-
                                     <hr />
-
-                                    <!-- nics code -->
-                                    <div v-if="$route.params.region_id ==2">
+                                    <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">PSC Code:<span class="text-danger">*</span></label><br />
-                                            <span v-if="errors.psc" style="color: #dc3545;">{{ errors.psc[0] }}<br/></span>
+                                            <span v-if="errors.pscs" style="color: #dc3545;margin-top:-10px">{{ errors.pscs[0] }}<br/></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
                                                 <span class="mt-2">
                                                     Use the search box to find psc Codes and mark one or more checkboxes to add to your selection. Note:Changing your search criteria does not remove items from your selection.
@@ -379,7 +286,6 @@
                                                             </form>
                                                         </div>
                                                         <div class="col-md-4 small d-flex">
-                                                            <!-- <div class="search-left1 me-2"><a class="my-auto me-2 dotted" href="javascript:void(0)">show selected</a></div> -->
                                                             <div><a class="my-auto dotted" href="javascript:void(0)" @click="clearAllPsc()" style="color: rgb(64, 164, 241);">Deselect All</a></div>
                                                         </div>
                                                     </div>
@@ -401,7 +307,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Company Name -->
                                     <div class="col-md-12">
                                         <label class="form-label" style="font-size: 20px; font-weight: 600;">Keywords (each seperated by ",") <span class="text-danger">*</span></label><br />
                                         <span v-if="errors.keywords" style="color: #dc3545;">{{ errors.keywords[0] }}</span>
@@ -414,10 +319,8 @@
                                         </div>
                                     </div>
                                     <div class="col-12 text-start">
-                                        <button type="submit" class="btn btn-sm btn-primary mb-0" @click.prevent="submit()" style="padding: 5px; font-weight: 400;">
-                                            <span v-if="status">Submit </span>
-                                            <span v-else>Update</span>
-                                        </button>
+                                        <button type="submit" class="btn btn-sm btn-primary mb-0" v-if="status" @click.prevent="createAlerts()" style="padding: 5px; font-weight: 400;">Submit</button>
+                                        <button type="submit" class="btn btn-sm btn-primary mb-0" v-else @click.prevent="updateAlerts()" style="padding: 5px; font-weight: 400;">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -438,6 +341,29 @@
         components: { TreeItem, PscTree, Loading },
         data() {
             return {
+                state_border_red:'',
+                states:[],
+                sorted_states:[],
+                state_keyword:'',
+                federal_notices:[],
+                federal_agencies:[],
+                sorted_federal_agencies:[],
+                selected_federal_agencies:[],
+                set_asides:[],
+                naics:[],
+                alert:{
+                    federal_alert_id:'',
+                    titel:'',
+                    frequency:'',
+                    region:'Federal',
+                    keywords:[],
+                    states:[],
+                    federal_notices:[],
+                    federal_agencies:[],
+                    set_asides:[],
+                    naics:[],
+                    pscs:[]
+                },
                 tags: [],
                 treeData: {
                     name: "",
@@ -527,11 +453,6 @@
                     created_on: "",
                     updated_on: "",
                 },
-                 alert:{
-                    tdr_naics:[],
-                    tdr_psc:[]
-                },
-               
                 isLoading: false,
                 isLoading1: false,
                 isLoading2: false,
@@ -550,93 +471,106 @@
                 clear_all_psc:false,
             };
         },
+
+        watch:{
+            
+        },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                if(to.params.region_id==2) {
-                    vm.getNotice(to.params.region_id);
+                if(to.name == 'EditBidAlert'){
+                    vm.alert.alert_id = to.params.alert_id
+                    vm.getAlert()
                 }
-                else {
-                    vm.getNotice('');
-                }
-                vm.savealert.user_id = vm.$store.getters.user.id;
-                vm.savealert.region_id = to.params.region_id;
-                if (to.name == "CreateBidAlert") {
-                    //  vm.$refs.tax_name.focus();
-                    vm.service_code.alert_id = ''
-                    vm.naics_code.alert_id = '' 
-                    vm.status = true;
-                    vm.getCountry();
-                    if (to.params.region_id != 4) {
-                        vm.liststate.country_id;
-                        vm.getSate();
-                    }
-                    if (vm.savealert.region_id == 1 || vm.savealert.region_id == 3 || vm.savealert.region_id == 4) {
-                        vm.agencycheck = true;
-                        vm.getAllAgency();
-                        vm.getcategory();
-                    } else {
-                        vm.agencycheck = false;
-                        vm.getSpecificAgency();
-                    }
-                } else {
-                    vm.service_code.alert_id = vm.$store.getters.alert.id
-                    vm.naics_code.alert_id = vm.$store.getters.alert.id       
-                    vm.status = false;
-                    vm.getSate();
-                    if (vm.savealert.region_id == 1 || vm.savealert.region_id == 3 || vm.savealert.region_id == 4) {
-                        vm.agencycheck = true;
-                        vm.getAllAgency();
-                        vm.getcategory();
-                    } else {
-                        vm.agencycheck = false;
-                        vm.getcategory();
-                        vm.getSpecificAgency();
-                    }
-                    vm.savealert.id = to.params.id;
-                    vm.savealert.user_id = vm.$store.getters.user.id;
-                    vm.$store
-                        .dispatch("post", { uri: "getAlert", data: vm.savealert })
-                        .then(function (response) {
-                            vm.savealert = response.data;
-                            vm.selectedState = vm.savealert.agency_fedral ? vm.savealert.agency_fedral.split("@") : [];
-                            vm.liststate.country_id = vm.savealert.country_id;
-                            vm.status = false;
-                            vm.frequency = vm.savealert.frequency;
-                            vm.notice_type = vm.savealert.notice_type ? vm.savealert.notice_type.split(",") : [];
-                            vm.set_aside_status = vm.savealert.set_aside_status ? vm.savealert.set_aside_status.split(",") : [];
-                            vm.state_id = vm.savealert.state_id ? vm.savealert.state_id.split(",") : [];
-                            vm.naics_id = vm.savealert.naics_id ? vm.savealert.naics_id.split(",") : [];
-                            vm.psc = vm.savealert.psc ? vm.savealert.psc.split(",") : [];
-                            vm.selected = vm.state_id;
-                            vm.tags = vm.savealert.keywords ? vm.savealert.keywords.split(","):'';
-                            vm.keywords = vm.tags;
-                            vm.categorys = vm.savealert.category_id? vm.savealert.category_id.split(","):[];
-                            vm.selectedcategory = vm.categorys
-                            // let naics = []
-                            // vm.naics_id.map(function(element){
-                            //     naics.push(parseInt(element))
-                            // })
-                            // vm.$store.dispatch("setSelectedNaics", naics);
-                            // let psc = []
-                            // vm.psc.map(function(element){
-                            //     psc.push(parseInt(element))
-                            // })
-                            // vm.$store.dispatch("setSelectedPsces", psc);
-                        })
-                        .catch(function (error) {
-                            console.log(error)
-                            vm.errors = error.response.data.errors;
-                            vm.$store.dispatch("error", error.response.data.message);
-                        });
-                }
-            });
+            })
         },
+        // beforeRouteEnter(to, from, next) {
+        //     next((vm) => {
+        //         if(to.params.region_id==2) {
+        //             vm.getNotice(to.params.region_id);
+        //         }
+        //         else {
+        //             vm.getNotice('');
+        //         }
+        //         vm.savealert.user_id = vm.$store.getters.user.id;
+        //         vm.savealert.region_id = to.params.region_id;
+        //         if (to.name == "CreateBidAlert") {
+        //             //  vm.$refs.tax_name.focus();
+        //             vm.service_code.alert_id = ''
+        //             vm.naics_code.alert_id = '' 
+        //             vm.status = true;
+        //             vm.getCountry();
+        //             if (to.params.region_id != 4) {
+        //                 vm.liststate.country_id;
+        //                 vm.getSate();
+        //             }
+        //             if (vm.savealert.region_id == 1 || vm.savealert.region_id == 3 || vm.savealert.region_id == 4) {
+        //                 vm.agencycheck = true;
+        //                 vm.getAllAgency();
+        //                 vm.getcategory();
+        //             } else {
+        //                 vm.agencycheck = false;
+        //                 vm.getSpecificAgency();
+        //             }
+        //         } else {
+        //             vm.service_code.alert_id = vm.$store.getters.alert.id
+        //             vm.naics_code.alert_id = vm.$store.getters.alert.id       
+        //             vm.status = false;
+        //             vm.getSate();
+        //             if (vm.savealert.region_id == 1 || vm.savealert.region_id == 3 || vm.savealert.region_id == 4) {
+        //                 vm.agencycheck = true;
+        //                 vm.getAllAgency();
+        //                 vm.getcategory();
+        //             } else {
+        //                 vm.agencycheck = false;
+        //                 vm.getcategory();
+        //                 vm.getSpecificAgency();
+        //             }
+        //             vm.savealert.id = to.params.id;
+        //             vm.savealert.user_id = vm.$store.getters.user.id;
+        //             vm.$store
+        //                 .dispatch("post", { uri: "getAlert", data: vm.savealert })
+        //                 .then(function (response) {
+        //                     vm.savealert = response.data;
+        //                     vm.selectedState = vm.savealert.agency_fedral ? vm.savealert.agency_fedral.split("@") : [];
+        //                     vm.liststate.country_id = vm.savealert.country_id;
+        //                     vm.status = false;
+        //                     vm.frequency = vm.savealert.frequency;
+        //                     vm.notice_type = vm.savealert.notice_type ? vm.savealert.notice_type.split(",") : [];
+        //                     vm.set_aside_status = vm.savealert.set_aside_status ? vm.savealert.set_aside_status.split(",") : [];
+        //                     vm.state_id = vm.savealert.state_id ? vm.savealert.state_id.split(",") : [];
+        //                     vm.naics_id = vm.savealert.naics_id ? vm.savealert.naics_id.split(",") : [];
+        //                     vm.psc = vm.savealert.psc ? vm.savealert.psc.split(",") : [];
+        //                     vm.selected = vm.state_id;
+        //                     vm.tags = vm.savealert.keywords ? vm.savealert.keywords.split(","):'';
+        //                     vm.keywords = vm.tags;
+        //                     vm.categorys = vm.savealert.category_id? vm.savealert.category_id.split(","):[];
+        //                     vm.selectedcategory = vm.categorys
+        //                     // let naics = []
+        //                     // vm.naics_id.map(function(element){
+        //                     //     naics.push(parseInt(element))
+        //                     // })
+        //                     // vm.$store.dispatch("setSelectedNaics", naics);
+        //                     // let psc = []
+        //                     // vm.psc.map(function(element){
+        //                     //     psc.push(parseInt(element))
+        //                     // })
+        //                     // vm.$store.dispatch("setSelectedPsces", psc);
+        //                 })
+        //                 .catch(function (error) {
+        //                     console.log(error)
+        //                     vm.errors = error.response.data.errors;
+        //                     vm.$store.dispatch("error", error.response.data.message);
+        //                 });
+        //         }
+        //     });
+        // },
         mounted() {
-            let vm = this;
-            vm.callFunction()
-            vm.getServiceCodes()
-            vm.getNaics()
-            vm.interstedUser.user_id = vm.$store.getters.user.id;
+            // let vm = this;
+            // vm.callFunction()
+            // vm.getServiceCodes()
+            // vm.getNaics()
+            // vm.interstedUser.user_id = vm.$store.getters.user.id;
+            this.getSates()
         },
         computed: {
             filterState() {
@@ -652,6 +586,336 @@
             },
         },
         methods: {
+
+            getAlert(){
+                let vm = this;
+                let uri = "getAlert";
+                vm.$store
+                    .dispatch("post", { uri: uri, data: vm.alert })
+                    .then(function (response) {
+                        vm.alert = response.data.data
+                        vm.tags = vm.alert.keywords
+                        vm.status = false
+                        vm.$store.dispatch("setSelectedNaics", vm.alert.naics)
+                        vm.$store.dispatch("setSelectedPscs", vm.alert.pscs)
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            removeFederalAgency(federal_agency){
+                console.log(federal_agency)
+                let vm = this
+                console.log(vm.alert.federal_agencies)
+                if(vm.alert.federal_agencies.includes(federal_agency.federal_agency_id)){
+                    let federal_agencies = vm.alert.federal_agencies.filter(function(element){
+                        console.log(element)
+                        return element != federal_agency.federal_agency_id
+                    })
+                    vm.alert.federal_agencies = federal_agencies
+                }
+                vm.selected_federal_agencies = []   
+                vm.alert.federal_agencies.map(function(element){
+                    let selected = vm.sorted_federal_agencies.filter(function(ele){
+                        return ele.federal_agency_id == element
+                    })
+                    if(selected.length){
+                        vm.selected_federal_agencies.push({
+                            federeal_agency_id:selected[0].federal_agency_id,
+                            agency_name:selected[0].agency_name
+                        })
+                    }
+                })
+            },
+
+            removeTag(index) {
+                this.alert.keywords.splice(index, 1);
+            },
+            removeLastTag(event) {
+                if (event.target.value.length === 0) {
+                    this.removeTag(this.alert.keywords.length - 1);
+                }
+            },
+            updateFederalAgencies(federal_agency, event){
+                let vm = this
+                if(event.target.checked){
+                    if(!vm.alert.federal_agencies.includes(federal_agency.federal_agency_id)){
+                        vm.alert.federal_agencies.push(federal_agency.federal_agency_id)
+                    }
+                }else{
+                    if(vm.alert.federal_agencies.includes(federal_agency.federal_agency_id)){
+                        let federal_agencies = vm.alert.federal_agencies.filter(function(element){
+                            return element != federal_agency.federal_agency_id
+                        })
+                        vm.alert.federal_agencies = federal_agencies
+                    }
+                }
+                vm.selected_federal_agencies = []   
+                vm.alert.federal_agencies.map(function(element){
+                    let selected = vm.sorted_federal_agencies.filter(function(ele){
+                        return ele.federal_agency_id == element
+                    })
+                    if(selected.length){
+                        vm.selected_federal_agencies.push({
+                            federeal_agency_id:selected[0].federal_agency_id,
+                            agency_name:selected[0].agency_name
+                        })
+                    }
+                })
+            },
+            updateSetAsides(set_aside, event){
+                if(event.target.checked){
+                    if(!this.alert.set_asides.includes(set_aside.set_aside_id)){
+                        this.alert.set_asides.push(set_aside.set_aside_id)
+                    }
+                }else{
+                    if(this.alert.set_asides.includes(set_aside.set_aside_id)){
+                        let set_asides = this.alert.set_asides.filter(function(element){
+                            return element != set_aside.set_aside_id
+                        })
+                        this.alert.set_asides = set_asides
+                    }
+                }
+            },
+            updateStates(state, event){
+                if(event.target.checked){
+                    if(!this.alert.states.includes(state.state_id)){
+                        this.alert.states.push(state.state_id)
+                    }
+                }else{
+                    if(this.alert.states.includes(state.state_id)){
+                        let states = this.alert.states.filter(function(element){
+                            return element != state.state_id
+                        })
+                        this.alert.states = states
+                    }
+                }
+            },
+
+            updateFederalNotices(notice, event){
+                if(event.target.checked){
+                    if(!this.alert.federal_notices.includes(notice.federal_notice_id)){
+                        this.alert.federal_notices.push(notice.federal_notice_id)
+                    }
+                }else{
+                    if(this.alert.federal_notices.includes(notice.federal_notice_id)){
+                        let federal_notices = this.alert.federal_notices.filter(function(element){
+                            return element != notice.federal_notice_id
+                        })
+                        this.alert.federal_notices = federal_notices
+                    }
+                }
+            },        
+
+            sortFederalAgency(){
+                let vm = this
+                vm.sorted_federal_agencies = vm.federal_agencies.filter(function(element){
+                    return element.agency_name.toLowerCase().includes(vm.federal_agency_keyword.toLowerCase()); 
+                })
+            },
+
+            selectAllFederalAgencies(){
+                let vm = this
+                vm.alert.federal_agencies = []
+                vm.sorted_federal_agencies.map(function(element){
+                    vm.alert.federal_agencies.push(element.federal_agency_id)
+                })
+                vm.selected_federal_agencies = []
+                vm.alert.federal_agencies.map(function(element){
+                    let selected = vm.sorted_federal_agencies.filter(function(ele){
+                        return ele.federal_agency_id == element
+                    })
+                    if(selected.length){
+                        vm.selected_federal_agencies.push({
+                            federeal_agency_id:selected[0].federal_agency_id,
+                            agency_name:selected[0].agency_name
+                        })
+                    }
+                })
+            },
+
+            deselectFederalAgencies(){
+                this.sorted_federal_agencies = this.federal_agencies
+                this.federal_agency_keyword = null
+                this.alert.federal_agencies = []
+                this.selected_federal_agencies = []
+            },
+
+            selectAllStates(){
+                let vm = this
+                vm.alert.states = []
+                vm.sorted_states.map(function(element){
+                    vm.alert.states.push(element.state_id)
+                })
+            },
+            deselectAllStates(){
+                this.sorted_states = this.states
+                this.state_keyword = null
+                this.alert.states = []
+            },
+            getSates() {
+                let vm = this;
+                let uri = "getStates";
+                vm.$store
+                    .dispatch("post", { uri: uri, data: {country_id:10} })
+                    .then(function (response) {
+                        vm.states = response.data
+                        vm.sorted_states = vm.states
+                        vm.getFederalNotices()
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            sortStates(){
+                let vm = this
+                vm.sorted_states = vm.states.filter(function(element){
+                    return element.state_name.toLowerCase().includes(vm.state_keyword.toLowerCase()); 
+                })
+            },
+
+            getFederalNotices() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "getFederalNotices" })
+                    .then(function (response) {
+                        vm.federal_notices = response.data
+                        vm.getFederalAgencies()
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            getFederalAgencies() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "getFederalAgencies" })
+                    .then(function (response) {
+                        vm.federal_agencies = response.data
+                        vm.sorted_federal_agencies = vm.federal_agencies
+                        vm.getSetAsides()
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getSetAsides() {
+                let vm = this;
+                let uri = "getSetAsides";
+                vm.$store
+                    .dispatch("post", { uri: uri })
+                    .then(function (response) {
+                        vm.set_asides = response.data
+                        vm.getNaics()
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getNaics() {
+                let vm = this;
+                let uri = "getNaics";
+                vm.$store
+                    .dispatch("post", { uri: uri })
+                    .then(function (response) {
+                        vm.treeData.children = response.data.data
+                        vm.getPscs()
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getPscs() {
+                let vm = this;
+                let uri = "getPscs";
+                vm.$store
+                    .dispatch("post", { uri: uri })
+                    .then(function (response) {
+                        vm.service_codes.children = response.data.data
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            createAlerts() {
+                let vm = this
+                vm.alert.naics = vm.$store.getters.selected_naics
+                vm.alert.pscs = vm.$store.getters.selected_pscs
+                vm.alert.keywords = vm.tags
+                vm.$store
+                    .dispatch("post", { uri: 'createAlerts', data:vm.alert })
+                    .then(function (response) {
+                        vm.$store.dispatch("success", "Alert is added successfully");
+                        vm.$router.push("/bids/save-alert");
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        if(error.response.data.errors.states){
+                            vm.state_border_red = 'border-color:red'
+                        }
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            updateAlerts() {
+                let vm = this
+                vm.alert.naics = vm.$store.getters.selected_naics
+                vm.alert.pscs = vm.$store.getters.selected_pscs
+                vm.alert.keywords = vm.tags
+                vm.$store
+                    .dispatch("post", { uri: 'updateAlerts', data:vm.alert })
+                    .then(function (response) {
+                        vm.$store.dispatch("success", "Alert is updated successfully");
+                        vm.$store.dispatch("setSelectedNaics", null)
+                        vm.$store.dispatch("setSelectedPscs", null)
+                        vm.$router.push("/bids/save-alert");
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        if(error.response.data.errors.states){
+                            vm.state_border_red = 'border-color:red'
+                        }
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            getNotice(region_id) {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "getNotice?region_id="+region_id })
+                    .then(function (response) {
+                        vm.notices = response.data.data;
+
+                        vm.getasideStatus();
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getasideStatus() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "getAllSetAsideStatus" })
+                    .then(function (response) {
+                        vm.sideStatus = response.data.data;
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
 
             backSaveAlert(){
                 this.$store.commit("setAlert", "");
@@ -697,8 +961,8 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            getNaics() {
-                this.getNaicsBackend()
+            // getNaics() {
+                // this.getNaicsBackend()
                 // let vm = this;
                 // vm.fullPage = false;
                 // vm.isLoading2 = false;
@@ -714,7 +978,7 @@
                 //         this.getNaicsBackend()
                 //     }
                 // }
-            },
+            // },
           
             getServiceCodes() {
                 let vm = this;
@@ -778,7 +1042,7 @@
             submit() {
                 let vm = this;
                 if (vm.status) {
-                    vm.AddAlert();
+                    vm.createAlerts();
                 } else {
                     vm.updateAlert();
                 }
@@ -934,46 +1198,7 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            getSate() {
-                let vm = this;
-                vm.listcountry.country_id = Object.assign({}, [vm.liststate.country_id]);
-                let uri = "getState";
-                vm.$store
-                    .dispatch("post", { uri: uri, data: vm.listcountry })
-                    .then(function (response) {
-                        vm.state_country = response.data.data;
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            getNotice(region_id) {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getNotice?region_id="+region_id })
-                    .then(function (response) {
-                        vm.notices = response.data.data;
-
-                        vm.getasideStatus();
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            getasideStatus() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getAllSetAsideStatus" })
-                    .then(function (response) {
-                        vm.sideStatus = response.data.data;
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
+            
             getFederal() {
                 let vm = this;
                 vm.$store
@@ -983,6 +1208,7 @@
                         //console.log(vm.federal);
                     })
                     .catch(function (error) {
+                        
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
@@ -1025,97 +1251,8 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            AddAlert() {
-                let vm = this;
-                console.log(vm.naics_id)
-                if (vm.$route.params.region_id == 1 || vm.$route.params.region_id == 3 || vm.$route.params.region_id == 4) {
-                    vm.naics_id = [];
-                    vm.set_aside_status = [];
-                }
-                let state = ''
-                vm.agency_fedral.map(function(element){
-                    
-                    if(state){
-                        state = state +'@'+element
-                    }else{
-                        console.log(element)
-                        state = element
-
-                    }
-                })
-                vm.naics_id = vm.$store.getters.selected_naicses
-                vm.savealert.user_id = vm.$store.getters.user.id;
-                vm.savealert.region_id = vm.$route.params.region_id;
-                vm.savealert.frequency = vm.frequency;
-                vm.savealert.keywords = vm.tags.toString();
-                vm.savealert.state_id = vm.state_id.toString();
-                vm.savealert.naics_id = vm.$store.getters.selected_naicses.toString()
-                vm.savealert.psc = vm.$store.getters.selected_psces.toString();
-                vm.savealert.set_aside_status = vm.set_aside_status.toString();
-                vm.savealert.agency_fedral = state
-                vm.savealert.notice_type = vm.notice_type.toString();
-                vm.savealert.country_id = vm.liststate.country_id.toString();
-                vm.savealert.category_id = vm.selectedcategory.toString();
-
-                vm.$store
-                    .dispatch("post", { uri: "addAlert", data: vm.savealert })
-                    .then(function (response) {
-                        vm.federal = response.data.data;
-                        vm.$store.dispatch("success", "Alert Added successfully");
-                        vm.$router.push("/bids/save-alert");
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            updateAlert() {
-                let vm = this;
-                if (vm.$route.params.region_id == 1 || vm.$route.params.region_id == 3 || vm.$route.params.region_id == 4) {
-                    vm.naics_id = [];
-                    vm.set_aside_status = [];
-                   
-                }
-                let state = ''
-                vm.agency_fedral.map(function(element){
-                    
-                    if(state){
-                        state = state +'@'+element
-                    }else{
-                        console.log(element)
-                        state = element
-
-                    }
-                })
-                console.log(vm.$store.getters.selected_psces.toString())
-                vm.savealert.user_id = vm.$store.getters.user.id;
-                vm.savealert.region_id = vm.$route.params.region_id;
-                vm.savealert.frequency = vm.frequency;
-                vm.savealert.keywords = vm.tags.toString();
-                vm.savealert.state_id = vm.state_id.toString();
-                vm.savealert.naics_id = vm.$store.getters.selected_naicses.toString();
-                vm.savealert.psc = vm.$store.getters.selected_psces.toString();
-                vm.savealert.set_aside_status= vm.set_aside_status.toString();
-                vm.savealert.agency_fedral = state
-                vm.savealert.notice_type = vm.notice_type.toString();
-                vm.savealert.country_id = vm.liststate.country_id.toString();
-                vm.savealert.category_id = vm.selectedcategory.toString();
-                vm.isLoading = true;
-
-                vm.$store
-                    .dispatch("post", { uri: "updateAlert/" + vm.savealert.id, data: vm.savealert })
-                    .then(function () {
-                        vm.isLoading = false;
-                        vm.$store.dispatch("success", "BidsAlert is successfully updated");
-
-                        vm.$router.push("/bids/save-alert");
-                    })
-                    .catch(function (error) {
-                        vm.isLoading = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
+            
+            
 
             filter1Agency() {
                 if (this.searchagencyState == "") {
@@ -1210,6 +1347,9 @@
     };
 </script>
 <style scoped>
+    .border-red{
+        border-color: red !important;
+    }
     .x-box {
         height: 130px;
         display: block;

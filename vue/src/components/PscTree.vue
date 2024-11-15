@@ -1,7 +1,6 @@
 <template>
 
     <div class="catalog-list-wrap">
-<!--  -->
         <div style=" overflow: hidden; width: 100%; height: 100%;">
             <div style="">
                 <div class="catalog-list cv-catalog-list">
@@ -105,7 +104,7 @@
             
             isSeletedItem() {
                 const selected_pscs = this.$store.getters.selected_pscs
-                if (selected_pscs.length) {
+                if (selected_pscs?.length) {
                     this.item.selected = selected_pscs.includes(this.item.psc_id)
                 } else {
                     this.item.selected = false
@@ -154,53 +153,59 @@
             },
             pushParentCode(parent_code){
                 console.log(parent_code)
-                let selected_psces = []
-                selected_psces = this.$store.getters.selected_psces
+                let selected_pscs = []
+                selected_pscs = this.$store.getters.selected_pscs
                 if(parent_code){
-                    if(!selected_psces.includes(parent_code)){
-                        selected_psces.push(parent_code)
+                    if(!selected_pscs.includes(parent_code)){
+                        selected_pscs.push(parent_code)
                     }
                 }else{
-                    let psc = selected_psces.filter(function(element){
+                    let psc = selected_pscs.filter(function(element){
                         return element != parent_code
                     })
-                    selected_psces = psc
+                    selected_pscs = psc
                 }
-                this.$store.dispatch("setSelectedPsces", selected_psces)
+                this.$store.dispatch("setSelectedPscs", selected_pscs)
             },
             pushSpliceItem(item){
-                let psc_id = item.psc_id
-                let selected_psces = []
-                let selected_psc_items = []
-                selected_psces = this.$store.getters.selected_psces
-                selected_psc_items = this.$store.getters.selected_psc_items
-                // selected_psc_items.push(item)
-                if(item.selected){
-                    if(!selected_psces.includes(psc_id)){
-                        selected_psces.push(psc_id)
+                if('psc_id' in item){
+                    let psc_id = item.psc_id
+                    let selected_pscs = []
+                    let selected_psc_items = []
+                    if(this.$store.getters.selected_pscs){
+                        selected_pscs = this.$store.getters.selected_pscs
+                        selected_psc_items = this.$store.getters.selected_psc_items
+                        // selected_psc_items.push(item)
+                        if(item.selected){
+                            if(!selected_pscs.includes(psc_id)){
+                                selected_pscs.push(psc_id)
+                            }
+                        }else{
+                            let psc = selected_pscs.filter(function(element){
+                                return element != psc_id
+                            })
+                            selected_pscs = psc
+                            // if(selected_pscs.includes(psc_code)){
+                            //     selected_pscs.splice(selected_pscs.indexOf(psc_code), 1)
+                            // }
+                        }
+                    }else{
+                        selected_pscs.push(psc_id)
                     }
-                }else{
-                    let psc = selected_psces.filter(function(element){
-                        return element != psc_id
-                    })
-                    selected_psces = psc
-                    // if(selected_psces.includes(psc_code)){
-                    //     selected_psces.splice(selected_psces.indexOf(psc_code), 1)
-                    // }
+                    this.$store.dispatch("setSelectedPscs", selected_pscs)
                 }
-                this.$store.dispatch("setSelectedPsces", selected_psces)
-                if(item.selected){
-                    var index = selected_psc_items.findIndex(function(element) {
-                        return element.psc_id == psc_id
-                    });
-                    if(index <= 0)
-                        selected_psc_items.push(item)
-                }else{
-                    let naics = selected_psc_items.filter(function(element){
-                        return element.psc_id !== psc_id
-                    })
-                    selected_psc_items = naics
-                }
+                // if(item.selected){
+                //     var index = selected_psc_items.findIndex(function(element) {
+                //         return element.psc_id == psc_id
+                //     });
+                //     if(index <= 0)
+                //         selected_psc_items.push(item)
+                // }else{
+                //     let naics = selected_psc_items.filter(function(element){
+                //         return element.psc_id !== psc_id
+                //     })
+                //     selected_psc_items = naics
+                // }
             },
             toggleSelectedChildren(item, selected){
                 item.selected = selected

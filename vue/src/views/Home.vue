@@ -399,7 +399,7 @@
         },
         mounted() {
             if(this.$store.getters.user){
-                this.$router.push('/bids')
+                this.$router.push('/bids/state-opportunities')
             }
             // this.getPsces();
             // this.getNaicses();

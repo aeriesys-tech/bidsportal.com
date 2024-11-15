@@ -3,16 +3,16 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\FederalTender; // Ensure the correct model is imported
-use App\Models\Country; // Import the model for countries
-use App\Models\State; // Import the model for states
-use App\Models\TenderType; // Import the model for tender types
-use App\Models\FederalNotice; // Import the model for federal notices
-use App\Models\Category; // Import the model for categories
-use App\Models\FederalAgency; // Import the model for federal agencies
-use App\Models\SetAside; // Import the model for set asides
-use App\Models\Naics; // Import the model for NAICS
-use App\Models\Psc; // Import the model for PSC
+use App\Models\FederalTender; 
+use App\Models\Country; 
+use App\Models\State; 
+use App\Models\TenderType; 
+use App\Models\FederalNotice; 
+use App\Models\Category; 
+use App\Models\FederalAgency; 
+use App\Models\SetAside; 
+use App\Models\Naics; 
+use App\Models\Psc; 
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 use App\Models\FederalContact;
@@ -67,7 +67,7 @@ class FederalTenderSeeder extends Seeder
             // Insert related FederalContact
             FederalContact::create([
                 'federal_tender_id' => $federal_tender->federal_tender_id,
-                'type' => $faker->randomElement(['Primary', 'Secondary', 'Support']),
+                'type' => $faker->randomElement(['Primary', 'Secondary']),
                 'email' => $faker->unique()->safeEmail,
                 'phone' => $faker->phoneNumber,
                 'title' => $faker->jobTitle,

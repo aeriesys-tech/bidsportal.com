@@ -11,7 +11,7 @@
                                 <span style="font-size: 13px;" class="cv-catalog-list-item__fake-checkbox"></span>
                             </label>
                             <div class="cv-catalog-list-item__expand-button">
-                                <span v-if="item.children.length!=0" class="cv-expand-button">
+                                <span v-if="item.children?.length!=0" class="cv-expand-button">
                                     <i class="fa fa-minus-circle" @click="toggle()" v-if="isOpen" aria-hidden="true" style="font-size: 13px;"></i>
                                     <i class="fa fa-plus-circle" @click="toggle()" v-else aria-hidden="true" style="font-size: 13px;"></i>
                                 </span>
@@ -75,7 +75,7 @@
      
         computed: {
             isFolder: function () {
-                return this.item.children && this.item.children.length;
+                return this.item.children && this.item.children?.length;
             }
             
         },
@@ -83,14 +83,12 @@
             if(!this.item.name)
                 this.isOpen = true
             else this.isOpen = this.item.isOpen
-            this.isSeletedItem()
         },
         methods: {
-
             isSeletedItem() {
                 const selected_naics = this.$store.getters.selected_naics
-                if (selected_naics.length) {
-                    this.item.selected = true
+                if (selected_naics?.length) {
+                    this.item.selected = selected_naics.includes(this.item.naics_id)
                 } else {
                     this.item.selected = false
                 }
@@ -112,55 +110,60 @@
             },
             toggleSelectedItem(item) {
                 item.selected = !item.selected;
-                // this.pushParentCode(item.naics_code.slice(0, 2))
-                // this.pushParentCode(item.naics_code.slice(0, 3)) 
-                // this.pushParentCode(item.naics_code.slice(0, 4))
-                // this.pushParentCode(item.naics_code.slice(0, 5)) 
+                // this.pushParentCode(item.naics_id.slice(0, 2))
+                // this.pushParentCode(item.naics_id.slice(0, 3)) 
+                // this.pushParentCode(item.naics_id.slice(0, 4))
+                // this.pushParentCode(item.naics_id.slice(0, 5)) 
                 this.pushSpliceItem(item);
                 this.setSelectedItem(item);
             },
             pushParentCode(parent_code){
-                let selected_naicses = []
-                selected_naicses = this.$store.getters.selected_naicses
-                if (parent_code) {
-                    if (!selected_naicses.includes(parent_code)) {
-                        selected_naicses.push(parent_code)
+                let selected_naics = []
+                if(this.$store.getters.selected_naics){
+                    selected_naics = this.$store.getters.selected_naics
+                    if (parent_code) {
+                        if (!selected_naics.includes(parent_code)) {
+                            selected_naics.push(parent_code)
+                        }
+                    } else {
+                        let naics = selected_naics.filter(function(element){
+                            return element != parent_code
+                        })
+                        selected_naics = naics
                     }
-                } else {
-                    let naics = selected_naicses.filter(function(element){
-                        return element != parent_code
-                    })
-                    selected_naicses = naics
+                    this.$store.dispatch("setSelectedNaics", selected_naics)
                 }
-                this.$store.dispatch("setSelectedNaics", selected_naicses);
             },
             setSelectedItem(item) {
                 let vm = this;
-                if (item.children.length) {
+                if (item.children?.length) {
                     item.children.map(function (element) {
                         vm.toggleSelectedChildren(element, item.selected);
                     });
                 }
             },
             pushSpliceItem(item) {
-                console.log(item)
-                let naics_id = item.naics_id
-                let selected_naicses = []
-                selected_naicses = this.$store.getters.selected_naicses
-                if(selected_naicses?.length){
-                    let loader = vm.$loading.show();
-                    if (item.selected) {
-                        if (!selected_naicses.includes(naics_id)) {
-                            selected_naicses.push(naics_id)
+                if('naics_id' in item){
+                    let naics_id = item.naics_id
+                    let selected_naics = []
+                    if(this.$store.getters.selected_naics){
+                        selected_naics = this.$store.getters.selected_naics
+                        if (item.selected) {
+                            if (!selected_naics.includes(naics_id)) {
+                                selected_naics.push(naics_id)
+                            }
+                        } else {
+                            let naics = selected_naics.filter(function(element){
+                                return element != naics_id
+                            })
+                            selected_naics = naics
                         }
-                    } else {
-                        let naics = selected_naicses.filter(function(element){
-                            return element != naics_id
-                        })
-                        selected_naicses = naics
+                    }else{
+                        if(naics_id){
+                            selected_naics.push(naics_id)
+                        }
                     }
-                    this.$store.dispatch("setSelectedNaics", selected_naicses);
-                    loader.hide()
+                    this.$store.dispatch("setSelectedNaics", selected_naics);
                 }
             },
 
