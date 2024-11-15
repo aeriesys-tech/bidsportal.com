@@ -50,19 +50,11 @@ class FederalTenderResource extends JsonResource
             }
 
             if($this->FederalPlaceOfPerformance->state_name){
-                if($place_of_performance){
-                    $place_of_performance = $place_of_performance .', '.$this->FederalPlaceOfPerformance->state_name;
-                }else{
-                    $place_of_performance = $this->FederalPlaceOfPerformance->state_name;
-                }
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalPlaceOfPerformance->state_name : $this->FederalPlaceOfPerformance->state_name;
             }
 
             if($this->FederalPlaceOfPerformance->country_name){
-                if($place_of_performance){
-                    $place_of_performance = $place_of_performance .', '.$this->FederalPlaceOfPerformance->country_name;
-                }else{
-                    $place_of_performance = $this->FederalPlaceOfPerformance->country_name;
-                }
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalPlaceOfPerformance->country_name : $this->FederalPlaceOfPerformance->country_name;
             }
 
         } else if($this->FederalOfficeAddress && !$place_of_performance){
@@ -70,20 +62,12 @@ class FederalTenderResource extends JsonResource
                 $place_of_performance = $this->FederalOfficeAddress->city;                
             }
 
-            if($this->FederalOfficeAddress->state){
-                if($place_of_performance){
-                    $place_of_performance = $place_of_performance .', '.$this->FederalOfficeAddress->state;
-                }else{
-                    $place_of_performance = $this->FederalOfficeAddress->state;
-                }
+            if($this->FederalOfficeAddress->state){   
+                $place_of_performance = $place_of_performance ?  $place_of_performance.', '.$this->FederalOfficeAddress->state : $this->FederalOfficeAddress->state;
             }
 
             if($this->FederalOfficeAddress->country){
-                if($place_of_performance){
-                    $place_of_performance = $place_of_performance .', '.$this->FederalOfficeAddress->country;
-                }else{
-                    $place_of_performance = $this->FederalOfficeAddress->country;
-                }
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalOfficeAddress->country : $this->FederalOfficeAddress->country;
             }            
         } else{
             $place_of_performance = null;

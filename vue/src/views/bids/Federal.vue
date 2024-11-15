@@ -1421,7 +1421,7 @@
                 let vm = this;
                 let uri = "getStates";
                 vm.$store
-                    .dispatch("post", { uri: uri, data: {country_id:1} })
+                    .dispatch("post", { uri: uri, data: {country_id:10} })
                     .then(function (response) {
                         vm.states = response.data
                         vm.sorted_states = vm.states
