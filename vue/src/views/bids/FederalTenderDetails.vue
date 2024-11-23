@@ -670,7 +670,7 @@
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
             },
             //  window.location.reload();

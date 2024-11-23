@@ -17,7 +17,7 @@
                                 <h5 class="card-header-title" v-else>Update Alert</h5>
 
                                 <span class="">
-                                    <router-link to="/bids" class="btn btn-sm btn-primary me-2" style="padding: 5px; font-weight: 400;">Back To Bids</router-link>
+                                    <router-link to="/bids/state-opportunities" class="btn btn-sm btn-primary me-2" style="padding: 5px; font-weight: 400;">Back To Bids</router-link>
                                     <a href="javascript:void(0)" class="btn btn-sm btn-primary" @click="backSaveAlert()" style="padding: 5px; font-weight: 400;">Back</a>
                                 </span>
                             </div>

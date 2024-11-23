@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\FederalTender;
 use App\Models\User;
+use App\Models\FederalAttachment;
 use App\Http\Resources\FederalTenderResource;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -14,6 +15,8 @@ use GuzzleHttp\Client;
 use DateTime;
 use DateTimeZone;
 use App\Models\ApiKey;
+use ZipArchive;
+use Auth;
 
 class FederalTenderController extends Controller
 {
@@ -152,14 +155,51 @@ class FederalTenderController extends Controller
 
     public function sendFederalTenderMail(Request $request)
     {
-        $data = [
-            'name' => 'Recipient Name',
-            'message' => 'This is a test message.'
-        ];
-        $bids = FederalTender::limit(1)->get();
-        $user = User::first();
-        Mail::to('ajitkundgol@gmail.com')->send(new FederalTenderMail($bids, $user, $request));
+        $data = $request->validate([
+            'recipient_email' => ['required', function ($attribute, $value, $fail) {
+                $emails = array_map('trim', explode(',', $value));
+                foreach ($emails as $email) {
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $fail("The $attribute contains an invalid email: $email");
+                    }
+                }
+            }],
+            'subject' => 'required',
+            'message' => 'required',
+            'federal_tenders' => 'required|array'
+        ]);
 
-        return response()->json(['status' => 'Email sent successfully!']);
+        if(isset($request->federal_tenders) && !empty($request->federal_tenders)){
+            $bids = FederalTender::whereIn('federal_tender_id', $request->federal_tenders)->get();
+            $user = Auth::User();
+            $emails = array_map('trim', explode(',', $request->recipient_email));
+            Mail::to($emails)->send(new FederalTenderMail($bids, $user, $request));
+
+            return response()->json(['status' => 'Email sent successfully!']);
+        }else{
+            return response()->json(['status' => 'Error sending mail'], 422);
+        }
+    }
+
+    public function downloadFederalAttachments($federal_tender_id)
+    {
+        $federal_attachments = FederalAttachment::where('federal_tender_id', $federal_tender_id)->get();
+        if(count($federal_attachments)){
+            
+            $zip_file_name = 'attachments.zip';
+            $temp_zip_path = storage_path($zip_file_name);
+            $zip = new ZipArchive;
+            if ($zip->open($temp_zip_path, ZipArchive::CREATE) === TRUE) {
+                foreach ($federal_attachments as $federal_attachment) {
+                    $file_contents = file_get_contents($federal_attachment->attachment_url); 
+                    $file_name = basename($federal_attachment->attachment_url); 
+                    $zip->addFromString($file_name, $file_contents);
+                }
+                $zip->close();
+            } else {
+                return response()->json(['error' => 'Failed to create ZIP file'], 500);
+            }
+            return response()->download($temp_zip_path, $zip_file_name)->deleteFileAfterSend(true);
+        }   
     }
 }

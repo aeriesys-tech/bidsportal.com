@@ -49,7 +49,7 @@ class FederalTenderDetailResource extends JsonResource
             'set_aside' => $this->SetAside,
             'naics' => $this->Naics,
             'psc' => $this->Psc,
-            'federal_attachments' => $this->FederalAttachments,
+            'federal_attachments' => FederalAttachmentResource::collection($this->FederalAttachments),
             'federal_contacts' => $this->FederalContacts
 
         ];

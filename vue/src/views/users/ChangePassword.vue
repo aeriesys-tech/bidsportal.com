@@ -72,7 +72,7 @@
                                 <div>
                                     <h5 class="card-header-title">Update Password</h5>
                                 </div>
-                                <router-link to="/bids" type="button" class="mb-0 btn btn-sm btn-primary">
+                                <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
                                     Back To Bids
                                 </router-link>
                             </div>

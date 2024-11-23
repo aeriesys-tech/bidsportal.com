@@ -100,12 +100,12 @@
                             <div class="card shadow mt-1">
                                 <div class="card-body">
                                     <div class="row g-3 align-items-center justify-content-between mb-3">
-                                        <div class="col-md-6" v-if="state_tender?.attachments?.length">
-                                            <strong>Downloads ({{ state_tender?.attachments?.length}})</strong>
+                                        <div class="col-md-6" v-if="state_tender?.state_attachments?.length">
+                                            <strong>Downloads ({{ state_tender?.state_attachments?.length}})</strong>
                                         </div>
                                         <div class="col-md-6 text-end">
-                                            <span v-if="state_tender?.attachments?.length">
-                                                <a target="_blank" :href="$store.state.baseUrl+'bidZipDownloadFromS3/'+ state_tender.region?.region_id +'/'+ state_tender.tdr_id" class="mybutton-secondary1 mb-0">
+                                            <span v-if="download_all_attachments">
+                                                <a target="_blank" :href="$store.state.baseUrl+'downloadStateAttachments/' + state_tender.state_tender_id" class="mybutton-secondary1 mb-0">
                                                     <i class="bi bi-cloud-download"></i> Download All Attachments/Links
                                                 </a>
                                             </span>
@@ -129,14 +129,14 @@
                                                 </tr>
                                                 <tr v-for="state_attachment, att_key in state_tender.state_attachments" :key="att_key">
                                                     <td>
-                                                        <img class="" width="25" :src="state_attachment.image" alt="avatar" />
+                                                        <i :class="state_attachment.attachment_icon" class="fa-fw me-2 fs-4"></i>
                                                     </td>
                                                     <td id="demo-3">{{ state_attachment.attachment_name }}</td>
                                                     <td class="text-center">{{ state_attachment.attachment_size }}</td>
                                                     <td class="text-center">{{ state_attachment.attachment_date }}</td>
-                                                    <td class="text-center" v-if="state_attachment.url">
+                                                    <td class="text-center" v-if="state_attachment.attachment_url">
                                                         <a
-                                                            :href="state_attachment.url"
+                                                            :href="state_attachment.attachment_url"
                                                             target="_blank"
                                                             class="btn btn-light btn-round mb-0"
                                                             data-bs-toggle="tooltip"
@@ -224,11 +224,7 @@
                                         <ul>
                                             <li
                                                 type="1"
-                                                v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(
-                                                                                                ','
-                                                                                            )"
-                                                :key="key"
-                                            >
+                                                v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(',')" :key="key">
                                                 {{ value }}
                                             </li>
                                         </ul>
@@ -576,10 +572,9 @@
                     .dispatch("post", { uri: "getStateTender", data: vm.state_tender })
                     .then(function (response) {
                         vm.state_tender = response.data.data
-                        vm.state_tender.state_attachments.map(function(element){
-                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
-                            element.image = vm.getFileExtension(file_extension)
-                        })
+                        vm.download_all_attachments = vm.state_tender.state_attachments.filter(
+                            attachment => attachment.attachment_url
+                        ).length >= 2;
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -638,7 +633,7 @@
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
             },
             //  window.location.reload();
@@ -711,10 +706,6 @@
                     .then(function (response) {
                         vm.isLoading = false;
                         vm.state_tender = response.data.data
-                        vm.state_tender.state_attachments.map(function(element){
-                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
-                            element.image = vm.getFileExtension(file_extension)
-                        })
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -723,41 +714,7 @@
                         // vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-
-            getFileExtension(file_extension){
-                let image = null
-                switch (file_extension) {
-                    case 'ppt':
-                    case 'pptx':
-                        image = 'assets/icons/ppt.png'
-                        break
-                    case 'pdf':
-                        image = 'assets/icons/PDF.svg'
-                        break
-                    case 'doc':
-                    case 'docx':
-                        image = 'assets/icons/DOCX.svg'
-                        break
-                    case 'png':
-                        image = 'assets/icons/PNG.svg'
-                        break
-                    case 'xls':
-                    case 'xlsx':
-                    case 'csv':
-                        image = 'assets/icons/XLS.svg'
-                        break
-                    case 'jpg':
-                    case 'jpeg':
-                        image = 'assets/icons/JPEG.svg'
-                        break
-                    case 'zip':
-                        image = 'assets/icons/ZIP.svg'
-                        break
-                    default:
-                        image = 'assets/icons/default_file_icon.png'
-                }
-                return image
-            },
+            
             edit(bidintersed) {
                 let vm = this;
                 vm.status = 0;

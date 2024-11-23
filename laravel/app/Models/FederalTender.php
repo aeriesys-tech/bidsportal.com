@@ -39,6 +39,56 @@ class FederalTender extends Model
 
     protected $primaryKey = 'federal_tender_id';
 
+    public function FederalTenderDetails(){
+        $place_of_performance = null;
+        if($this->FederalPlaceOfPerformance){
+            if($this->FederalPlaceOfPerformance->city_name){
+                $place_of_performance = $this->FederalPlaceOfPerformance->city_name;                
+            }
+
+            if($this->FederalPlaceOfPerformance->state_name){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalPlaceOfPerformance->state_name : $this->FederalPlaceOfPerformance->state_name;
+            }
+
+            if($this->FederalPlaceOfPerformance->country_name){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalPlaceOfPerformance->country_name : $this->FederalPlaceOfPerformance->country_name;
+            }
+
+        } else if($this->FederalOfficeAddress && !$place_of_performance){
+            if($this->FederalOfficeAddress->city){
+                $place_of_performance = $this->FederalOfficeAddress->city;                
+            }
+
+            if($this->FederalOfficeAddress->state){   
+                $place_of_performance = $place_of_performance ?  $place_of_performance.', '.$this->FederalOfficeAddress->state : $this->FederalOfficeAddress->state;
+            }
+
+            if($this->FederalOfficeAddress->country){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->FederalOfficeAddress->country : $this->FederalOfficeAddress->country;
+            }            
+        } else{
+            $place_of_performance = null;
+        }
+
+        if($this->FederalNotice){
+            $notice = $this->FederalNotice->notice_name;
+        }else{
+            $notice = null;
+        }
+
+        if($this->Category){
+            $category = $this->Category->category_name;
+        }else{
+            $category = null;
+        }
+        return ([
+            'place_of_performance' => $place_of_performance,
+            'notice' => $notice,
+            'tender_url' => $this->tender_url,
+            'category' => $category
+        ]);   
+    }
+
     public function FederalNotice()
     {
         return $this->belongsTo('App\Models\FederalNotice','federal_notice_id','federal_notice_id');

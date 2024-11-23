@@ -130,7 +130,7 @@
                                             </tbody>
                                             <tbody>
                                                 <tr>
-                                                    <td style="border-style: none;" class="back-bid"><router-link to="/bids" class="btn btn-primary"> Back to Bid Search</router-link></td>
+                                                    <td style="border-style: none;" class="back-bid"><router-link to="/bids/state-opportunities" class="btn btn-primary"> Back to Bid Search</router-link></td>
                                                 </tr>
                                             </tbody>
                                         </table>

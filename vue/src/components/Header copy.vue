@@ -28,7 +28,7 @@
                 <div class="navbar-collapse collapse" id="navbarCollapse">
                     <ul class="navbar-nav navbar-nav-scroll">
                         <li v-if="$store.getters.user === null" class="nav-item"><router-link class="nav-link" to="/">Home</router-link></li>
-                        <li v-if="$store.getters.user === null"  class="nav-item"><router-link class="nav-link" to="/bids">Bid Search</router-link></li>
+                        <li v-if="$store.getters.user === null"  class="nav-item"><router-link class="nav-link" to="/bids/state-opportunities">Bid Search</router-link></li>
                         <li v-if="$store.getters.user === null" class="nav-item"><router-link class="nav-link" to="/plans_pricing">Plans & Pricing</router-link></li>
                         <li v-if="$store.getters.user === null" class="nav-item"><router-link class="nav-link" to="/about_us">About Us</router-link></li>
                        <!-- Nav item Pages -->
@@ -47,7 +47,7 @@
                 <!-- Profile and Notification START -->
                 <ul class="navbar-nav nav flex-row align-items-center list-unstyled ms-xl-auto">
                      <!-- <li class="nav-item ms-0 ms-md-3" v-if="$store.getters.user?.subscription_id !== 0 || $store.getters.user?.length !==null" >
-                        <router-link class="nav-link btn-sm btn btn-light p-2 mb-0" role="button" to="/bids"><i class="fa-solid fa fa-globe me-2"></i>Bids</router-link>
+                        <router-link class="nav-link btn-sm btn btn-light p-2 mb-0" role="button" to="/bids/state-opportunities"><i class="fa-solid fa fa-globe me-2"></i>Bids</router-link>
                     </li> -->
                
                     <li class="nav-item ms-0 ms-md-3" >
@@ -184,7 +184,7 @@ export default {
        vm.$store.commit("setCartProducts",[]);
         vm.checklinks()
     
-       vm.$router.push("/bids");
+       vm.$router.push("/bids/state-opportunities");
     //    vm.$router.go(0)
     },
     checkurlbid(){

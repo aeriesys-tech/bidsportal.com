@@ -103,7 +103,7 @@
 							<!-- Pagination -->
 							<nav class="mb-sm-0 d-flex justify-content-center" aria-label="navigation">
 								<!-- <a href="javascript:void(0)" class="btn btn-primary mb-0" @click="$router.go(-1)">Select Bids</a> -->
-							<router-link to="/bids" class="btn btn-primary mb-0">Select Bids</router-link>
+							<router-link to="/bids/state-opportunities" class="btn btn-primary mb-0">Select Bids</router-link>
                             </nav>
 						</div>    
                             <!-- Card body END -->

@@ -1,5 +1,6 @@
 <template>
     <Region/>
+    <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" /> 
     <div class="search">
         <div class="container-fluid">
             <div class="row">
@@ -370,7 +371,7 @@
                                 </li>
 
                                 <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                    <a href="javascript:void(0)" @click.prevent="emailmodalpop()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
+                                    <a href="javascript:void(0)" @click.prevent="shareStateTenders()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
                                 </li>
                             </ul>
                         </div>
@@ -398,9 +399,9 @@
                                         </div>
 
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ state_tender.tender_no }}</li>
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(state_tender.posted_date) }} &nbsp;<span>{{state_tender.time_ago  }} </span></li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(state_tender.opening_date) }} &nbsp;<span>{{state_tender.time_ago  }} </span></li>
                                             <li class="nav-item">
                                                 <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" /> {{ dateFormat(state_tender.expiry_date) }}
                                                 <span class="col-green" v-if="state_tender.days_difference">
@@ -421,8 +422,9 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary"><i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ state_tender.state_agency?.state_agency_name}}</span></li>
 
-                                                    <li class="nav-item" v-if="state_tender.place_of_performance!=''">
-                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{state_tender.place_of_performance}}</span>
+                                                    <li class="nav-item">
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ state_tender?.state?.state_name }}<span v-if="state_tender?.state?.state_name">,</span> {{
+                                                        state_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -430,7 +432,7 @@
                                             <div class="mt-3">
                                                 <ul class="list-inline mb-0 z-index-2 small">
                                                     <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                                        <a href="javascript:void(0)" @click.prevent="shareTender(state_tender)" v-modal="shareBid.bids" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
+                                                        <a href="javascript:void(0)" @click.prevent="shareStateTender(state_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
                                                     <li class="list-inline-item" v-if="checkCartItem(state_tender.state_tender_id)">
@@ -482,7 +484,7 @@
                                                                     </div>
 
                                                                     <div class="column">
-                                                                        <a :style="{color:state_tender.state_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ state_tender.state_notice.notice_name }}</a>
+                                                                        <a :style="{color:state_tender.state_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ state_tender.state_notice?.notice_name }}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -671,7 +673,7 @@
 
                                     <form class="card-body" style="min-width: 350px;">
                                         <div class="mb-3">
-                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="mails" ref="mails" />
+                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="share_state_tender.recipient_email" ref="mails" />
                                             <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0] }}</span>
                                         </div>
                                         <div class="mb-3">
@@ -683,7 +685,7 @@
                                                 placeholder="Subject of Email"
                                                 autocomplet="off"
                                                 id="email_subject"
-                                                v-model="shareBid.subject"
+                                                v-model="share_state_tender.subject"
                                                 ref="subject"
                                             />
                                             <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
@@ -698,13 +700,13 @@
                                                 placeholder="Brief Messsage/Note"
                                                 autocomplet="off"
                                                 id="email_message"
-                                                v-model="shareBid.message"
+                                                v-model="share_state_tender.message"
                                             ></textarea>
                                             <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
                                         </div>
 
                                         <div class="text-end">
-                                            <a href="javascript:void(0)" @click="shareMail()" class="mybutton-secondary2">Send</a>
+                                            <a href="javascript:void(0)" @click="sendStateTenderMail()" class="mybutton-secondary2">Send</a>
                                         </div>
                                     </form>
                                 </div>
@@ -879,7 +881,13 @@
                 clear_all_naics: false,
                 clear_all_psc: false,
                 pageChangeInProgress: false,
-                auto_call:true
+                auto_call:true,
+                share_state_tender : {
+                    recipient_email:null,
+                    subject : '',
+                    message : '',
+                    state_tenders : []
+                }
             };
         },
 
@@ -933,6 +941,44 @@
         },
 
         methods: {
+
+            shareStateTender(state_tender){
+                this.share_state_tender.state_tenders.push(state_tender.state_tender_id)
+                this.share_tender = true
+            },
+
+            shareStateTenders(){
+                if(this.share_state_tender.state_tenders.length){
+                    this.share_tender = true
+                }else{
+                    this.$store.dispatch("info", "Select Federal Tender");
+                }
+            },
+
+            sendStateTenderMail(){
+                let vm = this
+                vm.fullPage = true
+                vm.isLoading = true
+                vm.$store
+                    .dispatch("post", { uri: "sendStateTenderMail", data: vm.share_state_tender })
+                    .then(function () {
+                        vm.fullPage = false
+                        vm.isLoading = false
+                        vm.share_tender = false
+                        vm.share_state_tender.recipient_email = ''
+                        vm.share_state_tender.subject = ''
+                        vm.share_state_tender.message = ''
+                        vm.share_state_tender.state_tenders = []
+                        vm.$store.dispatch("success", "Mail sent successfully");
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.fullPage = false
+                        vm.isLoading = false
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
 
             listviewgrid() {
                 this.listview = false;

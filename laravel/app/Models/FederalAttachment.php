@@ -13,7 +13,8 @@ class FederalAttachment extends Model
     	'attachment_name',
     	'attachment_size',
     	'attachment_date',
-    	'attachment_url'
+    	'attachment_url',
+        'attachment_s3_url'
     ];
 
     protected $primaryKey = 'federal_attachment_id';

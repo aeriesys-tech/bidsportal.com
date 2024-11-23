@@ -29,10 +29,14 @@ export default createStore({
 		state_notices:[],
 		categories:[],
 		state_agencies:[],
-		page_redirect:null
+		page_redirect:null,
+		user_plan:{}
 	}, 
 	
 	mutations: {
+		setUserPlan(state, user_plan){
+			state.user_plan = user_plan
+		},
 		setPageRedirect(state, page_redirect){
 			state.page_redirect = page_redirect
 		},
@@ -121,6 +125,9 @@ export default createStore({
 	},
 
 	getters: {
+		user_plan(state){
+			return state.user_plan
+		},
 		page_redirect(state){
 			return state.page_redirect
 		},
@@ -202,6 +209,9 @@ export default createStore({
 
 	actions: {
 		
+		async setUserPlan(context,payload) {
+			await context.commit('setUserPlan', payload);
+		},
 		async setPageRedirect(context,payload) {
 			await context.commit('setPageRedirect', payload);
 		},
@@ -339,6 +349,19 @@ export default createStore({
 					reject(error);
 				});
 			});
+		},
+
+		async info(context,description) {
+			await createToast({
+				title: 'Info',
+				description: description || "The given data was invalid."
+			},
+			{
+				showIcon: true,
+				hideProgressBar: true,
+				type: 'info',
+				position: 'top-right'
+			})
 		},
 
 		async error(context,description) {
