@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Models\CartItem;
 
 class FederalTenderResource extends JsonResource
 {
@@ -73,6 +74,17 @@ class FederalTenderResource extends JsonResource
             $place_of_performance = null;
         }
 
+        if($request->user_id){
+            $cart_item = CartItem::where('user_id', $request->user_id)->where('federal_tender_id', $this->federal_tender_id)->first();
+            if($cart_item){
+                $cart_icon = false;
+            }else{
+                $cart_icon = true;
+            }
+        }else{
+            $cart_icon = true;
+        }
+
         return [
             'federal_tender_id' => $this->federal_tender_id,
             'tender_no' => $this->tender_no,
@@ -104,8 +116,8 @@ class FederalTenderResource extends JsonResource
             'time_ago'  => $time_ago,
             'days_difference' => $days_difference,
             'federal_attachments' => $this->FederalAttachments,
-            'federal_office_address' => $this->FederalOfficeAddress
-
+            'federal_office_address' => $this->FederalOfficeAddress,
+            'cart_icon' => $cart_icon
         ];
     }
 }

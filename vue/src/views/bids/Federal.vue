@@ -449,10 +449,10 @@
                                                         <a href="javascript:void(0)" @click.prevent="shareFederalTender(federal_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
-                                                    <li class="list-inline-item" v-if="checkCartItem(federal_tender.federal_tender_id)">
-                                                        <div v-if="$store.getters.user?.subscription_id ===0">
-                                                            <a href="javascript:void(0)" @click="addCart(federal_tender)" class="p-2">
-                                                                <img v-if="hidecartstatue" src="assets/images/addcart.svg" width="19" />
+                                                    <li class="list-inline-item" v-if="federal_tender.cart_icon">
+                                                        <div>
+                                                            <a href="javascript:void(0)" @click="addToCart(federal_tender)" class="p-2">
+                                                                <img src="assets/images/addcart.svg" width="19" />
                                                             </a>
                                                         </div>
                                                     </li>
@@ -509,8 +509,8 @@
                                                         <td style="width: 110px;">{{ federal_tender.expiry_date }}</td>
                                                         <td>
                                                             <span v-if="checkCartItem(federal_tender.federal_tender_id)">
-                                                                <div v-if="$store.getters.user?.subscription_id ===0">
-                                                                    <a href="javascript:void(0)" @click="addCart(federal_tender)"><img v-if="hidecartstatue" class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
+                                                                <div>
+                                                                    <a href="javascript:void(0)" @click="addCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
                                                                 </div>
                                                             </span>
                                                             <span v-else>
@@ -903,7 +903,8 @@
                     subject : '',
                     message : '',
                     federal_tenders : []
-                }
+                },
+                federal_cart_items:[]
             };
         },
 
@@ -968,6 +969,29 @@
         },
 
         methods: {
+
+            addToCart(federal_tender) {
+                let vm = this
+                vm.fullPage = true
+                let cart_item = {
+                    federal_tender_id : federal_tender.federal_tender_id,
+                    state_tender_id : null,
+                    region : 'Federal'
+                }
+                vm.$store
+                    .dispatch("post", { uri: "addCartItem", data: cart_item })
+                    .then(function () {
+                        vm.fullPage = false
+                        federal_tender.cart_icon = false
+                        vm.$store.dispatch("success", "Tender added to cart successfully");
+                        vm.getCartItemsCount()
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
 
             sendFederalTenderMail(){
                 let vm = this
@@ -1507,12 +1531,29 @@
                     });
             },
 
+            getCartItemsCount(){
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
+                    .then(function (response) {
+                        if(response.data){
+                            vm.$store.dispatch('setTenderCart', response.data)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
             paginateFederalTenders(cancel_token) {
                 let vm = this
                 this.isLoading = true
                 vm.federal_tenders = []
                 vm.applyFilters()
                 window.scrollTo({ top: 0, behavior: "smooth" })
+                vm.meta.user_id = this.$store.getters.user?.user_id
                 vm.$store
                     .dispatch("post", { uri: "paginateFederalTenders", data:vm.meta, cancel_token })
                     .then(function (response) {
@@ -1525,6 +1566,7 @@
                         vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage
                         vm.meta.to = response.data.meta.to
                         vm.meta.page = response.data.meta.current_page
+                        vm.getCartItemsCount()
                     })
                     .catch(function (error) {
                         if (axios.isCancel(error)) {

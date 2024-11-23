@@ -30,10 +30,17 @@ export default createStore({
 		categories:[],
 		state_agencies:[],
 		page_redirect:null,
-		user_plan:{}
+		user_plan:{},
+		tender_cart:{
+			items: 0,
+			total: 0
+		}
 	}, 
 	
 	mutations: {
+		setTenderCart(state, tender_cart){
+			state.tender_cart = tender_cart
+		},
 		setUserPlan(state, user_plan){
 			state.user_plan = user_plan
 		},
@@ -110,21 +117,13 @@ export default createStore({
 		},
 		setBidsDetails(state,bidsdetails){
 			state.bidsdetails = bidsdetails
-		},
-		
-		addTocart(state, product) {
-            product.sub_total = product.price * product.quantity
-            state.cart.push(product);
-        },
-		removeFromCart(state, product) {
-			let index = state.cart.indexOf(product);
-			state.cart.splice(index, 1);
-			// localStorage.setItem("cartItems", JSON.stringify(state.cart));
-		},
-
+		}
 	},
 
 	getters: {
+		tender_cart(state){
+			return state.tender_cart
+		},
 		user_plan(state){
 			return state.user_plan
 		},
@@ -209,6 +208,9 @@ export default createStore({
 
 	actions: {
 		
+		async setTenderCart(context,payload) {
+			await context.commit('setTenderCart', payload);
+		},
 		async setUserPlan(context,payload) {
 			await context.commit('setUserPlan', payload);
 		},

@@ -89,6 +89,12 @@ class FederalTender extends Model
         ]);   
     }
 
+
+    public function CartItem()
+    {
+        return $this->hasMany('App\Models\CartItem','federal_tender_id','federal_tender_id');
+    }
+
     public function FederalNotice()
     {
         return $this->belongsTo('App\Models\FederalNotice','federal_notice_id','federal_notice_id');

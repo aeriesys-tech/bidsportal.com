@@ -314,8 +314,8 @@
                                     <h6 class="card-title mb-0">Contact Information</h6>
                                 </div>
                                 <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
-                                    <strong class="mb-1 text-primary" v-if="federal_contact.type=='Primary'">Primary Contact:</strong>
-                                    <strong class="mb-1 text-primary" v-if="federal_contact.type=='Secondary'">Secondary Contact:</strong>
+                                    <strong class="mb-1 text-primary" v-if="federal_contact.type==0">Primary Contact:</strong>
+                                    <strong class="mb-1 text-primary" v-if="federal_contact.type==1">Secondary Contact:</strong>
                                     <ul lass="list-group list-group-borderless" style="border-top: none;">
                                         <li class="list-group-item py-1" v-if="federal_contact.fullName">
                                             <span class="text-info fw-light me -1 mb-0">{{ federal_contact.full_name }}</span>
