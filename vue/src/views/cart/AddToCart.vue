@@ -17,7 +17,7 @@
                                 <h5 class="card-title mb-0">Your Cart</h5>
                             </div>
                                     <!-- test 1 -->
-                                <div class="card-body" style="padding:0px" v-if="$store.getters.cartItems.length === 0" >
+                                <div class="card-body" style="padding:0px" v-if="!cart_items.length" >
                                 <!-- Table head -->
                                 <div class="p-3 d-none d-sm-block" >
                                       <div class="text-center">
@@ -46,7 +46,7 @@
                                 </div>
 
                                 <!-- Table data -->
-                                 <div class="row row-cols-xl-7 g-4 align-items-sm-center border-bottom px-2 py-2" v-for="(item, key) in $store.getters.cartItems" :key="key">
+                                 <div class="row row-cols-xl-7 g-4 align-items-sm-center border-bottom px-2 py-2" v-for="(cart_item, key) in cart_items" :key="key">
                                     <!-- Data item -->
                                     <div class="col">
                                         <div class="avatar avatar-sm">
@@ -55,18 +55,18 @@
                                     </div>
 
                                     <!-- Data item -->
-                                    <div class="col-4">
-                                        <small class="d-block"> {{item.tdr_title }}</small>
+                                    <div class="col-4" v-if="cart_item.federal_tender_id">
+                                        <small class="d-block"> {{cart_item.federal_tender?.title }}</small>
                                         <div class="d-flex">
                                             <small class="me-1">Posted Date:</small>
-                                            <small class="mb-0 text-primary">{{ format_date(item.tdr_posted_date) }}</small>
+                                            <small class="mb-0 text-primary">{{ format_date(cart_item.federal_tender?.posted_date) }}</small>
                                         </div>
                                     </div>
 
                                     <!-- Data item -->
-                                    <div class="col">
+                                    <div class="col" v-if="cart_item.federal_tender_id">
                                         <small class="d-block d-sm-none">Status:</small>
-                                        <div class="">${{item.tdr_doc_fees }}</div>
+                                        <div class="">${{cart_item.federal_tender.fees }}</div>
                                     </div>
                                     <!-- Data item -->
                                     <div class="col">
@@ -77,12 +77,12 @@
                                     <!-- Data item -->
                                     <div class="col">
                                         <small class="d-block d-sm-none">Status:</small>
-                                        <div class="">${{item.tdr_doc_fees }}</div>
+                                        <div class="">${{cart_item.federal_tender?.fees }}</div>
                                        
                                     </div>
                                     <!-- Data item -->
                                     <div class="col">
-                                        <a href="javascript:void(0)" @click="removeCart(item)" class="btn btn-light btn-round mb-0"><i class="fa fa-times"></i></a>
+                                        <a href="javascript:void(0)" @click="removeCart(cart_item)" class="btn btn-light btn-round mb-0"><i class="fa fa-times"></i></a>
                                     </div>
                                     
                                 </div>
@@ -126,16 +126,17 @@
                             <div class="card-body">
                             <!-- List -->
                             <ul class="list-group list-group-borderless mb-0" >
-                                <li class="list-group-item d-flex justify-content-between" v-for="(bids, key) in $store.getters.cartItems" :key="key">
-                                    <span class="h6 fw-light mb-0"> {{ meta.from + key }}</span>
-                                    <span class="h6 fw-light mb-0">${{ bids.tdr_doc_fees }} </span>
+                                <li class="list-group-item d-flex justify-content-between" v-for="(cart_item, key) in cart_items" :key="key">
+                                    <span class="h6 fw-light mb-0"> {{ key+1 }}</span>
+                                    <span class="h6 fw-light mb-0" v-if="cart_item.federal_tender_id">${{ cart_item.federal_tender?.fees }} </span>
+                                    <span class="h6 fw-light mb-0" v-if="cart_item.state_tender_id">${{ cart_item.state_tender?.fees }} </span>
                                    
                                 </li>
                             <li class="list-group-item py-0"><hr class="my-0" /></li>
                                 <!-- Divider -->
                                 <li class="list-group-item d-flex justify-content-between pb-0">
-                                    <span class="h5 fw-normal mb-0">Totals</span>
-                                    <span class="h5 fw-normal mb-0">${{ subTotal }}</span>
+                                    <span class="h5 fw-normal mb-0">Total</span>
+                                    <span class="h5 fw-normal mb-0">${{ total }}</span>
                                 </li>
                             </ul>
 
@@ -258,10 +259,55 @@
                 },
                 errors:[],
                  isLoading: false,
-                fullPage: true
+                fullPage: true,
+                cart_items:[],
+                total:null
             };
         },
+        mounted(){
+            this.getCartItemsCount()
+        },
         methods: {
+            getCartItems(){
+                let vm = this
+                vm.total = 0
+                vm.$store
+                    .dispatch("post", { uri: "getCartItems" })
+                    .then(function (response) {
+                        vm.cart_items = response.data.data
+                        vm.cart_items.map(function(element){
+                            if(element.federal_tender_id){
+                                vm.total += element.federal_tender?.fees
+                            }
+                            if(element.state_tender_id){
+                                vm.total += element.state_tender?.fees
+                            }
+                        })
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            getCartItemsCount(){
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
+                    .then(function (response) {
+                        if(response.data){
+                            vm.$store.dispatch('setTenderCart', response.data)
+                            vm.getCartItems()
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
              format_date(value) {
                   return moment(String(value)).format('MMMM D, YYYY')
             },
@@ -291,8 +337,19 @@
                 let vm = this 
                 vm.userlogin = false;
             },
-            removeCart(item) {
-                this.$store.commit("removeFromCart", item);
+            removeCart(cart_item) {
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "removeCartItem", data:cart_item })
+                    .then(function () {
+                        vm.$store.dispatch("success", "Item removed from Cart");
+                        vm.getCartItemsCount()
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
             },
           
             removeAllCart() {

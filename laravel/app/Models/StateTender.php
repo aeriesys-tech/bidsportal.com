@@ -75,6 +75,10 @@ class StateTender extends Model
         ]);   
     }
 
+    public function CartItem()
+    {
+        return $this->hasMany('App\Models\CartItem','state_tender_id','state_tender_id');
+    }
     public function Country()
     {
         return $this->belongsTo('App\Models\Country','country_id','country_id');

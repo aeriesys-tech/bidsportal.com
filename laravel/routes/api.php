@@ -21,6 +21,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\PaypalController;
+use App\Http\Controllers\CartItemController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -74,6 +75,12 @@ Route::post("getCategories",[CategoryController::class,'getCategories']);
 Route::post('getSubscriptionPlans', [SubscriptionPlanController::class,'getSubscriptionPlans']);
 
 Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
+
+	//Cart Item
+	Route::post('addCartItem', [CartItemController::class,'addCartItem']);
+	Route::post('getCartItemsCount', [CartItemController::class,'getCartItemsCount']);
+	Route::post('getCartItems', [CartItemController::class,'getCartItems']);
+	Route::post('removeCartItem', [CartItemController::class,'removeCartItem']);
 
 	//Federal Mail
 	Route::post('sendFederalTenderMail', [FederalTenderController::class,'sendFederalTenderMail']);

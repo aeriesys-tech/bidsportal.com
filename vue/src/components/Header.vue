@@ -79,10 +79,10 @@
                     <li class="nav-item ms-3 d-none d-sm-block" v-if="!$store.getters.user">
                         <router-link class="btn btn-sm btn-primary-soft mb-0" to="/sign_up">Sign up</router-link>
                     </li>
-                    <li class="nav-item ms-3 d-none d-sm-block"  v-if="$store.getters.cartItems.length !==0">
+                    <li class="nav-item ms-3 d-none d-sm-block"  v-if="$store.getters.tender_cart.items">
                         <router-link class="bidlogoicon nav-link hover1" :to="{ path:'/cart' }">
                         <span><img src="assets/images/addcart.svg" width="30"/></span>
-                         <span style="padding:5px">{{ $store.getters.cartItems.length }} Bid(s) - ${{ subTotal }}</span>
+                         <span style="padding:5px">{{ $store.getters.tender_cart.items }} Bid(s) - ${{ $store.getters.tender_cart.total }}</span>
                         </router-link>
                     </li>
                 </ul>
