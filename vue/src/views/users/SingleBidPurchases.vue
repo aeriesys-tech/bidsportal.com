@@ -70,7 +70,7 @@
                                     
                                        <h6 class="mb-2 mb-sm-0"  v-if="payment.length===0"> This section includes the purchase details history of single Bids only - NOT APPLICABLE for subscriptions based user</h6>
                                         <h5 v-else class="mb-2 mb-sm-0">Single Bid Purchases</h5>
-                                         <router-link to="/bids" type="button" class="mb-0 btn btn-sm btn-primary">
+                                         <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
                                         Back To Bids
                                     </router-link>
                                        
@@ -220,7 +220,7 @@
              checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                     
                 }},
               format_date(value){

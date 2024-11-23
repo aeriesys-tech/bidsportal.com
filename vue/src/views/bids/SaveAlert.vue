@@ -230,13 +230,13 @@
             showTenders(alert) {
                 this.$store.commit("setAlert", alert);
                 if(alert.region == 'Federal'){
-                    this.$router.push('/bids')
+                    this.$router.push('/bids/state-opportunities')
                 }
             },
 
             backgoBidsPage(){
                  this.$store.commit("setAlert", null);
-                 this.$router.push('/bids')
+                 this.$router.push('/bids/state-opportunities')
             },
              closemodal() {
                 let vm = this;
@@ -245,20 +245,20 @@
              checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
             },
 
             search(alert) {
                 vm.$store.commit("setAlert", alert);
-                this.$router.push("/bids");
+                this.$router.push("/bids/state-opportunities");
             },
 
             edit(alert) {
                 // this.$store.commit("setAlert", intersted);
                 // this.$store.commit("setSelectedNaics",intersted.naics_id ? intersted.naics_id.split(","):[]);
                 // this.$store.commit("setSelectedPsces",intersted.psc ? intersted.psc.split(","):[]);
-                this.$router.push("/bids/bid-alert/Federal/" + alert.alert_id + "/edit");
+                this.$router.push("/bids/state-opportunities/bid-alert/Federal/" + alert.alert_id + "/edit");
             },
 
             getInterstedUser() {
@@ -312,7 +312,7 @@
                     .then(function () {
                         vm.isLoading = false;
                         vm.$store.dispatch("success", "BidsAlert is successfully updated");
-                        vm.$router.push("/bids/save-alert");
+                        vm.$router.push("/bids/state-opportunities/save-alert");
                     })
                     .catch(function (error) {
                         vm.isLoading = false;

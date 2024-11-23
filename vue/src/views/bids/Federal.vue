@@ -1,5 +1,6 @@
 <template>
     <Region/>
+    <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" /> 
     <div class="search">
         <div class="container-fluid">
             <div class="row">
@@ -385,7 +386,7 @@
                                 </li>
 
                                 <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                    <a href="javascript:void(0)" @click.prevent="emailmodalpop()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
+                                    <a href="javascript:void(0)" @click.prevent="shareFederalTenders()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
                                 </li>
                             </ul>
                         </div>
@@ -406,7 +407,7 @@
                                                 <li class="list-inline-item">
                                                     <div class="form-check-inline mb-0" v-if="$store.getters.user !==null">
                                                         <small class="form-check-label mb-0 me-2"><a href="javascript:void(0)" class="">SELECT</a></small>
-                                                        <input class="form-check-input" type="checkbox" :value="federal_tender.federal_tender_id" id="flexCheckChecked" v-model="sendMails.bids" />
+                                                        <input class="form-check-input" type="checkbox" :value="federal_tender.federal_tender_id" id="flexCheckChecked" v-model="share_federal_tender.federal_tenders" />
                                                     </div>
                                                 </li>
                                             </ul>
@@ -445,7 +446,7 @@
                                             <div class="mt-3">
                                                 <ul class="list-inline mb-0 z-index-2 small">
                                                     <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                                        <a href="javascript:void(0)" @click.prevent="shareTender(federal_tender)" v-modal="shareBid.bids" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
+                                                        <a href="javascript:void(0)" @click.prevent="shareFederalTender(federal_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
                                                     <li class="list-inline-item" v-if="checkCartItem(federal_tender.federal_tender_id)">
@@ -686,8 +687,8 @@
 
                                     <form class="card-body" style="min-width: 350px;">
                                         <div class="mb-3">
-                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="mails" ref="mails" />
-                                            <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0] }}</span>
+                                            <input class="form-control" :class="{ 'is-invalid': errors.recipient_email }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="share_federal_tender.recipient_email" ref="recipient_email" />
+                                            <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
                                         </div>
                                         <div class="mb-3">
                                             <input
@@ -698,7 +699,7 @@
                                                 placeholder="Subject of Email"
                                                 autocomplet="off"
                                                 id="email_subject"
-                                                v-model="shareBid.subject"
+                                                v-model="share_federal_tender.subject"
                                                 ref="subject"
                                             />
                                             <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
@@ -713,13 +714,13 @@
                                                 placeholder="Brief Messsage/Note"
                                                 autocomplet="off"
                                                 id="email_message"
-                                                v-model="shareBid.message"
+                                                v-model="share_federal_tender.message"
                                             ></textarea>
                                             <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
                                         </div>
 
                                         <div class="text-end">
-                                            <a href="javascript:void(0)" @click="shareMail()" class="mybutton-secondary2">Send</a>
+                                            <a href="javascript:void(0)" @click="sendFederalTenderMail()" class="mybutton-secondary2">Send</a>
                                         </div>
                                     </form>
                                 </div>
@@ -761,6 +762,7 @@
 
         data() {
             return {
+                fullPage: false,
                 add_federal_filters:false,
                 federal_filters:[],
                 federal_notices:[],
@@ -895,6 +897,12 @@
                 auto_call:true,
                 login:{
                     federal_tender:null
+                },
+                share_federal_tender : {
+                    recipient_email:null,
+                    subject : '',
+                    message : '',
+                    federal_tenders : []
                 }
             };
         },
@@ -961,6 +969,29 @@
 
         methods: {
 
+            sendFederalTenderMail(){
+                let vm = this
+                vm.fullPage = true
+                vm.isLoading = true
+                vm.$store
+                    .dispatch("post", { uri: "sendFederalTenderMail", data: vm.share_federal_tender })
+                    .then(function () {
+                        vm.fullPage = false
+                        vm.isLoading = false
+                        vm.share_tender = false
+                        vm.share_federal_tender.recipient_email = ''
+                        vm.share_federal_tender.subject = ''
+                        vm.share_federal_tender.message = ''
+                        vm.share_federal_tender.federal_tenders = []
+                        vm.$store.dispatch("success", "Mail sent successfully");
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
             listviewgrid() {
                 this.listview = false;
                 this.gridview = true;
@@ -1005,8 +1036,16 @@
                 }
             },
 
-            shareTender(federal_tender){
+            shareFederalTender(federal_tender){
+                this.share_federal_tender.federal_tenders.push(federal_tender.federal_tender_id)
                 this.share_tender = true
+            },
+            shareFederalTenders(){
+                if(this.share_federal_tender.federal_tenders.length){
+                    this.share_tender = true
+                }else{
+                    this.$store.dispatch("info", "Select Federal Tender");
+                }
             },
             emailmodalpop(){
                 this.share_tender = true
@@ -1106,6 +1145,10 @@
                 this.userModal = false
                 this.alertModal = false
                 this.share_tender = false
+                this.share_federal_tender.recipient_email = ''
+                this.share_federal_tender.subject = ''
+                this.share_federal_tender.message = ''
+                this.share_federal_tender.federal_tenders = []
             },
             
             tenderDetails(federal_tender){

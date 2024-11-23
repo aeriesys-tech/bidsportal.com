@@ -48,7 +48,6 @@ class FederalTenderMail extends Mailable
 
 
         return $this->view('emails.FederalTender', compact('bids','user','request', 'images', 'app_url'))
-        ->subject('BidsPortal :: ')
-        ->to('ajitkundgol@gmail.com');
+        ->subject('BidsPortal :: '.$request->subject);
     }
 }

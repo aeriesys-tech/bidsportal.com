@@ -91,7 +91,7 @@
                         loader.hide();
                         vm.$store.dispatch("success", "Successfuly logged in");
                         vm.$store.dispatch("setUser", response.data);
-                        vm.$router.push("/bids");
+                        vm.$router.push("/bids/state-opportunities");
                         vm.closeModal();
                     })
                     .catch(function (error) {

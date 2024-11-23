@@ -119,10 +119,7 @@
                                                             </td>
                                                         </tr>
                                                         @foreach($bids as $bid)
-                                                            @php
-                                                                $url = config('app.base_url').'/#/bids/';
-                                                                $url = $url.'state-opportunities/'.str_replace('/', '', $bid->title).'-'.$bid->tender_no.'/'.$bid->tdr_id;
-                                                            @endphp
+                                                            @php $bid_details = $bid->FederalTenderDetails() @endphp
                                                             <tr>
                                                                 <td style="padding: 10px 30px 10px;" align="center">
                                                                     <table style="height: 82px; border: 1px solid #eee; padding: 5px;" width="850" cellspacing="0" cellpadding="3">
@@ -161,7 +158,7 @@
                                                                                         <a style="color: #626262;"> Files : </a>
                                                                                     </b>
                                                                                     <span style="color: #3997ff;">
-                                                                                        <a target="_blank" href="{{ config('app.base_url').'/bidZipDownloadFromS3/'.$bid->tdr_region.'/'.$bid->tdr_id }}">
+                                                                                        <a target="_blank" href="{{ config('app.url').'downloadFederalAttachments/'.$bid->federal_tender_id }}">
                                                                                             Download Attachments
                                                                                         </a>
                                                                                     </span>
@@ -169,26 +166,15 @@
                                                                             </td>
                                                                         </tr>
                                                                         <tr style="padding-bottom: 10px;">
-                                                                            <td style="width: 35%;">
+                                                                            <td colspan=4>
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
                                                                                     <img src="{{ config('app.base_url') }}/storage/images/notice-type.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
-                                                                                        <a style="color: #626262;"> Notice Type : </a>
+                                                                                        <a style="color: #626262;"> Notice Type : {{ $bid_details['notice'] }}</a>
                                                                                     </b>
                                                                                     
                                                                                 </span>
                                                                             </td>
-                                                                            <td style="width: 42%;">
-                                                                                <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="{{ config('app.base_url') }}/storage/images/region.png" style="max-height: 13px; vertical-align: text-bottom; image-rendering: pixelated;" />
-                                                                                    <b>
-                                                                                        <a style="color: #626262;"> : </a>
-                                                                                    </b>
-                                                                                    
-                                                                                </span>
-                                                                            </td>
-                                                                            <td style="width: 0%;"></td>
-                                                                            <td style="width: 23%;"></td>
                                                                         </tr>
                                                                         <tr style="padding-bottom:10px;">
                                                                             <td colspan=4>
@@ -197,8 +183,8 @@
                                                                                     <b>
                                                                                         <a style="Color: #626262;">  Agency Link : </a>
                                                                                     </b>
-                                                                                    <a target="_blank" href="{{ $bid->tdr_posting_link }}" style="color:#3997ff; font-size: 13px;font-family: sans-serif;">
-                                                                                        
+                                                                                    <a target="_blank" href="{{ $bid_details['tender_url'] }}" style="color:#3997ff; font-size: 13px;font-family: sans-serif;">
+                                                                                        {{ $bid_details['tender_url']}}
                                                                                     </a>
                                                                                 </span>
                                                                             </td>
@@ -218,7 +204,7 @@
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
                                                                                     <img src="{{ $images['location'] }}" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Location : </a></b>
-                                                                                    
+                                                                                    {{ $bid_details['place_of_performance'] }}
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
@@ -226,7 +212,7 @@
                                                                         <tr style="padding-bottom: 10px; line-height: 1.8;">
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="{{ $images['category'] }}" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : </a></b>
+                                                                                    <img src="{{ $images['category'] }}" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : {{ $bid_details['category']}}</a></b>
                                                                                 </span>
                                                                             </td>
                                                                         </tr>

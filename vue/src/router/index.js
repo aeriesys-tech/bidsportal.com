@@ -40,7 +40,7 @@ import MyPurchasedBids from '@/views/users/MyPurchasedBids'
 import SaveAlert from "@/views/bids/SaveAlert";
 import Profile from "@/views/auth/Profile"
 import CreateBidAlert from '@/views/bids/BidsAlert'
-import Plans_pricing from "@/views/Plans_pricing.vue";
+import SubscriptionPlans from "@/views/subscriptions/SubscriptionPlan.vue";
 import Feedback from "@/views/Feedback"
 import PlanSubscription from "@/views/plans/PlanSubscription"
 import ChangePassword from '@/views/users/ChangePassword'
@@ -231,14 +231,14 @@ const routes = [
 	},
 	// Plans_pricing
     {
-        path: "/plans_pricing", name: "Plans_pricing",
-        component: Plans_pricing,
+        path: "/subscription_plans", name: "SubscriptionPlans",
+        component: SubscriptionPlans,
     },
-	{
-        path:'/plans_pricing/:id',
-        name:'PlanAcitve',
-        component:Plans_pricing
-    },
+	// {
+    //     path:'/plans_pricing/:id',
+    //     name:'PlanAcitve',
+    //     component:Plans_pricing
+    // },
 
 	//plan pricing new 
 	{

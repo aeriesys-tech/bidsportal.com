@@ -46,7 +46,7 @@ class StateTenderDetailResource extends JsonResource
             'set_aside' => $this->SetAside,
             'naics' => $this->Naics,
             'psc' => $this->Psc,
-            'state_attachments' => $this->StateAttachments,
+            'state_attachments' => StateAttachmentResource::collection($this->StateAttachments),
             'state_contacts' => $this->StateContacts
 
         ];

@@ -69,40 +69,51 @@
                                 <!-- Table head -->
                                 <div class="bg-light rounded p-3 d-none d-sm-block">
                                     <div class="row g-4">
-                                        <div class="col" v-for="plan in plans" :key="plan.id"><h6 class="fw-normal mb-0">{{plan.plan}} Plan</h6></div>
-                                        <!-- <div class="col-4"><h6 class="fw-normal mb-0">Semi Annual Plan</h6></div>
-                                        <div class="col"><h6 class="fw-normal mb-0">Annual Plan</h6></div> -->
+                                        <div class="col" v-for="plan, key in plans" :key="key"><h6 class="fw-normal mb-0">{{plan.plan}} Plan</h6></div>
+                                        <!-- <div class="col-4"><h6 class="fw-normal mb-0">Semi Annual Plan</h6></div> -->
+                                        <!-- <div class="col"><h6 class="fw-normal mb-0">Annual Plan</h6></div> -->
+                                    </div>
+                                </div>
+                                <div class="row g-4 align-items-sm-center border-bottom px-2 py-2">
+                                    <div class="col" v-for="plan, key in plans" :key="key">
+                                        <small class="d-block">${{plan.price}} (${{plan.discount}} Saved)</small>
+                                        <small class="me-1">{{plan.plan}}</small>
+                                    </div>
+                                </div>
+                                <div class="row g-4 align-items-sm-center border-bottom px-2 py-2">
+                                    <div class="col" v-for="plan, key in plans" :key="key">
+                                        <a class="btn btn-xs btn-primary-soft mb-0"  href="javascript:void(0)" @click.prevent="updatePlan(plan)">SELECT</a>
                                     </div>
                                 </div>
 
                                 <!-- Table data -->
-                                <div class="row g-4 align-items-sm-center border-bottom px-2 py-2">
+                                <!-- <div class="row g-4 align-items-sm-center border-bottom px-2 py-2"> -->
                                     <!-- Data item -->
 
                                     <!-- Data item -->
-                                    <div class="col" v-for="plan in plans" :key="plan.id">
-                                        <small class="d-block">${{plan.price}} (${{plan.discount}} Saved)</small> 
-                                        <div class="d-flex">
-                                            <small class="me-1">{{plan.plan}}</small>
+                                    <!-- <div class="col" v-for="plan in plans" :key="plan.id"> -->
+                                        <!-- <small class="d-block">${{plan.price}} (${{plan.discount}} Saved)</small>  -->
+                                        <!-- <div class="d-flex"> -->
+                                            <!-- <small class="me-1">{{plan.plan}}</small> -->
                                             <!-- <small class="mb-0 text-primary"> 02 Dec 2022</small> -->
-                                        </div>
-                                    </div>
+                                        <!-- </div> -->
+                                    <!-- </div> -->
 
                                    
                                 </div>
                                
-                                <div class="row  g-4 align-items-sm-center border-bottom px-2 py-2">
-                                   <div class="col" v-for="plan in plans" :key="plan.id">
-                                        <button class="btn btn-xs btn-primary-soft mb-0" href="javascript:void(0)" @click.prevent="getPlan(plan)">SELECT</button>
-                                    </div>
+                                <!-- <div class="row  g-4 align-items-sm-center border-bottom px-2 py-2"> -->
+                                   <!-- <div class="col" v-for="plan in plans" :key="plan.id"> -->
+                                        <!-- <button class="btn btn-xs btn-primary-soft mb-0" href="javascript:void(0)" @click.prevent="getPlan(plan)">SELECT</button> -->
+                                    <!-- </div> -->
                                    <!-- <div class="col-4">
                                         <a class="btn btn-xs btn-primary-soft mb-0"  href="javascript:void(0)" @click.prevent="plan(plans[1])">SELECT</a>
                                     </div>
                                    <div class="col-4">
                                         <a class="btn btn-xs btn-primary-soft mb-0" href="javascript:void(0)" @click.prevent="plan(plans[2])">SELECT</a>
                                     </div> -->
-                                </div>
-                            </div>
+                                <!-- </div> -->
+                            <!-- </div> -->
                         </div>
                         <p class="mb-0">
                             *For subscription plans comparison <span class="text-primary"><u>click here</u></span>
@@ -135,29 +146,29 @@
                                 <ul class="list-group list-group-borderless mb-0">
                                     <li class="list-group-item d-flex justify-content-between">
                                         <span class="h6 fw-light mb-0">Package:</span>
-                                        <span class="h6 fw-light mb-0">{{userplan.plan}}</span>
+                                        <span class="h6 fw-light mb-0">{{user_plan.plan}}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between">
                                         <span class="h6 fw-light mb-0">Price:</span>
-                                        <span class="h6 fw-light mb-0">${{userplan.price}}</span>
+                                        <span class="h6 fw-light mb-0">${{user_plan.price}}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between">
                                         <span class="h6 fw-light mb-0">Discount :</span>
-                                        <span class="h6 fw-light mb-0">${{userplan.discount}}</span>
+                                        <span class="h6 fw-light mb-0">${{user_plan.discount}}</span>
                                     </li>
 
                                     <li class="list-group-item py-0"><hr class="my-0" /></li>
                                     <!-- Divider -->
                                     <li class="list-group-item d-flex justify-content-between pb-0">
                                         <span class="h5 fw-normal mb-0"></span>
-                                        <span class="h5 fw-normal mb-0">${{(userplan.price-userplan.discount)}}</span>
+                                        <span class="h5 fw-normal mb-0">${{(user_plan.price-user_plan.discount)}}</span>
                                     </li>
                                 </ul>
 
                                 <div class="d-grid mt-2 gap-2">
                                     <div class="text-center"><label>Total Due</label></div>
                                     <div class="form-check form-check-inline mb-0">
-                                        <input class="form-check-input" v-model="userplan.agree" type="checkbox" />
+                                        <input class="form-check-input" v-model="user_plan.agree" type="checkbox" />
                                         <small class="form-check-label mb-0">I agree with <router-link to="/terms&condition">Terms and conditions</router-link></small>
                                     </div>
 
@@ -178,13 +189,12 @@
 </template>
 
 <script>
-import { RouterLink } from 'vue-router';
     export default {
         data() {
             return {
                 checked: false,
                 plans: [],
-                userplan: {
+                user_plan: {
                     loggedInUserID: "",
                     paypalURL: "https://www.sandbox.paypal.com/cgi-bin/webscr",
                     successURL: "https://hexaqore.com/bids/public/api/paypal_success_common_func",
@@ -235,61 +245,75 @@ import { RouterLink } from 'vue-router';
 
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                if (to.name == "") {
+                let user_plan = vm.$store.getters.user_plan
+                vm.user_plan.plan = user_plan.plan
+                vm.user_plan.price = user_plan.price
+                vm.user_plan.discount = user_plan.discount
+                // if (to.name == "") {
                     //  vm.$refs.tax_name.focus();
-                } else {
+                // } else {
                     // vm.savealert.id = to.params.id;
                     // vm.savealert.user_id = localStorage.getItem("id");
-                    vm.userplan.id = to.params.id;
-                    vm.$store
-                        .dispatch("post", { uri: "getSubscriptionPlan", data: vm.userplan })
-                        .then(function (response) {
-                            vm.userplan = response.data;
-                        })
-                        .catch(function (error) {
-                            vm.errors = error.response.data.errors;
-                            vm.$store.dispatch("error", error.response.data.message);
-                        });
-                }
+                    // vm.user_plan.id = to.params.id;
+                    // vm.$store
+                    //     .dispatch("post", { uri: "getSubscriptionPlan", data: vm.user_plan })
+                    //     .then(function (response) {
+                    //         vm.user_plan = response.data;
+                    //     })
+                    //     .catch(function (error) {
+                    //         vm.errors = error.response.data.errors;
+                    //         vm.$store.dispatch("error", error.response.data.message);
+                    //     });
+                // }
             });
         },
 
         computed: {
             total: function () {
                
-                return this.rows.reduce(function (total, userplan) {
-                    return (total = userplan.price - userplan.discount);
+                return this.rows.reduce(function (total, user_plan) {
+                    return (total = user_plan.price - user_plan.discount);
                 }, 0);
             },
         },
         mounted() {
             window.scrollTo(0, 0)
-            this.index();
-            this.checklogin();
-            // this.userplan.item_number = this.userplan.item_number + localStorage.getItem("id");
-            // this.userplan.loggedInUserID = localStorage.getItem("id");
+            this.index()
+            console.log(this.$store.getters.user_plan)
+            // this.checklogin();
+            // this.user_plan.item_number = this.user_plan.item_number + localStorage.getItem("id");
+            // this.user_plan.loggedInUserID = localStorage.getItem("id");
         },
         methods: {
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
 
             },
+
+            updatePlan(subscription){
+                this.user_plan.plan = subscription.plan
+                this.user_plan.price = subscription.price
+                this.user_plan.discount = subscription.discount
+            },
+
             subcribePlan(){
-                let loggedInUserID = this.$store?.getters?.user?.id
-                let itemName = this.userplan.plan
+                // console.log('userplan', this.user_plan)
+                // console.log('user', this.$store.getters.user)
+                let loggedInUserID = this.$store?.getters?.user?.user?.user_id
+                let itemName = this.user_plan.plan
                 var matches = itemName.match(/\b(\w)/g); // ['J','S','O','N']
                 var acronym = matches.join(''); // JSON
                 let itemNumber = acronym+'_'+loggedInUserID
-                let paypalAmt = this.userplan.price - this.userplan.discount
+                let paypalAmt = this.user_plan.price - this.user_plan.discount
                 let paypalValid = 1
                 console.log(itemName+' / '+acronym+' / '+itemNumber)
                 let params = '?loggedInUserID='+loggedInUserID+'&itemName='+itemName+'&itemNumber='+itemNumber+'&paypalAmt='+paypalAmt+'&paypalValid='+paypalValid
                 if(paypalAmt > 0){
                 
-                    if(this.userplan.agree)
+                    if(this.user_plan.agree)
                     //    <a href="this.$store.getters.baseUrl+'callPaypalSubscripton'+params" target="_blank"></a>             
                         window.open(this.$store.getters.baseUrl+'callPaypalSubscripton'+params,"_self")
                         // window.href(this.$store.getters.baseUrl+'callPaypalSubscripton'+params)
@@ -299,56 +323,70 @@ import { RouterLink } from 'vue-router';
                     this.$store.dispatch("error", "Amount cannot be less than 0")
                 }
             },
-            index() {
-                let vm = this;
-                let uri = "getPricingPlan?page=" + vm.meta.currentPage + "&search=" + vm.meta.search + "&order_by=" + vm.meta.order_by + "&field=" + vm.meta.field + "&per_page=" + vm.meta.per_page;
-
+            index(){
+                let vm = this
+                let uri = "getSubscriptionPlans"
                 vm.$store
                     .dispatch("post", { uri: uri })
                     .then(function (response) {
-                        for (let j=0; j< response.data.data.length; j++) {
-                            console.log("j",response.data.data[j]);
-                            if(response.data.data[j]["plan"]!='Monthly'){
-                                vm.plans.push(response.data.data[j]);
-                            }
-                        }
-                        vm.meta.totalRows = response.data.meta.total;
-                        vm.meta.lastPage = response.data.meta.last_page;
-                        vm.meta.from = response.data.meta.from;
-                        vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
-                       
+                        vm.plans = response.data
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
+            // index() {
+            //     let vm = this;
+            //     let uri = "getPricingPlan?page=" + vm.meta.currentPage + "&search=" + vm.meta.search + "&order_by=" + vm.meta.order_by + "&field=" + vm.meta.field + "&per_page=" + vm.meta.per_page;
+
+            //     vm.$store
+            //         .dispatch("post", { uri: uri })
+            //         .then(function (response) {
+            //             for (let j=0; j< response.data.data.length; j++) {
+            //                 console.log("j",response.data.data[j]);
+            //                 if(response.data.data[j]["plan"]!='Monthly'){
+            //                     vm.plans.push(response.data.data[j]);
+            //                 }
+            //             }
+            //             console.log('plans', vm.plans)
+            //             vm.meta.totalRows = response.data.meta.total;
+            //             vm.meta.lastPage = response.data.meta.last_page;
+            //             vm.meta.from = response.data.meta.from;
+            //             vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
+                       
+            //         })
+            //         .catch(function (error) {
+            //             vm.errors = error.response.data.errors;
+            //             vm.$store.dispatch("error", error.response.data.message);
+            //         });
+            // },
             getPlan(plan){
                 let vm = this;
-                vm.userplan = plan      
+                vm.user_plan = plan      
             },
             plan1(plans) {
                 let vm = this;
-                // this.userplan.id=plans[0];
-                vm.userplan.id = plans.id;
-                vm.userplan.plan = plans.plan;
-                vm.userplan.price = plans.price;
-                vm.userplan.days = plans.days;
-                vm.userplan.month = plans.month;
-                vm.userplan.month_desc = plans.month_desc;
-                vm.userplan.discount = plans.discount;
-                vm.userplan.a3 = plans.price - plans.discount;
-                vm.userplan.p3 = plans.month;
-                vm.userplan.custom = vm.userplan.loggedInUserID;
+                // this.user_plan.id=plans[0];
+                vm.user_plan.id = plans.id;
+                vm.user_plan.plan = plans.plan;
+                vm.user_plan.price = plans.price;
+                vm.user_plan.days = plans.days;
+                vm.user_plan.month = plans.month;
+                vm.user_plan.month_desc = plans.month_desc;
+                vm.user_plan.discount = plans.discount;
+                vm.user_plan.a3 = plans.price - plans.discount;
+                vm.user_plan.p3 = plans.month;
+                vm.user_plan.custom = vm.user_plan.loggedInUserID;
               
                 // v.firstName.concat(v.lastName);
 
-                // vm.userplan.item_number.concat(vm.userplan.loggedInUserID)
-                // vm.userplan.item_number=vm.userplan.item_number  +'.' +  localStorage.getItem('id');
+                // vm.user_plan.item_number.concat(vm.user_plan.loggedInUserID)
+                // vm.user_plan.item_number=vm.user_plan.item_number  +'.' +  localStorage.getItem('id');
             },
          
-            edit(userplan) {
-                this.$router.push("/Subscription_plan/" + userplan.id);
+            edit(user_plan) {
+                this.$router.push("/Subscription_plan/" + user_plan.id);
             },
             priceActive(){
 

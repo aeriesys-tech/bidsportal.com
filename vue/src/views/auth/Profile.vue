@@ -40,7 +40,7 @@
                     <div class="card border">
                         <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center" style="padding: 10px 22px">
                             <h5 class="card-header-title">Personal Information</h5>
-                            <router-link to="/bids" type="button" class="mb-0 btn btn-sm btn-primary">
+                            <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
                                 Back To Bids
                             </router-link>
                         </div>

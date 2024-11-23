@@ -37,9 +37,10 @@ class CreateStateTendersTable extends Migration
             $table->double('fees')->nullable();
             $table->string('type_of_award', 255)->nullable();
             $table->string('place_of_performance', 255)->nullable();
+            $table->text('contracting_office_address')->nullable();
             $table->string('notice_id', 255)->nullable();
             $table->text('description_link')->nullable();
-            $table->string('category_name',255)->nullable();
+            $table->text('category_name')->nullable();
             $table->string('notice_name', 255)->nullable();
             $table->string('agency_name', 255)->nullable();
             $table->string('document_path', 255)->nullable();

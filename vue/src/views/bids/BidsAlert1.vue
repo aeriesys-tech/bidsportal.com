@@ -26,7 +26,7 @@
                                 <h5 class="mb-2 mb-sm-0" v-else>Update Alert</h5>
 
                                 <div class="">
-                                    <router-link to="/bids" class="btn btn-primary me-2">Back To Bids</router-link>
+                                    <router-link to="/bids/state-opportunities" class="btn btn-primary me-2">Back To Bids</router-link>
                                     <router-link :to="{ path: '/bids/save-alert' }" class="btn btn-primary">Back</router-link>
                                 </div>
                             </div>

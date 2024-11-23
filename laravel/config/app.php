@@ -105,6 +105,17 @@ return [
         ),
     ],
 
+    'paypal_mode' => env('PAYPAL_MODE'),
+    'paypal_sandbox_id' => env('PAYPAL_SANDBOX_ID'),
+    'paypal_sandbox_url' => env('PAYPAL_SANDBOX_URL'),
+    'paypal_sandbox_client_id' => env('PAYPAL_SANDBOX_CLIENT_ID'),
+    'paypal_sandbox_client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
+
+    'paypal_live_url' => env('PAYPAL_LIVE_URL'),
+    'paypal_live_id' => env('PAYPAL_LIVE_ID'),
+    'paypal_live_client_id' => env('PAYPAL_LIVE_CLIENT_ID'),
+    'paypal_live_client_secret' => env('PAYPAL_LIVE_CLIENT_SECRET'),
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

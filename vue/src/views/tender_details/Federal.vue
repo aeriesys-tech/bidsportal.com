@@ -100,12 +100,12 @@
                             <div class="card shadow mt-1">
                                 <div class="card-body">
                                     <div class="row g-3 align-items-center justify-content-between mb-3">
-                                        <div class="col-md-6" v-if="federal_tender?.attachments?.length">
-                                            <strong>Downloads ({{ federal_tender?.attachments?.length}})</strong>
+                                        <div class="col-md-6" v-if="federal_tender?.federal_attachments?.length">
+                                            <strong>Downloads ({{ federal_tender?.federal_attachments?.length}})</strong>
                                         </div>
                                         <div class="col-md-6 text-end">
-                                            <span v-if="federal_tender?.attachments?.length">
-                                                <a target="_blank" :href="$store.state.baseUrl+'bidZipDownloadFromS3/'+ federal_tender.region?.region_id +'/'+ federal_tender.tdr_id" class="mybutton-secondary1 mb-0">
+                                            <span v-if="download_all_attachments">
+                                                <a target="_blank" :href="$store.state.baseUrl+'downloadFederalAttachments/' + federal_tender.federal_tender_id" class="mybutton-secondary1 mb-0">
                                                     <i class="bi bi-cloud-download"></i> Download All Attachments/Links
                                                 </a>
                                             </span>
@@ -129,14 +129,14 @@
                                                 </tr>
                                                 <tr v-for="federal_attachment, att_key in federal_tender.federal_attachments" :key="att_key">
                                                     <td>
-                                                        <img class="" width="25" :src="federal_attachment.image" alt="avatar" />
+                                                        <i :class="federal_attachment.attachment_icon" class="fa-fw me-2 fs-4"></i>
                                                     </td>
                                                     <td id="demo-3">{{ federal_attachment.attachment_name }}</td>
                                                     <td class="text-center">{{ federal_attachment.attachment_size }}</td>
                                                     <td class="text-center">{{ federal_attachment.attachment_date }}</td>
-                                                    <td class="text-center" v-if="federal_attachment.url">
+                                                    <td class="text-center" v-if="federal_attachment.download_url">
                                                         <a
-                                                            :href="federal_attachment.url"
+                                                            :href="federal_attachment.download_url"
                                                             target="_blank"
                                                             class="btn btn-light btn-round mb-0"
                                                             data-bs-toggle="tooltip"
@@ -398,7 +398,7 @@
                                     </div>
                                     <form class="card-body" style="min-width: 350px;">
                                         <div class="mb-3">
-                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="mails" ref="mails" />
+                                            <input class="form-control" placeholder="Employee/Colleague Email Address" autocomplet="off" type="text" id="recipient-name" v-model="mails" ref="mails" />
                                             <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0] }}</span>
                                         </div>
                                         <div class="mb-3">
@@ -574,7 +574,8 @@
                 erroralertmodal: false,
                 var: "",
                 from_path:null,
-                attachments:false
+                attachments:false,
+                download_all_attachments: false,
             };
         },
         
@@ -606,10 +607,9 @@
                     .dispatch("post", { uri: "getFederalTender", data: vm.federal_tender })
                     .then(function (response) {
                         vm.federal_tender = response.data.data
-                        vm.federal_tender.federal_attachments.map(function(element){
-                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
-                            element.image = vm.getFileExtension(file_extension)
-                        })
+                        vm.download_all_attachments = vm.federal_tender.federal_attachments.filter(
+                            attachment => attachment.download_url
+                        ).length >= 2;
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -668,7 +668,7 @@
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
             },
             //  window.location.reload();
@@ -741,10 +741,6 @@
                     .then(function (response) {
                         vm.isLoading = false;
                         vm.federal_tender = response.data.data
-                        vm.federal_tender.federal_attachments.map(function(element){
-                            let file_extension = element.attachment_name.slice(((element.attachment_name.lastIndexOf(".") - 1) >>> 0) + 2);
-                            element.image = vm.getFileExtension(file_extension)
-                        })
                     })
                     .catch(function (error) {
                         vm.isLoading = false;

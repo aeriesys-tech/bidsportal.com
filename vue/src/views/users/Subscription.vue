@@ -64,7 +64,7 @@
                         <!-- Card header -->
                         <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
                             <h5 class="card-header-title">Subscription Info</h5>
-                               <router-link to="/bids" type="button" class="mb-0 btn btn-sm btn-primary">
+                               <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
                                         Back To Bids
                                     </router-link>
                         </div>
@@ -342,7 +342,7 @@
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids");
+                    vm.$router.push("/bids/state-opportunities");
                 }
             },
             format_date(value) {

@@ -20,17 +20,17 @@
                 <div class="navbar-collapse collapse" id="navbarCollapse">
                     <ul class="navbar-nav navbar-nav-scroll" v-if="!$store.getters.user">
                         <li class="nav-item"><router-link class="nav-link" to="/">Home</router-link></li>
-                        <li  class="nav-item"><router-link class="nav-link" to="/bids">Bid Search</router-link></li>
-                        <li class="nav-item"><router-link class="nav-link" to="/plans_pricing">Pricing</router-link></li>
+                        <li  class="nav-item"><router-link class="nav-link" to="/bids/state-opportunities">Bid Search</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" to="/subscription_plans">Pricing</router-link></li>
                         <li class="nav-item"><router-link class="nav-link" to="/about_us">About Us</router-link></li>
                        <li class="nav-item"><router-link class="nav-link" to="/contact_us">Contact Us</router-link></li>
                     </ul>
                 </div>
                 <ul class="navbar-nav nav flex-row align-items-center list-unstyled ms-xl-auto">
-                    <li class="nav-item ms-0 ms-md-3" v-if="verifyPlan()" >
+                    <!-- <li class="nav-item ms-0 ms-md-3" v-if="verifyPlan()" >
                      <div><a href="javascript:void(0)" @click="checkurlbid()"   class="nav-link" > Upgrade</a></div>
-                    </li>
-                    <li class="nav-item ms-0 ms-md-3" v-if="verifyBid()">
+                    </li> -->
+                    <li class="nav-item ms-0 ms-md-3">
                      <div><a href="javascript:void(0)" @click="checkurlprice()"  class="nav-link" > Bid Search</a></div>
                     </li>
                     <li class="nav-item ms-0 ms-md-3">
@@ -161,8 +161,8 @@ export default {
    
     },
     checkurlprice(){
-            let vm= this;
-       vm.$router.push('/bids')
+        let vm= this;
+        vm.$router.push('/bids/state-opportunities')
     },
     logout() {
       let vm = this;

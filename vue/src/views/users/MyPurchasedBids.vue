@@ -65,7 +65,7 @@
                                    
                                          <!-- <h6 > This section Lists all of the individual Bids purchased - NOT APPLICABLE for subscriptions based user</h6> -->
                                          <h5 class="mb-2 mb-sm-0">My Purchased Bids</h5>
-                                         <router-link to="/bids" type="button" class="mb-0 btn btn-sm btn-primary">
+                                         <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
                                         Back To Bids
                                     </router-link>
                                     

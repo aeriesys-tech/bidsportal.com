@@ -26,14 +26,64 @@ class StateTender extends Model
         'fees',
         'type_of_award',
         'place_of_performance',
+        'contracting_office_address',
         'notice_id',
         'description_link',
         'category_name',
         'notice_name',
-        'agency_name'
+        'agency_name',
+        'status'
     ];
 
     protected $primaryKey = 'state_tender_id';
+
+    public function StateTenderDetails(){
+        
+        $place_of_performance = null;
+        if($this->StateOfficeAddress && !$place_of_performance){
+            if($this->StateOfficeAddress->city){
+                $place_of_performance = $this->StateOfficeAddress->city;                
+            }
+
+            if($this->StateOfficeAddress->state){   
+                $place_of_performance = $place_of_performance ?  $place_of_performance.', '.$this->StateOfficeAddress->state : $this->StateOfficeAddress->state;
+            }
+
+            if($this->StateOfficeAddress->country){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->StateOfficeAddress->country : $this->StateOfficeAddress->country;
+            }            
+        } else{
+            $place_of_performance = null;
+        }
+
+        if($this->StateNotice){
+            $notice = $this->StateNotice->notice_name;
+        }else{
+            $notice = null;
+        }
+
+        if($this->Category){
+            $category = $this->Category->category_name;
+        }else{
+            $category = null;
+        }
+        return ([
+            'place_of_performance' => $place_of_performance,
+            'notice' => $notice,
+            'tender_url' => $this->tender_url,
+            'category' => $category
+        ]);   
+    }
+
+    public function Country()
+    {
+        return $this->belongsTo('App\Models\Country','country_id','country_id');
+    }
+
+    public function State()
+    {
+        return $this->belongsTo('App\Models\State','state_id','state_id');
+    }
 
     public function StateNotice()
     {
