@@ -20,17 +20,28 @@ use App\Imports\StateTenderImport;
 use App\Jobs\UpdateFileSize;
 use ZipArchive;
 use Auth;
+use App\Models\StateContact;
 
 class StateTenderController extends Controller
 {
     public function paginateStateTenders(Request $request)
     {
-    	$request->validate([
+        $request->validate([
             'order_by' => 'required',
             'per_page' => 'required|numeric'
         ]);
-    	$query = StateTender::query();
-        $query->where('status', 1);
+        $query = StateTender::query();
+        // $query->where('status', 1);
+
+        if (isset($request->status)) {
+            if ($request->status === 'All') {
+            } elseif ($request->status === 'Active') {
+                $query->where('status', true);
+            } elseif ($request->status === 'Inactive') {
+                $query->where('status', false);
+            }
+        }
+        
         if ($request->active && $request->expired) {
             $query->whereDate('expiry_date', '>=', now()->toDateString())
               ->orWhereDate('expiry_date', '<', now()->toDateString());
@@ -40,10 +51,10 @@ class StateTenderController extends Controller
             $query->whereDate('expiry_date', '<', now()->toDateString());
         }
 
-    	if($request->posted_date && $request->posted_date != 'custom'){
+        if($request->posted_date && $request->posted_date != 'custom'){
             $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
-    		$query->whereDate('posted_date', '>=', $previous_date);
-    	}
+            $query->whereDate('posted_date', '>=', $previous_date);
+        }
 
         if($request->posted_from_date && $request->posted_to_date){
             $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
@@ -58,9 +69,9 @@ class StateTenderController extends Controller
             $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
         }
 
-    	if(!empty($request->state_notices)){
-    		$query->whereIn('state_notice_id', $request->state_notices);
-    	}
+        if(!empty($request->state_notices)){
+            $query->whereIn('state_notice_id', $request->state_notices);
+        }
 
         if(!empty($request->states)){
             $query->whereIn('state_id', $request->states);
@@ -70,7 +81,7 @@ class StateTenderController extends Controller
             $query->whereIn('state_agency_id', $request->state_agencies);
         }
 
-    	if (!empty($request->keywords)) {
+        if (!empty($request->keywords)) {
             if (is_string($request->keywords)) {
                 $keywords = array_map('trim', explode(',', $request->keywords));
             } else {
@@ -85,9 +96,18 @@ class StateTenderController extends Controller
             $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
         }
 
+        if($request->search!='')
+        {
+            $query->where('tender_no', 'like', "%$request->search%")->orWhere('title', 'like', "%$request->search%")
+            ->orWhere('opening_date', 'like', "%$request->search%")->orWhereHas('Category', function($que) use($request){
+                $que->where('category_name', 'like', "%$request->search%");
+            })->orwhereHas('State', function($qu) use($request){
+                $qu->where('state_name', 'like', "%$request->search%");
+            });
+        }
 
-	    $query->orderBy('state_tender_id', 'DESC');
-    	$state_tenders = $query->paginate($request->per_page); 
+        $query->orderBy('state_tender_id', 'DESC');
+        $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
     }
 
@@ -165,8 +185,8 @@ class StateTenderController extends Controller
         return new StateTenderDetailResource($state_tender);
     }
 
-    public function addStateTender(Request $request){
-
+    public function addStateTender(Request $request)
+    {
         $data = $request->validate([
             'tender_no' => 'required',
             'title' => 'required',
@@ -181,30 +201,87 @@ class StateTenderController extends Controller
             'state_agency_id' => 'nullable',
             'tender_url' => 'nullable',
             'fees' => 'nullable',
+            'state_address_office.city' => 'nullable',
+            'state_address_office.state' => 'nullable',
+            'state_address_office.country' => 'nullable',
+            'state_address_office.zip_code' => 'nullable',
             'primary_address.title' => 'nullable|string|max:255',
+            'primary_address.email' => 'nullable|email',
+            'primary_address.phone' => 'nullable',
+            'primary_address.full_name' => 'nullable',
+            'secondary_address.email' => 'nullable|email',
+            'secondary_address.phone' => 'nullable',
+            'secondary_address.title' => 'nullable|string|max:255',
+            'secondary_address.full_name' => 'nullable'
         ]);
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
 
         $state_tender = StateTender::create($data);
 
-        if($state_tender){
-            for($i=0; $i<count($request->attachments); $i++){
-                $attachment = $request->attachments[$i];
+        if($request->state_office_address)
+        {
+            $address = json_decode($request->state_office_address, true);
+            StateOfficeAddress::updateOrCreate([
+                'state_tender_id' => $state_tender->state_tender_id,
+                'city' => $address['city'],
+                'state' => $address['state'],
+                'country' => $address['country'],
+                'zip_code' => $address['zip_code'] ?? null
+            ]);
+        }
+
+        if ($request->primary_address) 
+        {
+            $primaryAddress = json_decode($request->primary_address, true);
+            StateContact::updateOrCreate(
+                [
+                    'state_tender_id' => $state_tender->state_tender_id,
+                    'type' => 'Primary',
+                    'email' => $primaryAddress['email'] ?? null,
+                    'phone' => $primaryAddress['phone'] ?? null,
+                    'title' => $primaryAddress['title'] ?? null,
+                    'full_name' => $primaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+    
+        if ($request->secondary_address) 
+        {
+            $secondaryAddress = json_decode($request->secondary_address, true);
+            StateContact::updateOrCreate(
+                [
+                    'state_tender_id' => $state_tender->state_tender_id,
+                    'type' => 'Secondary',
+                    'email' => $secondaryAddress['email'] ?? null,
+                    'phone' => $secondaryAddress['phone'] ?? null,
+                    'title' => $secondaryAddress['title'] ?? null,
+                    'full_name' => $secondaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+
+        if (!empty($request->attachments) && is_array($request->attachments)) {
+            foreach ($request->attachments as $attachment) {
                 $attachment_name = $attachment->getClientOriginalName();
                 $attachment_size = $attachment->getSize();
                 $filePath = 'state/' . $attachment_name; 
                 $result = Storage::disk('s3')->put($filePath, file_get_contents($attachment));
+        
                 if ($result) {
                     $attachment_url = Storage::disk('s3')->url($filePath);
-                    if($attachment_url){
-                        StateAttachment::updateOrCreate([
-                            'state_tender_id' => $state_tender->state_tender_id,
-                            'attachment_name' => $attachment_name,
-                            'attachment_size' => $attachment_size,
-                            'attachment_date' => date('Y-m-d'),
-                            'attachment_url' => $attachment_url
-                        ]);
+                    if ($attachment_url) {
+                        StateAttachment::updateOrCreate(
+                            [
+                                'state_tender_id' => $state_tender->state_tender_id,
+                                'attachment_name' => $attachment_name,
+                            ],
+                            [
+                                'attachment_size' => $attachment_size,
+                                'attachment_date' => now()->format('Y-m-d'),
+                                'attachment_url' => $attachment_url,
+                            ]
+                        );
                     }
                 } else {
                     return response()->json([
@@ -212,10 +289,11 @@ class StateTenderController extends Controller
                     ], 500);
                 }
             }
-            return response()->json([
-                'message' => 'State Tender added successfully',
-            ]);
         }
+
+        return response()->json([
+            'message' => 'State Tender added successfully',
+        ]);
     }
 
     public function updateStateBids(Request $request)
@@ -368,4 +446,131 @@ class StateTenderController extends Controller
         }
     }
 
+    public function updateTenderState(Request $request)
+    {
+        $data = $request->validate([
+            'state_tender_id' => 'required|exists:state_tenders,state_tender_id',
+            'tender_no' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'opening_date' => 'required',
+            'expiry_date' => 'required',
+            'country_id' => 'required',
+            'state_id' => 'required',
+            'tender_type_id' => 'nullable',
+            'state_notice_id' => 'nullable',
+            'category_id' => 'nullable',
+            'state_agency_id' => 'nullable',
+            'tender_url' => 'nullable',
+            'primary_address.title' => 'nullable|string|max:255',
+            'primary_address.email' => 'nullable',
+            'primary_address.phone' => 'nullable',
+            'primary_address.full_name' => 'nullable',
+            'secondary_address.email' => 'nullable',
+            'secondary_address.phone' => 'nullable',
+            'secondary_address.title' => 'nullable|string|max:255',
+            'secondary_address.full_name' => 'nullable'
+        ]);
+        $data['fees'] = isset($request->fees) ? (is_numeric($request->fees) ? $request->fees : 0) : null;
+        $data['posted_date'] = date('Y-m-d H:i:s');
+        $data['status'] = true;
+
+        $state_tender = StateTender::where('state_tender_id', $request->state_tender_id)->first();
+        $state_tender->update($data);
+
+        if($request->state_office_address)
+        {
+            $address = json_decode($request->state_office_address, true);
+            StateOfficeAddress::updateOrCreate([
+                'state_tender_id' => $state_tender->state_tender_id
+                ],
+                [
+                'city' => $address['city'],
+                'state' => $address['state'],
+                'country' => $address['country'],
+                'zip_code' => $address['zip_code'] ?? null
+            ]);
+        }
+
+        if ($request->primary_address) {
+            $primaryAddress = json_decode($request->primary_address, true);
+            StateContact::updateOrCreate(
+                [
+                    'state_tender_id' => $state_tender->state_tender_id,
+                    'type' => 'Primary'
+                ],
+                [
+                    'email' => $primaryAddress['email'] ?? null,
+                    'phone' => $primaryAddress['phone'] ?? null,
+                    'title' => $primaryAddress['title'] ?? null,
+                    'full_name' => $primaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+    
+        // Update secondary address
+        if ($request->secondary_address) {
+            $secondaryAddress = json_decode($request->secondary_address, true);
+            StateContact::updateOrCreate(
+                [
+                    'state_tender_id' => $state_tender->state_tender_id,
+                    'type' => 'Secondary'
+                ],
+                [
+                    'email' => $secondaryAddress['email'] ?? null,
+                    'phone' => $secondaryAddress['phone'] ?? null,
+                    'title' => $secondaryAddress['title'] ?? null,
+                    'full_name' => $secondaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+
+        if (!empty($request->attachments) && is_array($request->attachments)) {
+            foreach ($request->attachments as $attachment) {
+                $attachment_name = $attachment->getClientOriginalName();
+                $attachment_size = $attachment->getSize();
+                $filePath = 'state/' . $attachment_name; 
+                $result = Storage::disk('s3')->put($filePath, file_get_contents($attachment));
+    
+                if ($result) {
+                    $attachment_url = Storage::disk('s3')->url($filePath);
+                    if ($attachment_url) {
+                        StateAttachment::updateOrCreate(
+                            [
+                                'state_tender_id' => $state_tender->state_tender_id,
+                                'attachment_name' => $attachment_name,
+                            ],
+                            [
+                                'attachment_size' => $attachment_size,
+                                'attachment_date' => now()->format('Y-m-d'),
+                                'attachment_url' => $attachment_url,
+                            ]
+                        );
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'File upload failed',
+                    ], 500);
+                }
+            }
+        }
+        return response()->json([
+            'message' => 'State Tender updated successfully',
+        ]);
+    }
+
+    public function deleteStateTender(Request $request)
+    {
+        $request->validate([
+            'state_tender_id' => 'required|exists:state_tenders,state_tender_id'
+        ]);
+
+        StateOfficeAddress::where('state_tender_id', $request->state_tender_id)->forceDelete();
+        StateContact::where('state_tender_id', $request->state_tender_id)->forceDelete();
+        StateAttachment::where('state_tender_id', $request->state_tender_id)->forceDelete();
+        StateTender::where('state_tender_id', $request->state_tender_id)->forceDelete();
+        return response()->json([
+            "message" => "State Tender Deleted Successfully"
+        ]);
+    }
 }

@@ -235,7 +235,7 @@
                     .dispatch("post", {uri: uri,data: vm.payment})
                     .then(function (response) {
 
-                        vm.payment = response.data;
+                        vm.payment = response.data.data
                         vm.isLoading = false;
                      
                      })

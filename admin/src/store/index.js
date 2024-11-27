@@ -7,11 +7,12 @@ export default createStore({
     state: {
         // apiUrl: "https://bidsportal.com/api/",
         apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
+        // apiUrl: "http://192.168.0.213/bidsportal.com/laravel/public/",
         user: null,
         token: "",
         // permissions: [],
-        authenticated:false,
-        
+        authenticated: false,
+
 
     },
     mutations: {
@@ -40,7 +41,7 @@ export default createStore({
         },
         // permissions(state) {
         //     return state.permissions;
-        // }, 
+        // },
     },
 
     actions: {
@@ -53,7 +54,7 @@ export default createStore({
         // async setPermissions(context, payload) {
         //     await context.commit("setPermissions", payload);
         // },
-        
+
         async logout(context) {
             await context.commit("setUser", null);
             await context.commit("setToken", "");
@@ -62,7 +63,7 @@ export default createStore({
         auth(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.apiUrl +'api/'+ payload.uri, payload.data)
+                    .post(this.state.apiUrl + 'api/' + payload.uri, payload.data)
                     .then(function (response) {
                         resolve(response);
                     })
@@ -92,7 +93,7 @@ export default createStore({
         post(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.apiUrl +'api/'+ payload.uri, payload.data, {
+                    .post(this.state.apiUrl + 'api/' + payload.uri, payload.data, {
                         headers: {
                             Authorization: "Bearer" + " " + context.getters.token,
                         },
@@ -115,7 +116,7 @@ export default createStore({
         multipart_formdata(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.apiUrl +'api/'+ payload.uri, payload.data, {
+                    .post(this.state.apiUrl + 'api/' + payload.uri, payload.data, {
                         headers: {
                             Authorization: "Bearer" + " " + context.getters.token,
                             "Content-Type": "multipart/form-data"

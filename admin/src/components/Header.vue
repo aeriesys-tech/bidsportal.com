@@ -4,7 +4,8 @@
             <img src="../../src/assets/bidsportal_logo.png" class="logo" width="100" />
             <span href="javascript:void(0)" class="sidebar-logo ml-20"><span class="title">BidsPortal </span></span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -13,15 +14,68 @@
                     <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)" role="button" aria-expanded="false">Bids</a>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Bids</a>
                     <ul class="dropdown-menu">
-                        <li>
+                        <!-- <li>
                             <router-link to="/add_state_tender" class="dropdown-item"><i class="ri-donut-chart-fill"></i> Add State Bid</router-link>
-                        </li>
+                        </li> -->
                         <li>
-                            <router-link to="/state_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i> State Bids</router-link>
+                            <router-link to="/state_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                                State Bids</router-link>
+                        </li>
+                         <li>
+                            <router-link to="/federal_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                                Federal Bids</router-link>
                         </li>
                     </ul>
+                </li>
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Users</a>
+                    <ul class="dropdown-menu">
+                        <li >
+                            <router-link to="/users" class="dropdown-item"><i class="ri-group-line"></i> Users</router-link>
+                        </li>
+                         <li >
+                            <router-link to="/subscriptions" class="dropdown-item"><i class="ri-money-dollar-circle-line"></i> Subscriptions</router-link>
+                        </li>
+                         <li >
+                            <router-link to="/alerts" class="dropdown-item"><i class="ri-error-warning-line"></i> Alerts</router-link>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/admins" class="nav-link">Admin Management</router-link>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Agencies</a>
+                    <ul class="dropdown-menu">
+                         <li >
+                            <router-link to="/federal_agencies" class="dropdown-item"><i class="ri-star-line"></i> Federal Agencies</router-link>
+                        </li>
+                        <li >
+                            <router-link to="/state_agencies" class="dropdown-item"><i class="ri-government-line"></i> State Agencies</router-link>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Notices</a>
+                    <ul class="dropdown-menu">
+                         <li >
+                            <router-link to="/federal_notices" class="dropdown-item"><i class="ri-star-line"></i> Federal Notices</router-link>
+                        </li>
+                        <li >
+                            <router-link to="/state_notices" class="dropdown-item"><i class="ri-government-line"></i> State Notices</router-link>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/categories" class="nav-link">Category</router-link>
                 </li>
             </ul>
             <div class="dropdown dropdown-profile ms-3 ms-xl-4 mt-4" v-if="$store.getters.user">
@@ -41,7 +95,8 @@
                         </nav>
                         <hr />
                         <nav class="nav">
-                            <a href="javascript:void(0)" @click.prevent="logout()"><i class="ri-logout-box-r-line"></i> Log Out</a>
+                            <a href="javascript:void(0)" @click.prevent="logout()"><i class="ri-logout-box-r-line"></i>
+                                Log Out</a>
                         </nav>
                     </div>
                 </div>
@@ -50,128 +105,131 @@
     </nav>
 </template>
 <script>
-    export default {
-        name: "Header",
-        data() {
-            return {
-                project_label_status: true,
-                project_label: "Project Management",
-                permissions: [],
-                project_groups: [],
-                project_types: [],
-                project_categories: [],
-                projects: [],
-                project_group_projects: [],
-                meta: {
-                    project_group_id: "",
-                    project_type_id: "",
-                    project_category_id: "",
-                    project_id: "",
-                },
-            };
-        },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-                console.log(to);
-            });
-        },
-        mounted() {
-        },
-
-        methods: {
-
-            logout() {
-                let vm = this;
-                let loader = vm.$loading.show();
-                vm.$store
-                    .dispatch("post", { uri: "adminLogout", data: {id:vm.$store.getters.user.id} })
-                    .then(function () {
-                        loader.hide();
-                        vm.$store.dispatch("logout");
-                        vm.$router.push("/");
-                    })
-                    .catch(function (error) {
-                        loader.hide();
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+export default {
+    name: "Header",
+    data() {
+        return {
+            project_label_status: true,
+            project_label: "Project Management",
+            permissions: [],
+            project_groups: [],
+            project_types: [],
+            project_categories: [],
+            projects: [],
+            project_group_projects: [],
+            meta: {
+                project_group_id: "",
+                project_type_id: "",
+                project_category_id: "",
+                project_id: "",
             },
+        };
+    },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            console.log(to);
+        });
+    },
+    mounted() {
+    },
+
+    methods: {
+
+        logout() {
+            let vm = this;
+            let loader = vm.$loading.show();
+            vm.$store
+                .dispatch("post", { uri: "adminLogout", data: vm.$store.getters.user })
+                .then(function () {
+                    loader.hide();
+                    vm.$store.dispatch("logout");
+                    vm.$router.push("/");
+                })
+                .catch(function (error) {
+                    loader.hide();
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
         },
-    };
+    },
+};
 </script>
 <style scoped>
-    .sidebar-prime1 {
-        background-color: #506fd9;
-        background-image: linear-gradient(to bottom, #324daa, #506fd9);
-    }
+.sidebar-prime1 {
+    background-color: #506fd9;
+    background-image: linear-gradient(to bottom, #324daa, #506fd9);
+}
 
-    .header-main .nav-link {
-        color: lavender;
-    }
+.header-main .nav-link {
+    color: lavender;
+}
 
-    .header-main .nav-link.active {
-        font-weight: 600;
-        color: white;
-        letter-spacing: -0.1px;
-    }
+.header-main .nav-link.active {
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.1px;
+}
 
-    .collpase {
-        background-color: #506fd9;
-        background-image: linear-gradient(to bottom, #324daa, #506fd9);
-    }
+.collpase {
+    background-color: #506fd9;
+    background-image: linear-gradient(to bottom, #324daa, #506fd9);
+}
 
-    .show {
-        background-color: #506fd9;
-    }
+.show {
+    background-color: #506fd9;
+}
 
-    .dropdown-menu {
-        background-color: white !important;
-    }
+.dropdown-menu {
+    background-color: white !important;
+}
 
-    @media (min-width: 992px) {
-        .navbar-expand-lg .navbar-collapse {
-            display: flex !important;
-            flex-basis: auto;
-            justify-content: space-between;
-        }
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+        justify-content: space-between;
     }
+}
 
-    /* drop down */
-    .dropdown-menu li {
-        position: relative;
-    }
+/* drop down */
+.dropdown-menu li {
+    position: relative;
+}
 
-    .dropdown-menu .dropdown-submenu {
-        display: none;
-        position: absolute;
-        left: 100%;
-        top: -7px;
-    }
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
 
-    .dropdown-menu .dropdown-submenu-left {
-        right: 100%;
-        left: auto;
-    }
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
 
-    .dropdown-menu > li:hover > .dropdown-submenu {
-        display: block;
-    }
-    .sub_title {
-        font-size: 12px;
-        padding-left: 10px;
-        font-weight: 200;
-    }
-    .title {
-        font-weight: bold;
-        font-size: 25px;
-        padding-left: 10px;
-        padding-bottom: 0px;
-        letter-spacing: 2px;
-        display: block !important;
-        margin-bottom: -10px;
-    }
-    .font_size{
-        font-size:10pt;
-        margin-right:4em;
-    }
+.dropdown-menu>li:hover>.dropdown-submenu {
+    display: block;
+}
+
+.sub_title {
+    font-size: 12px;
+    padding-left: 10px;
+    font-weight: 200;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 25px;
+    padding-left: 10px;
+    padding-bottom: 0px;
+    letter-spacing: 2px;
+    display: block !important;
+    margin-bottom: -10px;
+}
+
+.font_size {
+    font-size: 10pt;
+    margin-right: 4em;
+}
 </style>

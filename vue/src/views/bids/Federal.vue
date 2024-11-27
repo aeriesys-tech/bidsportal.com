@@ -508,9 +508,9 @@
                                                         <td>{{ federal_tender.place_of_performance }}</td>
                                                         <td style="width: 110px;">{{ federal_tender.expiry_date }}</td>
                                                         <td>
-                                                            <span v-if="checkCartItem(federal_tender.federal_tender_id)">
+                                                            <span v-if="federal_tender.cart_icon">
                                                                 <div>
-                                                                    <a href="javascript:void(0)" @click="addCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
+                                                                    <a href="javascript:void(0)" @click="addToCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
                                                                 </div>
                                                             </span>
                                                             <span v-else>

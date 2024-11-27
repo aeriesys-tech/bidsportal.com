@@ -31,29 +31,48 @@ class CartItemController extends Controller
 	    }
     }
 
-    public function getCartItemsCount(Request $request){
-    	$user = Auth::User();
-    	$cart_items = CartItem::where('user_id', $user->user_id)->get();
-    	$total_items = count($cart_items);
-    	$federal_fees = FederalTender::whereHas('CartItem', function($que) use($user){
-    		$que->where('user_id', $user->user_id);
-    	})->sum('fees');
-    	$state_fees = StateTender::whereHas('CartItem', function($que) use($user){
-    		$que->where('user_id', $user->user_id);
-    	})->sum('fees');
-    	$federal_fees = $federal_fees?? 0; 
-    	$state_fees = $state_fees?? 0;
-    	$total = $federal_fees + $state_fees;
+    public function getCartItemsCount(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-    	return response()->json([
-    		'items' => $total_items,
-    		'total' => $total
-    	]);
+        $cutoff_date = Carbon::now()->subDays(30);
+
+        $cart_items_count = CartItem::where('user_id', $user->user_id)
+            ->where('cart_item_date', '>=', $cutoff_date)
+            ->count();
+
+        $federal_fees = FederalTender::whereHas('CartItem', function ($que) use ($user, $cutoff_date) {
+            $que->where('user_id', $user->user_id)
+                ->where('cart_item_date', '>=', $cutoff_date);
+        })->sum('fees');
+
+        $state_fees = StateTender::whereHas('CartItem', function ($que) use ($user, $cutoff_date) {
+            $que->where('user_id', $user->user_id)
+                ->where('cart_item_date', '>=', $cutoff_date);
+        })->sum('fees');
+
+        $federal_fees = $federal_fees ?? 0;
+        $state_fees = $state_fees ?? 0;
+        $total = $federal_fees + $state_fees;
+
+        return response()->json([
+            'items' => $cart_items_count,
+            'total' => $total,
+        ]);
     }
+
 
     public function getCartItems(Request $request){
     	$user = Auth::User();
-    	$cart_items = CartItem::where('user_id', $user->user_id)->get();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $cutoff_date = Carbon::now()->subDays(30);
+    	$cart_items = CartItem::where('user_id', $user->user_id)->where('cart_item_date', '>=', $cutoff_date)->get();
     	return CartItemResource::collection($cart_items);
     }
 
@@ -62,5 +81,13 @@ class CartItemController extends Controller
     		'cart_item_id' => 'required'
     	]);
     	return CartItem::where('cart_item_id', $request->cart_item_id)->delete();
+    }
+
+    public function clearCart(Request $request){
+        $user = Auth::User();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        return CartItem::where('user_id', $user->user_id)->delete();
     }
 }

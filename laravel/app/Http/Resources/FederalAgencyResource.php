@@ -14,6 +14,11 @@ class FederalAgencyResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'federal_agency_id' => $this->federal_agency_id,
+            'agency_name' => $this->agency_name,
+            'agency_code' => $this->agency_code,
+            'status' => $this->deleted_at?false:true
+        ];
     }
 }

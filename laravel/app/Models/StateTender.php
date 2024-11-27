@@ -119,4 +119,14 @@ class StateTender extends Model
         return $this->hasMany('App\Models\StateContact','state_tender_id','state_tender_id');
     }
     
+    public function StateContactPrimary()
+    {
+        return $this->hasOne('App\Models\StateContact', 'state_tender_id', 'state_tender_id')
+                ->where('type', 'Primary');
+    }
+    
+    public function StateContactSecondary()
+    {
+        return $this->hasOne('App\Models\StateContact','state_tender_id','state_tender_id')->where('type', 'Secondary');
+    }
 }

@@ -84,24 +84,35 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Email ID<span class="text-danger">*</span></label>
-                                            <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="password.email" disabled />
+                                            <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" disabled />
                                             <span v-if="errors.email" class="invalid-feedback">{{ errors.email[0] }}</span>
                                         </div>
                                         <!-- New password -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Current password</label>
+                                            <div class="input-group">
+                                                <input class="form-control fakepassword" placeholder="Current password" :type="current_password_type" :class="{ 'is-invalid': errors.current_password }" v-model="password.current_password" />
+                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('current_password_type', 'current_password_icon')">
+                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="current_password_icon"></i>
+                                                    <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
+                                                </span>
+                                            </div>
+											<span v-if="errors.current_password" class="invalid-feedbacks">{{ errors.current_password[0] }}</span>
+                                        </div>
+
                                         <div class="mb-3">
                                             <label class="form-label"> Enter new password</label>
                                             <div class="input-group">
                                                 <input
                                                     class="form-control fakepassword"
                                                     placeholder="Enter New password"
-                                                    :type="type"
-                                                    id="psw-input"
+                                                    :type="new_password_type"
                                                     :class="{ 'is-invalid': errors.new_password }"
                                                     ref="password"
                                                     v-model="password.new_password"
                                                 />
-                                                <span class="input-group-text p-0 bg-transparent" @click="toggle">
-                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="icon"></i>
+                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('new_password_type', 'new_password_icon')">
+                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="new_password_icon"></i>
                                                     <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
                                                 </span>
                                             </div>
@@ -111,18 +122,18 @@
                                         <div class="mb-3">
                                             <label class="form-label">Confirm new password</label>
                                             <div class="input-group">
-                                                <input class="form-control fakepassword" placeholder="Enter password" :type="type1" id="psw-input" :class="{ 'is-invalid': errors.confirm_password }" v-model="password.confirm_password" />
-                                                <span class="input-group-text p-0 bg-transparent" @click="toggle1">
-                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="icon1"></i>
+                                                <input class="form-control fakepassword" placeholder="Retype password" :type="confirm_password_type" :class="{ 'is-invalid': errors.new_password_confirmation }" v-model="password.new_password_confirmation" />
+                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('confirm_password_type', 'confirm_password_icon')">
+                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="confirm_password_icon"></i>
                                                     <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
                                                 </span>
                                             </div>
-											<span v-if="errors.confirm_password" class="invalid-feedbacks">{{ errors.confirm_password[0] }}</span>
+											<span v-if="errors.new_password_confirmation" class="invalid-feedbacks">{{ errors.new_password_confirmation[0] }}</span>
                                         </div>
 
                                         <div class="text-end" style="margin-top: 10px !important; margin-bottom: 36px !important;">
                                             <br />
-                                            <a href="javascript:void(0)" class="btn btn-primary mb-0 btn-sm" @click.prevent="UpdatePassword()">Change Password</a>
+                                            <a href="javascript:void(0)" class="btn btn-primary mb-0 btn-sm" @click.prevent="changePassword()">Change Password</a>
                                             <br />
                                         </div>
                                     </div>
@@ -165,81 +176,68 @@
                 regSetAside: [],
                 SetAsideStatus: [],
                 user: {
-                    title: "",
-                    name: "",
-                    id: "",
-                    email: "",
-                    role: "",
-                    mobile_number: "",
-                    avatar: "",
-                    phone: "",
-                    company_name: "",
-                    web_address: "",
-                    mail_address: "",
-                    city: "",
-                    state: "",
-                    zipcode: "",
+                    title: '',
+                    name: '',
+                    id: '',
+                    email: '',
+                    role: '',
+                    mobile_number: '',
+                    avatar: '',
+                    phone: '',
+                    company_name: '',
+                    web_address: '',
+                    mail_address: '',
+                    city: '',
+                    state: '',
+                    zipcode: '',
                     sub_details: {},
-                    socioeconomic_status: "",
+                    socioeconomic_status: ''
                 },
                 password: {
-                    id: "",
                     email: "",
-                    // current_password: "",
+                    current_password: "",
                     new_password: "",
-                    confirm_password: "",
+                    new_password_confirmation: "",
                 },
                 errors: [],
                 isLoading: false,
                 fullPage: true,
+                current_password_type : 'password',
+                new_password_type : 'password',
+                confirm_password_type : 'password',
+                current_password_icon : false,
+                new_password_icon : false,
+                confirm_password_icon : false
             };
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.isLoading = true;
-
-                vm.user.id = vm.$store.getters.user?.id;
-                vm.$store
-                    .dispatch("post", { uri: "showUser", data: vm.user })
-                    .then(function (response) {
-                        vm.isLoading = false;
-                        vm.user = response.data.data;
-                        vm.password.email = vm.user.email;
-                        vm.password.user_id = vm.user.user_id;
-                        vm.regSetAside = vm.user.socioeconomic_status.split(",");
-                    })
-                    .catch(function (error) {
-                        vm.isLoading = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                vm.user = vm.$store.getters.user
+                // vm.$store
+                //     .dispatch("post", { uri: "showUser", data: vm.user })
+                //     .then(function (response) {
+                //         vm.isLoading = false;
+                //         vm.user = response.data.data;
+                //         vm.password.email = vm.user.email;
+                //         vm.password.user_id = vm.user.user_id;
+                //         vm.regSetAside = vm.user.socioeconomic_status.split(",");
+                //     })
+                //     .catch(function (error) {
+                //         vm.isLoading = false;
+                //         vm.errors = error.response.data.errors;
+                //         vm.$store.dispatch("error", error.response.data.message);
+                //     });
             });
         },
         mounted() {
             let vm = this;
             if (vm.$store.getters.user) {
-                this.getUserSubscriptions();
-                this.getuserbids();
+                // this.getUserSubscriptions();
+                // this.getuserbids();
             }
         },
         methods: {
-            getUserSubscriptions() {
-                let vm = this;
-                vm.subscriptions.user_id = vm.$store.getters.user.subscription_id;
-                vm.$store
-                    .dispatch("post", {
-                        uri: "getUserSubscriptions",
-                        data: vm.subscriptions,
-                    })
-                    .then(function (response) {
-                        vm.subscriptions = response.data.data;
-                        vm.getPaymentSubscriptions();
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
+           
 
             getPaymentSubscriptions() {
                 let vm = this;
@@ -302,19 +300,29 @@
                 }
             },
             // getBids
-            UpdatePassword() {
+            changePassword() {
                 let vm = this;
-                vm.password.id = vm.$store.getters.user.id;
+                vm.password.email = vm.user.email
                 vm.$store
                     .dispatch("post", {
-                        uri: "updatePasswordFromProfile/" + vm.password.id,
-                        data: vm.password,
+                        uri: "changePassword",
+                        data: vm.password
                     })
                     .then(function () {
                         vm.$store.dispatch("success", "User Password Updated successfully ");
                         vm.errors == [];
                         vm.disabled == false;
-                        vm.$router.push("/login");
+                        vm.$store.dispatch('setUser', null)
+                        vm.$store.dispatch('setToken', null)
+                        vm.$store.commit("setCartProducts",[])
+                        localStorage.removeItem("user")
+                        localStorage.removeItem("token")
+                        localStorage.removeItem("cartItems")
+                        localStorage.removeItem("alert")
+                        localStorage.removeItem("bidsdetails")
+                        localStorage.removeItem("naicses")
+                        localStorage.removeItem("psces")
+                        vm.$router.push("/login")
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -335,27 +343,13 @@
                 }
             },
 
-            toggle() {
-                let vm = this;
-
-                if (vm.type == "password") {
-                    vm.type = "text";
-                    vm.icon = true;
-                } else {
-                    vm.type = "password";
-                    vm.icon = false;
-                }
-            },
-
-            toggle1() {
-                let vm = this;
-
-                if (vm.type1 == "password") {
-                    vm.type1 = "text";
-                    vm.icon1 = true;
-                } else {
-                    vm.type1 = "password";
-                    vm.icon1 = false;
+            togglePassword(field, icon) {
+                if(this[field] == 'password'){
+                    this[field] = 'text'
+                    this[icon] = true
+                }else{
+                    this[field] = 'password'
+                    this[icon] = false
                 }
             },
 

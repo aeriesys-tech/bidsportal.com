@@ -405,4 +405,25 @@ class AlertController extends Controller
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
 	}
+
+	public function paginateAllAlerts(Request $request)
+	{
+		$request->validate([
+			'order_by' => 'required',
+			'per_page' => 'required|numeric',
+			'keyword' => 'required'
+		]);
+
+		$query = Alert::query();
+	    
+		if($request->search!='')
+		{
+			$query->where('region', 'like', "%$request->search%")->orWhere('frequency', 'like', "$request->search%")
+				->orWhere('alert_title', 'like', "$request->search%")->orWhere('posted_date', 'like', "$request->search%")->orWhereHas('User', function($que) use($request){
+					$que->where('name', 'like', "$request->search%");
+				});
+		}
+		$users = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page);
+		return AlertResource::collection($users);
+	}
 }

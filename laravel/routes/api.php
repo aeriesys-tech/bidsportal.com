@@ -22,6 +22,10 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\UserPaymentController;
+use App\Http\Controllers\UserSetAsideController;
+use App\Http\Controllers\UserSubscriptionController;
+use App\Http\Controllers\UserController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -30,6 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post("login", [AuthController::class,'login']);
 Route::post("adminLogin",[AdminController::class,'adminLogin']);
+Route::post("register",[UserController::class,'register']);
 
 //Federal Tender
 Route::post('paginateFederalTenders', [FederalTenderController::class,'paginateFederalTenders']);
@@ -40,6 +45,8 @@ Route::post('paginateInactiveStateTenders', [StateTenderController::class,'pagin
 Route::post("showS3BucketFiles", [StateTenderController::class,'showS3BucketFiles']);
 Route::post("updateStateTender", [StateTenderController::class,'updateStateTender']);
 Route::post("deleteStateTenders", [StateTenderController::class,'deleteStateTenders']);
+Route::post("updateTenderState", [StateTenderController::class,'updateTenderState']);
+Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
 
 //Pscs
 Route::post('getPscs', [PscController::class,'getPscs']);
@@ -62,6 +69,7 @@ Route::post("getStates",[StateController::class,'getStates']);
 //Federal Agency
 Route::post("getFederalAgencies",[FederalAgencyController::class,'getFederalAgencies']);
 
+
 //State Notice
 Route::post('getStateNotices', [StateNoticeController::class,'getStateNotices']);
 
@@ -76,11 +84,53 @@ Route::post('getSubscriptionPlans', [SubscriptionPlanController::class,'getSubsc
 
 Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
 
+	
+	Route::post("changePassword",[UserController::class,'changePassword']);
+
+	Route::post("adminLogout",[AdminController::class,'adminLogout']);
+
+	Route::post("getUserSubscriptions",[UserSubscriptionController::class,'getUserSubscriptions']);
+	Route::post("getActiveSubscription",[UserSubscriptionController::class,'getActiveSubscription']);
+
+	Route::post("getUserPayments",[UserPaymentController::class,'getUserPayments']);
+
+	Route::post("paginateUserSubscriptions",[SubscriptionPlanController::class,'paginateUserSubscriptions']);
+
+	//Federal Agency
+	Route::post("paginateFederalAgencies",[FederalAgencyController::class,'paginateFederalAgencies']);
+	Route::post("addFederalAgency",[FederalAgencyController::class,'addFederalAgency']);
+	Route::post("getFederalAgency",[FederalAgencyController::class,'getFederalAgency']);
+	Route::post("updateFederalAgency",[FederalAgencyController::class,'updateFederalAgency']);
+	Route::post("deleteFederalAgency",[FederalAgencyController::class,'deleteFederalAgency']);
+
+	Route::post("paginateActiveUsers",[AuthController::class,'paginateActiveUsers']);
+	
+	//User setasides
+	Route::post('getUserSetAsideIds', [UserSetAsideController::class,'getUserSetAsideIds']);
+
+	//State Agency
+	Route::post("paginateStateAgencies",[StateAgencyController::class,'paginateStateAgencies']);
+	Route::post("addStateAgency",[StateAgencyController::class,'addStateAgency']);
+	Route::post("getStateAgency",[StateAgencyController::class,'getStateAgency']);
+	Route::post("updateStateAgency",[StateAgencyController::class,'updateStateAgency']);
+	Route::post("deleteStateAgency",[StateAgencyController::class,'deleteStateAgency']);
+
+	//State Notice
+	Route::post("paginateStateNotices",[StateNoticeController::class,'paginateStateNotices']);
+	Route::post("addStateNotice",[StateNoticeController::class,'addStateNotice']);
+	Route::post("getStateNotice",[StateNoticeController::class,'getStateNotice']);
+	Route::post("updateStateNotice",[StateNoticeController::class,'updateStateNotice']);
+	Route::post("deleteStateNotice",[StateNoticeController::class,'deleteStateNotice']);
+
+	//User Payment
+	Route::post('getUserPayment', [UserPaymentController::class,'getUserPayment']);
+
 	//Cart Item
 	Route::post('addCartItem', [CartItemController::class,'addCartItem']);
 	Route::post('getCartItemsCount', [CartItemController::class,'getCartItemsCount']);
 	Route::post('getCartItems', [CartItemController::class,'getCartItems']);
 	Route::post('removeCartItem', [CartItemController::class,'removeCartItem']);
+	Route::post('clearCart', [CartItemController::class,'clearCart']);
 
 	//Federal Mail
 	Route::post('sendFederalTenderMail', [FederalTenderController::class,'sendFederalTenderMail']);
@@ -102,6 +152,13 @@ Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
 	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);	
 	Route::post("getStateFilters", [StateFilterController::class,'getStateFilters']);
 
+	//Admin Controller
+	Route::post("paginateAdmins",[AdminController::class,'paginateAdmins']);
+	Route::post("addAdmin",[AdminController::class,'addAdmin']);
+	Route::post("getAdmin",[AdminController::class,'getAdmin']);
+	Route::post("updateAdmin",[AdminController::class,'updateAdmin']);
+	Route::post("deleteAdmin",[AdminController::class,'deleteAdmin']);
+
 	//Alerts
 	Route::post("addAlerts", [AlertController::class,'addAlerts']);	
 	Route::post("updateAlerts", [AlertController::class,'updateAlerts']);	
@@ -109,6 +166,14 @@ Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
 	Route::post("getAlert", [AlertController::class,'getAlert']);
 	Route::post("paginateAlerts", [AlertController::class,'paginateAlerts']);
 	Route::post("deleteAlert", [AlertController::class,'deleteAlert']);	
+	Route::post("paginateAllAlerts", [AlertController::class,'paginateAllAlerts']);
+
+	//Federal Notice
+	Route::post("paginateFederalNotices",[FederalNoticeController::class,'paginateFederalNotices']);
+	Route::post("addFederalNotice",[FederalNoticeController::class,'addFederalNotice']);
+	Route::post("getFederalNotice",[FederalNoticeController::class,'getFederalNotice']);
+	Route::post("updateFederalNotice",[FederalNoticeController::class,'updateFederalNotice']);
+	Route::post("deleteFederalNotice",[FederalNoticeController::class,'deleteFederalNotice']);
 
 	//Api Key
 	Route::post("getApiKey",[AdminController::class,'getApiKey']);
@@ -116,11 +181,26 @@ Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
 
 	//Aws
 	Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
+
+	//Federal Tender
+	Route::post("paginateTenderFederals",[FederalTenderController::class,'paginateTenderFederals']);
+	Route::post("addFederalTender",[FederalTenderController::class,'addFederalTender']);
+	Route::post("updateTenderFederal",[FederalTenderController::class,'updateTenderFederal']);
+	Route::post("updateFederalTender",[FederalTenderController::class,'updateFederalTender']);
+	Route::post("deleteFederalTender",[FederalTenderController::class,'deleteFederalTender']);
+
+	//Category
+	Route::post("paginateCategories",[CategoryController::class,'paginateCategories']);
+	Route::post("addCategory",[CategoryController::class,'addCategory']);
+	Route::post("getCategory",[CategoryController::class,'getCategory']);
+	Route::post("updateCategory",[CategoryController::class,'updateCategory']);
+	Route::post("deleteCategory",[CategoryController::class,'deleteCategory']);
 });
 
 //paypal
 Route::post("testPaypal",[PaypalController::class,'testPaypal']);
-Route::get("paypal_success_common_func",[PaypalController::class,'paypal_success_common_func']);
+Route::get("paypalSubscriptionSuccess",[PaypalController::class,'paypalSubscriptionSuccess']);
+Route::get("paypalPurchaseTenderSuccess",[PaypalController::class,'paypalPurchaseTenderSuccess']);
 Route::get("subscriptionCancelpage_func",[PaypalController::class,'subscriptionCancelpage_func']);
 Route::post("paypal_ipn_common_func",[PaypalController::class,'paypal_ipn_common_func']);
 Route::post("send_mail_invoice_normal_payment",[PaypalController::class,'send_mail_invoice_normal_payment']);

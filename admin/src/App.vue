@@ -63,37 +63,42 @@ export default {
 }
 </style>
 <style>
-	::-webkit-scrollbar{
-        /* height: 5px; */
-		height: 8px;
-        width: 10px;
-        background: gray;
-    }
+::-webkit-scrollbar {
+	/* height: 5px; */
+	height: 8px;
+	width: 10px;
+	background: gray;
+}
 
-    /* Track */
-    ::-webkit-scrollbar-track {
-    	background: #f1f1f1; 
-    }
-    
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-    	background: #506fd9; 
-		/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
-    }
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
 
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-    	background: #555; 
-    }
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #506fd9;
+	/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
+}
 
-    ::-webkit-scrollbar-thumb:horizontal{
-        background: #506fd9;
-		/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
-        border-radius: 10px;
-    }
-	::-webkit-scrollbar-thumb:vertical{
-        background: #506fd9;
-		/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
-        border-radius: 10px;
-    }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+	background: #506fd9;
+	/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+	background: #506fd9;
+	/* background: #F5D34F #E7C845 #F68529 #D51D25 #991010; */
+	border-radius: 10px;
+}
+
+.width-75 {
+	width: 75px;
+}
 </style>

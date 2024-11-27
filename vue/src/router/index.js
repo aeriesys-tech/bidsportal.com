@@ -44,7 +44,7 @@ import SubscriptionPlans from "@/views/subscriptions/SubscriptionPlan.vue";
 import Feedback from "@/views/Feedback"
 import PlanSubscription from "@/views/plans/PlanSubscription"
 import ChangePassword from '@/views/users/ChangePassword'
-import Subscription_payment from '@/views/payment/Subscription_payment'
+import SubscriptionPayment from '@/views/payment/SubscriptionPayment'
 import Normal_payment from '@/views/payment/NormalPayment'
 import Reset_password from '@/views/auth/ResetPassword'
 import Payment_failure from '@/views/payment/Payment_failure'
@@ -68,9 +68,9 @@ const routes = [
 		component: Cart,
 	},
 	{
-        path:'/subscription-payment/:item_number/:amount/:txn_id',
-        name:'Subscription_payment',
-        component:Subscription_payment
+        path:'/subscription-payment/:item_number/:amount/:txn_id/:valid_upto',
+        name:'SubscriptionPayment',
+        component:SubscriptionPayment
     },
 	{
         path:'/payment-failure',
@@ -78,7 +78,7 @@ const routes = [
         component:Payment_failure
     },
 	{
-        path:'/normal-payment/:txn_id/:order_id/:payment_date/:first_name/:item_code/:payment_amount',
+        path:'/normal-payment/:txn_id/:order_id/:payment_date/:first_name/:user_payment_id',
         name:'Normal_payment',
         component:Normal_payment
     },
@@ -256,7 +256,7 @@ const routes = [
         component: Feedback,
 	},
 	{
-		path: "/plan_subscription/:id", name: "PlanSubscription",
+		path: "/plan_subscription", name: "PlanSubscription",
         component: PlanSubscription,
 	},
 

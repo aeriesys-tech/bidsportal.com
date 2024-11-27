@@ -54,7 +54,7 @@
                                 <!-- position -->
                                 <div class="col-md-4">
                                     <label class="form-label">Position/Title<span class="text-danger"></span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.title }" ref="title" v-model="user.title" :disabled="disabled" placeholder="Enter your Position/Title" />
+                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.title }" ref="title" v-model="user.position" :disabled="disabled" placeholder="Enter your Position/Title" />
                                     <span v-if="errors.title" class="invalid-feedback">{{ errors.title[0] }}</span>
                                 </div>
                                 <!-- Email -->
@@ -73,8 +73,8 @@
                                 <!-- Company Name -->
                                 <div class="col-md-4">
                                     <label class="form-label">Company Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.company_name }" ref="webaddress" v-model="user.company_name" :disabled="disabled" placeholder="Enter your Company Name" />
-                                    <span v-if="errors.company_name" class="invalid-feedback">{{ errors.company_name[0] }}</span>
+                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.company }" ref="webaddress" v-model="user.company" :disabled="disabled" placeholder="Enter your Company Name" />
+                                    <span v-if="errors.company" class="invalid-feedback">{{ errors.company[0] }}</span>
                                 </div>
                                 <!-- Website Address -->
                                 <div class="col-md-4">
@@ -97,8 +97,8 @@
                                 <!-- Zip Code -->
                                 <div class="col-md-4">
                                     <label class="form-label">Zip Code<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.zipcode }" ref="zipcode" v-model="user.zipcode" :disabled="disabled" placeholder="Enter your Zip Code" />
-                                    <span v-if="errors.zipcode" class="invalid-feedback">{{ errors.zipcode[0] }}</span>
+                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.pin_code }" ref="pin_code" v-model="user.pin_code" :disabled="disabled" placeholder="Enter your Zip Code" />
+                                    <span v-if="errors.pin_code" class="invalid-feedback">{{ errors.pin_code[0] }}</span>
                                 </div>
                                 <!-- Nationality -->
                                 <!-- <div class="col-md-4">
@@ -206,12 +206,12 @@
                     mobile_number: "",
                     avatar: "",
                     phone: "",
-                    company_name: "",
+                    company: "",
                     web_address: "",
                     mail_address: "",
                     city: "",
                     state: "",
-                    zipcode: "",
+                    pin_code: "",
                     sub_details: {},
                     socioeconomic_status: "",
                 },
@@ -230,9 +230,9 @@
         },
         computed: {
             filterSetAside() {
-                return this.SetAsideStatus.filter((aside) => {
-                    return aside.status_name.toLowerCase().includes(this.searchstate.toLowerCase());
-                });
+                // return this.SetAsideStatus.filter((aside) => {
+                //     return aside.status_name.toLowerCase().includes(this.searchstate.toLowerCase());
+                // });
             },
         },
         beforeRouteEnter(to, from, next) {
@@ -241,19 +241,16 @@
                 // let loader = vm.$loading.show();
                 vm.isLoading = true;
                 if (vm.$store.getters.user) {
-                    vm.user.id = vm.$store.getters.user?.id;
+                    vm.user = vm.$store.getters.user
                     vm.$store
-                        .dispatch("post", { uri: "showUser", data: vm.user })
+                        .dispatch("post", { uri: "getUserSetAsideIds", data: vm.user })
                         .then(function (response) {
                             // loader.hide();
                             vm.isLoading = false;
-                            vm.user = response.data.data;
-                            vm.password.email = vm.user.email;
-                            vm.password.user_id = vm.user.user_id;
-                            vm.regSetAside = vm.user.socioeconomic_status.split(",");
+                            vm.user.set_asides = response.data
                         })
                         .catch(function (error) {
-                            vm.isLoading = false;
+                            vm.isLoading = false
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
@@ -265,11 +262,11 @@
             let vm = this;
 
             // vm.password.email = vm.$store.getters.user.email;
-            if (vm.$store.getters.user) {
-                vm.getUserSubscriptions();
-                vm.getuserbids();
-                vm.getSetAsideStatus();
-            }
+            // if (vm.$store.getters.user) {
+            //     vm.getUserSubscriptions();
+            //     vm.getuserbids();
+            //     vm.getSetAsideStatus();
+            // }
             //
             // vm.$router.push("/bids");
         },

@@ -87,12 +87,12 @@
                                 <div class="tab-pane fade show active" id="tab-1">
                                     <div class="card border bg-light mb-4">
                                         <div class="card-body">
-                                            <div class="row g-3" v-if="!$store.getters.user.subscription_id">
+                                            <div class="row g-3" v-if="!active_subscription">
                                                 <span style="text-align: center;">You have no active subscription</span>
                                             </div>
 
                                            
-                                                <div class="row"  v-else>
+                                                <div class="row" v-else>
                                                   <div class="col-md-9">
                                                         <ul class="list-group list-group-borderless mb-0">
                                                             <li class="list-group-item d-flex row">
@@ -101,9 +101,8 @@
                                                                 </div>
                                                                  <div class="col-md-8 col-sm-8">
                                                                 <!-- <span class="h6 fw-light mb-0">$260</span> -->
-                                                                <span class="h6 fw-light mb-0" v-if="user?.sub_details?.validity ==12">Yearly Subscription</span>
-                                                                <span class="h6 fw-light mb-0" v-if="user?.sub_details?.validity ==6">6 Month Subscription</span>
-                                                                <span class="h6 fw-light mb-0" v-if="user?.sub_details?.validity ==1">Monthly Subscription</span>
+                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.validity ==12">Annual Subscription</span>
+                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.validity == 6">Semi-Annual Subscription</span>
                                                                 </div>
                                                             </li>
                                                             <li class="list-group-item py-0"></li>
@@ -112,19 +111,13 @@
                                                                 <span class="h6 fw-bold mb-0">Subscription Status :</span>
                                                                 </div>
                                                                 <div class="col-md-8 col-sm-8">
-                                                                <!-- <span class="h6 fw-light mb-0">
-                                                                    <span :class="user.sub_details?.active_status?'activeclass':'text-danger alert'">{{ user.sub_details?.active_status }}</span> | Expires on : {{
-                                                                    format_date(user.sub_details?.valid_to) }}
-                                                                </span> -->
-
-                                                                <!-- try  -->
-                                                                <span class="h6 fw-light mb-0" v-if="user.sub_details?.active_status=='active'">
-                                                                    <span class="activeclass">{{ user.sub_details?.active_status }}</span> | Expires on : {{
-                                                                    format_date(user.sub_details?.valid_to) }}
+                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.active_status=='active'">
+                                                                    <span class="activeclass">{{ active_subscription.active_status }}</span> | Expires on : {{
+                                                                    format_date(active_subscription.valid_to) }}
                                                                 </span>
-                                                                <span class="h6 fw-light mb-0" v-if="user.sub_details?.active_status=='inactive'">
-                                                                    <span class="inactiveclass" >{{ user.sub_details?.active_status }}</span> | Expired on : {{
-                                                                    format_date(user.sub_details?.valid_to) }}
+                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.active_status=='inactive'">
+                                                                    <span class="inactiveclass" >{{ active_subscription.active_status }}</span> | Expired on : {{
+                                                                    format_date(active_subscription.valid_to) }}
                                                                 </span>
 
 
@@ -265,6 +258,8 @@
                     user_id: "",
                 },
 
+                active_subscription:null,
+
                 payment: {
                     user_id: "",
                     item_number: [],
@@ -317,25 +312,11 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.isLoading = true;
-
-                vm.user.id = vm.$store.getters.user.id;
-                vm.$store
-                    .dispatch("post", { uri: "showUser", data: vm.user })
-                    .then(function (response) {
-                        vm.isLoading = false;
-                        vm.user = response.data.data;
-                                             
-                    })
-                    .catch(function (error) {
-                        vm.isLoading = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                vm.user = vm.$store.getters.user
             });
         },
         mounted() {
-            this.getUserSubscriptions();
+            this.getActiveSubscription();
             // this.checklogin();
         },
         methods: {
@@ -348,28 +329,30 @@
             format_date(value) {
                 return moment(String(value)).format("MMMM D, YYYY");
             },
-            getUserSubscriptions() {
+            getActiveSubscription() {
                 let vm = this;
-                vm.subscriptions.user_id = vm.$store.getters.user.id;
                 vm.$store
-                    .dispatch("post", { uri: "getUserSubscriptions", data: vm.subscriptions })
+                    .dispatch("post", {
+                        uri: "getActiveSubscription",
+                        data: vm.user,
+                    })
                     .then(function (response) {
-                        vm.subscriptions = response.data.data;
-                        vm.getPaymentSubscriptions();
+                        vm.active_subscription = response.data
+                        vm.getUserSubscriptions();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            getPaymentSubscriptions() {
+            getUserSubscriptions() {
                 let vm = this;
                 vm.payment.user_id = vm.$store.getters.user.id;
-                let uri = "getUserPayments";
+                let uri = "getUserSubscriptions";
                 vm.$store
-                    .dispatch("post", { uri: uri, data: vm.payment })
+                    .dispatch("post", { uri: uri, data: vm.user })
                     .then(function (response) {
-                        vm.payment = response.data;
+                        vm.subscriptions = response.data;
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;

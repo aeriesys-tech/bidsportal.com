@@ -202,4 +202,314 @@ class FederalTenderController extends Controller
             return response()->download($temp_zip_path, $zip_file_name)->deleteFileAfterSend(true);
         }   
     }
+
+    public function paginateTenderFederals(Request $request)
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required|numeric',
+            'keyword' => 'required'
+        ]);
+        $query = FederalTender::query();
+        if (isset($request->status)) {
+            if ($request->status === 'All') {
+            } elseif ($request->status === 'Active') {
+                $query->where('status', true);
+            } elseif ($request->status === 'Inactive') {
+                $query->where('status', false);
+            }
+        }
+            
+        if($request->search!='')
+        {
+            $query->where('tender_no', 'like', "%$request->search%")->orWhere('opening_date', 'like', "$request->search%")
+                ->orWhere('title', 'like', "$request->search%")->orWhere('posted_date', 'like', "$request->search%");
+        }
+        $federals = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page);
+        return FederalTenderResource::collection($federals);
+    }
+
+    public function addFederalTender(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required',
+            'title' => 'required',
+            'description' => 'nullable',
+            'title' => 'nullable',
+            'country_id' => 'required',
+            'state_id' => 'required',
+            'tender_type_id' => 'nullable',
+            'federal_notice_id' => 'nullable',
+            'category_id' => 'nullable',
+            'federal_agency_id' => 'nullable',
+            'set_aside_id' => 'nullable',
+            'naics_id' => 'nullable',
+            'psc_id' => 'nullable',
+            'tender_url' => 'nullable',
+            'fees' => 'nullable',
+            'type_of_award' => 'nullable',
+            'place_of_performance' => 'nullable',
+            'notice_id' => 'nullable',
+            'description_link' => 'nullable',
+            'category_name' => 'nullable',
+            'notice_name' => 'nullable',
+            'agency_name' => 'nullable',
+            'is_latest' => 'nullable',
+            'primary_address.title' => 'nullable|string|max:255',
+            'primary_address.email' => 'nullable',
+            'primary_address.phone' => 'nullable',
+            'primary_address.full_name' => 'nullable',
+            'secondary_address.email' => 'nullable',
+            'secondary_address.phone' => 'nullable',
+            'secondary_address.title' => 'nullable|string|max:255',
+            'secondary_address.full_name' => 'nullable',
+            'opening_date' => 'nullable',
+            'posted_date' => 'nullable',
+            'expiry_date' => 'nullable'
+        ]);
+
+        $federal = FederalTender::create($data);
+
+        if($request->federal_office_address)
+        {
+            $address = json_decode($request->federal_office_address, true);
+            FederalOfficeAddress::updateOrCreate([
+                'federal_tender_id' => $federal->federal_tender_id,
+                'city' => $address['city'],
+                'state' => $address['state'],
+                'country' => $address['country'],
+                'zip_code' => $address['zip_code'] ?? null
+            ]);
+        }
+
+        if ($request->primary_address) 
+        {
+            $primaryAddress = json_decode($request->primary_address, true);
+            FederalContact::updateOrCreate(
+                [
+                    'federal_tender_id' => $federal->federal_tender_id,
+                    'type' => 'Primary',
+                    'email' => $primaryAddress['email'] ?? null,
+                    'phone' => $primaryAddress['phone'] ?? null,
+                    'title' => $primaryAddress['title'] ?? null,
+                    'full_name' => $primaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+    
+        if ($request->secondary_address) 
+        {
+            $secondaryAddress = json_decode($request->secondary_address, true);
+            FederalContact::updateOrCreate(
+                [
+                    'federal_tender_id' => $federal->federal_tender_id,
+                    'type' => 'Secondary',
+                    'email' => $secondaryAddress['email'] ?? null,
+                    'phone' => $secondaryAddress['phone'] ?? null,
+                    'title' => $secondaryAddress['title'] ?? null,
+                    'full_name' => $secondaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+
+        if (!empty($request->attachments) && is_array($request->attachments)) {
+            foreach ($request->attachments as $attachment) {
+                $attachment_name = $attachment->getClientOriginalName();
+                $attachment_size = $attachment->getSize();
+                $filePath = 'federal/' . $attachment_name; 
+                $result = Storage::disk('s3')->put($filePath, file_get_contents($attachment));
+        
+                if ($result) {
+                    $attachment_url = Storage::disk('s3')->url($filePath);
+                    if ($attachment_url) {
+                        FederalAttachment::updateOrCreate(
+                            [
+                                'federal_tender_id' => $federal->federal_tender_id,
+                                'attachment_name' => $attachment_name,
+                            ],
+                            [
+                                'attachment_size' => $attachment_size,
+                                'attachment_date' => now()->format('Y-m-d'),
+                                'attachment_url' => $attachment_url,
+                            ]
+                        );
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'File upload failed',
+                    ], 500);
+                }
+            }
+        }
+        // return new FederalTenderResource($federal);
+    }
+
+    public function updateTenderFederal(Request $request)
+    {
+        $data = $request->validate([
+            'federal_tender_id' => 'required|exists:federal_tenders,federal_tender_id',
+            'tender_no' => 'required',
+            'title' => 'required',
+            'description' => 'nullable',
+            'title' => 'nullable',
+            'country_id' => 'nullable',
+            'state_id' => 'nullable',
+            'tender_type_id' => 'nullable',
+            'federal_notice_id' => 'nullable',
+            'category_id' => 'nullable',
+            'federal_agency_id' => 'nullable',
+            'set_aside_id' => 'nullable',
+            'naics_id' => 'nullable',
+            'psc_id' => 'nullable',
+            'tender_url' => 'nullable',
+            'fees' => 'nullable',
+            'type_of_award' => 'nullable',
+            'place_of_performance' => 'nullable',
+            'notice_id' => 'nullable',
+            'description_link' => 'nullable',
+            'category_name' => 'nullable',
+            'notice_name' => 'nullable',
+            'agency_name' => 'nullable',
+            'is_latest' => 'nullable',
+            'primary_address.title' => 'nullable|string|max:255',
+            'primary_address.email' => 'nullable',
+            'primary_address.phone' => 'nullable',
+            'primary_address.full_name' => 'nullable',
+            'secondary_address.email' => 'nullable',
+            'secondary_address.phone' => 'nullable',
+            'secondary_address.title' => 'nullable|string|max:255',
+            'secondary_address.full_name' => 'nullable',
+            'opening_date' => 'nullable',
+            'posted_date' => 'nullable',
+            'expiry_date' => 'nullable'
+        ]);
+
+        $federal = FederalTender::where('federal_tender_id', $request->federal_tender_id)->first();
+        $federal->update($data);
+
+        if($request->federal_office_address)
+        {
+            $address = json_decode($request->federal_office_address, true);
+            FederalOfficeAddress::updateOrCreate([
+                'federal_tender_id' => $federal->federal_tender_id
+                ],
+                [
+                'city' => $address['city'],
+                'state' => $address['state'],
+                'country' => $address['country'],
+                'zip_code' => $address['zip_code'] ?? null
+            ]);
+        }
+
+        if ($request->primary_address) {
+            $primaryAddress = json_decode($request->primary_address, true);
+            FederalContact::updateOrCreate(
+                [
+                    'federal_tender_id' => $federal->federal_tender_id,
+                    'type' => 'Primary'
+                ],
+                [
+                    'email' => $primaryAddress['email'] ?? null,
+                    'phone' => $primaryAddress['phone'] ?? null,
+                    'title' => $primaryAddress['title'] ?? null,
+                    'full_name' => $primaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+    
+        // Update secondary address
+        if ($request->secondary_address) {
+            $secondaryAddress = json_decode($request->secondary_address, true);
+            FederalContact::updateOrCreate(
+                [
+                    'federal_tender_id' => $federal->federal_tender_id,
+                    'type' => 'Secondary'
+                ],
+                [
+                    'email' => $secondaryAddress['email'] ?? null,
+                    'phone' => $secondaryAddress['phone'] ?? null,
+                    'title' => $secondaryAddress['title'] ?? null,
+                    'full_name' => $secondaryAddress['full_name'] ?? null,
+                ]
+            );
+        }
+
+        if (!empty($request->attachments) && is_array($request->attachments)) {
+            foreach ($request->attachments as $attachment) {
+                $attachment_name = $attachment->getClientOriginalName();
+                $attachment_size = $attachment->getSize();
+                $filePath = 'federal/' . $attachment_name; 
+                $result = Storage::disk('s3')->put($filePath, file_get_contents($attachment));
+    
+                if ($result) {
+                    $attachment_url = Storage::disk('s3')->url($filePath);
+                    if ($attachment_url) {
+                        FederalAttachment::updateOrCreate(
+                            [
+                                'federal_tender_id' => $federal->federal_tender_id,
+                                'attachment_name' => $attachment_name,
+                            ],
+                            [
+                                'attachment_size' => $attachment_size,
+                                'attachment_date' => now()->format('Y-m-d'),
+                                'attachment_url' => $attachment_url,
+                            ]
+                        );
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'File upload failed',
+                    ], 500);
+                }
+            }
+        }
+        return response()->json([
+            'message' => 'Federal Tender updated successfully',
+        ]);
+    }
+
+    public function updateFederalTender(Request $request)
+    {
+        $request->validate([
+            'federal_tender_id' => 'required',
+            'federal_notice_id' => 'required',
+            'category_id' => 'required',
+            'state_id' => 'required'
+        ]);
+
+        try{
+            $update_state_tender = FederalTender::where('federal_tender_id', $request->federal_tender_id)->update([
+                'federal_notice_id' => $request->federal_notice_id,
+                'federal_agency_id' => $request->federal_agency_id,
+                'category_id' => $request->category_id,
+                'state_id' => $request->state_id,
+                'status' => true
+            ]);
+            if($update_state_tender){
+                return response()->json([
+                    'message' => 'Tender updated successfully'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while updating the tender',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteFederalTender(Request $request)
+    {
+        $request->validate([
+            'federal_tender_id' => 'required|exists:federal_tenders,federal_tender_id'
+        ]);
+
+        FederalOfficeAddress::where('federal_tender_id', $request->federal_tender_id)->forceDelete();
+        FederalContact::where('federal_tender_id', $request->federal_tender_id)->forceDelete();
+        FederalAttachment::where('federal_tender_id', $request->federal_tender_id)->forceDelete();
+        FederalTender::where('federal_tender_id', $request->federal_tender_id)->forceDelete();
+        return response()->json([
+            "message" => "FederalTender Deleted Successfully"
+        ]);
+    }
 }

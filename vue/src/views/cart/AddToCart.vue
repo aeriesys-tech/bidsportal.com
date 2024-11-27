@@ -63,10 +63,22 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-4" v-if="cart_item.state_tender_id">
+                                        <small class="d-block"> {{cart_item.state_tender?.title }}</small>
+                                        <div class="d-flex">
+                                            <small class="me-1">Posted Date:</small>
+                                            <small class="mb-0 text-primary">{{ format_date(cart_item.state_tender?.posted_date) }}</small>
+                                        </div>
+                                    </div>
+
                                     <!-- Data item -->
                                     <div class="col" v-if="cart_item.federal_tender_id">
                                         <small class="d-block d-sm-none">Status:</small>
                                         <div class="">${{cart_item.federal_tender.fees }}</div>
+                                    </div>
+                                    <div class="col" v-if="cart_item.state_tender_id">
+                                        <small class="d-block d-sm-none">Status:</small>
+                                        <div class="">${{cart_item.state_tender.fees }}</div>
                                     </div>
                                     <!-- Data item -->
                                     <div class="col">
@@ -75,9 +87,14 @@
                                     </div>
 
                                     <!-- Data item -->
-                                    <div class="col">
+                                    <div class="col" v-if="cart_item.federal_tender_id">
                                         <small class="d-block d-sm-none">Status:</small>
                                         <div class="">${{cart_item.federal_tender?.fees }}</div>
+                                       
+                                    </div>
+                                    <div class="col" v-if="cart_item.state_tender_id">
+                                        <small class="d-block d-sm-none">Status:</small>
+                                        <div class="">${{cart_item.state_tender?.fees }}</div>
                                        
                                     </div>
                                     <!-- Data item -->
@@ -99,7 +116,7 @@
                             </div>
                               <div class="d-sm-flex justify-content-sm-between align-items-sm-center mt-2">
 							<!-- Content -->
-							<p class="mb-sm-0 text-center text-sm-start"><a href="javascript:void(0)" class="btn btn-primary mb-0" @click="removeAllCart()">Clear Cart</a></p>
+							<p class="mb-sm-0 text-center text-sm-start"><a href="javascript:void(0)" class="btn btn-primary mb-0" @click="clearCart()">Clear Cart</a></p>
 							<!-- Pagination -->
 							<nav class="mb-sm-0 d-flex justify-content-center" aria-label="navigation">
 								<!-- <a href="javascript:void(0)" class="btn btn-primary mb-0" @click="$router.go(-1)">Select Bids</a> -->
@@ -148,7 +165,7 @@
                                     <small class="form-check-label mb-0">I agree with <router-link to="/terms&condition">Terms and conditions</router-link></small>
                                 </div>
                                 <div class="text-center">
-                                    <button type="buton" data-bs-toggle="modal" @click="createOrder()">
+                                    <button type="buton" @click="createOrder()">
                                         <img class="" src="assets/images/svg/paypal.svg" alt="avatar" width="130" height="80"/>
                                     </button>
                                 </div> 
@@ -252,7 +269,7 @@
                     item_code:'',
                     item_total:'',
                     currency_code:'USD',
-                    loggedInUserID: this.$store?.getters?.user?.id,
+                    loggedInUserID: this.$store?.getters?.user?.user_id,
                     cancelURL: this.$store?.getters?.cancelURL,
                     successURL:this.$store?.getters?.successURL,
                     agree:''
@@ -261,7 +278,7 @@
                  isLoading: false,
                 fullPage: true,
                 cart_items:[],
-                total:null
+                total:0
             };
         },
         mounted(){
@@ -342,7 +359,7 @@
                 vm.$store
                     .dispatch("post", { uri: "removeCartItem", data:cart_item })
                     .then(function () {
-                        vm.$store.dispatch("success", "Item removed from Cart");
+                        vm.$store.dispatch("success", "Item removed from Cart")
                         vm.getCartItemsCount()
                     })
                     .catch(function (error) {
@@ -352,10 +369,28 @@
                     });
             },
           
-            removeAllCart() {
-                this.$store.commit("setCartProducts",[]);
+            clearCart() {
+                let vm = this
+                let cart_items = {
+                    items: 0,
+                    total: 0
+                }
+                vm.$store
+                    .dispatch("post", { uri: "clearCart" })
+                    .then(function () {
+                        vm.cart_items =  []
+                        vm.total = 0
+                        vm.$store.dispatch('setTenderCart', cart_items)
+                        vm.$store.dispatch("success", "Cart item cleared");
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
             },
             createOrder(){
+                console.log('customer_id', this.$store.getters.user.user_id)
                     let item_code = []
                    
                     this.$store.getters.cartItems.map(function(element){
@@ -364,13 +399,13 @@
                     });
                     
                 if(this.payPal.loggedInUserID){
-                    if(this.$store.getters.cartItems.length > 0){
-                        this.payPal.totalITem = this.$store.getters.cartItems.length
+                    if(this.$store.getters.tender_cart){
+                        this.payPal.totalITem = this.$store.getters.tender_cart.items
                         this.payPal.item_code = item_code.toString('@');
-                        this.payPal.item_total = this.subTotal
+                        this.payPal.item_total = this.$store.getters.tender_cart.total
                         let params = '?loggedInUserID='+this.payPal.loggedInUserID+'&totalITem='+this.payPal.totalITem+'&item_code='+this.payPal.item_code+'&item_total='+this.payPal.item_total 
                         if(this.payPal.agree)
-                            window.open(this.$store.getters.baseUrl+'callPaypalNoramlPayment'+params,"_self")
+                            window.open(this.$store.getters.baseUrl+'purchaseTender'+params,"_self")
                         else
                             this.$store.dispatch("error", "Agree to Terms and Conditions");
                     }else{

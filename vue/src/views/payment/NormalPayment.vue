@@ -96,18 +96,23 @@
                                             </thead>
                                             <tbody class="border-top-0">
                                                 <!-- Table item -->
-                                                <tr v-if="normalPayment.length==0">
+                                                <tr v-if="user_payment.purchase_items?.length==0">
                                                     <td colspan="8" class="text-center">No records found</td>
                                                 </tr>
-                                                <tr v-for="normal in normalPayment" :key="normal.tdr_id">
-                                                    <td>
-                                                        {{normal.tdr_id}}
+                                                <tr v-for="purchase_item, key in user_payment.purchase_items" :key="key">
+                                                    <td v-if="purchase_item.federal_tender_id">
+                                                        {{ purchase_item.federal_tender_id }}
+                                                    </td>
+                                                    <td v-if="purchase_item.state_tender_id">
+                                                        {{ purchase_item.state_tender_id }}
                                                     </td>
 
-                                                    <td>{{normal.tdr_title}}</td>
+                                                    <td v-if="purchase_item.federal_tender_id">{{ purchase_item.federal_tender?.title }}</td>
+                                                    <td v-if="purchase_item.state_tender_id">{{ purchase_item.state_tender?.title }}</td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td style="text-align: center;">${{normal.tdr_doc_fees}}</td>
+                                                    <td style="text-align: center;" v-if="purchase_item.federal_tender_id">${{ purchase_item.federal_tender.fees }}</td>
+                                                    <td style="text-align: center;" v-if="purchase_item.state_tender_id">${{ purchase_item.state_tender.fees }}</td>
                                                 </tr>
                                             </tbody>
                                             <tbody>
@@ -117,7 +122,7 @@
                                                     <td class="text_right_td fftrr">Incl Tax</td>
                                                     <td class="text_right_td text-center">=</td>
 
-                                                    <td class="text_center_td text-center">${{total_amount}}</td>
+                                                    <td class="text_center_td text-center">${{user_payment.payment_amount}}</td>
                                                 </tr>
                                                 <tr class="hover1">
                                                     <td></td>
@@ -125,7 +130,7 @@
                                                     <td class="text_right_td fftrr">Total Paid</td>
                                                     <td class="text_right_td text-center">=</td>
 
-                                                    <td class="text_center_td text-center">${{total_amount}}</td>
+                                                    <td class="text_center_td text-center">${{user_payment.payment_amount}}</td>
                                                 </tr>
                                             </tbody>
                                             <tbody>
@@ -205,13 +210,14 @@
         data() {
             return {
                 payment: {
-                    txn_id: "",
-                    order_id: "",
-                    payment_date: "",
-                    total_amount: "",
+                    txn_id: '',
+                    order_id: '',
+                    payment_date: '',
+                    total_amount: '',
+                    user_payment_id: ''
                 },
+                user_payment: '',
                 normalPayment: [],
-
                 item_code: {
                     bids: [],
                 },
@@ -220,20 +226,36 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.payment.txn_id = to.params.txn_id;
-                vm.payment.order_id = to.params.order_id;
-                vm.payment.payment_date = to.params.payment_date;
-                vm.payment.first_name = to.params.first_name;
-                vm.payment.payment_amount = to.params.payment_amount;
-                vm.total_amount = to.params.payment_amount;
-                vm.item_code.bids = to.params.item_code.split(",");
-                vm.$store.commit("setPage", "normal-payment");
-                vm.$store.commit("setCartProducts", []);
-                vm.getbids();
+                vm.payment.txn_id = to.params.txn_id
+                vm.payment.order_id = to.params.order_id
+                vm.payment.payment_date = to.params.payment_date
+                vm.payment.first_name = to.params.first_name
+                vm.payment.payment_amount = to.params.payment_amount
+                vm.payment.user_payment_id = to.params.user_payment_id
+                vm.getUserPayment();
             });
         },
 
+        mounted(){
+            // this.getUserPayment()
+        },
+
         methods: {
+
+            getUserPayment() {
+                let vm = this;
+                vm.isLoading = true;
+                vm.$store
+                    .dispatch("post", { uri: "getUserPayment", data: vm.payment })
+                    .then(function (response) {
+                        vm.user_payment = response.data.data;
+                    })
+                    .catch(function (error) {
+                        vm.isLoading = false;
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
             getUrl(){
             let url = this.$store.getters.baseUrl+'api/generateBidsPdf/'+this.$store.getters.user.id+'/'+this.item_code.bids
                 return url
