@@ -29,4 +29,9 @@ class UserSubscription extends Model
     ];
 
     protected $primaryKey = 'user_subscription_id';
+
+    public function User()
+    {
+		return $this->belongsTo(User::class, 'user_id');
+    }
 }

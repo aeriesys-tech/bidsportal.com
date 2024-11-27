@@ -435,10 +435,10 @@
                                                         <a href="javascript:void(0)" @click.prevent="shareStateTender(state_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
-                                                    <li class="list-inline-item" v-if="checkCartItem(state_tender.state_tender_id)">
-                                                        <div v-if="$store.getters.user?.subscription_id ===0">
-                                                            <a href="javascript:void(0)" @click="addCart(state_tender)" class="p-2">
-                                                                <img v-if="hidecartstatue" src="assets/images/addcart.svg" width="19" />
+                                                    <li class="list-inline-item" v-if="state_tender.cart_icon">
+                                                        <div>
+                                                            <a href="javascript:void(0)" @click="addToCart(state_tender)" class="p-2">
+                                                                <img src="assets/images/addcart.svg" width="19" />
                                                             </a>
                                                         </div>
                                                     </li>
@@ -494,9 +494,9 @@
                                                         <td>{{ state_tender.place_of_performance }}</td>
                                                         <td style="width: 110px;">{{ state_tender.expiry_date }}</td>
                                                         <td>
-                                                            <span v-if="checkCartItem(state_tender.state_tender_id)">
-                                                                <div v-if="$store.getters.user?.subscription_id ===0">
-                                                                    <a href="javascript:void(0)" @click="addCart(state_tender)"><img v-if="hidecartstatue" class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
+                                                            <span v-if="state_tender.cart_icon">
+                                                                <div>
+                                                                    <a href="javascript:void(0)" @click="addToCart(state_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
                                                                 </div>
                                                             </span>
                                                             <span v-else>
@@ -923,6 +923,14 @@
             this.meta.time_zone = moment.tz.guess() 
             this.paginateStateTenders()
             this.getStateNotices()
+            let state_tender = this.$store.getters.state_tender
+            this.tags = []
+            if(state_tender?.title){
+                this.handleSelectedTag(state_tender.title)
+            } 
+            if(state_tender?.tender_no){
+                this.handleSelectedTag(state_tender.tender_no)
+            }
             // this.getPscs()
             // this.getNaics()
             // this.$store.commit("setSelectedNaics", [])
@@ -941,6 +949,45 @@
         },
 
         methods: {
+
+            addToCart(state_tender) {
+                let vm = this
+                vm.fullPage = true
+                let cart_item = {
+                    federal_tender_id : null,
+                    state_tender_id : state_tender.state_tender_id,
+                    region : 'State'
+                }
+                vm.$store
+                    .dispatch("post", { uri: "addCartItem", data: cart_item })
+                    .then(function () {
+                        vm.fullPage = false
+                        state_tender.cart_icon = false
+                        vm.$store.dispatch("success", "Tender added to cart successfully");
+                        vm.getCartItemsCount()
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            getCartItemsCount(){
+                let vm = this
+                vm.$store
+                    .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
+                    .then(function (response) {
+                        if(response.data){
+                            vm.$store.dispatch('setTenderCart', response.data)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
 
             shareStateTender(state_tender){
                 this.share_state_tender.state_tenders.push(state_tender.state_tender_id)

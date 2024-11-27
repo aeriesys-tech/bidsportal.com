@@ -195,6 +195,7 @@
                 checked: false,
                 plans: [],
                 user_plan: {
+                    subscription_plan_id: '',
                     loggedInUserID: "",
                     paypalURL: "https://www.sandbox.paypal.com/cgi-bin/webscr",
                     successURL: "https://hexaqore.com/bids/public/api/paypal_success_common_func",
@@ -246,6 +247,8 @@
         beforeRouteEnter(to, from, next) {
             next((vm) => {
                 let user_plan = vm.$store.getters.user_plan
+                console.log('before', user_plan)
+                vm.user_plan.subscription_plan_id = user_plan.subscription_plan_id
                 vm.user_plan.plan = user_plan.plan
                 vm.user_plan.price = user_plan.price
                 vm.user_plan.discount = user_plan.discount
@@ -294,6 +297,7 @@
             },
 
             updatePlan(subscription){
+                this.user_plan.subscription_plan_id = subscription.subscription_plan_id
                 this.user_plan.plan = subscription.plan
                 this.user_plan.price = subscription.price
                 this.user_plan.discount = subscription.discount
@@ -302,14 +306,11 @@
             subcribePlan(){
                 // console.log('userplan', this.user_plan)
                 // console.log('user', this.$store.getters.user)
-                let loggedInUserID = this.$store?.getters?.user?.user?.user_id
+                let loggedInUserID = this.$store?.getters?.user?.user_id
                 let itemName = this.user_plan.plan
-                var matches = itemName.match(/\b(\w)/g); // ['J','S','O','N']
-                var acronym = matches.join(''); // JSON
-                let itemNumber = acronym+'_'+loggedInUserID
+                let itemNumber = this.user_plan.subscription_plan_id
                 let paypalAmt = this.user_plan.price - this.user_plan.discount
                 let paypalValid = 1
-                console.log(itemName+' / '+acronym+' / '+itemNumber)
                 let params = '?loggedInUserID='+loggedInUserID+'&itemName='+itemName+'&itemNumber='+itemNumber+'&paypalAmt='+paypalAmt+'&paypalValid='+paypalValid
                 if(paypalAmt > 0){
                 

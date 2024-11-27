@@ -31,4 +31,8 @@ class UserPayment extends Model
     ];
 
     protected $primaryKey = 'user_payment_id';
+
+    public function PurchaseItems(){
+        return $this->hasMany('App\Models\PurchaseItem', 'user_payment_id', 'user_payment_id');
+    }
 }

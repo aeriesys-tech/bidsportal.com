@@ -15,6 +15,43 @@ class FederalTenderDetailResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (isset($this->FederalOfficeAddress)) {
+            $federal_office_address = $this->FederalOfficeAddress;
+        } else {
+            $federal_office_address = [
+                'city' => null,
+                'state' => null,
+                'country' => null
+            ];
+        }
+
+        if(isset($this->FederalContactPrimary))
+        {
+            $primary_address = $this->FederalContactPrimary;
+        }
+        else{
+            $primary_address = [
+                'title' => $this->FederalContactPrimary->title ?? null,
+                'type' => $this->FederalContactPrimary->type ?? null,
+                'email' => $this->FederalContactPrimary->email ?? null,
+                'phone' => $this->FederalContactPrimary->phone ?? null,
+                'full_name' => $this->FederalContactPrimary->full_name ?? null,
+            ];
+        }
+
+        if(isset($this->FederalContactSecondary))
+        {
+            $secondary_address = $this->FederalContactSecondary;
+        }
+        else{
+            $secondary_address = [
+                'title' => $this->FederalContactSecondary->title ?? null,
+                'type' => $this->FederalContactSecondary->type ?? null,
+                'email' => $this->FederalContactSecondary->email ?? null,
+                'phone' => $this->FederalContactSecondary->phone ?? null,
+                'full_name' => $this->FederalContactSecondary->full_name ?? null,
+            ];
+        }
         return [
             'federal_tender_id' => $this->federal_tender_id,
             'tender_no' => $this->tender_no,
@@ -25,6 +62,7 @@ class FederalTenderDetailResource extends JsonResource
             'expiry_date' => $this->expiry_date,
             'country_id' => $this->country_id,
             'state_id' => $this->state_id,
+            'state' => new StateResource($this->State),
             'federal_tender_id' => $this->federal_tender_id,
             'federal_notice_id' => $this->federal_notice_id,
             'federal_notice' => $this->FederalNotice,
@@ -43,15 +81,17 @@ class FederalTenderDetailResource extends JsonResource
             'category_name' => $this->category_name,
             'notice_name' => $this->notice_name,
             'agency_name' => $this->agency_name,
-            'federal_office_address' => $this->FederalOfficeAddress,
+            'federal_office_address' => $federal_office_address,
             'federal_notice' => $this->FederalNotice,
             'category' => $this->Category,
             'set_aside' => $this->SetAside,
             'naics' => $this->Naics,
             'psc' => $this->Psc,
             'federal_attachments' => FederalAttachmentResource::collection($this->FederalAttachments),
-            'federal_contacts' => $this->FederalContacts
-
+            'federal_contacts' => $this->FederalContacts,
+            'primary_address' => $primary_address,
+            'secondary_address' => $secondary_address
         ];
+    }
     }
 }

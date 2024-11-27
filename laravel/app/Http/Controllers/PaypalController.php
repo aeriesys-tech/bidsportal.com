@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\UserSubscription;
 use App\Models\UserPayment;
 use App\Models\User;
-use App\Models\SubscriptionPlans;
+use App\Models\SubscriptionPlan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
+use App\Models\CartItem;
+use App\Models\PurchaseItem;
 
 class PaypalController extends Controller
 {
@@ -15,6 +19,47 @@ class PaypalController extends Controller
     {
         return view('paypal.Subscription', compact('request'));
     }
+
+    public function paypalSubscriptionSuccess(Request $request)
+	{
+
+		$item_number_user = $request->query('item_number');
+		$item_number_arr = explode("_", $item_number_user);
+		$item_number = $item_number_arr[0];
+		$user_id = $item_number_arr[1];
+		$order_id_no =$this->getNextSubscriptionOrderId();
+        $order_id="BPSB-".$order_id_no."-".date("mdy");
+        $subscription_plan = SubscriptionPlan::where('subscription_plan_id', $item_number)->first();
+        $subscr_date_from = Carbon::now();
+        $subscr_month = $subscription_plan->month;
+        $valid_to = $subscr_date_from->copy()->addMonths($subscr_month);
+        $update_user_subscription = UserSubscription::updateOrcreate([ 
+            'user_id' => $user_id,
+            'txn_id' => $request->query('tx')
+        ],
+        [
+            'valid_from' => $subscr_date_from,
+            'valid_to' => $valid_to,
+            'order_id' => $order_id,
+            'payment_method' => 'online',
+            'active_status' => 'active',
+            'validity' => $subscr_month,
+            'item_number' => $item_number,
+            'payment_gross' => $request->query('amt'),
+            'currency_code' => $request->query('cc'),
+            'subscription_plan_id' => $item_number,
+            'payer_email' => null,
+            'payment_status' => $request->query('st'),
+            'subscr_month' => $subscr_month,
+            'payment_date' => date('Y-m-d H:i e'),
+            'created_date' => date('Y-m-d H:i:s')
+        ]); 
+
+        if($update_user_subscription){
+        	$valid_upto = $valid_to->format('M d - Y');
+        	return Redirect::to(config('app.base_url').'/#/subscription-payment'.'/'.$item_number.'/'.$request->query('amt').'/'.$request->query('tx').'/'.$valid_upto);
+        }
+	}
 
     public function paypal_success_common_func()
 	{
@@ -35,7 +80,7 @@ class PaypalController extends Controller
 	       Log::info(" payment_status  : ".$payment_status); 
 
 	       $IsSubscription=substr($item_number,0,2);
-	       $user_id = substr($item_number, strpos($item_number, "_") + 1); 
+	       $user_id = $_GET('loggedInUserID');
 	     
 
 	       if($IsSubscription=="M_" || $IsSubscription=="SA" || $IsSubscription=="Y_" )
@@ -158,7 +203,7 @@ class PaypalController extends Controller
 	            $IsSubscription=substr($item_number,0,2);
 	            Log::info(" IsSubscription  : ".$IsSubscription);
 
-	            $user = User::where('id', $user_id)->first();
+	            $user = User::where('user_id', $user_id)->first();
 
 	            $data['txn_id'] =$txn_id;
 	            $data['user_id'] =$user_id;
@@ -176,7 +221,7 @@ class PaypalController extends Controller
 	            $data['item_number'] = $item_number;
 	            $data['payment_date'] = date("Y-m-d H:i:s");
 	            $data['payment_gross'] =$payment_gross;
-	            $data['payment_fee'] = 'temp_payment_fee';
+	            $data['payment_fee'] = 0;
 	            $data['mc_currency'] = $currency_code;
 	            $data['createdtime']= date("Y-m-d H:i:s");                   
 
@@ -207,6 +252,70 @@ class PaypalController extends Controller
 	    $orderId = UserSubscription::max('user_subscription_id') + 1; 
 	    $orderIdNo = str_pad($orderId, 5, "0", STR_PAD_LEFT); 
 	    return $orderIdNo;
+	}
+
+	public function getNextPaymentOrderId()
+    {
+      	$orderid=UserPayment::max('user_payment_id')+1; 
+      	$orderIdNo = str_pad($orderid, 5, "0", STR_PAD_LEFT); 
+	    return $orderIdNo;
+    }
+
+    public function purchaseTender(Request $request)
+    {  
+        return view('paypal.PurchaseTender', compact('request'));
+    }
+
+    public function paypalPurchaseTenderSuccess(Request $request)
+	{
+		Log::info(" ** inside Normal Payment ** "); 
+            $order_id_no =$this->getNextPaymentOrderId();
+            $order_id="BPSB-".$order_id_no."-".date("mdy");                
+            Log::info(" order_id  : ".$order_id); 
+           
+            $txn_id = $_GET['tx'];
+            $payment_gross = $_GET['amt'];
+            $currency_code = $_GET['cc'];
+            $payment_status = $_GET['st'];
+            $user_id=$_GET['cm']; 
+           
+            // Log::info(" item_number  : ".$item_number);
+            // $IsSubscription=substr($item_number,0,2);
+            // Log::info(" IsSubscription  : ".$IsSubscription);
+
+            $user = User::where('user_id', $user_id)->first();
+
+            $data['txn_id'] =$txn_id;
+            $data['user_id'] =$user_id;
+            $data['order_id'] =$order_id;
+            $data['payment_amount'] = $payment_gross; 
+            $data['payment_status'] =$payment_status;
+            $data['first_name'] = $user->name;
+            $data['last_name'] = "temp_last_name";
+            $data['business'] = "temp_business";
+            $data['payer_email'] = "temp_payer_email";
+            $data['payer_id'] = "temp_last_payer_id";
+            $data['receiver_email'] = "temp_receiver_email";
+            $data['receiver_id'] = "temp_receiver_id";
+            $data['item_name'] = "temp_item_name";
+            $data['payment_date'] = date("Y-m-d H:i:s");
+            $data['payment_gross'] =$payment_gross;
+            $data['payment_fee'] = 0;
+            $data['mc_currency'] = $currency_code;
+            $data['createdtime']= date("Y-m-d H:i:s");                   
+
+            $user_payment = UserPayment::create($data); 
+            $cart_items = CartItem::where('user_id', $user_id)->get();
+            foreach ($cart_items as $cart_item) {
+            	PurchaseItem::create([
+            		'user_payment_id' => $user_payment->user_payment_id,
+            		'federal_tender_id' => $cart_item['federal_tender_id'],
+            		'state_tender_id' => $cart_item['state_tender_id']
+            	]);	
+            }
+            CartItem::where('user_id', $user_id)->delete();
+            return Redirect::to(config('app.base_url').'/#/normal-payment/'.$data['txn_id'].'/'.$data['order_id'].'/'.$data['payment_date'].'/'.$data['first_name'].'/'.$user_payment->user_payment_id);
+
 	}
 
 }

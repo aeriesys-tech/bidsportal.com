@@ -23,13 +23,15 @@ class User extends Authenticatable
         'email',
         'password',
         'position',
-        'company',
+        'company_name',
         'phone',
         'web_address',
         'mailing_address',
         'city',
         'state',
-        'pin_code'
+        'pin_code',
+        'status',
+        'pw'
     ];
 
     protected $primaryKey = 'user_id';
@@ -61,5 +63,11 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = \Hash::make($value);
+    }
+
+    
+    public function UserSubscription()
+    {
+        return $this->hasOne('App\Models\UserSubscription', 'user_id', 'user_id')->latest('user_subscription_id');
     }
 }

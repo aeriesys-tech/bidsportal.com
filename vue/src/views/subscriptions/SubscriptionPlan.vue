@@ -420,7 +420,7 @@
                     vm.modal2 = true
                 } else {
                     vm.$store.dispatch('setUserPlan', subscription)
-                    vm.$router.push("/plan_subscription/" + subscription.subscription_plan_id)
+                    vm.$router.push("/plan_subscription")
                 }
             },
 

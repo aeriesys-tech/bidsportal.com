@@ -23,9 +23,9 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="did-floating-label-content">
-                                                <input class="did-floating-input" type="text" placeholder=" " v-model="user.title" :class="{'is-invalid': errors.title}" />
+                                                <input class="did-floating-input" type="text" placeholder=" " v-model="user.position" :class="{'is-invalid': errors.position}" />
                                                 <label class="did-floating-label">Title/Position <span class="text-danger">*</span></label>
-                                                <span v-if="errors.title" class="invalid-feedback">{{ errors.title[0] }}</span>
+                                                <span v-if="errors.position" class="invalid-feedback">{{ errors.position[0] }}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -51,9 +51,9 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="did-floating-label-content">
-                                                <input class="did-floating-input" type="text" placeholder=" " v-model="user.mail_address" :class="{'is-invalid':errors.mail_address}" />
+                                                <input class="did-floating-input" type="text" placeholder=" " v-model="user.mailing_address" :class="{'is-invalid':errors.mailing_address}" />
                                                 <label class="did-floating-label">Mailing Address <span class="text-danger">*</span></label>
-                                                <span v-if="errors.mail_address" class="invalid-feedback">{{ errors.mail_address[0] }}</span>
+                                                <span v-if="errors.mailing_address" class="invalid-feedback">{{ errors.mailing_address[0] }}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -86,8 +86,8 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="did-floating-label-content input-group">
-                                                <input class="did-floating-input" placeholder=" " :type="type" id="psw-input" :class="{'is-invalid': errors.password}" ref="password" v-model="user.password" />
+                                            <div class="did-floating-label-content input-group mb-0">
+                                                <input class="did-floating-input" :type="type" :class="{'is-invalid': errors.password}" ref="password" v-model="user.password" />
 
                                                 <label class="did-floating-label">Password <span class="text-danger">*</span></label>
                                                 <div class="input-group-prepend">
@@ -105,8 +105,8 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="did-floating-label-content input-group">
-                                                <input class="did-floating-input" placeholder=" " :type="type1" id="psw-input" :class="{'is-invalid': errors.confirm_password}" v-model="user.confirm_password" />
+                                            <div class="did-floating-label-content input-group mb-0">
+                                                <input class="did-floating-input" :type="type1" :class="{'is-invalid': errors.confirm_password}" v-model="user.confirm_password" />
 
                                                 <label class="did-floating-label">Confirm Password <span class="text-danger">*</span></label>
                                                 <div class="input-group-prepend">
@@ -147,20 +147,20 @@
                                                                 <div class="liststate" id="style-3">
                                                                     <ul class="checkbox pl-0" >
                                                                         <li class="list-group-item fnt">
-                                                                            <input type="checkbox" :value="'nosetaside'" v-model="regSetAside" class="form-check-input me-2" @click="noSetAside('nosetaside')"  ref="rolesSelected" />No Set Aside
+                                                                            <input type="checkbox" :value="'nosetaside'" v-model="user.set_asides" class="form-check-input me-2" @click="noSetAside('nosetaside')"  ref="rolesSelected" />No Set Aside
                                                                         </li>
-                                                                        <li class="list-group-item fnt" v-for="setAside in filterSetAside" :key="setAside.status_id">
+                                                                        <li class="list-group-item fnt" v-for="set_aside, key in filterSetAside" :key="key">
                                                                             <input
                                                                                 class="form-check-input me-1"
                                                                                 id="federalcheck"
                                                                                 type="checkbox"
-                                                                                :value="setAside.status_id"
-                                                                                v-model="regSetAside"
+                                                                                :value="set_aside.set_aside_id"
+                                                                                v-model="user.set_asides"
                                                                                 @change="updateCheckall"
                                                                                 aria-label="..."
                                                                             />
 
-                                                                            {{setAside.status_name}}
+                                                                            {{set_aside.set_aside_name}}
                                                                         </li>
                                                                     </ul>
                                                                 </div>
@@ -306,7 +306,7 @@
                 icon1: false,
                 male: "Male",
                 female: "Female",
-                SetAsideStatus: [],
+                set_asides: [],
                 selectedFederal: [],
                 state_country: [],
                 selectAll: false,
@@ -316,23 +316,23 @@
                 searchstate: "",
                 user: {
                     checked: false,
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirm_password: "",
-                    title: "",
-                    gender: "",
-                    phone: "",
-                    country: "",
-                    city: "",
-                    company_name: "",
-                    address: "",
-                    mail_address: "",
-                    web_address: "",
-                    zipcode: "",
-                    state: "",
-                    status: "pending",
-                    socioeconomic_status: "",
+                    name: '',
+                    email: '',
+                    password: '',
+                    confirm_password: '',
+                    position: '',
+                    gender: '',
+                    phone: '',
+                    country: '',
+                    city: '',
+                    company_name: '',
+                    address: '',
+                    mailing_address: '',
+                    web_address: '',
+                    zipcode: '',
+                    state: '',
+                    socioeconomic_status: '',
+                    set_asides:[]
                 },
                 // user: {
                 //     checked: false,
@@ -347,7 +347,7 @@
                 //     city: "Belgaum",
                 //     company_name: "Aeriesys tech",
                 //     address: "",
-                //     mail_address: "bharatesh@aeriesys.com",
+                //     mailing_address: "bharatesh@aeriesys.com",
                 //     web_address: "https://aeriesys.com",
                 //     zipcode: "590001",
                 //     state: "Karnataka",
@@ -364,23 +364,23 @@
             };
         },
         mounted() {
-            this.getSetAsideStatus();
+            this.getSetAsides();
         },
         computed: {
             filterSetAside() {
-                return this.SetAsideStatus.filter((aside) => {
-                    return aside.status_name.toLowerCase().includes(this.searchstate.toLowerCase());
+                return this.set_asides.filter((set_aside) => {
+                    return set_aside.set_aside_name.toLowerCase().includes(this.searchstate.toLowerCase());
                 });
             },
         },
         methods: {
-            getSetAsideStatus() {
+            getSetAsides() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getSetAsideStatus" })
+                    .dispatch("post", { uri: "getSetAsides" })
                     .then(function (response) {
-                        vm.SetAsideStatus = response.data.data;
-                        vm.coutsetside = vm.SetAsideStatus;
+                        vm.set_asides = response.data
+                        vm.coutsetside = vm.set_asides
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -397,13 +397,13 @@
             },
             register() {
                 let vm = this;
-                vm.user.socioeconomic_status = vm.regSetAside.toString();
-                // if(vm.user.socioeconomic_status == "nosetaside")
-                // {
-                //     vm.user.socioeconomic_status = "0";
-                // }
+                if(vm.user.set_asides.length){
+                    vm.user.socioeconomic_status = true
+                }else{
+                    vm.user.socioeconomic_status = null
+                }
                 vm.user.phone=vm.user.phone.replace(/-/g, "");
-                vm.isLoading = true;
+                // vm.isLoading = true;
                 vm.$store
                     .dispatch("auth", { uri: "register", data: vm.user })
                     .then(function (response) {
@@ -442,12 +442,12 @@
             },
 
             select() {
-                this.regSetAside = [];
+                this.regSetAside = []
+                let vm = this
                 if (!this.selectAll) {
-                    for (let i in this.SetAsideStatus) {
-                        this.regSetAside.push(this.SetAsideStatus[i].status_id);
-                    }
-                    this.status_id = this.regSetAside;
+                    this.set_asides.map(function(element){
+                        vm.regSetAside.push(element.set_aside_id)
+                    })
                 }
             },
             Deselect() {
@@ -460,7 +460,7 @@
                         this.regSetAside.splice(0,1);
                     }
                 }
-                if (this.SetAsideStatus.length == this.regSetAside.length) {
+                if (this.set_asides.length == this.regSetAside.length) {
                     // this.no_Set_Aside=false;
                     this.selectAll = true;
                     this.status_id = this.regSetAside;

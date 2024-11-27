@@ -43,6 +43,19 @@ class StateTenderResource extends JsonResource
             $days_difference = null;
         }
 
+        $cart_icon = false;
+        if($request->user_id){
+            $cutoff_date = Carbon::now()->subDays(30);
+            $cart_item = CartItem::where('user_id', $request->user_id)->where('state_tender_id', $this->state_tender_id)->where('cart_item_date', '>=', $cutoff_date)->first();
+            if($cart_item){
+                $cart_icon = false;
+            }else{
+                $cart_icon = true;
+            }
+        }else{
+            $cart_icon = true;
+        }
+
         return [
             'state_tender_id' => $this->state_tender_id,
             'tender_no' => $this->tender_no,
@@ -72,6 +85,7 @@ class StateTenderResource extends JsonResource
             'time_ago'  => $time_ago,
             'days_difference' => $days_difference,
             'state_attachments' => $this->StateAttachments,
+            'cart_icon' => $cart_icon
         ];
     }
 }

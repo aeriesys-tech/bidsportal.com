@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
@@ -45,21 +46,25 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('UserSubscription')->where('email', $request->email)->where('pw', $request->password)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+        // if (!$user || !Hash::check($request->password, $user->password)) {
+        //     throw ValidationException::withMessages([
+        //         'email' => ['The provided credentials are incorrect.'],
+        //     ]);
+        // }
+        if($user){
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user
             ]);
+        }else{
+            return response()->json(['message' => 'These credentials donot match']);
         }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
     }
 
     // Logout user (revoke token)
@@ -76,5 +81,25 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function paginateActiveUsers(Request $request)
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required',
+            'keyword' => 'required'
+        ]);
+
+        $query = User::query();
+        $query->whereNull('deleted_at');
+        
+        if($request->search!='')
+        {
+            $query->where('name', 'like', "%$request->search%")->orWhere('email', 'like', "$request->search%")
+                ->orWhere('phone', 'like', "$request->search%")->orWhere('company', 'like', "$request->search%");
+        }
+        $user = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page); 
+        return UserResource::collection($user);
     }
 }

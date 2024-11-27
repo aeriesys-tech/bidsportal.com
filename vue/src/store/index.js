@@ -34,10 +34,17 @@ export default createStore({
 		tender_cart:{
 			items: 0,
 			total: 0
+		},
+		state_tender:{
+			title:null,
+			tender_no: null,
 		}
 	}, 
 	
 	mutations: {
+		setStateTender(state, state_tender){
+			state.state_tender = state_tender
+		},
 		setTenderCart(state, tender_cart){
 			state.tender_cart = tender_cart
 		},
@@ -121,6 +128,9 @@ export default createStore({
 	},
 
 	getters: {
+		state_tender(state){
+			return state.state_tender
+		},
 		tender_cart(state){
 			return state.tender_cart
 		},
@@ -207,7 +217,9 @@ export default createStore({
 	},
 
 	actions: {
-		
+		async setStateTender(context,payload) {
+			await context.commit('setStateTender', payload);
+		},
 		async setTenderCart(context,payload) {
 			await context.commit('setTenderCart', payload);
 		},
