@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StateNotice;
 use Illuminate\Support\Facades\Cache;
-use App\Http\resources\StateNoticeResource;
+use App\Http\Resources\StateNoticeResource;
 
 class StateNoticeController extends Controller
 {
