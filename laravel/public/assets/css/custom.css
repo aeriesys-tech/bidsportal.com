@@ -1,0 +1,185 @@
+/* Header */
+.navbar-brand {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Region of Bids */
+.regions {
+    background-color: #00a26c;
+    background-image: url(map.svg);
+    background-position: 100% 102%;
+}
+
+.regions .nav-link {
+    color: #fff;
+    font-weight: 500;
+    padding: 10px;
+}
+
+.regions .icon {
+    margin-top: -5px;
+    height: 20px;
+    width: 20px;
+}
+
+/* Search */
+.search {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.search .search-left {
+    box-shadow: 5px 2px 4px -5px rgb(0 0 0 / 20%);
+    border-right: 1px solid lightgray;
+}
+
+.search .label {
+    color: #4a4a4a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.search .empty {
+    color: #9b9b9b;
+    font-style: italic;
+}
+
+.search .search-right {
+    width: 100%;
+    box-shadow: 5px 2px 4px -5px rgb(0 0 0 / 20%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Result */
+.result {
+    background: #f5f5f6;
+}
+
+/* filtercss */
+.bg-white {
+    background-color: #fff !important;
+}
+/* .scroll-sidebar {
+    height: 550px;
+    box-shadow: rgb(0 0 0 / 24%) 0px 1px 3px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: scroll;
+} */
+.bor11 {
+    border-bottom: 1px solid #ededed;
+    padding: 9px 16px;
+    cursor: pointer;
+}
+.containercheckbox {
+    display: block;
+    position: relative;
+    padding-left: 21px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.containercheckbox span {
+    font-weight: 400;
+    font-size: 12px;
+    /* font-family: Arial,Helvetica,Sans,Sans-Serif,Sans Serif; */
+}
+
+/* bids*/
+
+/* sign up */
+.box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+.recommendation-component {
+    -webkit-box-flex: 0;
+    /* -ms-flex: 0 0 340px; */
+    flex: 0 0 340px;
+    background: #fbfcfc;
+    padding: 25px 20px;
+    /* font-size: 13px; */
+}
+.recommendation-component h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+}
+.ng-scope {
+    font-weight: 600;
+    font-size: 12px;
+    background-color: transparent;
+    cursor: pointer;
+}
+.recommendation-panel {
+    border: 1px solid #c4ebfc !important;
+    border-radius: 6px;
+    background: #fff;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+    /* display: -webkit-box; */
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    /* -ms-flex-direction: column; */
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.recommendation-header {
+    display: flex;
+    -webkit-box-pack: justify;
+    /* -ms-flex-pack: justify; */
+    justify-content: space-between;
+}
+.recommendation-panel h3 {
+    color: #31708f;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 23px;
+    margin: 0 0 5px;
+}
+.recommendation-header img {
+    position: relative;
+    top: 6px;
+    right: 9px;
+    margin: 0 0 0 8px;
+}
+.recommendation-panel .recommendation-details {
+    display: flex;
+    -webkit-box-pack: justify;
+    /* -ms-flex-pack: justify; */
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 0 40px 0 0;
+    font-size: 13px;
+}
+.recommendation-panel:after {
+    position: absolute;
+    background: rgba(0, 159, 193, 0.14);
+    width: 82px;
+    height: 82px;
+    right: -11px;
+    top: -15px;
+    content: "";
+    border-radius: 50%;
+    box-shadow: 0 0 0 33px rgb(0 159 193 / 3%), 0 0 0 65px rgb(0 159 193 / 3%), 0 0 0 98px rgb(0 159 193 / 3%);
+}
+
+/* header bottom */
+.margin-10 {
+    margin-left: 10px;
+    margin-right: 10px;
+}
