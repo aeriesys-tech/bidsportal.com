@@ -17,40 +17,37 @@ class CartItemController extends Controller
     		'federal_tender_id' => 'nullable|required_without:state_tender_id',
         	'state_tender_id' => 'nullable|required_without:federal_tender_id',
         	'region' => 'required',
+            'user_id' => 'required'
     	]);
-    	$user = Auth::User();
-
-    	if($user){
-	    	CartItem::create([
-	    		'user_id' => $user->user_id,
-	    		'federal_tender_id' => $data['federal_tender_id'],
-	    		'state_tender_id' => $data['state_tender_id'],
-	    		'region' => $data['region'],
-	    		'cart_item_date' => now()
-	    	]);
-	    }
+    	CartItem::create([
+    		'user_id' => $request->user_id,
+    		'federal_tender_id' => $data['federal_tender_id'],
+    		'state_tender_id' => $data['state_tender_id'],
+    		'region' => $data['region'],
+    		'cart_item_date' => now()
+    	]);
+	    
     }
 
     public function getCartItemsCount(Request $request)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        $data = $request->validate([
+            'user_id' => 'required'
+        ]);
 
         $cutoff_date = Carbon::now()->subDays(30);
 
-        $cart_items_count = CartItem::where('user_id', $user->user_id)
+        $cart_items_count = CartItem::where('user_id', $request->user_id)
             ->where('cart_item_date', '>=', $cutoff_date)
             ->count();
 
-        $federal_fees = FederalTender::whereHas('CartItem', function ($que) use ($user, $cutoff_date) {
-            $que->where('user_id', $user->user_id)
+        $federal_fees = FederalTender::whereHas('CartItem', function ($que) use ($request, $cutoff_date) {
+            $que->where('user_id', $request->user_id)
                 ->where('cart_item_date', '>=', $cutoff_date);
         })->sum('fees');
 
-        $state_fees = StateTender::whereHas('CartItem', function ($que) use ($user, $cutoff_date) {
-            $que->where('user_id', $user->user_id)
+        $state_fees = StateTender::whereHas('CartItem', function ($que) use ($request, $cutoff_date) {
+            $que->where('user_id', $request->user_id)
                 ->where('cart_item_date', '>=', $cutoff_date);
         })->sum('fees');
 
@@ -66,13 +63,12 @@ class CartItemController extends Controller
 
 
     public function getCartItems(Request $request){
-    	$user = Auth::User();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        $data = $request->validate([
+            'user_id' => 'required'
+        ]);    	
 
         $cutoff_date = Carbon::now()->subDays(30);
-    	$cart_items = CartItem::where('user_id', $user->user_id)->where('cart_item_date', '>=', $cutoff_date)->get();
+    	$cart_items = CartItem::where('user_id', $request->user_id)->where('cart_item_date', '>=', $cutoff_date)->get();
     	return CartItemResource::collection($cart_items);
     }
 
@@ -84,10 +80,9 @@ class CartItemController extends Controller
     }
 
     public function clearCart(Request $request){
-        $user = Auth::User();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        return CartItem::where('user_id', $user->user_id)->delete();
+        $data = $request->validate([
+            'user_id' => 'required'
+        ]);  
+        return CartItem::where('user_id', $request->user_id)->delete();
     }
 }
