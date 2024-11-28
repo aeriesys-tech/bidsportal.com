@@ -1544,18 +1544,21 @@
 
             getCartItemsCount(){
                 let vm = this
-                vm.$store
-                    .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
-                    .then(function (response) {
-                        if(response.data){
-                            vm.$store.dispatch('setTenderCart', response.data)
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                let user = vm.$store.getters.user
+                if(user){
+                    vm.$store
+                        .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
+                        .then(function (response) {
+                            if(response.data){
+                                vm.$store.dispatch('setTenderCart', response.data)
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             paginateFederalTenders(cancel_token) {

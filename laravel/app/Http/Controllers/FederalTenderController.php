@@ -38,7 +38,7 @@ class FederalTenderController extends Controller
     public function updateDescriptions()
     {
         $api_key = ApiKey::first()?->api_key ?? "8UPYOoBOM5C3ZSFpaxt1sIvZ3byn2Jfb91XoGyMT";
-        $federal_tenders = FederalTender::whereNull('description')->limit(4)->get();
+        $federal_tenders = FederalTender::whereNull('description')->get();
         if ($federal_tenders->isEmpty()) {
             \Log::info('No federal tenders found with null descriptions.');
             return;
