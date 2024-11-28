@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ApiKey;
 use Storage;
-use App\Http\resources\AdminResource;
+use App\Http\Resources\AdminResource;
 
 class AdminController extends Controller
 {

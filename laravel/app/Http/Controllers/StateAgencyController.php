@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StateAgency;
 use Illuminate\Support\Facades\Cache;
-use App\Http\resources\StateAgencyResource;
+use App\Http\Resources\StateAgencyResource;
 
 class StateAgencyController extends Controller
 {
