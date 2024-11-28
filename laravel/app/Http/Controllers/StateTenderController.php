@@ -414,7 +414,7 @@ class StateTenderController extends Controller
 
         if(isset($request->state_tenders) && !empty($request->state_tenders)){
             $bids = StateTender::whereIn('state_tender_id', $request->state_tenders)->get();
-            $user = Auth::User();
+            $user = User::where('user_id', $request->user_id)->first();
             $emails = array_map('trim', explode(',', $request->recipient_email));
             Mail::to($emails)->send(new StateTenderMail($bids, $user, $request));
 

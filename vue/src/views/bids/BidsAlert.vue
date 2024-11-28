@@ -589,20 +589,23 @@
 
             getAlert(){
                 let vm = this;
-                let uri = "getAlert";
-                vm.$store
-                    .dispatch("post", { uri: uri, data: vm.alert })
-                    .then(function (response) {
-                        vm.alert = response.data.data
-                        vm.tags = vm.alert.keywords
-                        vm.status = false
-                        vm.$store.dispatch("setSelectedNaics", vm.alert.naics)
-                        vm.$store.dispatch("setSelectedPscs", vm.alert.pscs)
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.alert.user_id = vm.$store.getters.user.user_id
+                    let uri = "getAlert";
+                    vm.$store
+                        .dispatch("post", { uri: uri, data: vm.alert })
+                        .then(function (response) {
+                            vm.alert = response.data.data
+                            vm.tags = vm.alert.keywords
+                            vm.status = false
+                            vm.$store.dispatch("setSelectedNaics", vm.alert.naics)
+                            vm.$store.dispatch("setSelectedPscs", vm.alert.pscs)
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
             removeFederalAgency(federal_agency){
                 console.log(federal_agency)
@@ -851,20 +854,23 @@
                 vm.alert.naics = vm.$store.getters.selected_naics
                 vm.alert.pscs = vm.$store.getters.selected_pscs
                 vm.alert.keywords = vm.tags
-                vm.$store
-                    .dispatch("post", { uri: 'createAlerts', data:vm.alert })
-                    .then(function (response) {
-                        vm.$store.dispatch("success", "Alert is added successfully");
-                        vm.$router.push("/bids/save-alert");
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        if(error.response.data.errors.states){
-                            vm.state_border_red = 'border-color:red'
-                        }
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.alert.user_id = vm.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: 'createAlerts', data:vm.alert })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Alert is added successfully");
+                            vm.$router.push("/bids/save-alert");
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            if(error.response.data.errors.states){
+                                vm.state_border_red = 'border-color:red'
+                            }
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             updateAlerts() {
@@ -872,22 +878,25 @@
                 vm.alert.naics = vm.$store.getters.selected_naics
                 vm.alert.pscs = vm.$store.getters.selected_pscs
                 vm.alert.keywords = vm.tags
-                vm.$store
-                    .dispatch("post", { uri: 'updateAlerts', data:vm.alert })
-                    .then(function (response) {
-                        vm.$store.dispatch("success", "Alert is updated successfully");
-                        vm.$store.dispatch("setSelectedNaics", null)
-                        vm.$store.dispatch("setSelectedPscs", null)
-                        vm.$router.push("/bids/save-alert");
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        if(error.response.data.errors.states){
-                            vm.state_border_red = 'border-color:red'
-                        }
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.alert.user_id = vm.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: 'updateAlerts', data:vm.alert })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Alert is updated successfully");
+                            vm.$store.dispatch("setSelectedNaics", null)
+                            vm.$store.dispatch("setSelectedPscs", null)
+                            vm.$router.push("/bids/save-alert");
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            if(error.response.data.errors.states){
+                                vm.state_border_red = 'border-color:red'
+                            }
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             getNotice(region_id) {

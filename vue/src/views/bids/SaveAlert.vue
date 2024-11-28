@@ -186,18 +186,20 @@
         methods: {
             index(){
                 let vm = this
-                // vm.isLoading = true;
-                vm.$store
-                    .dispatch("post", { uri: "paginateAlerts", data:vm.meta })
-                    .then(function (response) {
-                        // vm.isLoading = false
-                        vm.alerts = response.data.data
-                        vm.meta.totalRows = response.data.total;
-                        vm.meta.lastPage = response.data.last_page;
-                        vm.meta.from = response.data.from;
-                        vm.meta.to = response.data.to;
-                        vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
-                    })
+                if(vm.$store.getters.user){
+                    vm.meta.user_id = vm.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: "paginateAlerts", data:vm.meta })
+                        .then(function (response) {
+                            // vm.isLoading = false
+                            vm.alerts = response.data.data
+                            vm.meta.totalRows = response.data.total;
+                            vm.meta.lastPage = response.data.last_page;
+                            vm.meta.from = response.data.from;
+                            vm.meta.to = response.data.to;
+                            vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
+                        })
+                }
             },
 
             deleteAlertpopup(alert){

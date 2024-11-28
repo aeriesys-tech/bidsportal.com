@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post("login", [AuthController::class,'login']);
 Route::post("adminLogin",[AdminController::class,'adminLogin']);
-Route::post("register",[UserController::class,'register']);
+Route::post("register",[AuthController::class,'register']);
 
 //Federal Tender
 Route::post('paginateFederalTenders', [FederalTenderController::class,'paginateFederalTenders']);
@@ -82,7 +82,7 @@ Route::post("getCategories",[CategoryController::class,'getCategories']);
 //Subscription Plan
 Route::post('getSubscriptionPlans', [SubscriptionPlanController::class,'getSubscriptionPlans']);
 
-Route::middleware(['api', 'auth:sanctum'])->group(function ($router) {
+Route::middleware(['api'])->group(function ($router) {
 
 	
 	Route::post("changePassword",[UserController::class,'changePassword']);

@@ -259,16 +259,9 @@
         },
 
         mounted() {
-            let vm = this;
-
-            // vm.password.email = vm.$store.getters.user.email;
-            // if (vm.$store.getters.user) {
-            //     vm.getUserSubscriptions();
-            //     vm.getuserbids();
-            //     vm.getSetAsideStatus();
-            // }
-            //
-            // vm.$router.push("/bids");
+            let header_menu = this.$store.getters.header_menu
+            header_menu.show_bidsearch = true
+            this.$store.dispatch('setHeaderMenu', header_menu)
         },
         methods: {
             getSetAsideStatus() {

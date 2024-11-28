@@ -30,7 +30,13 @@
                     <!-- <li class="nav-item ms-0 ms-md-3" v-if="verifyPlan()" >
                      <div><a href="javascript:void(0)" @click="checkurlbid()"   class="nav-link" > Upgrade</a></div>
                     </li> -->
-                    <li class="nav-item ms-0 ms-md-3">
+                    <li class="nav-item" v-if="$store.getters.header_menu?.show_pricing">
+                        <router-link class="nav-link" to="/subscription_plans">Pricing</router-link>
+                    </li>
+                    <li class="nav-item" v-if="$store.getters.header_menu?.show_upgrade">
+                        <router-link class="nav-link" to="/subscription_plans">Upgrade</router-link>
+                    </li>
+                    <li class="nav-item ms-0 ms-md-3" v-if="$store.getters.header_menu?.show_bidsearch">
                      <div><a href="javascript:void(0)" @click="checkurlprice()"  class="nav-link" > Bid Search</a></div>
                     </li>
                     <li class="nav-item ms-0 ms-md-3">
@@ -115,134 +121,128 @@
     </teleport>
 </template>
 <script>
+    import moment from 'moment';
 export default {
     name:"",
  
     data() {
         return{
-                login_url:false,
-                alertSubscribe:false,
-                currentUrl:'',
-                resendemail:false,
-                sendmail:{
-                    id:'',
-                    email:'',
-                }
+            login_url:false,
+            alertSubscribe:false,
+            currentUrl:'',
+            resendemail:false,
+            sendmail:{
+                id:'',
+                email:'',
+            },
+            user_subscription: null,
+            show_pricing: false,
+            show_upgrade: false,
+            show_bidsearch: false,
+            current_page: null,
+            tender_pages : ['state_opportunities', 'federal_opportunities', 'private_opportunities', 'international_opportunities']
                
         }
         
     },
-    
 
-    mounted(){
-        //this.checklinks()
-      
-      },
     methods:{
 
-    verifyPlan(){
-        if(this.$store.getters.user && !this.$store.getters.user.subscription_id && this.$store.getters.page == 'bids')
-            return true
-    },
-
-    verifyBid(){
-        if(this.$store.getters.user && this.$store.getters.page=='plans' )
-            return true
-        if(this.$store.getters.user && this.$store.getters.page=='normal-payment')
-            return true
-        if(this.$store.getters.user && this.$store.getters.page=='subscription_payment')
-            return true
-        if(this.$store.getters.user && this.$store.getters.page=='subscription')
-            return true
-    },
-      checkurlbid(){
-        let vm = this;
-        vm.$router.push('/plans_pricing')
-   
-    },
-    checkurlprice(){
-        let vm= this;
-        vm.$router.push('/bids/state-opportunities')
-    },
-    logout() {
-      let vm = this;
-        vm.$store.dispatch('setUser', null)
-        vm.$store.dispatch('setToken', null)
-        vm.$store.commit("setCartProducts",[])
-        localStorage.removeItem("user")
-        localStorage.removeItem("token")
-        localStorage.removeItem("cartItems")
-        localStorage.removeItem("alert")
-        localStorage.removeItem("bidsdetails")
-        localStorage.removeItem("naicses")
-        localStorage.removeItem("psces")
-        vm.$router.push("/login")
-    },
+        verifyBid(){
+            if(this.$store.getters.user && this.$store.getters.page=='plans' )
+                return true
+            if(this.$store.getters.user && this.$store.getters.page=='normal-payment')
+                return true
+            if(this.$store.getters.user && this.$store.getters.page=='subscription_payment')
+                return true
+            if(this.$store.getters.user && this.$store.getters.page=='subscription')
+                return true
+        },
+        checkurlbid(){
+            let vm = this;
+            vm.$router.push('/plans_pricing')
+        },
+        checkurlprice(){
+            let vm= this;
+            vm.$router.push('/bids/state-opportunities')
+        },
+        logout() {
+            let vm = this;
+            vm.$store.dispatch('setUser', null)
+            vm.$store.dispatch('setToken', null)
+            vm.$store.commit("setCartProducts",[])
+            localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("cartItems")
+            localStorage.removeItem("alert")
+            localStorage.removeItem("bidsdetails")
+            localStorage.removeItem("naicses")
+            localStorage.removeItem("psces")
+            vm.$router.push("/login")
+        },
         checkurl(){
-         
             if(this.$store.getters.user.subscription_id==0){
-                
                 this.hidecartstatue=true;
                 this.hidepricestatue=false;
             }
         },
    
-    checklinks(){
-        
-        let vm = this;
-         if(vm.$store.getters.user === null  ){
-            vm.hidecartstatue = false;
-            vm.hidepricestatue = false;
-        }
-        if(vm.$store.getters?.user?.subscription_id ==0){
-            vm.hidecartstatue = false;
-            vm.hidepricestatue = true;
-        }
-          
-    },
-    goto_alert(){
-     
-        let vm = this;
-        if(vm.$store.getters.user?.subscription_id ==0){           
-                   vm.alertSubscribe= true;
-                       setTimeout(() => vm.alertSubscribe = false, 5000)
-                }else{
-                    vm.$router.push("/bids/save-alert")
-         }       
-    },
-    closemodal() {
-                let vm = this;
-                   vm.alertSubscribe=false;
-                   vm.resendemail= false;
-                   vm.errors = [];
-            },
-            resendEmail(){
-                  let vm = this;
-                   vm.resendemail=true;  
-            },
-            sendConfirmeMail(){
-                 let vm = this;
-                 vm.resendemail = false;
-                 vm.sendmail.id = vm.$store.getters.user?.id;
-                 vm.sendmail.email = vm.$store.getters.user?.email;
-                vm.$store
-                    .dispatch("post", { uri: "resend_email", data: vm.sendmail })
-                    .then(function () {
-                        vm.$store.dispatch("success", "Confirmation link resent to your registered email address");
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+        checklinks(){
+            let vm = this;
+            if(vm.$store.getters.user === null  ){
+                vm.hidecartstatue = false;
+                vm.hidepricestatue = false;
             }
+            if(vm.$store.getters?.user?.subscription_id ==0){
+                vm.hidecartstatue = false;
+                vm.hidepricestatue = true;
+            }
+            
+        },
+
+        goto_alert(){
+        
+            let vm = this;
+            if(vm.$store.getters.user?.subscription_id ==0){           
+                    vm.alertSubscribe= true;
+                        setTimeout(() => vm.alertSubscribe = false, 5000)
+                    }else{
+                        vm.$router.push("/bids/save-alert")
+            }       
+        },
+        closemodal() {
+            let vm = this;
+            vm.alertSubscribe=false;
+            vm.resendemail= false;
+            vm.errors = [];
+        },
+        resendEmail(){
+                let vm = this;
+                vm.resendemail=true;  
+        },
+        sendConfirmeMail(){
+            let vm = this;
+            vm.resendemail = false;
+            vm.sendmail.id = vm.$store.getters.user?.id;
+            vm.sendmail.email = vm.$store.getters.user?.email;
+            vm.$store
+            .dispatch("post", { uri: "resend_email", data: vm.sendmail })
+            .then(function () {
+                vm.$store.dispatch("success", "Confirmation link resent to your registered email address");
+            })
+            .catch(function (error) {
+                vm.errors = error.response.data.errors;
+                vm.$store.dispatch("error", error.response.data.message);
+            });
+        }
     },
-     computed: {
-     subTotal: function () {
-      return this.$store.getters.cartItems
-        .reduce((prev, cur) => +prev + +cur.tdr_doc_fees, 0)
-        .toFixed(2);
-    },
-     }
+    computed: {
+        subTotal: function () {
+            return this.$store.getters.cartItems
+            .reduce((prev, cur) => +prev + +cur.tdr_doc_fees, 0)
+            .toFixed(2);
+        },
+    }
 }
 </script>
 <style scoped>

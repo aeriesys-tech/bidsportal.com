@@ -156,6 +156,7 @@ class FederalTenderController extends Controller
     public function sendFederalTenderMail(Request $request)
     {
         $data = $request->validate([
+            'user_id' => 'required',
             'recipient_email' => ['required', function ($attribute, $value, $fail) {
                 $emails = array_map('trim', explode(',', $value));
                 foreach ($emails as $email) {
@@ -171,7 +172,7 @@ class FederalTenderController extends Controller
 
         if(isset($request->federal_tenders) && !empty($request->federal_tenders)){
             $bids = FederalTender::whereIn('federal_tender_id', $request->federal_tenders)->get();
-            $user = Auth::User();
+            $user = User::where('user_id', $request->user_id)->first();
             $emails = array_map('trim', explode(',', $request->recipient_email));
             Mail::to($emails)->send(new FederalTenderMail($bids, $user, $request));
 

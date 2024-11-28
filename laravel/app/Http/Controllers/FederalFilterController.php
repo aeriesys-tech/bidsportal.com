@@ -18,19 +18,18 @@ class FederalFilterController extends Controller
 {
 	public function getFederalFilters(Request $request)
     {
-    	$user = Auth::User();
-    	if($user){
-		    $federal_filters = FederalFilter::where('user_id', $user->user_id)->get();
-		    // return $federal_filters;
-		    return FederalFilterResource::collection($federal_filters);
-		}else{
-			return response()->json(['message' => 'Please sign in'], 422);
-		}
+    	$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
+	    $federal_filters = FederalFilter::where('user_id', $request->user_id)->get();
+	    return FederalFilterResource::collection($federal_filters);
 	}
 
 	public function addFederalFilters(Request $request)
 	{
-	    $user = Auth::User(); 
+    	$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
 
 	    $data = $request->validate([
 	        'federal_filter_name' => 'required',
@@ -55,11 +54,11 @@ class FederalFilterController extends Controller
 	    	try{
 		        $federal_filter = FederalFilter::whereHas('FederalFilterKeywords', function($que) use($request){
 		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $user->user_id)->first();
+		        })->where('user_id', $request->user_id)->first();
 	 
 		        if (!$federal_filter){
 			        $federal_filter = FederalFilter::create([
-			            'user_id' => $user->user_id,
+			            'user_id' => $request->user_id,
 					    'federal_filter_name' => $request->federal_filter_name,
 					    'posted_date' => $request->posted_date ?: null,
 					    'active' => $request->active ?: null,

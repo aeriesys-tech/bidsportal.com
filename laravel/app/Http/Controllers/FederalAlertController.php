@@ -18,19 +18,21 @@ use Auth;
 class FederalAlertController extends Controller
 {
 	public function getFederalAlerts(Request $request){
-		$user = Auth::User(); 
-		$federal_alerts = FederalAlert::where('user_id', $user->user_id)->get();
+		$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
+		$federal_alerts = FederalAlert::where('user_id', $request->user_id)->get();
 		return $federal_alerts;	
 	}
 
 	public function paginateFederalAlerts(Request $request){
 		$request->validate([
+			'user_id' => 'required',
             'order_by' => 'required',
             'per_page' => 'required|numeric'
         ]);
-        $user = Auth::User(); 
     	$query = FederalAlert::query();
-    	$query->where('user_id', $user->user_id);
+    	$query->where('user_id', $request->user_id);
     	$query->orderBy('federal_alert_id', 'DESC');
     	$federal_alerts = $query->paginate($request->per_page);
         return FederalAlertResource::collection($federal_alerts);	
@@ -38,7 +40,9 @@ class FederalAlertController extends Controller
 
 	public function addFederalAlerts(Request $request)
 	{
-	    $user = Auth::User(); 
+    	$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
 	    $data = $request->validate([
 	        'federal_alert_name' => 'required',
 	        'frequency' => 'required',
@@ -63,11 +67,11 @@ class FederalAlertController extends Controller
 	    	try{
 		        $federal_alert = FederalAlert::whereHas('FederalAlertKeywords', function($que) use($request){
 		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $user->user_id)->first();
+		        })->where('user_id', $request->user_id)->first();
 	 
 		        if (!$federal_alert){
 			        $federal_alert = FederalAlert::create([
-			            'user_id' => $user->user_id,
+			            'user_id' => $request->user_id,
 					    'federal_alert_name' => $request->federal_alert_name,
 					    'frequency' => $request->frequency,
 					    'posted_date' => $request->posted_date ?: null,

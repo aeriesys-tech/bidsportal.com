@@ -413,7 +413,7 @@
                                         </div>
 
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ federal_tender.tender_no }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.posted_date) }} &nbsp;<span>{{federal_tender.time_ago  }} </span></li>
                                             <li class="nav-item">
@@ -497,7 +497,7 @@
                                                                     </div>
 
                                                                     <div class="column">
-                                                                        <a :style="{color:federal_tender.federal_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice.notice_name }}</a>
+                                                                        <a :style="{color:federal_tender.federal_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice?.notice_name }}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -912,6 +912,9 @@
             this.getPscs()
             this.getNaics()
             this.$store.commit("setSelectedNaics", [])
+            let header_menu = this.$store.getters.header_menu
+            header_menu.show_bidsearch = false
+            this.$store.dispatch('setHeaderMenu', header_menu)
         },
 
         computed: {
