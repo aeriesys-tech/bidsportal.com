@@ -93,5 +93,4 @@ class FederalTenderDetailResource extends JsonResource
             'secondary_address' => $secondary_address
         ];
     }
-    }
 }
