@@ -41,6 +41,7 @@ import 'vue-loading-overlay/dist/css/index.css';
                 this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
                 this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
                 this.$store.dispatch("setToken", localStorage.getItem("token"));
+                this.$store.dispatch("setHeaderMenu", JSON.parse(localStorage.getItem("header_menu")));
                 
             }
 
@@ -51,6 +52,7 @@ import 'vue-loading-overlay/dist/css/index.css';
                 localStorage.setItem("cartItems", JSON.stringify(this.$store?.getters?.cartItems))
                 localStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
                 localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
+                localStorage.setItem("header_menu", JSON.stringify(this.$store?.getters?.header_menu));
             });
 			
         },

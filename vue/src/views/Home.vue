@@ -393,12 +393,36 @@
     </section>
 </template>
 <script>
+    import moment from 'moment';
     export default {
         data() {
             return {};
         },
         mounted() {
             if(this.$store.getters.user){
+                let user = this.$store.getters.user
+                let vm = this
+                let header_menu = {
+                    show_pricing : false,
+                    show_upgrade : false,
+                    show_bidsearch : false
+                }
+                if(user){
+                    if(user.user_subscription){
+                        let valid_to = user.user_subscription.valid_to
+                        const today = moment().startOf('day')
+                        const validToDate = moment(valid_to)
+                        header_menu.show_pricing = false
+                        if(validToDate.isSameOrAfter(today)){
+                            header_menu.show_upgrade = false
+                        }else{
+                            header_menu.show_upgrade = true
+                        }
+                    }else{
+                        header_menu.show_pricing = true
+                    }
+                }
+                vm.$store.dispatch('setHeaderMenu', header_menu)
                 this.$router.push('/bids/state-opportunities')
             }
             // this.getPsces();

@@ -38,10 +38,19 @@ export default createStore({
 		state_tender:{
 			title:null,
 			tender_no: null,
+		},
+		
+		header_menu:{
+			show_pricing: null,
+			show_upgrade: null,
+			show_bidsearch: null
 		}
 	}, 
 	
 	mutations: {
+		setHeaderMenu(state, header_menu){
+			state.header_menu = header_menu
+		},
 		setStateTender(state, state_tender){
 			state.state_tender = state_tender
 		},
@@ -128,6 +137,9 @@ export default createStore({
 	},
 
 	getters: {
+		header_menu(state){
+			return state.header_menu
+		},
 		state_tender(state){
 			return state.state_tender
 		},
@@ -217,6 +229,9 @@ export default createStore({
 	},
 
 	actions: {
+		async setHeaderMenu(context,payload) {
+			await context.commit('setHeaderMenu', payload);
+		},
 		async setStateTender(context,payload) {
 			await context.commit('setStateTender', payload);
 		},
@@ -302,7 +317,7 @@ export default createStore({
 		},
 		async setCartProducts(context,cart) { 
 			await context.commit("setCartProducts",cart);
-	   },
+	   	},
 		
 		auth(context,payload) {
 			return new Promise((resolve, reject) => {

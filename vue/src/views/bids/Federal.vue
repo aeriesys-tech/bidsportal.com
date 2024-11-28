@@ -954,6 +954,9 @@
             this.$store.commit("setSelectedNaics", null)
             this.$store.commit("setFederalTender", null)
             this.$store.commit("setStateTender", null)
+            let header_menu = this.$store.getters.header_menu
+            header_menu.show_bidsearch = false
+            this.$store.dispatch('setHeaderMenu', header_menu)
         },
 
         computed: {
@@ -997,23 +1000,26 @@
                 let vm = this
                 vm.fullPage = true
                 vm.isLoading = true
-                vm.$store
-                    .dispatch("post", { uri: "sendFederalTenderMail", data: vm.share_federal_tender })
-                    .then(function () {
-                        vm.fullPage = false
-                        vm.isLoading = false
-                        vm.share_tender = false
-                        vm.share_federal_tender.recipient_email = ''
-                        vm.share_federal_tender.subject = ''
-                        vm.share_federal_tender.message = ''
-                        vm.share_federal_tender.federal_tenders = []
-                        vm.$store.dispatch("success", "Mail sent successfully");
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(this.$store.getters.user){
+                    vm.share_federal_tender.user_id = this.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: "sendFederalTenderMail", data: vm.share_federal_tender })
+                        .then(function () {
+                            vm.fullPage = false
+                            vm.isLoading = false
+                            vm.share_tender = false
+                            vm.share_federal_tender.recipient_email = ''
+                            vm.share_federal_tender.subject = ''
+                            vm.share_federal_tender.message = ''
+                            vm.share_federal_tender.federal_tenders = []
+                            vm.$store.dispatch("success", "Mail sent successfully");
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             listviewgrid() {
@@ -1127,17 +1133,20 @@
             addFederalFilter(filter_name){
                 let vm = this
                 vm.meta.federal_filter_name = filter_name
-                vm.$store
-                    .dispatch("post", { uri: "addFederalFilters", data: vm.meta })
-                    .then(function (response) {
-                        vm.$store.dispatch("success", "Filters saved successfully");
-                        vm.closeModal()
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.meta.user_id = vm.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: "addFederalFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.closeModal()
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             addAlert(alert){
@@ -1519,16 +1528,18 @@
 
             getFederalFilters(){
                 let vm = this
-                vm.$store
-                    .dispatch("post", { uri: "getFederalFilters" })
-                    .then(function (response) {
-                        vm.federal_filters = response.data.data
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.$store
+                        .dispatch("post", { uri: "getFederalFilters", data:vm.$store.getters.user })
+                        .then(function (response) {
+                            vm.federal_filters = response.data.data
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             getCartItemsCount(){

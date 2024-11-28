@@ -303,6 +303,7 @@
             changePassword() {
                 let vm = this;
                 vm.password.email = vm.user.email
+                vm.password.user_id = vm.user.user_id
                 vm.$store
                     .dispatch("post", {
                         uri: "changePassword",

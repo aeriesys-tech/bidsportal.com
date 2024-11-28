@@ -131,7 +131,7 @@
                                         </div>
 
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ state_tender.tender_no }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(state_tender.posted_date) }} &nbsp;<span>{{state_tender.time_ago  }} </span></li>
                                             <li class="nav-item">
@@ -547,6 +547,9 @@
             if(this.region == 'State'){
                 this.paginateStateTenders()
             }
+            let header_menu = this.$store.getters.header_menu
+            header_menu.show_bidsearch = false
+            this.$store.dispatch('setHeaderMenu', header_menu)
         },
 
         computed: {

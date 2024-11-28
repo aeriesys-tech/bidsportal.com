@@ -23,12 +23,13 @@ class UserController extends Controller
 	{
 	    // Validate the input
 	    $data = $this->validate($request, [
+          'user_id' => 'required',
 	        'current_password' => 'required|min:8',
 	        'new_password' => 'required|min:8|confirmed', // 'confirmed' ensures new_password == confirm_password
 	    ]);
 
-	    $user = Auth::user();
-	    if (!Hash::check($request->current_password, $user->password)) {
+	    $user = User::where('user_id', $request->user_id)->where('password', $request->current_password)->first();
+	    if (!$user)) {
 	        return response()->json([
 	            'errors' => [
 	                'current_password' => ['Your current password does not match.'],

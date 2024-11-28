@@ -883,6 +883,7 @@
                 pageChangeInProgress: false,
                 auto_call:true,
                 share_state_tender : {
+                    user_id:null,
                     recipient_email:null,
                     subject : '',
                     message : '',
@@ -930,6 +931,12 @@
             } 
             if(state_tender?.tender_no){
                 this.handleSelectedTag(state_tender.tender_no)
+            }
+            let header_menu = this.$store.getters.header_menu
+            console.log(header_menu)
+            if(header_menu){
+                header_menu.show_bidsearch = false
+                this.$store.dispatch('setHeaderMenu', header_menu)
             }
             // this.getPscs()
             // this.getNaics()
@@ -1006,6 +1013,7 @@
                 let vm = this
                 vm.fullPage = true
                 vm.isLoading = true
+                vm.share_state_tender.user_id = this.$store.getters.user.user_id
                 vm.$store
                     .dispatch("post", { uri: "sendStateTenderMail", data: vm.share_state_tender })
                     .then(function () {
@@ -1126,17 +1134,20 @@
             addStateFilter(filter_name){
                 let vm = this
                 vm.meta.state_filter_name = filter_name
-                vm.$store
-                    .dispatch("post", { uri: "addStateFilters", data: vm.meta })
-                    .then(function (response) {
-                        vm.$store.dispatch("success", "Filters saved successfully");
-                        vm.closeModal()
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(this.$store.getters.user){
+                    vm.meta.user_id = this.$store.getters.user.user_id
+                    vm.$store
+                        .dispatch("post", { uri: "addStateFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.closeModal()
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             addAlert(alert){
@@ -1482,16 +1493,18 @@
 
             getStateFilters(){
                 let vm = this
-                vm.$store
-                    .dispatch("post", { uri: "getStateFilters" })
-                    .then(function (response) {
-                        vm.state_filters = response.data.data
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.$store
+                        .dispatch("post", { uri: "getStateFilters", data: vm.$store.getters.user })
+                        .then(function (response) {
+                            vm.state_filters = response.data.data
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             paginateStateTenders(cancel_token) {

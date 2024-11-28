@@ -14,14 +14,10 @@ class UserPaymentController extends Controller
     }
 
     public function getUserPayments(Request $request){
-    	$user = Auth::User();
-    	if($user){
-	    	$user_payments = UserPayment::where('user_id', $user->user_id)->get();
-    		return UserPaymentResource::collection($user_payments);
-    	}else{
-    		return response()->json([
-    			'message' => 'Unauthorised'
-    		]);
-    	}
+        $data = $request->validate([
+            'user_id' => 'required'
+        ]);
+    	$user_payments = UserPayment::where('user_id', $request->user_id)->get();
+		return UserPaymentResource::collection($user_payments);
     }
 }

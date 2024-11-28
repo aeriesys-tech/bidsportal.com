@@ -17,19 +17,19 @@ class StateFilterController extends Controller
 {
 	public function getStateFilters(Request $request)
     {
-    	$user = Auth::User();
-    	if($user){
-		    $state_filters = StateFilter::where('user_id', $user->user_id)->get();
-		    // return $state_filters;
-		    return StateFilterResource::collection($state_filters);
-		}else{
-			return response()->json(['message' => 'Please sign in'], 422);
-		}
+    	$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
+	    $state_filters = StateFilter::where('user_id', $request->user_id)->get();
+	    return StateFilterResource::collection($state_filters);
+		
 	}
 
     public function addStateFilters(Request $request)
 	{
-	    $user = Auth::User(); 
+    	$data = $request->validate([
+    		'user_id' => 'required'
+    	]);
 
 	    $data = $request->validate([
 	        'state_filter_name' => 'required',
@@ -47,16 +47,14 @@ class StateFilterController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
 
-	    if ($user) {
-
 	    	try{
 		        $state_filter = StateFilter::whereHas('StateFilterKeywords', function($que) use($request){
 		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $user->user_id)->first();
+		        })->where('user_id', $request->user_id)->first();
 	 
 		        if (!$state_filter){
 			        $state_filter = StateFilter::create([
-			            'user_id' => $user->user_id,
+			            'user_id' => $request->user_id,
 					    'state_filter_name' => $request->state_filter_name,
 					    'posted_date' => $request->posted_date ?: null,
 					    'active' => $request->active ?: null,
@@ -109,7 +107,6 @@ class StateFilterController extends Controller
 		    } catch (\Exception $e) {
 	            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
 	        }
-	    }
 	}
 
 	private function deleteAssociations($state_filter)

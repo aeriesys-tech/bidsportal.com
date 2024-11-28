@@ -16,7 +16,7 @@ class FederalTenderResource extends JsonResource
      */
     public function toArray($request)
     {
-
+        $time_ago = null;
         if($this->posted_date) {
             if($request->time_zone) {
                 $difference = Carbon::parse($this->posted_date)
