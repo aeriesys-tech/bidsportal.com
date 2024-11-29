@@ -618,7 +618,7 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-disabled="!userModal" v-if="userModal">
+    <teleport to="#modals" v-if="userModal">
         <div class="modal-overlay">
             <div class="">
                 <div class="">
@@ -633,7 +633,7 @@
         </div>
     </teleport>
 
-    <teleport to="#modals" v-disabled="!alertModal" v-if="alertModal">
+    <teleport to="#modals" v-if="alertModal">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -648,7 +648,7 @@
         </div>
     </teleport>
 
-    <teleport to="#modals" v-disabled="!share_tender" v-if="share_tender">
+    <teleport to="#modals" v-if="share_tender">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -888,7 +888,10 @@
                     subject : '',
                     message : '',
                     state_tenders : []
-                }
+                },
+                state_keyword:'',
+                fullPage:'',
+                tag:''
             };
         },
 

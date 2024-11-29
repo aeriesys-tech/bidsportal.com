@@ -95,7 +95,7 @@
             </div>
         </nav>
     </header>
-     <teleport to="#modals" v-disabled="!alertSubscribe" v-if="alertSubscribe">
+     <teleport to="#modals" v-if="alertSubscribe">
         <div class="modal-overlay">
             <div id="popup1" class="confirm" style="background-color:white !important">
                 <div class="" >
@@ -106,7 +106,7 @@
             </div>
         </div>
     </teleport>
-     <teleport to="#modals" v-disabled="!resendemail" v-if="resendemail">
+     <teleport to="#modals"  v-if="resendemail">
         <div class="modal-overlay">
             <div id="popup1" class="overlay">
                 <div class="popup">

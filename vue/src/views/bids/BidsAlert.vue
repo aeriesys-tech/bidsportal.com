@@ -469,6 +469,7 @@
                 },
                 clear_all_naics:false,
                 clear_all_psc:false,
+                federal_agency_keyword: null
             };
         },
 

@@ -349,8 +349,11 @@
 <script>
 import TreeItem from "@/components/TreeItem.vue";
 import PscTree from "@/components/PscTree.vue";
+import DatePicker from "@jobinsjp/vue3-datepicker";
+import "@jobinsjp/vue3-datepicker/index.css";
+
 export default {
-    components: { TreeItem, PscTree},
+    components: { TreeItem, PscTree, DatePicker},
     props:{
         'naics_codes':{
             type: Object,
@@ -366,6 +369,9 @@ export default {
             requred: true
         }
     },
+
+    emits: ['updateFederalFilters'],
+
     data(){
         return{
             federal_notices:[],
@@ -375,6 +381,8 @@ export default {
             sorted_federal_agencies:[],
             set_asides:[],
             tree_data:'',
+            clear_all_naics: false,
+            clear_all_psc: false,
             meta:{
                 keywords:[],
                 federal_notices : [],
@@ -390,8 +398,11 @@ export default {
                 states:[],
                 federal_agencies:[],
                 set_asides:[],
-                filters:[]
+                filters:[],
             },
+            federal_agency_keword: null,
+            federal_keyword: null,
+            errors: [],
         }
     },
 
@@ -442,7 +453,6 @@ export default {
         getStates() {
             let vm = this;
             vm.states = vm.$store.getters.states
-            console.log(vm.states)
             if(!vm.states.length){
                 let uri = "getStates";
                 vm.$store
@@ -461,7 +471,6 @@ export default {
         getFederalAgencies() {
             let vm = this;
             vm.federal_agencies = vm.$store.getters.federal_agencies
-            console.log(vm.federal_agencies)
             if(!vm.federal_agencies.length){
                 let uri = "getFederalAgencies";
                 vm.$store
@@ -481,7 +490,6 @@ export default {
         getSetAsides() {
             let vm = this;
             vm.set_asides = vm.$store.getters.set_asides
-            console.log(vm.set_asides)
             if(!vm.set_asides){
                 let uri = "getSetAsides";
                 vm.$store

@@ -70,7 +70,7 @@
                             </div>
                             <hr class="my-0" />
                             <div v-if="region == 'State'">
-                                <StateFilter :clear_state_filters="clear_state_filters" :state_notices="state_notices" :categories="categories" :states="states" :state_agencies="state_agencies" @updateStateFilters="updateStateFilters" ref="state_filter" />
+                                <StateFilter :clear_state_filters="clear_state_filters"  @updateStateFilters="updateStateFilters" ref="state_filter" />
                             </div>
                             <div v-if="region == 'Federal'">
                                 <FederalFilter :clear_federal_filters="clear_federal_filters" :naics_codes="naics_codes" :service_codes="service_codes" @updateFederalFilters="updateFederalFilters" ref="federal_filter" />
@@ -373,7 +373,7 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-disabled="!userModal" v-if="userModal">
+    <teleport to="#modals"  v-if="userModal">
         <div class="modal-overlay">
             <div class="">
                 <div class="">
@@ -513,7 +513,10 @@
                 state_filters:[],
                 clear_state_filters:false,
                 login_modal:false,
-                userModal : false
+                userModal : false,
+                tag:null,
+                tags: [],
+                errors:null
             };
         },
 

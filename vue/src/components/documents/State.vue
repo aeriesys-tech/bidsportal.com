@@ -244,6 +244,9 @@
     </div>
 </template>
 <script>
+import DatePicker from "@jobinsjp/vue3-datepicker";
+import "@jobinsjp/vue3-datepicker/index.css";
+
 export default {
     props:{
         'clear_state_filters': {
@@ -251,6 +254,11 @@ export default {
             requred: true
         }
     },
+
+    emits: ['updateStateFilters'],
+
+    components: { DatePicker },
+
     data(){
         return{
             state_notices:[],
@@ -274,6 +282,10 @@ export default {
                 state_agencies:[],
                 filters:[]
             },
+            category_keyword:null,
+            state_keyword: null,
+            errors:[],
+            state_agency_keword:null
         }
     },
 
@@ -299,7 +311,6 @@ export default {
     },
 
     mounted(){
-        console.log(this.sorted_states)
         this.getStateNotices()
         
     },
@@ -433,7 +444,6 @@ export default {
         getStates() {
             let vm = this;
             vm.states = vm.$store.getters.states
-            console.log(vm.states)
             if(!vm.states.length){
                 let uri = "getStates";
                 vm.$store
@@ -452,7 +462,6 @@ export default {
         getStateAgencies() {
             let vm = this;
             vm.state_agencies = vm.$store.getters.state_agencies
-            console.log(vm.state_agencies)
             if(!vm.state_agencies.length){
                 let uri = "getStateAgencies";
                 vm.$store

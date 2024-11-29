@@ -287,42 +287,46 @@
         methods: {
             getCartItems(){
                 let vm = this
-                vm.total = 0
-                vm.$store
-                    .dispatch("post", { uri: "getCartItems" })
-                    .then(function (response) {
-                        vm.cart_items = response.data.data
-                        vm.cart_items.map(function(element){
-                            if(element.federal_tender_id){
-                                vm.total += element.federal_tender?.fees
-                            }
-                            if(element.state_tender_id){
-                                vm.total += element.state_tender?.fees
-                            }
+                if(vm.$store.getters.user){
+                    vm.total = 0
+                    vm.$store
+                        .dispatch("post", { uri: "getCartItems", data: vm.$store.getters.user })
+                        .then(function (response) {
+                            vm.cart_items = response.data.data
+                            vm.cart_items.map(function(element){
+                                if(element.federal_tender_id){
+                                    vm.total += element.federal_tender?.fees
+                                }
+                                if(element.state_tender_id){
+                                    vm.total += element.state_tender?.fees
+                                }
+                            })
                         })
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             getCartItemsCount(){
                 let vm = this
-                vm.$store
-                    .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
-                    .then(function (response) {
-                        if(response.data){
-                            vm.$store.dispatch('setTenderCart', response.data)
-                            vm.getCartItems()
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.$store
+                        .dispatch("post", { uri: "getCartItemsCount", data:vm.$store.getters.user })
+                        .then(function (response) {
+                            if(response.data){
+                                vm.$store.dispatch('setTenderCart', response.data)
+                                vm.getCartItems()
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
              format_date(value) {
@@ -371,23 +375,25 @@
           
             clearCart() {
                 let vm = this
-                let cart_items = {
-                    items: 0,
-                    total: 0
+                if(vm.$store.getters.user){
+                    let cart_items = {
+                        items: 0,
+                        total: 0
+                    }
+                    vm.$store
+                        .dispatch("post", { uri: "clearCart", data: vm.$store.getters.user })
+                        .then(function () {
+                            vm.cart_items =  []
+                            vm.total = 0
+                            vm.$store.dispatch('setTenderCart', cart_items)
+                            vm.$store.dispatch("success", "Cart item cleared");
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
                 }
-                vm.$store
-                    .dispatch("post", { uri: "clearCart" })
-                    .then(function () {
-                        vm.cart_items =  []
-                        vm.total = 0
-                        vm.$store.dispatch('setTenderCart', cart_items)
-                        vm.$store.dispatch("success", "Cart item cleared");
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
             },
             createOrder(){
                 console.log('customer_id', this.$store.getters.user.user_id)
