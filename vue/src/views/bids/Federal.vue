@@ -632,7 +632,7 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-disabled="!userModal" v-if="userModal">
+    <teleport to="#modals" v-if="userModal">
         <div class="modal-overlay">
             <div class="">
                 <div class="">
@@ -647,7 +647,7 @@
         </div>
     </teleport>
 
-    <teleport to="#modals" v-disabled="!alertModal" v-if="alertModal">
+    <teleport to="#modals" v-if="alertModal">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -662,7 +662,7 @@
         </div>
     </teleport>
 
-    <teleport to="#modals" v-disabled="!share_tender" v-if="share_tender">
+    <teleport to="#modals" v-if="share_tender">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -763,6 +763,8 @@
         data() {
             return {
                 fullPage: false,
+                state_keyword:null,
+                tag:null,
                 add_federal_filters:false,
                 federal_filters:[],
                 federal_notices:[],
@@ -924,7 +926,7 @@
             'meta.federal_agencies': 'triggerFederalTenders',
             'meta.naics': 'triggerFederalTenders',
             'meta.pscs': 'triggerFederalTenders',
-            'store.getters.page_redirect' : 'pageRedirect'
+            // 'store.getters.page_redirect' : 'pageRedirect'
         },
 
         beforeRouteEnter(to, from, next) {
@@ -977,6 +979,7 @@
                 let vm = this
                 vm.fullPage = true
                 let cart_item = {
+                    user_id: vm.$store.getters.user.user_id,
                     federal_tender_id : federal_tender.federal_tender_id,
                     state_tender_id : null,
                     region : 'Federal'
@@ -1168,7 +1171,6 @@
             },
 
             closeModal(modal) {
-                console.log(modal)
                 if (modal == "login_modal") {
                     if (this.$store.getters.user) {
                         this.getSavedsearch();

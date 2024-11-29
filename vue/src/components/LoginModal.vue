@@ -1,7 +1,6 @@
 <template>
 <loading v-model:active="isLoading"
                  :can-cancel="false"
-                 :on-cancel="onCancel"
                  :is-full-page="fullPage"/>
     <transition name="fade">
         <transition name="drop-in">
@@ -82,17 +81,20 @@
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 export default {
-     components: {Loading},
+    components: {Loading},
     data(){
         return{
              user:{
                 email:'',
                 password:'',
             },
+            isLoading: false,
             errors:[],
-            fullPage: true
+            fullPage: true,
         }
     },
+
+    emits: ['closeModal'],
    
     methods:{
         closeModal(modal){

@@ -1,5 +1,5 @@
 <template>
-    <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :on-cancel="onCancel" :is-full-page="fullPage" />
+    <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001"  :is-full-page="fullPage" />
     <section class="pt-0">
         <div class="container vstack gap-3">
             <div class="row align-items-center mt-3">
@@ -193,9 +193,9 @@
                         .then(function (response) {
                             // vm.isLoading = false
                             vm.alerts = response.data.data
-                            vm.meta.totalRows = response.data.total;
-                            vm.meta.lastPage = response.data.last_page;
-                            vm.meta.from = response.data.from;
+                            vm.meta.totalRows = response.data.meta.total;
+                            vm.meta.lastPage = response.data.meta.last_page;
+                            vm.meta.from = response.data.meta.from;
                             vm.meta.to = response.data.to;
                             vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
                         })
@@ -232,7 +232,7 @@
             showTenders(alert) {
                 this.$store.commit("setAlert", alert);
                 if(alert.region == 'Federal'){
-                    this.$router.push('/bids/state-opportunities')
+                    this.$router.push('/bids/federal-opportunities')
                 }
             },
 
@@ -257,10 +257,12 @@
             },
 
             edit(alert) {
-                // this.$store.commit("setAlert", intersted);
+                console.log(alert)
+                
+		path:'/bids/bid-alert/:region/:alert_id/edit',
                 // this.$store.commit("setSelectedNaics",intersted.naics_id ? intersted.naics_id.split(","):[]);
                 // this.$store.commit("setSelectedPsces",intersted.psc ? intersted.psc.split(","):[]);
-                this.$router.push("/bids/state-opportunities/bid-alert/Federal/" + alert.alert_id + "/edit");
+                this.$router.push("/bids/bid-alert/Federal/" + alert.alert_id +'/edit' );
             },
 
             getInterstedUser() {

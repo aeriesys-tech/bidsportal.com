@@ -96,8 +96,8 @@
                                                         <td v-if="purchase_item.federal_tender_id">{{ purchase_item.federal_tender.title }}</td>
                                                         <td v-if="purchase_item.state_tender_id">{{format_date(purchase_item.state_tender.expiry_date)}}</td>
                                                         <td v-if="purchase_item.federal_tender_id">{{format_date(purchase_item.federal_tender.expiry_date)}}</td>
-                                                        <td v-if="purchase_item.state_tender.state_tender_id"><div>{{format_date(purchase_item.state_tender.posted_date)}}</div></td>
-                                                        <td v-if="purchase_item.state_tender.federal_tender_id"><div>{{format_date(purchase_item.federal_tender.posted_date)}}</div></td>
+                                                        <td v-if="purchase_item.state_tender_id"><div>{{format_date(purchase_item.state_tender.posted_date)}}</div></td>
+                                                        <td v-if="purchase_item.federal_tender_id"><div>{{format_date(purchase_item.federal_tender.posted_date)}}</div></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -250,8 +250,8 @@
             },
              getPaymentSubscriptions() {
                 let vm = this;
-                 vm.isLoading = true;
-                vm.payment.user_id = vm.$store.getters.user.id
+                //  vm.isLoading = true;
+                vm.payment.user_id = vm.$store.getters.user.user_id
              vm.$store
                     .dispatch("post", {
                         uri: "getUserPayments",
@@ -259,12 +259,12 @@
                     })
                     .then(function (response) {
                         vm.payment = response.data.data
-                        vm.isLoading = false;
+                        // vm.isLoading = false;
                      
                         // vm.userbids.bids = vm.payment.item_number.toString();
                      })
                     .catch(function (error) {
-                        vm.isLoading = false;
+                        // vm.isLoading = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });

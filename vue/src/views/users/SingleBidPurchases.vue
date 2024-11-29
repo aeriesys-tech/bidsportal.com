@@ -229,7 +229,7 @@
              getPaymentSubscriptions() {
                 let vm = this;
                  vm.isLoading = true;
-                vm.payment.user_id = vm.$store.getters.user.id
+                vm.payment.user_id = vm.$store.getters.user.user_id
                let uri = "getUserPayments"
                 vm.$store
                     .dispatch("post", {uri: uri,data: vm.payment})
