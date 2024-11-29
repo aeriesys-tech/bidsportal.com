@@ -42,11 +42,16 @@ Route::post('paginateFederalTenders', [FederalTenderController::class,'paginateF
 //State Tender
 Route::post('paginateStateTenders', [StateTenderController::class,'paginateStateTenders']);
 Route::post('paginateInactiveStateTenders', [StateTenderController::class,'paginateInactiveStateTenders']);
-Route::post("showS3BucketFiles", [StateTenderController::class,'showS3BucketFiles']);
 Route::post("updateStateTender", [StateTenderController::class,'updateStateTender']);
 Route::post("deleteStateTenders", [StateTenderController::class,'deleteStateTenders']);
 Route::post("updateTenderState", [StateTenderController::class,'updateTenderState']);
 Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
+
+//AWS S3 Bucket
+Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
+Route::post("showS3BucketFiles", [AdminController::class,'showS3BucketFiles']);
+Route::post("deleteS3BucketFiles",[AdminController::class,'deleteS3BucketFiles']);
+Route::post("uploadS3BucketFile",[AdminController::class,'uploadS3BucketFile']);
 
 //Pscs
 Route::post('getPscs', [PscController::class,'getPscs']);
@@ -86,6 +91,7 @@ Route::middleware(['api'])->group(function ($router) {
 
 	
 	Route::post("changePassword",[UserController::class,'changePassword']);
+	Route::post("toggleUser",[UserController::class,'toggleUser']);
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
 
@@ -141,6 +147,7 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//Federal Tender
 	Route::post("getFederalTender", [FederalTenderController::class,'getFederalTender']);
+	Route::post("deleteFederalTenders", [FederalTenderController::class,'deleteFederalTenders']);
 
 	//State Tender
 	Route::post("getStateTender", [StateTenderController::class,'getStateTender']);
@@ -158,6 +165,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getAdmin",[AdminController::class,'getAdmin']);
 	Route::post("updateAdmin",[AdminController::class,'updateAdmin']);
 	Route::post("deleteAdmin",[AdminController::class,'deleteAdmin']);
+	Route::post("toggleAdmin",[AdminController::class,'toggleAdmin']);
 
 	//Alerts
 	Route::post("addAlerts", [AlertController::class,'addAlerts']);	
@@ -179,8 +187,6 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getApiKey",[AdminController::class,'getApiKey']);
 	Route::post("updateApiKey",[AdminController::class,'updateApiKey']);	
 
-	//Aws
-	Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
 
 	//Federal Tender
 	Route::post("paginateTenderFederals",[FederalTenderController::class,'paginateTenderFederals']);

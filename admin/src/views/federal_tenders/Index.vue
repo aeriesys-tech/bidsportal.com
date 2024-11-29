@@ -83,19 +83,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="10%">Notices</th>
-                                        <th @click="sort('category')">
-                                            Category
-                                            <span>
-                                                <i v-if="meta.keyword == 'category' && meta.order_by == 'asc'"
-                                                    class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'category' && meta.order_by == 'desc'"
-                                                    class="ri-arrow-down-line"></i>
-                                                <i v-else class="fas fa-sort"></i>
-                                            </span>
-                                        </th>
-                                        <th class="text-center" width="10%">Categories</th>
-                                        <th @click="sort('category')">
+                                        <th @click="sort('category')" width="7%">
                                             Issuing Agency
                                             <span>
                                                 <i v-if="meta.keyword == 'issuing_agency' && meta.order_by == 'asc'"
@@ -105,8 +93,6 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="10%">Agencies</th>
-                                        <th class="text-center" width="10%">States</th>
                                         <th class="text-center" width="5%">Bid Link</th>
                                         <th class="text-center" width="3%">
                                             Action
@@ -126,60 +112,11 @@
                                         <td class="wrap-text">{{ tender.tender_no }}</td>
                                         <td>{{ tender.opening_date }}</td>
                                         <td class="wrap-text ">{{ tender.title }}</td>
-                                        <td>{{ tender.notice_name }}</td>
-                                        <td>
-                                            <select class="form-control form-control-sm"
-                                                :class="{ 'is-invalid': tender.errors?.federal_notice_id }"
-                                                v-model="tender.federal_notice_id">
-                                                <option value="null">Select Notice</option>
-                                                <option v-for="notice, notice_key in notices" :key="notice_key"
-                                                    :value="notice.federal_notice_id">{{ notice.notice_name }}</option>
-                                            </select>
-                                            <span class="invalid-feedback"
-                                                v-if="tender.errors?.federal_notice_id?.length">{{
-                                                    tender.errors?.federal_notice_id[0] }}</span>
-                                        </td>
-                                        <td>{{ tender.category_name }}</td>
-                                        <td>
-                                            <category_search :class="{ 'is-invalid': tender.errors?.category_id }"
-                                                :customClass="{ 'is-invalid': tender.errors?.category_id }"
-                                                :initialize="tender.category_id" id="category_id" label="category_name"
-                                                placeholder="Select Category" :data="categories"
-                                                @input="category => tender.category_id = category">
-                                            </category_search>
-                                            <span class="invalid-feedback" v-if="tender.errors?.category_id?.length">{{
-                                                tender.errors?.category_id[0] }}</span>
-                                        </td>
-                                        <td>{{ tender.agency_name }}</td>
-                                        <td>
-                                            <agency_search :class="{ 'is-invalid': tender.errors?.federal_agency_id }"
-                                                :customClass="{ 'is-invalid': tender.errors?.federal_agency_id }"
-                                                :initialize="tender.federal_agency_id" id="federal_agency_id"
-                                                label="federal_agency_name" placeholder="Select Agency" :data="agencies"
-                                                @input="agency => tender.federal_agency_id = agency"
-                                                @updateAgencies="updateAgencies">
-                                            </agency_search>
-                                            <span class="invalid-feedback"
-                                                v-if="tender.errors?.federal_agency_id?.length">{{
-                                                    tender.errors?.federal_agency_id[0] }}</span>
-                                        </td>
-                                        <td>
-                                            <state_search :class="{ 'is-invalid': tender.errors?.state_id }"
-                                                :customClass="{ 'is-invalid': tender.errors?.state_id }"
-                                                :initialize="tender.state_id" id="state_id" label="state_name"
-                                                placeholder="Select State" :data="states"
-                                                @input="state => tender.state_id = state">
-                                            </state_search>
-                                            <span class="invalid-feedback" v-if="tender.errors?.state_id?.length">{{
-                                                tender.errors?.state_id[0] }}</span>
-                                        </td>
+                                        <td>{{ tender.federal_notice?.notice_name }}</td>
+                                        <td>{{ tender.federal_agency?.agency_name }}</td>
                                         <td class="text-center"><a :href="tender.tender_url" target="_blank">Click
                                                 here</a></td>
                                         <td class="text-center">
-                                            <a href="javascript:void(0)" title="Update" class="text-success me-2"
-                                                @click="updateFederalTender(tender)"><i
-                                                    class="ri-refresh-line icon_ht"></i></a>
-
                                             <a href="javascript:void(0)" class="text-success me-2"
                                                 @click="editFederal(tender)"><i class="ri-pencil-line fs-18 lh-1"></i></a>
                                             <a href="javascript:void(0)" class="text-danger"
@@ -234,6 +171,7 @@ export default {
                 search: "",
                 order_by: "desc",
                 keyword: "tdr_id",
+                keywords:[],
                 per_page: 10,
                 totalRows: 0,
                 page: 1,
@@ -242,7 +180,7 @@ export default {
                 to: 1,
                 maxPage: 1,
                 trashed: false,
-                status: 'Inactive',
+                status: 'All',
             },
             role: {
                 role_id: "",
@@ -354,7 +292,11 @@ export default {
                 });
         },
         index() {
-            let vm = this;
+            let vm = this
+            vm.meta.keywords = []
+            if(vm.meta.search){
+                vm.meta.keywords.push(vm.meta.search)
+            }
             vm.$store
                 .dispatch("post", { uri: "paginateFederalTenders", data: vm.meta })
                 .then((response) => {

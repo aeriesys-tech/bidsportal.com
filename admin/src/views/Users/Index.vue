@@ -38,7 +38,7 @@
                                             </span>
                                         </th>
                                         <th @click="sort('company')">
-                                            Company
+                                            Company Name
                                             <span>
                                                 <i v-if="meta.keyword == 'company' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
                                                 <i v-else-if="meta.keyword == 'company' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
@@ -53,6 +53,62 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th @click="sort('phone')">
+                                            Phone
+                                            <span>
+                                                <i v-if="meta.keyword == 'phone' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'phone' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('web_address')">
+                                            Web Address
+                                            <span>
+                                                <i v-if="meta.keyword == 'web_address' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'web_address' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('mailing_address')">
+                                            Mailing Address
+                                            <span>
+                                                <i v-if="meta.keyword == 'mailing_address' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'mailing_address' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('city')">
+                                            City
+                                            <span>
+                                                <i v-if="meta.keyword == 'city' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'city' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('state')">
+                                            State
+                                            <span>
+                                                <i v-if="meta.keyword == 'state' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'state' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('pin_code')">
+                                            Zipcode
+                                            <span>
+                                                <i v-if="meta.keyword == 'pin_code' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'pin_code' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th class="text-center" @click="sort('status')">
+                                            Status
+                                            <span>
+                                                <i v-if="meta.keyword == 'status' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'status' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -63,8 +119,21 @@
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ user.name }}</td>
                                         <td>{{ user.email }}</td>
-                                        <td>{{ user.company }}</td>
+                                        <td>{{ user.company_name }}</td>
                                         <td>{{ user.position }}</td>
+                                        <td>{{ user.phone }}</td>
+                                        <td>{{ user.web_address }}</td>
+                                        <td>{{ user.mailing_address }}</td>
+                                        <td>{{ user.city }}</td>
+                                        <td>{{ user.state }}</td>
+                                        <td>{{ user.pin_code }}</td>
+                                        <td class="text-center">
+                                            <a href="javascript:void(0)" class="text-success me-2" @click="toggleUser(user)"> 
+                                                <span :class="['badge', user.status == 1 ? 'badge-success' : 'badge-warning']">
+                                                    {{ user.status == 1 ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -118,6 +187,28 @@
             vm.index();
         },
         methods: {
+            toggleUser(user){
+                let vm = this;
+                let confirm_user = false
+                if(user.status){
+                    confirm_user = confirm("Are you sure you want to deactivate user ?")
+                }else{
+                    confirm_user = confirm("Are you sure you want to activate user ?")
+                }
+
+                if(confirm_user){
+                    vm.$store
+                        .dispatch("post", { uri: "toggleUser", data: user })
+                        .then((response) => {
+                            vm.index()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
+
             index() {
                 let vm = this;
                 vm.$store
@@ -158,3 +249,42 @@
         },
     };
 </script>
+<style scoped>
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+/* Variations */
+.badge-success {
+  background-color: #28a745; /* Green for success */
+}
+
+.badge-warning {
+  background-color: #ffc107; /* Yellow for warning */
+  color: #212529; /* Dark text for contrast */
+}
+
+.badge-danger {
+  background-color: #dc3545; /* Red for danger */
+}
+
+.badge-info {
+  background-color: #17a2b8; /* Cyan for info */
+}
+
+.badge-primary {
+  background-color: #007bff; /* Blue for primary */
+}
+
+.badge-secondary {
+  background-color: #6c757d; /* Gray for secondary */
+}
+</style>

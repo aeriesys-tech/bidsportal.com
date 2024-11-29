@@ -86,7 +86,7 @@
                             {{ $store.getters.user?.first_name }} :: {{ $store.getters.user?.role }}
                         </p>
                     </div>
-                    <div class="avatar online"><img src="/assets/img/user.png" alt="" /></div>
+                    <div class="avatar online"><img src="/admin/assets/img/user.png" alt="" /></div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end mt-10-f">
                     <div class="dropdown-menu-body">

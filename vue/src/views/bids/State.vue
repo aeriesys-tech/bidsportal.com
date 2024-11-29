@@ -963,24 +963,27 @@
             addToCart(state_tender) {
                 let vm = this
                 vm.fullPage = true
-                let cart_item = {
-                    federal_tender_id : null,
-                    state_tender_id : state_tender.state_tender_id,
-                    region : 'State'
+                if(vm.$store.getters.user){
+                    let cart_item = {
+                        user_id: vm.$store.getters.user.user_id,
+                        federal_tender_id : null,
+                        state_tender_id : state_tender.state_tender_id,
+                        region : 'State'
+                    }
+                    vm.$store
+                        .dispatch("post", { uri: "addCartItem", data: cart_item })
+                        .then(function () {
+                            vm.fullPage = false
+                            state_tender.cart_icon = false
+                            vm.$store.dispatch("success", "Tender added to cart successfully");
+                            vm.getCartItemsCount()
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
                 }
-                vm.$store
-                    .dispatch("post", { uri: "addCartItem", data: cart_item })
-                    .then(function () {
-                        vm.fullPage = false
-                        state_tender.cart_icon = false
-                        vm.$store.dispatch("success", "Tender added to cart successfully");
-                        vm.getCartItemsCount()
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
             },
 
             getCartItemsCount(){

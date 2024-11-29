@@ -13,8 +13,21 @@
                     </div>
 
                     <div class="card-body">
-                        <div class="form-group mb-2 d-flex">
-                            <input class="form-control form-control-sm" type="text" placeholder="Type keyword and press enter key" v-model="meta.search" @keypress.enter="search()" />
+                        <div class="form-group mb-2 d-flex justify-content-between align-items-center">
+                            <div class="form-group" style="flex: 9">
+                                <label class="label_1">Search</label>
+                                <input class="form-control form-control-sm" type="text" placeholder="Type keyword and press enter key" 
+                                v-model="meta.search" @keypress.enter="search()" />
+                            </div>
+                            <div class="form-group" style="flex-1">
+                                <label class="label_9">Status</label>
+                                <select class="form-select form-select-sm ms-2" v-model="meta.status" @change="filterBystatus()">
+                                    <option value="">Select Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Expiring">Expiring (15 Days)</option>
+                                    <option value="Expired/Suspended">Expired/Suspended</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="table-responsive table-responsive-sm">
                             <table class="table table-striped table-sm text-wrap table-bordered mb-0">
@@ -29,46 +42,47 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('currency_code')">
-                                            Currency Code
+                                        <th @click="sort('user_id')">
+                                            Email
                                             <span>
-                                                <i v-if="meta.keyword == 'currency_code' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'currency_code' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-if="meta.keyword == 'user_id' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'user_id' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('payer_email')">
-                                            Payer Email
+                                        <th @click="sort('payment_date')">
+                                            Purchase Date
                                             <span>
-                                                <i v-if="meta.keyword == 'payer_email' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'payer_email' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-if="meta.keyword == 'payment_date' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'payment_date' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('payment_gross')">
-                                            Payment Gross
+                                        <th @click="sort('valid_to')">
+                                            Expiry Date
                                             <span>
-                                                <i v-if="meta.keyword == 'payment_gross' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'payment_gross' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-if="meta.keyword == 'valid_to' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'valid_to' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                         <th @click="sort('payment_method')">
-                                            Payment Method
+                                        <th @click="sort('valid_to')">
+                                            Plan
                                             <span>
-                                                <i v-if="meta.keyword == 'payment_method' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'payment_method' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-if="meta.keyword == 'valid_to' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'valid_to' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('subscr_month')">
-                                            Subscription Month
+                                        <th @click="sort('valid_to')">
+                                            Time Left
                                             <span>
-                                                <i v-if="meta.keyword == 'subscr_month' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'subscr_month' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-if="meta.keyword == 'valid_to' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'valid_to' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -77,12 +91,20 @@
                                     </tr>
                                     <tr v-for="subscription, key in subscriptions" :key="key">
                                         <td class="text-center">{{ meta.from + key }}</td>
-                                        <td class="wrap-text">{{ subscription.user.name }}</td>
-                                        <td>{{subscription.currency_code }}</td>
-                                        <td>{{subscription.payer_email}}</td>
-                                        <td>{{subscription.payment_gross}}</td>
-                                        <td>{{subscription.payment_method}}</td>
-                                        <td>{{subscription.subscr_month}}</td>
+                                        <td class="wrap-text">{{ subscription.user?.name }}</td>
+                                        <td>{{ subscription.user?.email }}</td>
+                                        <td>{{ subscription.payment_date }}</td>
+                                        <td>{{ subscription.valid_to }}</td>
+                                        <td>{{ subscription.subscription_plan?.plan }}</td>
+                                        <td>{{ subscription.time_left }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-danger btn-sm me-2">
+                                                <i class="ri-pause-circle-line"></i> Suspend
+                                            </button>
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="ri-file-text-line"></i> View Invoice
+                                            </button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -135,6 +157,10 @@
             vm.index();
         },
         methods: {
+            filterBystatus(){
+
+            },
+            
             index() {
                 let vm = this;
                 vm.$store
@@ -175,3 +201,12 @@
         },
     };
 </script>
+<style scoped>
+.label_1{
+    margin-left: 1px;
+}
+.label_9{
+    margin-left: 9px;
+}
+
+</style>

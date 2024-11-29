@@ -34,4 +34,9 @@ class UserSubscription extends Model
     {
 		return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function SubscriptionPlan()
+    {
+		return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id', 'subscription_plan_id');
+    }
 }

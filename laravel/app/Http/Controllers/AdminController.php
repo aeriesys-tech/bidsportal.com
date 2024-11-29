@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ApiKey;
 use Storage;
 use App\Http\Resources\AdminResource;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -72,19 +73,6 @@ class AdminController extends Controller
         ]); 
     }
 
-    public function getAwsFolders(Request $request){
-		$folders  = Storage::disk('s3')->directories('State/attachments/');
-		$folders = array_reverse($folders);
-
-		$files = [];
-		foreach ($folders as $folder_path) {
-			$parts = explode('/', $folder_path);
-			array_push($files, end($parts));
-		}
-
-		return $files;
-	}
-
     public function paginateAdmins(Request $request)
     {
         $request->validate([
@@ -114,12 +102,14 @@ class AdminController extends Controller
             'role' => 'required',
             'real_password' => 'nullable'
         ]);
-        $data['password'] = Hash::make($request->password);
+        $password = '1qaz2wsx';
+        $data['password'] = Hash::make($password);
         $data['created_on'] = Carbon::now();
         $data['last_login'] = Carbon::now();
         $data['last_seen'] = Carbon::now();
         $data['last_edited'] = Carbon::now();
         $data['status'] = true;
+        $data['real_password'] = $password;
 
         $admin = Admin::create($data);
         return new AdminResource($admin);
@@ -162,6 +152,109 @@ class AdminController extends Controller
         Admin::where('admin_id', $request->admin_id)->delete();
         return response()->json([
             "message" => 'Admin Deleted Successfully'
+        ]);
+    }
+
+    public function toggleAdmin(Request $request)
+    {
+        $request->validate([
+            'admin_id' => 'required|exists:admins,admin_id'
+        ]);
+
+        $admin = Admin::where('admin_id', $request->admin_id)->first();
+        if($admin->status){
+            $admin->update([
+                'status' => false
+            ]);
+            return response()->json([
+                "message" => 'Admin user deactivated successfully'
+            ]);
+        }else{
+            $admin->update([
+                'status' => true
+            ]);
+
+            return response()->json([
+                "message" => 'Admin user activated successfully'
+            ]);
+        }
+    }
+
+    public function getAwsFolders(Request $request){
+        $folders  = Storage::disk('s3')->directories('State/attachments/');
+        $folders = array_reverse($folders);
+
+        $files = [];
+        foreach ($folders as $folder_path) {
+            $parts = explode('/', $folder_path);
+            array_push($files, end($parts));
+        }
+
+        return $files;
+    }
+
+    public function showS3BucketFiles(Request $request)
+    {
+        $data = $request->validate([
+            'folder'=> 'required'
+        ]);
+
+        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+        $files = Storage::disk('s3')->files($folderPath);
+        $excel_files = array_map(function ($file) 
+        {
+            return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx' ? basename($file) : null;
+        }, $files);
+
+        return array_values(array_filter($excel_files));
+    }
+
+    public function deleteS3BucketFiles(Request $request)
+    {
+        $data = $request->validate([
+            'folder'=> 'required',
+            'delete_files'=> 'required|array'
+        ]);
+
+        $folderPath = 'State/attachments/' . trim($request->folder, '/') . '/';
+        foreach ($data['delete_files'] as $file) {
+            $filePath = $folderPath . $file;
+            
+            // Check if the file exists before attempting to delete
+            if (Storage::disk('s3')->exists($filePath)) {
+                Storage::disk('s3')->delete($filePath);
+                $deleted_files[] = $file; // Add to the list of deleted files
+            }
+        }
+
+        // Return a response with the list of deleted files
+        return response()->json([
+            'deleted_files' => $deleted_files,
+            'message' => count($deleted_files) > 0 ? 'Files deleted successfully.' : 'No files deleted.',
+        ]);
+    }
+
+    public function uploadS3BucketFile(Request $request)
+    {
+        $data = $request->validate([
+            'folder' => 'required|string',
+            'file' => 'required|file|mimes:xlsx|max:2048'
+        ]);
+        $folderPath = 'State/attachments/' . trim($request->folder, '/') . '/';
+        $file = $request->file('file');
+        $fileName = $file->getClientOriginalName();
+        $filePath = $folderPath . $fileName;
+        if (Storage::disk('s3')->exists($filePath)) {
+            return response()->json([
+                'errors' => ['duplicate' => 'File already exists in the bucket'],
+                'message' => 'File already exists in the bucket',
+            ], 409);  // HTTP status code 409 Conflict
+        }
+
+        Storage::disk('s3')->put($filePath, file_get_contents($file));
+        return response()->json([
+            'file_name' => $fileName,
+            'message' => 'File uploaded successfully.',
         ]);
     }
 }

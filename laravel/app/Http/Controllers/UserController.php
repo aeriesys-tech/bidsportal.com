@@ -29,7 +29,7 @@ class UserController extends Controller
 	    ]);
 
 	    $user = User::where('user_id', $request->user_id)->where('password', $request->current_password)->first();
-	    if (!$user)) {
+	    if (!$user) {
 	        return response()->json([
 	            'errors' => [
 	                'current_password' => ['Your current password does not match.'],
@@ -150,6 +150,31 @@ class UserController extends Controller
       //    }
       //    return $this->genToken($tblUser,$data1);        
       // }sssssss
+    }
+
+    public function toggleUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,user_id'
+        ]);
+
+        $user = User::where('user_id', $request->user_id)->first();
+        if($user->status){
+            $user->update([
+                'status' => false
+            ]);
+            return response()->json([
+                "message" => 'User deactivated successfully'
+            ]);
+        }else{
+            $user->update([
+                'status' => true
+            ]);
+
+            return response()->json([
+                "message" => 'User activated successfully'
+            ]);
+        }
     }
 
 }

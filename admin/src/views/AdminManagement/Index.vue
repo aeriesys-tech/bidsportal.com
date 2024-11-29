@@ -69,6 +69,30 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th @click="sort('created_on')">
+                                            Created Date
+                                            <span>
+                                                <i v-if="meta.keyword == 'created_on' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'created_on' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th @click="sort('last_login')">
+                                            Last Login
+                                            <span>
+                                                <i v-if="meta.keyword == 'last_login' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'last_login' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
+                                        <th class="text-center" @click="sort('status')">
+                                            Status
+                                            <span>
+                                                <i v-if="meta.keyword == 'status' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'status' && meta.order_by == 'desc'" class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
                                         <th class="text-center">
                                             Action
                                         </th>
@@ -86,6 +110,15 @@
                                         <td>{{admin.mobile1}}</td>
                                         <td>{{admin.mobile2}}</td>
                                         <td>{{admin.role}}</td>
+                                        <td>{{ admin.created_on }}</td>
+                                        <td>{{ admin.last_login }}</td>
+                                        <td class="text-center"> 
+                                            <a href="javascript:void(0)" class="text-success me-2" @click="toggleAdmin(admin)">
+                                                <span :class="['badge', admin.status == 1 ? 'badge-success' : 'badge-warning']">
+                                                    {{ admin.status == 1 ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </a>
+                                        </td>
                                         <td class="text-center">
                                             <a href="javascript:void(0)" class="text-success me-2" @click="editAdmin(admin)"><i class="ri-pencil-line fs-18 lh-1"></i></a>
                                             <a href="javascript:void(0)" class="text-danger" @click="deleteAdmin(admin)"><i class="ri-delete-bin-6-line fs-18 lh-1"></i></a>
@@ -143,6 +176,27 @@
             vm.index();
         },
         methods: {
+            toggleAdmin(admin){
+                let vm = this;
+                let confirm_admin = false
+                if(admin.status){
+                    confirm_admin = confirm("Are you sure you want to deactivate admin user ?")
+                }else{
+                    confirm_admin = confirm("Are you sure you want to activate admin user ?")
+                }
+
+                if(confirm_admin){
+                    vm.$store
+                        .dispatch("post", { uri: "toggleAdmin", data: admin })
+                        .then((response) => {
+                            vm.index()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
             index() {
                 let vm = this;
                 vm.$store
@@ -208,3 +262,43 @@
         },
     };
 </script>
+<style scoped>
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+/* Variations */
+.badge-success {
+  background-color: #089c2a; /* Green for success */
+}
+
+.badge-warning {
+  background-color: #ffc107; /* Yellow for warning */
+  color: #212529; /* Dark text for contrast */
+}
+
+.badge-danger {
+  background-color: #dc3545; /* Red for danger */
+}
+
+.badge-info {
+  background-color: #17a2b8; /* Cyan for info */
+}
+
+.badge-primary {
+  background-color: #007bff; /* Blue for primary */
+}
+
+.badge-secondary {
+  background-color: #6c757d; /* Gray for secondary */
+}
+</style>
+

@@ -77,7 +77,7 @@ class CategoryController extends Controller
 
 	      Category::where('category_id', $request->category_id)->forceDelete();
 	      return response()->json([
-	          "message" => 'StateAgency Deleted Successfully'
+	          "message" => 'Category Deleted Successfully'
 	      ]);
 	  }
 }

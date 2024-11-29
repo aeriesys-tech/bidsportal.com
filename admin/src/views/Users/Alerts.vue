@@ -120,7 +120,7 @@
             index() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "paginateAllAlerts", data: vm.meta })
+                    .dispatch("post", { uri: "paginateAlerts", data: vm.meta })
                     .then((response) => {
                         vm.alerts = response.data.data;
                         vm.meta.totalRows = response.data.meta.total;

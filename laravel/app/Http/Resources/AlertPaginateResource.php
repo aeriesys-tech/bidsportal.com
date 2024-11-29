@@ -20,6 +20,7 @@ class AlertPaginateResource extends JsonResource
             'region' => $this->region,
             'frequency' => $this->frequency,
             'user_id' => $this->user_id,
+            'user' => $this->User,
             'posted_date' => $this->posted_date,
             'active' => $this->active ? true : false,
             'expired' => $this->expired ? true : false,
