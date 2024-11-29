@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class FederalNotice extends Model
 {
     use HasFactory;
+    protected $fillable = [
+    	'notice_name',
+    	'sort',
+    	'background_color'
+    ];
+
+    protected $primaryKey = 'federal_notice_id';
 }

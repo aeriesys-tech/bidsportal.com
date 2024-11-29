@@ -30,13 +30,20 @@ class AlertController extends Controller
 
 	public function paginateAlerts(Request $request){
 		$request->validate([
-			'user_id' => 'required',
             'order_by' => 'required',
             'per_page' => 'required|numeric'
         ]);
-        $user = Auth::User(); 
     	$query = Alert::query();
-    	$query->where('user_id', $request->user_id);
+    	if($request->user_id){
+	    	$query->where('user_id', $request->user_id);
+	    }
+
+	    if($request->search){
+	    	$query->where('alert_title', 'like', "%$request->search%")->orWhere('region', 'like', "%$request->search%")->orWhere('frequency', 'like', "%$request->search%")->orWhereHas('User', function($que) use($request){
+	    		$que->where('name', 'like', "%$request->search%");
+	    	});
+
+	    }
     	$query->orderBy('alert_id', 'DESC');
     	$alerts = $query->paginate($request->per_page);
         return AlertPaginateResource::collection($alerts);
@@ -45,9 +52,7 @@ class AlertController extends Controller
 	public function addAlerts(Request $request)
 	{
 	    $data = $request->validate([
-	    	'user_id' => 'required'
-	    ]);
-	    $data = $request->validate([
+	    	'user_id' => 'required',
 	        'alert_title' => 'required',
 	        'frequency' => 'required',
 	        'region' => 'required',
@@ -414,8 +419,8 @@ class AlertController extends Controller
 		if($request->search!='')
 		{
 			$query->where('region', 'like', "%$request->search%")->orWhere('frequency', 'like', "$request->search%")
-				->orWhere('alert_title', 'like', "$request->search%")->orWhere('posted_date', 'like', "$request->search%")->orWhereHas('User', function($que) use($request){
-					$que->where('name', 'like', "$request->search%");
+				->orWhere('alert_title', 'like', "%$request->search%")->orWhere('posted_date', 'like', "$request->search%")->orWhereHas('User', function($que) use($request){
+					$que->where('name', 'like', "%$request->search%");
 				});
 		}
 		$users = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page);

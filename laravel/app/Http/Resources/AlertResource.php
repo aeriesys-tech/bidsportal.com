@@ -20,6 +20,7 @@ class AlertResource extends JsonResource
             'frequency' => $this->frequency,
             'region' => $this->region,
             'user_id' => $this->user_id,
+            'user' => $this->User,
             'posted_date' => $this->posted_date,
             'active' => $this->active ? true : false,
             'expired' => $this->expired ? true : false,

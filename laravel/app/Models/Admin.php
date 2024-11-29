@@ -24,7 +24,8 @@ class Admin extends Authenticatable
     	'last_login',
     	'last_seen',
     	'last_edited',
-    	'status'
+    	'status',
+        'real_password'
     ];
 
     protected $primaryKey = 'admin_id';

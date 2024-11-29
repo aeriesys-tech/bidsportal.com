@@ -26,7 +26,7 @@ class AdminResource extends JsonResource
             'last_login' => $this->last_login,
             'last_seen' => $this->last_seen,
             'last_edited' => $this->last_edited,
-            'status' => $this->status?true:false
+            'status' => $this->status
         ];
     }
 }

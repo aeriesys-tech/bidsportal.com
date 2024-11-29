@@ -17,6 +17,8 @@ use DateTimeZone;
 use App\Models\ApiKey;
 use ZipArchive;
 use Auth;
+use App\Models\FederalOfficeAddress;
+use App\Models\FederalContact;
 
 class FederalTenderController extends Controller
 {
@@ -512,5 +514,12 @@ class FederalTenderController extends Controller
         return response()->json([
             "message" => "FederalTender Deleted Successfully"
         ]);
+    }
+
+    public function deleteFederalTenders(Request $request){
+        FederalOfficeAddress::whereIn('federal_tender_id', $request->delete_tenders)->delete();
+        FederalContact::whereIn('federal_tender_id', $request->delete_tenders)->delete();
+        FederalAttachment::whereIn('federal_tender_id', $request->delete_tenders)->delete();
+        return FederalTender::whereIn('federal_tender_id', $request->delete_tenders)->delete();
     }
 }

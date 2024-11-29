@@ -344,22 +344,6 @@ class StateTenderController extends Controller
         }
     }
 
-    public function showS3BucketFiles(Request $request)
-    {
-        $data = $request->validate([
-            'folder'=> 'required'
-        ]);
-
-        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
-        $files = Storage::disk('s3')->files($folderPath);
-        $excel_files = array_map(function ($file) 
-        {
-            return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx' ? basename($file) : null;
-        }, $files);
-
-        return array_values(array_filter($excel_files));
-    }
-
     public function updateStateTender(Request $request)
     {
         $request->validate([

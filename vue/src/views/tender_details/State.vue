@@ -18,11 +18,6 @@
                         <li class="list-inline-item" v-if="$store.getters.user">
                             <button class="mybutton-secondary2 mybutton-success" @click.prevent="sharestate_tenders()" v-modal="shareBid.bids"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                         </li>
-                        <li class="list-inline-item">
-                            <a href="javascript:void(0)" @click="backToBids()" type="button" class="mb-0 btn btn-sm btn-primary backbidbtn">
-                                Back To Bids
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 <div class="col-12">
