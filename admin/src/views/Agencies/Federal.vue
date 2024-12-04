@@ -16,7 +16,7 @@
                         <div class="row g-3">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>Federal Agency Code<span class="text-danger">*</span></label>
+                                    <label>Federal Agency Code</label>
                                     <input
                                         type="text"
                                         class="form-control form-control-sm"
@@ -30,7 +30,7 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>Federal Agency Name<span class="text-danger">*</span></label>
+                                    <label>Federal Agency Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Federal Agency Name" :class="{ 'is-invalid': errors?.agency_name }" v-model="federal_agency.agency_name" />
                                     <span v-if="errors?.agency_name" class="invalid-feedback">{{ errors?.agency_name[0] }}</span>
                                 </div>

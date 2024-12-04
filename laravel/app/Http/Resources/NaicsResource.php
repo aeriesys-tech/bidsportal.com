@@ -32,33 +32,6 @@ class NaicsResource extends JsonResource
             if (in_array($this->naics_code, $naicses)) { 
                 $is_naics = true;
             }
-            // foreach ($naicses as $value) {
-            //     $arr = str_split($value);
-            //     $search_arr = [];
-            //     $search_element = "";
-            //     foreach ($arr as $value) {
-            //         if(!$search_element){
-            //             $search_element = $value;
-            //             array_push($search_arr, $search_element);
-            //         }else{
-            //             $search_element = $search_element.''.$value;
-            //             array_push($search_arr, $search_element);
-            //         }
-            //     }
-            //     $remove_first_element = array_shift($search_arr);
-            //     if (str_contains($this->naics_code, '-')) { 
-            //         $str = explode("-", $this->naics_code);
-            //         foreach ($str as $element) {
-            //             if (in_array($element, $search_arr)) { 
-            //                 $is_naics = true;
-            //             }
-            //         }
-            //     }else{
-            //         if (in_array($this->naics_code, $search_arr)) { 
-            //             $is_naics = true;
-            //         }
-            //     }
-            // }
         }
 
         return [

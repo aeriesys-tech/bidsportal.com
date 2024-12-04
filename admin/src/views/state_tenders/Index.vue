@@ -233,7 +233,7 @@ export default {
             meta: {
                 search: "",
                 order_by: "desc",
-                keyword: "tdr_id",
+                keyword: "state_tender_id",
                 per_page: 10,
                 totalRows: 0,
                 page: 1,

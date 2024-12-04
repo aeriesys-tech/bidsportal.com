@@ -7,7 +7,7 @@
                     <div class="cc-catalog-list__item">
                         <div class="cv-catalog-list-item cv-catalog-list-item__level_1 has-checkboxes">
                             <label class="cv-catalog-list-item__label-checkbox">
-                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.psc_id" v-model="item.selected" @click="toggleSelectedItem(item, $event)" style="font-size: 13px;" />
+                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.naics_id" v-model="item.selected" @click="toggleSelectedItem(item)" style="font-size: 13px;" />
                                 <span style="font-size: 13px;" class="cv-catalog-list-item__fake-checkbox"></span>
                             </label>
                             <div class="cv-catalog-list-item__expand-button">
@@ -20,7 +20,7 @@
                             <div class="cv-catalog-list-item__code">
                                 <div class="catalog-code">
                                     <div class="catalog-code__id is-disabled">
-                                        <span class="catalog-code__number" style="font-size: 12px; margin-left: 5px;">{{item.psc_code}}</span>
+                                        <span class="catalog-code__number" style="font-size: 12px; margin-left: 5px;">{{item.naics_code}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -29,7 +29,7 @@
                             </a>
                         </div>
                         <ul v-show="isOpen" v-if="isFolder">
-                            <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child" :tdr_pscs="tdr_pscs" @toggleParentItem="parentItemToggle" :search="search" :clear_all_pscs="clear_all_pscs"></TreeItem>
+                            <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child" :tdr_naics="tdr_naics" :search="search" :clear_all_naics="clear_all_naics"></TreeItem>
                         </ul>
                     </div>
                 </div>
@@ -48,33 +48,18 @@
         name: "TreeItem",
         props: {
             item: Object,
-            tdr_pscs: Array,
+            tdr_naics: Array,
             search: String,
-            clear_all_pscs:Boolean
+            clear_all_naics:Boolean
         },
 
         watch: {
-            "clear_all_pscs": function () {
+            "clear_all_naics": function () {
                 this.item.selected = false
             },
-            "$store.getters.selected_pscs": {
+            "$store.getters.selected_naics": {
                 handler() {
                     this.isSeletedItem();
-                },
-                immediate: true,
-                deep: true,
-            },
-            "item": {
-                handler() {
-                    if(this.item.psc_code == 'Select All'){
-                        if ('children' in this.item && this.item.children.length) {
-                            const all_selected = this.item.children.every(child => child.selected)
-                            this.item.selected = all_selected
-                        }else{
-                            this.item.selected = false
-                        }
-                        this.$store.dispatch('setAllPscs', this.item.selected)
-                    }
                 },
                 immediate: true,
                 deep: true,
@@ -84,7 +69,7 @@
         data() {
             return {
                 isOpen: false,
-                item_tdr_pscs: [],
+                item_tdr_naics: [],
             };
         },
      
@@ -101,30 +86,19 @@
         },
         methods: {
             isSeletedItem() {
-                const selected_pscs = this.$store.getters.selected_pscs
-                if (selected_pscs?.length) {
-                    this.item.selected = selected_pscs.includes(this.item.psc_id)
+                const selected_naics = this.$store.getters.selected_naics
+                if (selected_naics?.length) {
+                    this.item.selected = selected_naics.includes(this.item.naics_id)
                 } else {
                     this.item.selected = false
                 }
             },
 
             toggle: function () {
-                let vm = this
-                if (vm.isFolder) {
-                    vm.isOpen = !vm.isOpen;
-                }
-                if('children' in vm.item && vm.item.children.length){
-                    if(vm.item.selected){
-                        vm.item.children.map(function(element){
-                            element.selected = true
-                            vm.pushSpliceItem(element)
-                        })
-                    }
-                    vm.pushSpliceItem(this.item)
+                if (this.isFolder) {
+                    this.isOpen = !this.isOpen;
                 }
             },
-
             highlight(name) {
                 if (!this.search) {
                     return '<span class="hovertext" style="color: rgb(89, 93, 110);font-size:13px">' + name + "</span>";
@@ -134,70 +108,70 @@
                 });
                 return name;
             },
-
-            toggleSelectedItem(item, event) {
-                let vm = this
-                item.selected = !item.selected
-                vm.pushSpliceItem(item)
-                if(event.target.checked){
-                    if('children' in item && item.children.length){
-                        item.children.map(function(element){
-                            element.selected = true
-                            vm.pushSpliceItem(element)
-                        })
-                    }
-                }else{
-                    if('children' in item && item.children.length){
-                        item.children.map(function(element){
-                            element.selected = false
-                            vm.pushSpliceItem(element)
-                        })
-                    }
-                }
-                vm.toggleParentItem()
+            toggleSelectedItem(item) {
+                item.selected = !item.selected;
+                // this.pushParentCode(item.naics_id.slice(0, 2))
+                // this.pushParentCode(item.naics_id.slice(0, 3)) 
+                // this.pushParentCode(item.naics_id.slice(0, 4))
+                // this.pushParentCode(item.naics_id.slice(0, 5)) 
+                this.pushSpliceItem(item);
+                this.setSelectedItem(item);
             },
-
-            toggleParentItem(){
-                this.$emit('toggleParentItem')
-            },
-
-            parentItemToggle(){
-                let vm = this
-                if(this.item.psc_code != 'Select All'){
-                    if ('children' in this.item && this.item.children.length) {
-                        const all_selected = this.item.children.some(child => child.selected)
-                        this.item.selected = all_selected;
-                    }else{
-                        this.item.selected = false
+            pushParentCode(parent_code){
+                let selected_naics = []
+                if(this.$store.getters.selected_naics){
+                    selected_naics = this.$store.getters.selected_naics
+                    if (parent_code) {
+                        if (!selected_naics.includes(parent_code)) {
+                            selected_naics.push(parent_code)
+                        }
+                    } else {
+                        let naics = selected_naics.filter(function(element){
+                            return element != parent_code
+                        })
+                        selected_naics = naics
                     }
-                    vm.pushSpliceItem(this.item)
+                    this.$store.dispatch("setSelectedNaics", selected_naics)
                 }
             },
-
+            setSelectedItem(item) {
+                let vm = this;
+                if (item.children?.length) {
+                    item.children.map(function (element) {
+                        vm.toggleSelectedChildren(element, item.selected);
+                    });
+                }
+            },
             pushSpliceItem(item) {
-                if('psc_id' in item){
-                    let psc_id = item.psc_id
-                    let selected_pscs = []
-                    if(this.$store.getters.selected_pscs){
-                        selected_pscs = this.$store.getters.selected_pscs
+                if('naics_id' in item){
+                    let naics_id = item.naics_id
+                    let selected_naics = []
+                    if(this.$store.getters.selected_naics){
+                        selected_naics = this.$store.getters.selected_naics
                         if (item.selected) {
-                            if (!selected_pscs.includes(psc_id)) {
-                                selected_pscs.push(psc_id)
+                            if (!selected_naics.includes(naics_id)) {
+                                selected_naics.push(naics_id)
                             }
                         } else {
-                            let pscs = selected_pscs.filter(function(element){
-                                return element != psc_id
+                            let naics = selected_naics.filter(function(element){
+                                return element != naics_id
                             })
-                            selected_pscs = pscs
+                            selected_naics = naics
                         }
                     }else{
-                        if(psc_id){
-                            selected_pscs.push(psc_id)
+                        if(naics_id){
+                            selected_naics.push(naics_id)
                         }
                     }
-                    this.$store.dispatch("setSelectedPscs", selected_pscs)
+                    this.$store.dispatch("setSelectedNaics", selected_naics);
                 }
-            }
+            },
+
+            toggleSelectedChildren(item, selected) {
+                item.selected = selected;
+                this.pushSpliceItem(item);
+                this.setSelectedItem(item);
+            },
         },
     };
 </script>

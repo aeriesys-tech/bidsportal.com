@@ -213,8 +213,10 @@
                             </div>
                             <div class="col-sm-12 margin_top">
                                 <div class="form-group">
-                                    <label>Bid Description </label>
-                                    <ckeditor :editor="editor" v-model="tender.description"></ckeditor>
+                                    <label>Bid Description <span class="text-danger">*</span></label>
+                                    <ckeditor :editor="editor" v-model="tender.description" :class="{ 'is-invalid': errors?.description }"></ckeditor>
+                                    <span class="invalid-feedback" v-if="errors?.description?.length">{{
+                                        errors?.description[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-12 margin_top">Primary Address</div>

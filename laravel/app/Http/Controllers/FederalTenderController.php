@@ -129,20 +129,26 @@ class FederalTenderController extends Controller
         }
 
     	if (!empty($request->keywords)) {
-            if (is_string($request->keywords)) {
-                $keywords = array_map('trim', explode(',', $request->keywords));
-            } else {
-                $keywords = array_map('trim', $request->keywords);
+            $keywords = is_string($request->keywords)
+                ? array_map('trim', explode(',', $request->keywords))
+                : array_map('trim', $request->keywords);
+
+            foreach ($keywords as $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereRaw(
+                        "MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)",
+                        [$keyword]
+                    )
+                    ->orWhere('tender_no', 'REGEXP', '[[:<:]]' . preg_quote($keyword) . '[[:>:]]')
+                    ->orWhere('title', 'REGEXP', '[[:<:]]' . preg_quote($keyword) . '[[:>:]]');
+                });
             }
 
-            $searchQuery = implode(' ', $keywords); // Join keywords for full-text search
-
-            // Search for matches
-            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
-
-            $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC", [$searchQuery]);
+            $query->orderByRaw(
+                "MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC",
+                [$keyword]
+            );
         }
-
 
 	    $query->orderBy('federal_tender_id', 'DESC');
     	$federal_tenders = $query->paginate($request->per_page); 
@@ -236,7 +242,7 @@ class FederalTenderController extends Controller
     {
         $data = $request->validate([
             'tender_no' => 'required',
-            'title' => 'required',
+            'title' => 'required|unique:federal_tenders,title',
             'description' => 'nullable',
             'title' => 'nullable',
             'country_id' => 'required',

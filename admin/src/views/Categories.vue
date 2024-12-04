@@ -16,7 +16,7 @@
                         <div class="row g-3">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>Category Name<span class="text-danger">*</span></label>
+                                    <label>Category Name <span class="text-danger"> *</span></label>
                                     <input
                                         type="text"
                                         class="form-control form-control-sm"
@@ -30,7 +30,7 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>Sort<span class="text-danger">*</span></label>
+                                    <label>Sort </label>
                                     <input type="number" class="form-control form-control-sm" placeholder="Sort" v-model="category.sort" />
                                 </div>
                             </div>

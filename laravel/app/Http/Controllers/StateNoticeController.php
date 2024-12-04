@@ -38,7 +38,7 @@ class StateNoticeController extends Controller
     public function addStateNotice(Request $request)
     {
         $data = $request->validate([
-            'notice_name' => 'required',
+            'notice_name' => 'required|unique:state_notices,notice_name',
             'sort' => 'nullable',
             'background_color' => 'nullable'
         ]);
@@ -61,7 +61,7 @@ class StateNoticeController extends Controller
     {
         $data = $request->validate([
             'state_notice_id' => 'required|exists:state_notices,state_notice_id',
-            'notice_name' => 'required',
+            'notice_name' => 'required|unique:state_notices,notice_name,'.$request->state_notice_id.',state_notice_id',
             'sort' => 'nullable',
             'background_color' => 'nullable'
         ]);

@@ -38,8 +38,8 @@ class StateAgencyController extends Controller
     public function addStateAgency(Request $request)
     {
         $data = $request->validate([
-            'state_agency_name' => 'required',
-            'state_agency_code' => 'required'
+            'state_agency_name' => 'required|unique:state_agencies,state_agency_name',
+            'state_agency_code' => 'sometimes|nullable'
         ]);
 
         $state = StateAgency::create($data);
@@ -60,8 +60,8 @@ class StateAgencyController extends Controller
     {
         $data = $request->validate([
            'state_agency_id' => 'required|exists:state_agencies,state_agency_id',
-            'state_agency_name' => 'required',
-            'state_agency_code' => 'required'
+            'state_agency_name' => 'required|unique:state_agencies,state_agency_name,'.$request->state_agency_id.',state_agency_id',
+            'state_agency_code' => 'sometimes|nullable'
         ]);
 
         $state = StateAgency::where('state_agency_id', $request->state_agency_id)->first();

@@ -37,8 +37,8 @@ class FederalAgencyController extends Controller
 	public function addFederalAgency(Request $request)
 	{
 		$data = $request->validate([
-			'agency_name' => 'required',
-			'agency_code' => 'required'
+			'agency_name' => 'required|unique:federal_agencies,agency_name',
+			'agency_code' => 'sometimes|nullable'
 		]);
 
 		$state = FederalAgency::create($data);
@@ -59,8 +59,8 @@ class FederalAgencyController extends Controller
 	{
 		$data = $request->validate([
 			'federal_agency_id' => 'required|exists:federal_agencies,federal_agency_id',
-			'agency_name' => 'required',
-			'agency_code' => 'required'
+			'agency_name' => 'required|unique:federal_agencies,agency_name,'.$request->federal_agency_id.',federal_agency_id',
+			'agency_code' => 'sometimes|nullable'
 		]);
 
 		$state = FederalAgency::where('federal_agency_id', $request->federal_agency_id)->first();
