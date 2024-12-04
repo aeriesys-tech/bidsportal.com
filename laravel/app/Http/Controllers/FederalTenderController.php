@@ -244,7 +244,6 @@ class FederalTenderController extends Controller
             'tender_no' => 'required',
             'title' => 'required|unique:federal_tenders,title',
             'description' => 'nullable',
-            'title' => 'nullable',
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
