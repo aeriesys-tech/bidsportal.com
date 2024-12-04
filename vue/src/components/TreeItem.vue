@@ -7,7 +7,7 @@
                     <div class="cc-catalog-list__item">
                         <div class="cv-catalog-list-item cv-catalog-list-item__level_1 has-checkboxes">
                             <label class="cv-catalog-list-item__label-checkbox">
-                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.naics_id" v-model="item.selected" @click="toggleSelectedItem(item)" style="font-size: 13px;" />
+                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.naics_id" v-model="item.selected" @click="toggleSelectedItem(item, $event)" style="font-size: 13px;" />
                                 <span style="font-size: 13px;" class="cv-catalog-list-item__fake-checkbox"></span>
                             </label>
                             <div class="cv-catalog-list-item__expand-button">
@@ -29,7 +29,7 @@
                             </a>
                         </div>
                         <ul v-show="isOpen" v-if="isFolder">
-                            <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child" :tdr_naics="tdr_naics" :search="search" :clear_all_naics="clear_all_naics"></TreeItem>
+                            <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child" :tdr_naics="tdr_naics" @toggleParentItem="parentItemToggle" :search="search" :clear_all_naics="clear_all_naics"></TreeItem>
                         </ul>
                     </div>
                 </div>
@@ -60,6 +60,21 @@
             "$store.getters.selected_naics": {
                 handler() {
                     this.isSeletedItem();
+                },
+                immediate: true,
+                deep: true,
+            },
+            "item": {
+                handler() {
+                    if(this.item.naics_code == 'Select All'){
+                        if ('children' in this.item && this.item.children.length) {
+                            const all_selected = this.item.children.every(child => child.selected)
+                            this.item.selected = all_selected
+                        }else{
+                            this.item.selected = false
+                        }
+                        this.$store.dispatch('setAllNaics', this.item.selected)
+                    }
                 },
                 immediate: true,
                 deep: true,
@@ -95,10 +110,21 @@
             },
 
             toggle: function () {
-                if (this.isFolder) {
-                    this.isOpen = !this.isOpen;
+                let vm = this
+                if (vm.isFolder) {
+                    vm.isOpen = !vm.isOpen;
+                }
+                if('children' in vm.item && vm.item.children.length){
+                    if(vm.item.selected){
+                        vm.item.children.map(function(element){
+                            element.selected = true
+                            vm.pushSpliceItem(element)
+                        })
+                    }
+                    vm.pushSpliceItem(this.item)
                 }
             },
+
             highlight(name) {
                 if (!this.search) {
                     return '<span class="hovertext" style="color: rgb(89, 93, 110);font-size:13px">' + name + "</span>";
@@ -108,40 +134,46 @@
                 });
                 return name;
             },
-            toggleSelectedItem(item) {
-                item.selected = !item.selected;
-                // this.pushParentCode(item.naics_id.slice(0, 2))
-                // this.pushParentCode(item.naics_id.slice(0, 3)) 
-                // this.pushParentCode(item.naics_id.slice(0, 4))
-                // this.pushParentCode(item.naics_id.slice(0, 5)) 
-                this.pushSpliceItem(item);
-                this.setSelectedItem(item);
-            },
-            pushParentCode(parent_code){
-                let selected_naics = []
-                if(this.$store.getters.selected_naics){
-                    selected_naics = this.$store.getters.selected_naics
-                    if (parent_code) {
-                        if (!selected_naics.includes(parent_code)) {
-                            selected_naics.push(parent_code)
-                        }
-                    } else {
-                        let naics = selected_naics.filter(function(element){
-                            return element != parent_code
+
+            toggleSelectedItem(item, event) {
+                let vm = this
+                item.selected = !item.selected
+                vm.pushSpliceItem(item)
+                if(event.target.checked){
+                    if('children' in item && item.children.length){
+                        item.children.map(function(element){
+                            element.selected = true
+                            vm.pushSpliceItem(element)
                         })
-                        selected_naics = naics
                     }
-                    this.$store.dispatch("setSelectedNaics", selected_naics)
+                }else{
+                    if('children' in item && item.children.length){
+                        item.children.map(function(element){
+                            element.selected = false
+                            vm.pushSpliceItem(element)
+                        })
+                    }
+                }
+                vm.toggleParentItem()
+            },
+
+            toggleParentItem(){
+                this.$emit('toggleParentItem')
+            },
+
+            parentItemToggle(){
+                let vm = this
+                if(this.item.naics_code != 'Select All'){
+                    if ('children' in this.item && this.item.children.length) {
+                        const all_selected = this.item.children.some(child => child.selected)
+                        this.item.selected = all_selected;
+                    }else{
+                        this.item.selected = false
+                    }
+                    vm.pushSpliceItem(this.item)
                 }
             },
-            setSelectedItem(item) {
-                let vm = this;
-                if (item.children?.length) {
-                    item.children.map(function (element) {
-                        vm.toggleSelectedChildren(element, item.selected);
-                    });
-                }
-            },
+
             pushSpliceItem(item) {
                 if('naics_id' in item){
                     let naics_id = item.naics_id
@@ -163,15 +195,9 @@
                             selected_naics.push(naics_id)
                         }
                     }
-                    this.$store.dispatch("setSelectedNaics", selected_naics);
+                    this.$store.dispatch("setSelectedNaics", selected_naics)
                 }
-            },
-
-            toggleSelectedChildren(item, selected) {
-                item.selected = selected;
-                this.pushSpliceItem(item);
-                this.setSelectedItem(item);
-            },
+            }
         },
     };
 </script>

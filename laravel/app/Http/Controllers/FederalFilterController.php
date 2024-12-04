@@ -27,11 +27,9 @@ class FederalFilterController extends Controller
 
 	public function addFederalFilters(Request $request)
 	{
-    	$data = $request->validate([
-    		'user_id' => 'required'
-    	]);
 
 	    $data = $request->validate([
+	    	'user_id' => 'required',
 	        'federal_filter_name' => 'required',
 	        'posted_date' => 'sometimes|nullable',
 	        'posted_from_date' => 'sometimes|nullable',
@@ -49,97 +47,94 @@ class FederalFilterController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
 
-	    if ($user) {
+    	try{
+	        $federal_filter = FederalFilter::whereHas('FederalFilterKeywords', function($que) use($request){
+	        	$que->whereIn('keyword', $request->keywords);
+	        })->where('user_id', $request->user_id)->first();
+ 
+	        if (!$federal_filter){
+		        $federal_filter = FederalFilter::create([
+		            'user_id' => $request->user_id,
+				    'federal_filter_name' => $request->federal_filter_name,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null
+		        ]);
+		    }else {
+                // Delete previous associations if the filter already exists
+                $this->deleteAssociations($federal_filter);
+            }
 
-	    	try{
-		        $federal_filter = FederalFilter::whereHas('FederalFilterKeywords', function($que) use($request){
-		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $request->user_id)->first();
-	 
-		        if (!$federal_filter){
-			        $federal_filter = FederalFilter::create([
-			            'user_id' => $request->user_id,
-					    'federal_filter_name' => $request->federal_filter_name,
-					    'posted_date' => $request->posted_date ?: null,
-					    'active' => $request->active ?: null,
-					    'expired' => $request->expired ?: null,
-					    'posted_from_date' => $request->posted_from_date ?: null,
-					    'posted_to_date' => $request->posted_to_date ?: null,
-					    'response_date' => $request->response_date ?: null,
-					    'response_from_date' => $request->response_from_date ?: null,
-					    'response_to_date' => $request->response_to_date ?: null
-			        ]);
-			    }else {
-	                // Delete previous associations if the filter already exists
-	                $this->deleteAssociations($federal_filter);
+	        // Handle the related data associations
+	        if ($request->has('keywords')) {
+	            foreach ($request->keywords as $keyword) {
+	                FederalFilterKeyword::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'keyword' => $keyword]
+	                );
 	            }
-
-		        // Handle the related data associations
-		        if ($request->has('keywords')) {
-		            foreach ($request->keywords as $keyword) {
-		                FederalFilterKeyword::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'keyword' => $keyword]
-		                );
-		            }
-		        }
-
-		        if ($request->has('federal_notices')) {
-		            foreach ($request->federal_notices as $notice) {
-		                FederalFilterNotice::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'federal_notice_id' => $notice]
-		                );
-		            }
-		        }
-
-		        if ($request->has('naics')) {
-		            foreach ($request->naics as $naics) {
-		                FederalFilterNaics::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'naics_id' => $naics]
-		                );
-		            }
-		        }
-
-		        if ($request->has('pscs')) {
-		        	$filtered_psc_codes = array_filter($request->pscs, function($item) {
-					    return is_numeric($item);
-					});
-					$filtered_psc_codes = array_values($filtered_psc_codes);
-		            foreach ($filtered_psc_codes as $psc) {
-		                FederalFilterPsc::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'psc_id' => $psc]
-		                );
-		            }
-		        }
-
-		        if ($request->has('states')) {
-		            foreach ($request->states as $state) {
-		                FederalFilterState::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'state_id' => $state]
-		                );
-		            }
-		        }
-
-		        if ($request->has('set_asides')) {
-		            foreach ($request->set_asides as $set_aside) {
-		                FederalFilterSetAside::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'set_aside_id' => $set_aside]
-		                );
-		            }
-		        }
-
-		        if ($request->has('federal_agencies')) {
-		            foreach ($request->federal_agencies as $agency) {
-		                FederalFilterAgency::updateOrCreate(
-		                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'federal_agency_id' => $agency]
-		                );
-		            }
-		        }
-
-		        return $federal_filter;
-		    } catch (\Exception $e) {
-	            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
 	        }
-	    }
+
+	        if ($request->has('federal_notices')) {
+	            foreach ($request->federal_notices as $notice) {
+	                FederalFilterNotice::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'federal_notice_id' => $notice]
+	                );
+	            }
+	        }
+
+	        if ($request->has('naics')) {
+	            foreach ($request->naics as $naics) {
+	                FederalFilterNaics::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'naics_id' => $naics]
+	                );
+	            }
+	        }
+
+	        if ($request->has('pscs')) {
+	        	$filtered_psc_codes = array_filter($request->pscs, function($item) {
+				    return is_numeric($item);
+				});
+				$filtered_psc_codes = array_values($filtered_psc_codes);
+	            foreach ($filtered_psc_codes as $psc) {
+	                FederalFilterPsc::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'psc_id' => $psc]
+	                );
+	            }
+	        }
+
+	        if ($request->has('states')) {
+	            foreach ($request->states as $state) {
+	                FederalFilterState::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'state_id' => $state]
+	                );
+	            }
+	        }
+
+	        if ($request->has('set_asides')) {
+	            foreach ($request->set_asides as $set_aside) {
+	                FederalFilterSetAside::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'set_aside_id' => $set_aside]
+	                );
+	            }
+	        }
+
+	        if ($request->has('federal_agencies')) {
+	            foreach ($request->federal_agencies as $agency) {
+	                FederalFilterAgency::updateOrCreate(
+	                    ['federal_filter_id' => $federal_filter->federal_filter_id, 'federal_agency_id' => $agency]
+	                );
+	            }
+	        }
+
+	        return $federal_filter;
+	    } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
+        }
 	}
 
 	private function deleteAssociations($federal_filter)

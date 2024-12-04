@@ -38,7 +38,7 @@ class FederalNoticeController extends Controller
     public function addFederalNotice(Request $request)
     {
         $data = $request->validate([
-            'notice_name' => 'required',
+            'notice_name' => 'required|unique:federal_notices,notice_name',
             'sort' => 'nullable',
             'background_color' => 'nullable'
         ]);
@@ -61,7 +61,7 @@ class FederalNoticeController extends Controller
     {
         $data = $request->validate([
             'federal_notice_id' => 'required|exists:federal_notices,federal_notice_id',
-            'notice_name' => 'required',
+            'notice_name' => 'required|unique:federal_notices,notice_name,'.$request->federal_notice_id.',federal_notice_id',
             'sort' => 'nullable',
             'background_color' => 'nullable'
         ]);

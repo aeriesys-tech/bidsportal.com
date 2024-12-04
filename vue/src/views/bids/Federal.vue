@@ -68,6 +68,12 @@
                                 <div class="col-12 ml2 multi-collapse collapse show" id="status">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="all" v-model="meta.all" />
+                                            <label class="form-check-label">All</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="active" v-model="meta.active" />
                                             <label class="form-check-label">Active</label>
                                         </div>
@@ -542,7 +548,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="border-bottom: none;">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNaicsModal()"></button>
                 </div>
                 <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
                     <div class="d-flex align-items-center mb-2 mb-sm-0">
@@ -589,7 +595,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="border-bottom: none;">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closePscModal"></button>
                 </div>
                 <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
                     <div class="d-flex align-items-center mb-2 mb-sm-0">
@@ -926,7 +932,16 @@
             'meta.federal_agencies': 'triggerFederalTenders',
             'meta.naics': 'triggerFederalTenders',
             'meta.pscs': 'triggerFederalTenders',
-            // 'store.getters.page_redirect' : 'pageRedirect'
+            'meta.all' : function(){
+                if(this.meta.all){
+                    this.meta.active = true
+                    this.meta.expired = true
+                }else{
+                    this.meta.active = false
+                    this.meta.expired = false
+                }
+            },
+            'store.getters.page_redirect' : 'pageRedirect'
         },
 
         beforeRouteEnter(to, from, next) {
@@ -974,6 +989,26 @@
         },
 
         methods: {
+
+            closeNaicsModal(){
+                if(!this.meta.naics.length){
+                    this.$store.dispatch("setSelectedNaics", [])
+                }
+            },
+
+            deselectNaics(){
+                this.$store.dispatch("setSelectedNaics", [])
+            },
+
+            closePscModal(){
+                if(!this.meta.pscs.length){
+                    this.$store.dispatch("setSelectedPscs", [])
+                }
+            },
+
+            deselectPsc(){
+                this.$store.dispatch("setSelectedPscs", [])
+            },
 
             addToCart(federal_tender) {
                 let vm = this
@@ -1293,6 +1328,8 @@
                 this.meta.states = [],
                 this.meta.federal_agencies = []
                 this.getFederalTenders()
+                this.$store.dispatch("setSelectedNaics", [])
+                this.$store.dispatch("setSelectedPscs", [])
             },
             removeFilter(filter){
                 console.log(filter)
@@ -1378,15 +1415,23 @@
                     })
                 }
                 if(vm.meta.naics.length){
+                    let naics_length = vm.meta.naics.length
+                    if(vm.$store.getters.is_all_naics){
+                        naics_length =  2197       
+                    }
                     vm.filters.push({
-                        name: 'naics:'+vm.meta.naics.length,
+                        name: 'naics:'+naics_length,
                         id:vm.meta.naics,
                         module:'naics'
                     })
                 }
                 if(vm.meta.pscs.length){
+                    let pscs_length = vm.meta.pscs.length
+                    if(vm.$store.getters.is_all_pscs){
+                        pscs_length = 3074
+                    }
                     vm.filters.push({
-                        name: 'psc:'+vm.meta.pscs.length,
+                        name: 'psc:'+pscs_length,
                         id:vm.meta.pscs,
                         module:'pscs'
                     })

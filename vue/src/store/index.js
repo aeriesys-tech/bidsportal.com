@@ -5,10 +5,10 @@ import axios from 'axios';
 
 export default createStore({
 	state: {
-		// baseUrl: 'http://192.168.0.174/bidsportal_new/laravel/public/',
-		// appUrl: 'http://192.168.0.174:8080/#/',
-		baseUrl:"http://64.227.157.66/",
-		appUrl:'http://64.227.157.66/#/',
+		baseUrl: 'http://localhost/bidsportal_new/laravel/public/',
+		appUrl: 'http://localhost:8080/#/',
+		// baseUrl:"http://64.227.157.66/",
+		// appUrl:'http://64.227.157.66/#/',
 		token:null,
 		user:null,
 		cart:[],
@@ -45,10 +45,18 @@ export default createStore({
 			show_pricing: null,
 			show_upgrade: null,
 			show_bidsearch: null
-		}
+		},
+		is_all_naics:false,
+		is_all_pscs:false
 	}, 
 	
 	mutations: {
+		setAllNaics(state, is_all_naics){
+			state.is_all_naics = is_all_naics
+		},
+		setAllPscs(state, is_all_pscs){
+			state.is_all_pscs = is_all_pscs
+		},
 		setHeaderMenu(state, header_menu){
 			state.header_menu = header_menu
 		},
@@ -138,6 +146,12 @@ export default createStore({
 	},
 
 	getters: {
+		is_all_naics(state){
+			return state.is_all_naics
+		},
+		is_all_pscs(state){
+			return state.is_all_pscs
+		},
 		header_menu(state){
 			return state.header_menu
 		},
@@ -230,6 +244,12 @@ export default createStore({
 	},
 
 	actions: {
+		async setAllNaics(context,payload) {
+			await context.commit('setAllNaics', payload);
+		},
+		async setAllPscs(context,payload) {
+			await context.commit('setAllPscs', payload);
+		},
 		async setHeaderMenu(context,payload) {
 			await context.commit('setHeaderMenu', payload);
 		},

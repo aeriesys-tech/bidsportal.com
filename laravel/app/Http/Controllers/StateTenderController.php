@@ -189,7 +189,7 @@ class StateTenderController extends Controller
     {
         $data = $request->validate([
             'tender_no' => 'required',
-            'title' => 'required',
+            'title' => 'required|unique:state_tenders,title',
             'description' => 'required',
             'opening_date' => 'required',
             'expiry_date' => 'required',

@@ -38,7 +38,7 @@ class CategoryController extends Controller
 	  public function addCategory(Request $request)
 	  {
 	      $data = $request->validate([
-	          'category_name' => 'required',
+	          'category_name' => 'required|unique:categories,category_name',
 	          'sort' => 'nullable'
 	      ]);
 
@@ -60,7 +60,7 @@ class CategoryController extends Controller
 	  {
 	      $data = $request->validate([
 	          'category_id' => 'required|exists:categories,category_id',
-	          'category_name' => 'required',
+	          'category_name' => 'required|unique:categories,category_name,'.$request->category_id.',category_id',
 	          'sort' => 'nullable'
 	      ]);
 
