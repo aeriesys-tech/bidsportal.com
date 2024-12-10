@@ -1,165 +1,82 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :on-cancel="onCancel" :is-full-page="fullPage" />
-    <section class="pt-3" style="padding-bottom:74px">
-        <div class="container-fluid">
+    <section class="pt-3" style="padding-bottom: 74px;">
+        <div class="container">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="card bg-light w-100">
-                        <div class="card-body p-3">
-                            <div class="text-center">
-                                <div class="text-center">
-                                    <h1 class="avatar avatar-xl rounded-circle border border-white border-3 shadow">{{$store.getters.user?.name.substring(0,1)}}</h1>
-                                </div>
-                                <h6 class="mb-0">{{$store.getters.user?.name}}</h6>
-                                <a href="javascript:void(0)" class="text-reset text-primary-hover small">{{$store.getters.user?.email}}</a>
-                                <hr />
-                            </div>
-                            <ul class="nav nav-pills-primary-soft flex-column">
-                                <li class="nav-item">
-                                    <router-link class="nav-link active" to="/user/profile"><i class="bi bi-person fa-fw me-2"></i>My Profile</router-link>
-                                </li>
-                                <li class="nav-item">
-                                    <router-link class="nav-link" to="/user/change-password"><i class="bi bi-person fa-fw me-2"></i>Change Password</router-link>
-                                </li>
-                                <li class="nav-item">
-                                    <router-link class="nav-link" to="/user/subscription"><i class="bi bi-ticket-perforated fa-fw me-2"></i>Subscription Info</router-link>
-                                </li>
-
-                                <li class="nav-item" v-if="payment.length !==0">
-                                    <router-link class="nav-link" to="/user/single-bidpurchases"><i class="bi bi-people fa-fw me-2"></i> Single Bid Purchases</router-link>
-                                </li>
-
-                                <li class="nav-item" v-if="payment.length !==0">
-                                    <router-link class="nav-link" to="/user/my-purchasedbids"><i class="bi bi-people fa-fw me-2"></i>My Purchased Bids</router-link>
-                                </li>
-                            </ul>
-                        </div>
+                <ProfileList></ProfileList>
+                <div class="col-lg-8 col-xl-9 ps-xl-5">
+                    <div class="d-grid mb-0 d-lg-none w-100">
+                        <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="card border">
-                        <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center" style="padding: 10px 22px">
-                            <h5 class="card-header-title">Personal Information</h5>
-                            <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
-                                Back To Bids
-                            </router-link>
+                    <div class="card border-0 p-5 pt-0">
+                        <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-header-title">Profile</h5>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <form class="row g-3">
-                                <div class="col-md-4">
+                            <!-- <div class="d-flex align-items-center text-start me-0 me-sm-4 mb-3">
+                                <div class="icon-md bg-primary bg-opacity-10 flex-shrink-0 text-primary rounded-circle me-2"><i class="fa fa-user"></i></div>
+                                <div>
+                                    <p class="h6 fw-normal mb-0">Basic info</p>
+                                    <p class="mb-0 small">Your personal information here</p>
+                                </div>
+                            </div> -->
+                            <div class="row g-3">
+                                <div class="col-md-12">
                                     <label class="form-label">Full Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" placeholder="Enter your full name" :class="{ 'is-invalid': errors.name }" ref="username" v-model="user.name" :disabled="disabled" />
+                                    <input type="text" class="form-control" placeholder="Enter your full name" :class="{ 'is-invalid': errors.name }" ref="username" v-model="user.name" />
                                     <span v-if="errors.name" class="invalid-feedback">{{ errors.name[0] }}</span>
                                 </div>
-                                <!-- position -->
-                                <div class="col-md-4">
-                                    <label class="form-label">Position/Title<span class="text-danger"></span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.title }" ref="title" v-model="user.position" :disabled="disabled" placeholder="Enter your Position/Title" />
-                                    <span v-if="errors.title" class="invalid-feedback">{{ errors.title[0] }}</span>
-                                </div>
-                                <!-- Email -->
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="form-label">Mailing Address<span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control form-control-sm" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" :disabled="disabled" placeholder="Enter your email id" />
+                                    <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" placeholder="Enter your email id" />
                                     <span v-if="errors.email" class="invalid-feedback">{{ errors.email[0] }}</span>
                                 </div>
-
-                                <!-- Mobile -->
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="form-label">Mobile number<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.phone }" ref="companyname" v-model="user.phone" :disabled="disabled" placeholder="Enter your mobile number" />
+                                    <input type="text" class="form-control" :class="{ 'is-invalid': errors.phone }" ref="companyname" v-model="user.phone" placeholder="Enter your mobile number" />
                                     <span v-if="errors.phone" class="invalid-feedback">{{ errors.phone[0] }}</span>
                                 </div>
-                                <!-- Company Name -->
-                                <div class="col-md-4">
+                                  <div class="col-md-12">
                                     <label class="form-label">Company Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.company }" ref="webaddress" v-model="user.company" :disabled="disabled" placeholder="Enter your Company Name" />
+                                    <input type="text" class="form-control" :class="{ 'is-invalid': errors.company }" ref="webaddress" v-model="user.company" placeholder="Enter your Company Name" />
                                     <span v-if="errors.company" class="invalid-feedback">{{ errors.company[0] }}</span>
                                 </div>
                                 <!-- Website Address -->
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <label class="form-label">Website Address<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.web_address }" ref="mailaddress" v-model="user.web_address" :disabled="disabled" placeholder="Enter your Website Address" />
+                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.web_address }" ref="mailaddress" v-model="user.web_address" placeholder="Enter your Website Address" />
                                     <span v-if="errors.web_address" class="invalid-feedback">{{ errors.web_address[0] }}</span>
                                 </div>
-                                <!-- City -->
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-12">
+                                    <label class="form-label">Company Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.company }" ref="webaddress" v-model="user.company" placeholder="Enter your Company Name" />
+                                    <span v-if="errors.company" class="invalid-feedback">{{ errors.company[0] }}</span>
+                                </div> -->
+                                  <!-- <div class="col-md-12">
                                     <label class="form-label">City<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.city }" ref="city" v-model="user.city" :disabled="disabled" placeholder="Enter your City" />
                                     <span v-if="errors.city" class="invalid-feedback">{{ errors.city[0] }}</span>
-                                </div>
+                                </div> -->
                                 <!-- State -->
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-12">
                                     <label class="form-label">State<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.state }" ref="state" v-model="user.state" :disabled="disabled" placeholder="Enter your State" />
                                     <span v-if="errors.state" class="invalid-feedback">{{ errors.state[0] }}</span>
-                                </div>
+                                </div> -->
                                 <!-- Zip Code -->
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-12">
                                     <label class="form-label">Zip Code<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.pin_code }" ref="pin_code" v-model="user.pin_code" :disabled="disabled" placeholder="Enter your Zip Code" />
                                     <span v-if="errors.pin_code" class="invalid-feedback">{{ errors.pin_code[0] }}</span>
-                                </div>
-                                <!-- Nationality -->
-                                <!-- <div class="col-md-4">
-                                    <label class="form-label">Set Aside<span class="text-danger">*</span></label>
-                                    <div class="liststate" id="style-3">
-                                        <ul class="list-group checkbox disabled" v-for="setAside in SetAsideStatus" :key="setAside.status_id">
-                                            <li class="list-group-item" id="lable">
-                                                <label class="containercheckbox">
-                                                    <input class="form-check-input check-gov me-1 checkbox12" id="federalcheck" type="checkbox" aria-label="..." :value="setAside.status_id" v-model="regSetAside" />
-                                                    <span class="checkmarkcheckbox"></span>{{setAside.status_name}}
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                 </div> -->
-
-                                <!-- testing -->
-                                <div class="col-md-4">
-                                    <label for="inputfrequen1" class="form-label head1">Set Aside <span class="text-danger">*</span> </label> <label>{{ regSetAside.length }} of {{ coutsetside.length}} Selected</label>
-
-                                    <div class="">
-                                        <button type="button" class="btn form-control bgcolor btnwht10 form-select" data-bs-toggle="dropdown">
-                                            <span class="text-center" style="float: left; font-size: 10pt; font-weight: 400; color:#a49da5">Select Set Aside</span>
-                                        </button>
-                                        <label for="inputfrequen1" class="form-label"> </label>
-                                        <ul class="dropdown-menu ">
-                                            <li class="dropdown-item fnt">
-                                                <div class="">
-                                                    <router-link to="" v-model="selectAll" @click="select()" class="" ref="selectState">
-                                                        Select All /
-                                                    </router-link>
-                                                    <router-link to="" v-model="selectAll" @click="Deselect()" class="" ref="selectState">
-                                                        Reset all
-                                                    </router-link>
-                                                    <div class="ss-filter-search scrollaside">
-                                                        <input autocomplete="off" class="form-control" type="text" v-model="searchstate" placeholder="Search Set Aside" />
-                                                        <div class="liststate " id="style-3">
-                                                            <ul class="checkbox pl-0" v-for="setAside in filterSetAside" :key="setAside.status_id">
-                                                                <li class="list-group-item">
-                                                                    <input class="form-check-input me-1" id="federalcheck" type="checkbox" :value="setAside.status_id" v-model="regSetAside" @change="updateCheckall" aria-label="..." />
-                                                                    {{setAside.status_name}}
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
                                 <div class="col-md-12">
                                     <div class="text-end">
-                                        <button type="button" v-if="buttontogle==0" href="#" class="btn-sm btn btn-primary mb-0 me-2" @click="UpdateUser()">Save Changes</button>
-                                        <button type="button" class="btn btn-sm abtn mt-1 btn-secondary secd" @click="enable()">
-                                            <span v-if="buttontogle">Edit</span>
-                                            <span v-else>Cancel </span>
-                                        </button>
+                                        <button type="button" href="#" class="btn-sm btn btn-primary mb-0 me-2" @click="UpdateUser()">Save Changes</button>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,8 +87,9 @@
 <script>
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
+    import ProfileList from "@/components/ProfileList.vue";
     export default {
-        components: { Loading },
+        components: { Loading, ProfileList },
         data() {
             return {
                 searchstate: "",
@@ -241,16 +159,16 @@
                 // let loader = vm.$loading.show();
                 vm.isLoading = true;
                 if (vm.$store.getters.user) {
-                    vm.user = vm.$store.getters.user
+                    vm.user = vm.$store.getters.user;
                     vm.$store
                         .dispatch("post", { uri: "getUserSetAsideIds", data: vm.user })
                         .then(function (response) {
                             // loader.hide();
                             vm.isLoading = false;
-                            vm.user.set_asides = response.data
+                            vm.user.set_asides = response.data;
                         })
                         .catch(function (error) {
-                            vm.isLoading = false
+                            vm.isLoading = false;
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
@@ -259,9 +177,9 @@
         },
 
         mounted() {
-            let header_menu = this.$store.getters.header_menu
-            header_menu.show_bidsearch = true
-            this.$store.dispatch('setHeaderMenu', header_menu)
+            let header_menu = this.$store.getters.header_menu;
+            header_menu.show_bidsearch = true;
+            this.$store.dispatch("setHeaderMenu", header_menu);
         },
         methods: {
             getSetAsideStatus() {
@@ -465,7 +383,7 @@
         /* margin-bottom: 10px; */
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
-         max-width: 260px!important;
+        max-width: 260px !important;
     }
     .stripe-1 {
         color: white !important;
@@ -482,38 +400,39 @@
         color: var(--bs-gray-900);
     }
     /* .liststate[data-v-ca123f88] {
-    
+
     max-width: 260px!important;
     } */
-     .pl-0{
-        padding-left:5px!important;
-     }
-    .dropdown-item:hover, .dropdown-item:focus {
-    color:inherit;
-    background-color:transparent;
-}
-.fnt{
-    font-size: 15px;
-    font-weight: 400;
-}
+    .pl-0 {
+        padding-left: 5px !important;
+    }
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        color: inherit;
+        background-color: transparent;
+    }
+    .fnt {
+        font-size: 15px;
+        font-weight: 400;
+    }
 
-/* width */
+    /* width */
     .scrollaside ::-webkit-scrollbar {
-        width: 5px!important;
-        height:5px!important;
+        width: 5px !important;
+        height: 5px !important;
 
-        cursor: pointer!important;
+        cursor: pointer !important;
     }
 
     /* Track */
     .scrollaside::-webkit-scrollbar-track {
         /* box-shadow: inset 0 0 5px grey;  */
-        border-radius: 10px!important;
+        border-radius: 10px !important;
     }
 
     /* Handle */
     .scrollaside ::-webkit-scrollbar-thumb {
-        background-color: #5143d9!important;
-        border-radius: 10px!important;
+        background-color: #5143d9 !important;
+        border-radius: 10px !important;
     }
 </style>

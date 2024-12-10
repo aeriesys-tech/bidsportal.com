@@ -271,9 +271,9 @@ class FederalTenderController extends Controller
             'secondary_address.phone' => 'nullable',
             'secondary_address.title' => 'nullable|string|max:255',
             'secondary_address.full_name' => 'nullable',
-            'opening_date' => 'nullable',
+            'opening_date' => 'nullable|date',
             'posted_date' => 'nullable',
-            'expiry_date' => 'nullable'
+            'expiry_date' => 'nullable|date|after:opening_date'
         ]);
 
         $federal = FederalTender::create($data);
@@ -387,9 +387,9 @@ class FederalTenderController extends Controller
             'secondary_address.phone' => 'nullable',
             'secondary_address.title' => 'nullable|string|max:255',
             'secondary_address.full_name' => 'nullable',
-            'opening_date' => 'nullable',
+            'opening_date' => 'nullable|date',
             'posted_date' => 'nullable',
-            'expiry_date' => 'nullable'
+            'expiry_date' => 'nullable|date|after:opening_date'
         ]);
 
         $federal = FederalTender::where('federal_tender_id', $request->federal_tender_id)->first();

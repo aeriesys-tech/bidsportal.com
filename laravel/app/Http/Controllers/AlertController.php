@@ -426,4 +426,31 @@ class AlertController extends Controller
 		$users = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page);
 		return AlertResource::collection($users);
 	}
+
+	public function toggleAlert(Request $request)
+	{
+		$request->validate([
+			'alert_id' => 'required'
+		]);
+
+		$alert = Alert::where('alert_id', $request->alert_id)->first();
+
+		if($alert){
+			if($alert->status){
+				return $alert->update([
+					'status' => false
+				]); 
+			}else{
+				return $alert->update([
+					'status' => true
+				]); 
+			}
+		}else{
+			return response()->json(['message' => 'No records found']);
+		}
+
+		$update = Alert::where('alert_id', $request->alert_id)->update([
+			'status'
+		]);
+	}
 }

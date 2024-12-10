@@ -3,6 +3,80 @@
         <div class="d-flex justify-content-between">
             <h2 class="main-title mb-3">Dashboard</h2>
         </div>
+        <div class="row g-2 mb-3">
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total registered users</label>
+                        <h3 class="card-value mb-1"><i class="ri-user-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total users confirmed email address</label>
+                        <h3 class="card-value mb-1"><i class="ri-mail-check-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total users not confirmed email address</label>
+                        <h3 class="card-value mb-1"><i class="ri-mail-close-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total active actual subscriptions</label>
+                        <h3 class="card-value mb-1"><i class="ri-user-follow-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total expired actual subscriptions</label>
+                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total active trail subscriptions</label>
+                        <h3 class="card-value mb-1"><i class="ri-check-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total expired trail subscriptions</label>
+                        <h3 class="card-value mb-1"><i class="ri-close-line"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total Subscriptions purchase in a month</label>
+                        <h3 class="card-value mb-1"><i class="ri-user-star-fill"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <label class="card-title fs-sm fw-medium mb-1">Total Subscriptions expiring in a month</label>
+                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-fill"></i> 8,327</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row g-3">
             <div class="col-12">
                 <div class="card">
@@ -43,9 +117,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label style="font-weight: bold;">S3 Bucket Folders</label>
-                                    <select class="form-control" style="margin-right: 10px" v-model="meta.folder">
-                                        <option v-for="folder, key in folders" :key="key" :value="folder">{{ folder }}</option>
-                                    </select>
+                                    <input type="date" id="calendar" v-model="meta.folder" class="form-control" :min="min_date" :max="max_date" @change="validateDate()" />
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -93,10 +165,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label style="font-weight: bold;">S3 Bucket Folders</label>
-                                    <select class="form-control" style="margin-right: 10px" v-model="upload_excel.folder" :class="{'is-invalid': upload_excel.errors.folder}">
-                                        <option value=''>Select Folder</option>
-                                        <option v-for="folder, key in folders" :key="key" :value="folder">{{ folder }}</option>
-                                    </select>
+                                    <input type="date" id="calendar" v-model="upload_excel.folder" class="form-control" :min="min_date" :max="max_date" @change="validateDate()" />
                                     <span v-if="upload_excel.errors.folder" class="invalid-feedback">{{ upload_excel.errors.folder[0] }}</span>
                                 </div>
                             </div>
@@ -158,6 +227,10 @@
         name: "Dashboard",
         data() {
             return {
+                min_date: '2024-09-01', 
+                max_date : '2024-12-05',
+                selected_date: null,
+                allowed_dates:[],
                 dashboard:{
                     api_key_id:null,
                     api_key:null
@@ -189,6 +262,15 @@
             });
         },
         methods: {
+        
+            validateDate(){
+                if(this.folders.includes(this.meta.folder)){
+                    return true
+                }else{
+                    this.$store.dispatch("info", "Folder doesn't exist in S3 for the selected date")
+                    return false
+                }
+            }, 
             getExcelFile(e){
                 let vm = this
                 vm.upload_excel.file= e.target.files[0]
@@ -290,6 +372,9 @@
                         vm.folders = response.data
                         if(vm.folders.length){
                             vm.meta.folder = vm.folders[0]
+                            vm.min_date = vm.folders[vm.folders.length-1]
+                            vm.max_date = vm.folders[0]
+                            vm.selected_date = vm.folders[0]
                         }
                     })
                     .catch(function (error) {

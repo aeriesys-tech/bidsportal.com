@@ -17,19 +17,23 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8|same:confirm_password',
             'position' => 'required',
-            'company' => 'required',
+            'confirm_password' => 'required',
+            'company_name' => 'required',
             'phone' => 'required',
             'web_address' => 'required',
             'mailing_address' => 'required',
             'city' => 'required',
             'state' => 'required',
-            'pin_code' => 'required',
-            'set_asides' => 'required|array'
+            'zipcode' => 'required',
+            'set_asides' => 'required|array',
+            'terms' => 'accepted',
         ]);
 
+        $data['pw'] = $data['password'];
         $data['password'] = Hash::make($data['password']);
+        $data['pin_code'] = $data['zipcode'];
 
         $user = User::create($data);
 

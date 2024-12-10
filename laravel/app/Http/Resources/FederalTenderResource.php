@@ -74,17 +74,18 @@ class FederalTenderResource extends JsonResource
             $place_of_performance = null;
         }
 
-        if($request->user_id){
-            $cutoff_date = Carbon::now()->subDays(30);
-            $cart_item = CartItem::where('user_id', $request->user_id)->where('federal_tender_id', $this->federal_tender_id)->where('cart_item_date', '>=', $cutoff_date)->first();
-            if($cart_item){
-                $cart_icon = false;
-            }else{
-                $cart_icon = true;
-            }
-        }else{
-            $cart_icon = true;
-        }
+        // if($request->user_id){
+        //     $cutoff_date = Carbon::now()->subDays(30);
+        //     $cart_item = CartItem::where('user_id', $request->user_id)->where('federal_tender_id', $this->federal_tender_id)->where('cart_item_date', '>=', $cutoff_date)->first();
+        //     if($cart_item){
+        //         $cart_icon = false;
+        //     }else{
+        //         $cart_icon = true;
+        //     }
+        // }else{
+        //     $cart_icon = true;
+        // }
+        $cart_icon = false;
 
         return [
             'federal_tender_id' => $this->federal_tender_id,

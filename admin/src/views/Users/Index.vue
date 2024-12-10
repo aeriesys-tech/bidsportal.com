@@ -21,6 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">#</th>
+                                        <th class="text-center">Signup Date</th>
                                         <th @click="sort('name')">
                                             Name
                                             <span>
@@ -117,6 +118,7 @@
                                     </tr>
                                     <tr v-for="user, key in users" :key="key">
                                         <td class="text-center">{{ meta.from + key }}</td>
+                                        <td class="text-center">{{ user.created_at }}</td>
                                         <td class="wrap-text">{{ user.name }}</td>
                                         <td>{{ user.email }}</td>
                                         <td>{{ user.company_name }}</td>

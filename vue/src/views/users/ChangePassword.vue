@@ -2,144 +2,77 @@
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :on-cancel="onCancel" :is-full-page="fullPage" />
 
     <section class="pt-3" style="padding-bottom: 77px;">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
-                <!-- Sidebar START -->
-                <div class="col-lg-4 col-xl-3">
-                    <!-- Responsive offcanvas body START -->
-                    <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="offcanvasSidebar">
-                        <!-- Offcanvas header -->
-                        <div class="offcanvas-header justify-content-end pb-2">
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasSidebar" aria-label="Close"></button>
-                        </div>
-
-                        <!-- Offcanvas body -->
-                        <div class="offcanvas-body p-3 p-lg-0">
-                            <div class="card bg-light w-100">
-                                <div class="card-body p-3">
-                                    <!-- Avatar and content -->
-                                    <div class="text-center">
-                                        <div class="text-center">
-                                            <h1 class="avatar avatar-xl rounded-circle border border-white border-3 shadow">
-                                                {{ $store.getters.user?.name.substring(0, 1) }}
-                                            </h1>
-                                        </div>
-                                        <h6 class="mb-0">{{ $store.getters.user?.name }}</h6>
-                                        <a href="javascript:void(0)" class="text-reset text-primary-hover small">{{ $store.getters.user?.email }}</a>
-                                        <hr />
-                                    </div>
-                                    <!-- Sidebar menu item START -->
-                                    <ul class="nav nav-pills-primary-soft flex-column">
-                                        <li class="nav-item">
-                                            <router-link class="nav-link" to="/user/profile"><i class="bi bi-person fa-fw me-2"></i>My Profile</router-link>
-                                        </li>
-                                        <li class="nav-item">
-                                            <router-link class="nav-link active" to="/user/change-password"><i class="bi bi-person fa-fw me-2"></i>Change Password</router-link>
-                                        </li>
-                                        <li class="nav-item">
-                                            <router-link class="nav-link" to="/user/subscription"><i class="bi bi-ticket-perforated fa-fw me-2"></i>Subscription Info</router-link>
-                                        </li>
-
-                                        <li class="nav-item" v-if="payment.length !== 0">
-                                            <router-link class="nav-link" to="/user/single-bidpurchases"><i class="bi bi-people fa-fw me-2"></i> Single Bid Purchases</router-link>
-                                        </li>
-
-                                        <li class="nav-item" v-if="payment.length !== 0">
-                                            <router-link class="nav-link" to="/user/my-purchasedbids"><i class="bi bi-people fa-fw me-2"></i>My Purchased Bids</router-link>
-                                        </li>
-                                    </ul>
-                                    <!-- Sidebar menu item END -->
-                                </div>
-                                <!-- Card body END -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Responsive offcanvas body END -->
-                </div>
-                <!-- Sidebar END -->
-
-                <!-- Main content START -->
-                <div class="col-md-1"></div>
-                <div class="col-lg-6 col-xl-6">
-                    <!-- Offcanvas menu button -->
+                <ProfileList></ProfileList>
+                <div class="col-lg-8 col-xl-9 ps-xl-5">
                     <div class="d-grid mb-0 d-lg-none w-100">
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
-
-                    <div class="vstack gap-4">
-                        <div class="card border">
-                            <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="card-header-title">Update Password</h5>
-                                </div>
-                                <router-link to="/bids/state-opportunities" type="button" class="mb-0 btn btn-sm btn-primary">
-                                    Back To Bids
-                                </router-link>
+                    <div class="card border-0 p-5 pt-0">
+                        <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-header-title">Account details</h5>
                             </div>
+                        </div>
+                        <form class="card-body">
+                            <div class="row" style="">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email ID<span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" disabled />
+                                        <span v-if="errors.email" class="invalid-feedback">{{ errors.email[0] }}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Current password</label>
+                                        <div class="input-group">
+                                            <input class="form-control fakepassword" placeholder="Current password" :type="current_password_type" :class="{ 'is-invalid': errors.current_password }" v-model="password.current_password" />
+                                            <span class="input-group-text p-0 bg-transparent" @click="togglePassword('current_password_type', 'current_password_icon')">
+                                                <i class="fakepasswordicon fas fa-eye p-2" v-if="current_password_icon"></i>
+                                                <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
+                                            </span>
+                                        </div>
+                                        <span v-if="errors.current_password" class="invalid-feedbacks">{{ errors.current_password[0] }}</span>
+                                    </div>
 
-                            <!-- Card body START -->
-                            <form class="card-body">
-                                <!-- Current password -->
-                                <div class="row" style="">
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label class="form-label">Email ID<span class="text-danger">*</span></label>
-                                            <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" disabled />
-                                            <span v-if="errors.email" class="invalid-feedback">{{ errors.email[0] }}</span>
+                                    <div class="mb-3">
+                                        <label class="form-label"> Enter new password</label>
+                                        <div class="input-group">
+                                            <input class="form-control fakepassword" placeholder="Enter New password" :type="new_password_type" :class="{ 'is-invalid': errors.new_password }" ref="password" v-model="password.new_password" />
+                                            <span class="input-group-text p-0 bg-transparent" @click="togglePassword('new_password_type', 'new_password_icon')">
+                                                <i class="fakepasswordicon fas fa-eye p-2" v-if="new_password_icon"></i>
+                                                <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
+                                            </span>
                                         </div>
-                                        <!-- New password -->
-                                        <div class="mb-3">
-                                            <label class="form-label">Current password</label>
-                                            <div class="input-group">
-                                                <input class="form-control fakepassword" placeholder="Current password" :type="current_password_type" :class="{ 'is-invalid': errors.current_password }" v-model="password.current_password" />
-                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('current_password_type', 'current_password_icon')">
-                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="current_password_icon"></i>
-                                                    <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
-                                                </span>
-                                            </div>
-											<span v-if="errors.current_password" class="invalid-feedbacks">{{ errors.current_password[0] }}</span>
-                                        </div>
+                                        <span v-if="errors.new_password" class="invalid-feedbacks">{{ errors.new_password[0] }}</span>
+                                    </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label"> Enter new password</label>
-                                            <div class="input-group">
-                                                <input
-                                                    class="form-control fakepassword"
-                                                    placeholder="Enter New password"
-                                                    :type="new_password_type"
-                                                    :class="{ 'is-invalid': errors.new_password }"
-                                                    ref="password"
-                                                    v-model="password.new_password"
-                                                />
-                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('new_password_type', 'new_password_icon')">
-                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="new_password_icon"></i>
-                                                    <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
-                                                </span>
-                                            </div>
-											<span v-if="errors.new_password" class="invalid-feedbacks">{{ errors.new_password[0] }}</span>
+                                    <div class="mb-3">
+                                        <label class="form-label">Confirm new password</label>
+                                        <div class="input-group">
+                                            <input
+                                                class="form-control fakepassword"
+                                                placeholder="Retype password"
+                                                :type="confirm_password_type"
+                                                :class="{ 'is-invalid': errors.new_password_confirmation }"
+                                                v-model="password.new_password_confirmation"
+                                            />
+                                            <span class="input-group-text p-0 bg-transparent" @click="togglePassword('confirm_password_type', 'confirm_password_icon')">
+                                                <i class="fakepasswordicon fas fa-eye p-2" v-if="confirm_password_icon"></i>
+                                                <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
+                                            </span>
                                         </div>
+                                        <span v-if="errors.new_password_confirmation" class="invalid-feedbacks">{{ errors.new_password_confirmation[0] }}</span>
+                                    </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Confirm new password</label>
-                                            <div class="input-group">
-                                                <input class="form-control fakepassword" placeholder="Retype password" :type="confirm_password_type" :class="{ 'is-invalid': errors.new_password_confirmation }" v-model="password.new_password_confirmation" />
-                                                <span class="input-group-text p-0 bg-transparent" @click="togglePassword('confirm_password_type', 'confirm_password_icon')">
-                                                    <i class="fakepasswordicon fas fa-eye p-2" v-if="confirm_password_icon"></i>
-                                                    <i class="fakepasswordicon fas fa-eye-slash p-2" v-else></i>
-                                                </span>
-                                            </div>
-											<span v-if="errors.new_password_confirmation" class="invalid-feedbacks">{{ errors.new_password_confirmation[0] }}</span>
-                                        </div>
-
-                                        <div class="text-end" style="margin-top: 10px !important; margin-bottom: 36px !important;">
-                                            <br />
-                                            <a href="javascript:void(0)" class="btn btn-primary mb-0 btn-sm" @click.prevent="changePassword()">Change Password</a>
-                                            <br />
-                                        </div>
+                                    <div class="text-end" style="margin-top: 10px !important; margin-bottom: 36px !important;">
+                                        <br />
+                                        <a href="javascript:void(0)" class="btn btn-primary mb-0 btn-sm" @click.prevent="changePassword()">Change Password</a>
+                                        <br />
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -149,8 +82,9 @@
 <script>
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
+    import ProfileList from "@/components/ProfileList.vue";
     export default {
-        components: { Loading },
+        components: { Loading, ProfileList },
         data() {
             return {
                 buttontogle: 1,
@@ -176,22 +110,22 @@
                 regSetAside: [],
                 SetAsideStatus: [],
                 user: {
-                    title: '',
-                    name: '',
-                    id: '',
-                    email: '',
-                    role: '',
-                    mobile_number: '',
-                    avatar: '',
-                    phone: '',
-                    company_name: '',
-                    web_address: '',
-                    mail_address: '',
-                    city: '',
-                    state: '',
-                    zipcode: '',
+                    title: "",
+                    name: "",
+                    id: "",
+                    email: "",
+                    role: "",
+                    mobile_number: "",
+                    avatar: "",
+                    phone: "",
+                    company_name: "",
+                    web_address: "",
+                    mail_address: "",
+                    city: "",
+                    state: "",
+                    zipcode: "",
                     sub_details: {},
-                    socioeconomic_status: ''
+                    socioeconomic_status: "",
                 },
                 password: {
                     email: "",
@@ -202,17 +136,17 @@
                 errors: [],
                 isLoading: false,
                 fullPage: true,
-                current_password_type : 'password',
-                new_password_type : 'password',
-                confirm_password_type : 'password',
-                current_password_icon : false,
-                new_password_icon : false,
-                confirm_password_icon : false
+                current_password_type: "password",
+                new_password_type: "password",
+                confirm_password_type: "password",
+                current_password_icon: false,
+                new_password_icon: false,
+                confirm_password_icon: false,
             };
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.user = vm.$store.getters.user
+                vm.user = vm.$store.getters.user;
                 // vm.$store
                 //     .dispatch("post", { uri: "showUser", data: vm.user })
                 //     .then(function (response) {
@@ -237,8 +171,6 @@
             }
         },
         methods: {
-           
-
             getPaymentSubscriptions() {
                 let vm = this;
                 vm.payment.user_id = vm.$store.getters.user.id;
@@ -302,28 +234,28 @@
             // getBids
             changePassword() {
                 let vm = this;
-                vm.password.email = vm.user.email
-                vm.password.user_id = vm.user.user_id
+                vm.password.email = vm.user.email;
+                vm.password.user_id = vm.user.user_id;
                 vm.$store
                     .dispatch("post", {
                         uri: "changePassword",
-                        data: vm.password
+                        data: vm.password,
                     })
                     .then(function () {
                         vm.$store.dispatch("success", "User Password Updated successfully ");
                         vm.errors == [];
                         vm.disabled == false;
-                        vm.$store.dispatch('setUser', null)
-                        vm.$store.dispatch('setToken', null)
-                        vm.$store.commit("setCartProducts",[])
-                        localStorage.removeItem("user")
-                        localStorage.removeItem("token")
-                        localStorage.removeItem("cartItems")
-                        localStorage.removeItem("alert")
-                        localStorage.removeItem("bidsdetails")
-                        localStorage.removeItem("naicses")
-                        localStorage.removeItem("psces")
-                        vm.$router.push("/login")
+                        vm.$store.dispatch("setUser", null);
+                        vm.$store.dispatch("setToken", null);
+                        vm.$store.commit("setCartProducts", []);
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("cartItems");
+                        localStorage.removeItem("alert");
+                        localStorage.removeItem("bidsdetails");
+                        localStorage.removeItem("naicses");
+                        localStorage.removeItem("psces");
+                        vm.$router.push("/login");
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -345,12 +277,12 @@
             },
 
             togglePassword(field, icon) {
-                if(this[field] == 'password'){
-                    this[field] = 'text'
-                    this[icon] = true
-                }else{
-                    this[field] = 'password'
-                    this[icon] = false
+                if (this[field] == "password") {
+                    this[field] = "text";
+                    this[icon] = true;
+                } else {
+                    this[field] = "password";
+                    this[icon] = false;
                 }
             },
 
@@ -376,7 +308,6 @@
         font-size: 30px;
     }
 
-
     .liststate {
         max-height: 200px;
         /* margin-bottom: 10px; */
@@ -393,14 +324,14 @@
         margin-bottom: 10px;
     }
 
-	.invalid-feedbacks {
-		width: 100%;
-		margin-top: 0.25rem;
-		font-size: 0.875em;
-		color: #dc3545;
-	}
+    .invalid-feedbacks {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
 
     .input-group {
-        flex-wrap: wrap!important;
+        flex-wrap: wrap !important;
     }
 </style>

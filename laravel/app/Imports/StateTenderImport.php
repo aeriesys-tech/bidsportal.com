@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\StateAttachment;
-use App\Models\DuplicateTender;
+use App\Models\DuplicateStateTender;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 use App\Rules\ValidDateRule; 
@@ -55,15 +55,15 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 $tender_no = $row[4];
                 $title = $row[5] ?? 'No Title';
 
-                // if (in_array($tender_no, $this->existing_tender_nos)) {
-                //     DuplicateTender::updateOrCreate([
-                //         'tender_no' => $tender_no,
-                //         'posted_date' => $created_date,
-                //         'title' => $title,
-                //         'tender_url' => $tender_url
-                //     ]);
-                //     continue;
-                // }
+                if (in_array($tender_no, $this->existing_tender_nos)) {
+                    DuplicateStateTender::updateOrCreate([
+                        'tender_no' => $tender_no,
+                        'posted_date' => $created_date,
+                        'title' => $title,
+                        'tender_url' => $tender_url
+                    ]);
+                    continue;
+                }
 
                 $country = Country::where('country_code', 'US')->first();
                 $description = (!empty($row[8]) ? $row[8] : '') . (!empty($row[9]) ? ' ' . $row[9] : '');

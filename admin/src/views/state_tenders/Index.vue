@@ -204,6 +204,10 @@
                                 <option>20</option>
                                 <option>25</option>
                                 <option>30</option>
+                                <option>50</option>
+                                <option>100</option>
+                                <option>200</option>
+                                <option>500</option>
                             </select>
                             <span>Showing {{ meta.from }} to {{ meta.to }} of {{ meta.totalRows }} entries</span>
                             <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page"
@@ -234,7 +238,7 @@ export default {
                 search: "",
                 order_by: "desc",
                 keyword: "state_tender_id",
-                per_page: 10,
+                per_page: 100,
                 totalRows: 0,
                 page: 1,
                 lastPage: 1,
