@@ -90,7 +90,7 @@
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch text-center form-check-md mb-0">
-                                                    <input class="form-check-input" type="checkbox" v-model="alert.status" :value="alert.status" @change="updateAlert(alert)" />
+                                                    <input class="form-check-input" type="checkbox" v-model="alert.status" :value="alert.status" @change="toggleAlert(alert)" />
                                                 </div>
                                             </td>
                                         </tr>
@@ -304,19 +304,16 @@
                     });
             },
 
-            updateAlert(interested) {
+            toggleAlert(alert) {
                 let vm = this;
-                interested.on_off = interested.on_off == 1 ? 0 : 1;
                 vm.isLoading = true;
                 vm.$store
                     .dispatch("post", {
-                        uri: "updateAlert/" + interested.id,
-                        data: interested,
+                        uri: "toggleAlert", data: alert,
                     })
                     .then(function () {
                         vm.isLoading = false;
-                        vm.$store.dispatch("success", "BidsAlert is successfully updated");
-                        vm.$router.push("/bids/state-opportunities/save-alert");
+                        vm.$store.dispatch("success", "Alert is successfully updated");
                     })
                     .catch(function (error) {
                         vm.isLoading = false;

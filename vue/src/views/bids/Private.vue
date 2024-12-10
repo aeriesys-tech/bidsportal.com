@@ -1418,16 +1418,18 @@
 
             getFederalFilters(){
                 let vm = this
-                vm.$store
-                    .dispatch("post", { uri: "getFederalFilters" })
-                    .then(function (response) {
-                        vm.federal_filters = response.data.data
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                if(vm.$store.getters.user){
+                    vm.$store
+                        .dispatch("post", { uri: "getFederalFilters", data:vm.$store.getters.user })
+                        .then(function (response) {
+                            vm.federal_filters = response.data.data
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             paginateFederalTenders(cancel_token) {

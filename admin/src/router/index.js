@@ -22,13 +22,19 @@ import Admins from "@/views/AdminManagement/Index.vue";
 // agencies
 import StateAgencies from "@/views/Agencies/State.vue";
 import FederalAgencies from "@/views/Agencies/Federal.vue";
+import PrivateAgencies from "@/views/Agencies/Private.vue";
+import InteranationalAgencies from "@/views/Agencies/International.vue";
 
 // notices
 import StateNotices from "@/views/Notice/State.vue";
 import FederalNotices from "@/views/Notice/Federal.vue";
+import PrivateNotices from "@/views/Notice/Private.vue";
+import InternationalNotices from "@/views/Notice/International.vue";
 
 // categories
 import Categories from "@/views/Categories.vue";
+
+import DuplicateStateTenders from "@/views/duplicate_state_tenders/Index.vue";
 
 const routes = [
 
@@ -132,23 +138,56 @@ const routes = [
         component: FederalAgencies,
     },
 
+    //Private agencies
+    {
+        path: "/private_agencies",
+        name: "PrivateAgencies",
+        component: PrivateAgencies,
+    },
+
+     //International agencies
+     {
+        path: "/interanational_agencies",
+        name: "InteranationalAgencies",
+        component: InteranationalAgencies,
+    },
+
     // state notices
     {
         path: "/state_notices",
         name: "StateNotices",
         component: StateNotices,
     },
-    // federal agencies
+    // federal notices
     {
         path: "/federal_notices",
         name: "FederalNotices",
         component: FederalNotices,
+    },
+    // Private Notice
+    {
+        path: "/private_notices",
+        name: "PrivateNotices",
+        component: PrivateNotices,
+    },
+
+    //international notices
+    {
+        path: "/international_notices",
+        name: "InternationalNotices",
+        component: InternationalNotices,
     },
     // categories
     {
         path: "/categories",
         name: "Categories",
         component: Categories,
+    },
+
+    {
+        path: "/duplicate_state_tenders",
+        name: "DuplicateStateTenders",
+        component: DuplicateStateTenders,
     },
 
 

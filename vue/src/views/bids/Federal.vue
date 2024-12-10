@@ -455,7 +455,7 @@
                                                         <a href="javascript:void(0)" @click.prevent="shareFederalTender(federal_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
                                                     </li>
 
-                                                    <li class="list-inline-item" v-if="federal_tender.cart_icon">
+                                                    <!-- <li class="list-inline-item" v-if="federal_tender.cart_icon">
                                                         <div>
                                                             <a href="javascript:void(0)" @click="addToCart(federal_tender)" class="p-2">
                                                                 <img src="assets/images/addcart.svg" width="19" />
@@ -464,7 +464,7 @@
                                                     </li>
                                                     <li class="list-inline-item" v-else>
                                                         <img src="assets/images/icons/cart-24.svg" width="19" />
-                                                    </li>
+                                                    </li> -->
                                                 </ul>
                                             </div>
                                         </div>
@@ -514,14 +514,14 @@
                                                         <td>{{ federal_tender.place_of_performance }}</td>
                                                         <td style="width: 110px;">{{ federal_tender.expiry_date }}</td>
                                                         <td>
-                                                            <span v-if="federal_tender.cart_icon">
+                                                            <!-- <span v-if="federal_tender.cart_icon">
                                                                 <div>
                                                                     <a href="javascript:void(0)" @click="addToCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
                                                                 </div>
                                                             </span>
                                                             <span v-else>
                                                                 <img src="assets/images/icons/cart-24.svg" width="19" />
-                                                            </span>
+                                                            </span> -->
                                                         </td>
                                                     </tr>
                                                 </tbody>

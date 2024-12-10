@@ -26,6 +26,11 @@ use App\Http\Controllers\UserPaymentController;
 use App\Http\Controllers\UserSetAsideController;
 use App\Http\Controllers\UserSubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DuplicateStateTenderController;
+use App\Http\Controllers\PrivateAgencyController;
+use App\Http\Controllers\PrivateNoticeController;
+use App\Http\Controllers\InternationalNoticeController;
+use App\Http\Controllers\InternationalAgencyController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -47,11 +52,20 @@ Route::post("deleteStateTenders", [StateTenderController::class,'deleteStateTend
 Route::post("updateTenderState", [StateTenderController::class,'updateTenderState']);
 Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
 
+Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
+Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
+
+
 //AWS S3 Bucket
 Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
 Route::post("showS3BucketFiles", [AdminController::class,'showS3BucketFiles']);
 Route::post("deleteS3BucketFiles",[AdminController::class,'deleteS3BucketFiles']);
 Route::post("uploadS3BucketFile",[AdminController::class,'uploadS3BucketFile']);
+
+Route::post("meAdmin",[AdminController::class,'meAdmin']);
+Route::post('updateAdminProfile',[AdminController::class, 'updateAdminProfile']); 
+Route::post("updateAdminPassword",[AdminController::class,'updateAdminPassword']);
+
 
 //Pscs
 Route::post('getPscs', [PscController::class,'getPscs']);
@@ -128,6 +142,36 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("updateStateNotice",[StateNoticeController::class,'updateStateNotice']);
 	Route::post("deleteStateNotice",[StateNoticeController::class,'deleteStateNotice']);
 
+
+	//Private Notice
+	Route::post("paginatePrivateNotices",[PrivateNoticeController::class,'paginatePrivateNotices']);
+	Route::post("addPrivateNotice",[PrivateNoticeController::class,'addPrivateNotice']);
+	Route::post("getPrivateNotice",[PrivateNoticeController::class,'getPrivateNotice']);
+	Route::post("getPrivateNotices",[PrivateNoticeController::class,'getPrivateNotices']);
+	Route::post("updatePrivateNotice",[PrivateNoticeController::class,'updatePrivateNotice']);
+	Route::post("deletePrivateNotice",[PrivateNoticeController::class,'deletePrivateNotice']);
+
+	Route::post("paginatePrivateAgencies",[PrivateAgencyController::class,'paginatePrivateAgencies']);
+	Route::post("addPrivateAgency",[PrivateAgencyController::class,'addPrivateAgency']);
+	Route::post("getPrivateAgency",[PrivateAgencyController::class,'getPrivateAgency']);
+	Route::post("getPrivateAgencies",[PrivateAgencyController::class,'getPrivateAgencies']);
+	Route::post("updatePrivateAgency",[PrivateAgencyController::class,'updatePrivateAgency']);
+	Route::post("deletePrivateAgency",[PrivateAgencyController::class,'deletePrivateAgency']);
+
+	Route::post("paginateInternationalNotices",[InternationalNoticeController::class,'paginateInternationalNotices']);
+	Route::post("addInternationalNotice",[InternationalNoticeController::class,'addInternationalNotice']);
+	Route::post("getInternationalNotice",[InternationalNoticeController::class,'getInternationalNotice']);
+	Route::post("getInternationalNotices",[InternationalNoticeController::class,'getInternationalNotices']);
+	Route::post("updateInternationalNotice",[InternationalNoticeController::class,'updateInternationalNotice']);
+	Route::post("deleteInternationalNotice",[InternationalNoticeController::class,'deleteInternationalNotice']);
+
+	Route::post("paginateInternationalAgencies",[InternationalAgencyController::class,'paginateInternationalAgencies']);
+	Route::post("addInternationalAgency",[InternationalAgencyController::class,'addInternationalAgency']);
+	Route::post("getInternationalAgency",[InternationalAgencyController::class,'getInternationalAgency']);
+	Route::post("getInternationalAgencies",[InternationalAgencyController::class,'getInternationalAgencies']);
+	Route::post("updateInternationalAgency",[InternationalAgencyController::class,'updateInternationalAgency']);
+	Route::post("deleteInternationalAgency",[InternationalAgencyController::class,'deleteInternationalAgency']);
+
 	//User Payment
 	Route::post('getUserPayment', [UserPaymentController::class,'getUserPayment']);
 
@@ -175,6 +219,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("paginateAlerts", [AlertController::class,'paginateAlerts']);
 	Route::post("deleteAlert", [AlertController::class,'deleteAlert']);	
 	Route::post("paginateAllAlerts", [AlertController::class,'paginateAllAlerts']);
+	Route::post("toggleAlert", [AlertController::class,'toggleAlert']);
 
 	//Federal Notice
 	Route::post("paginateFederalNotices",[FederalNoticeController::class,'paginateFederalNotices']);

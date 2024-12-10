@@ -257,4 +257,86 @@ class AdminController extends Controller
             'message' => 'File uploaded successfully.',
         ]);
     }
+
+    public function meAdmin(Request $request)
+    {
+        $request->validate([
+            'admin_id' => 'required|exists:admins,admin_id'
+        ]);
+        $user = Admin::where('admin_id', $request->admin_id)->first();
+        return new AdminResource($user);
+    }
+
+    public function updateAdminProfile(Request $request)
+    {
+        $data = $request->validate([
+            'first_name' => 'required',
+            'mobile1' => 'required|regex:/^\+?[1-9]\d{9}$/',
+            'email' => 'required|email|max:100|unique:users,email,'.$request->user_id.',user_id',
+            'role' => 'required'
+        ]);
+
+        $admin = Admin::where('admin_id', $request->admin_id)->first();
+        if ($request->hasFile('avatar')) {
+            $avatar = time().'.'.$request->file('avatar')->getClientOriginalExtension();
+            $request->avatar->move(public_path('storage/users'), $avatar);
+            $data['avatar'] = $avatar;
+        } 
+        else {
+            $data['avatar'] = $user->avatar;
+        }
+        $admin->update($data);
+        return new AdminResource($admin);
+    }
+    
+    public function updateAdminPassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required',
+        ]);
+        $user = Admin::where('admin_id', $request->admin_id)->first();
+        if (!(Hash::check($request->current_password, $user->password)))
+        {
+            return response()->json([
+                'errors' => [
+                    'current_password' => ['Your current password does not matches with the password you provided. Please try again'],
+                ]
+            ], 422);
+        }
+        else if(strcmp($request->new_password, $user->first_name) == 0)
+        {
+            return response()->json([
+                'errors' => [
+                    'new_password' => ['New Password cannot be same as username'],
+                ]
+            ], 422);
+        }
+        else if(strcmp($request->current_password, $request->new_password) == 0)
+        {
+            return response()->json([
+                'errors' => [
+                    'new_password' => ['New Password cannot be same as your current password. Please choose a different password.'],
+                ]
+            ], 422);
+        }
+        else if(strcmp($request->new_password, $request->confirm_password) != 0)
+        {
+            return response()->json([
+                'errors' => [
+                    'confirm_password' => ['The password confirmation does not match'],
+                ]
+            ], 422);
+        }
+        else
+        {
+            $user->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+            return response()->json([
+                'message' => ['Password is successfully updated'],
+            ], 200);
+        }
+    }
 }

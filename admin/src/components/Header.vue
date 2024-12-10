@@ -24,6 +24,10 @@
                             <router-link to="/state_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
                                 State Bids</router-link>
                         </li>
+                        <li>
+                            <router-link to="/duplicate_state_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                                Duplicate State Bids</router-link>
+                        </li>
                          <li>
                             <router-link to="/federal_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
                                 Federal Bids</router-link>
@@ -58,6 +62,12 @@
                         <li >
                             <router-link to="/state_agencies" class="dropdown-item"><i class="ri-government-line"></i> State Agencies</router-link>
                         </li>
+                        <li >
+                            <router-link to="/private_agencies" class="dropdown-item"><i class="ri-building-line"></i> Private Agencies</router-link>
+                        </li>
+                        <li >
+                            <router-link to="/interanational_agencies" class="dropdown-item"><i class="ri-global-line"></i> International Agencies</router-link>
+                        </li>
 
                     </ul>
                 </li>
@@ -71,6 +81,12 @@
                         <li >
                             <router-link to="/state_notices" class="dropdown-item"><i class="ri-government-line"></i> State Notices</router-link>
                         </li>
+                        <li >
+                            <router-link to="/private_notices" class="dropdown-item"><i class="ri-building-line"></i> Private Notices</router-link>
+                        </li>
+                        <li >
+                            <router-link to="/international_notices" class="dropdown-item"><i class="ri-global-line"></i> International Notices</router-link>
+                        </li>
 
                     </ul>
                 </li>
@@ -83,7 +99,7 @@
                     <div class="text-end me-2">
                         <h6 class="mb-0 text-white fw-semibold">{{ $store.getters.user.name }}</h6>
                         <p class="fs-sm text-white">
-                            {{ $store.getters.user?.first_name }} :: {{ $store.getters.user?.role }}
+                            {{ $store.getters.user?.first_name+' '+$store.getters.user?.last_name }}
                         </p>
                     </div>
                     <div class="avatar online"><img src="/admin/assets/img/user.png" alt="" /></div>

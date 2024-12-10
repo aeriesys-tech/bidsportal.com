@@ -41,6 +41,6 @@
 </script>
 
 <!--
-Email: nazim.buyer1@yahoo.com
+Email: nazim@yahoo.com
 Pswd: Mjuy%9283
 -->

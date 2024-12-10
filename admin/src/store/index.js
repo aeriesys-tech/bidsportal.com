@@ -12,8 +12,6 @@ export default createStore({
         token: "",
         // permissions: [],
         authenticated: false,
-
-
     },
     mutations: {
         setUser(state, user) {
@@ -136,6 +134,19 @@ export default createStore({
                     });
             });
         },
+
+        async info(context,description) {
+			await createToast({
+				title: 'Info',
+				description: description || "The given data was invalid."
+			},
+			{
+				showIcon: true,
+				hideProgressBar: true,
+				type: 'info',
+				position: 'top-right'
+			})
+		},
 
         async error(context, description) {
             await createToast(

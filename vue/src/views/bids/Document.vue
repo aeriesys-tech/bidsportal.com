@@ -277,7 +277,7 @@
                                         </div>
 
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ federal_tender.tender_no }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.posted_date) }} &nbsp;<span>{{federal_tender.time_ago  }} </span></li>
                                             <li class="nav-item">
@@ -343,7 +343,7 @@
                                                                     </div>
 
                                                                     <div class="column">
-                                                                        <a :style="{color:federal_tender.federal_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice.notice_name }}</a>
+                                                                        <a :style="{color:federal_tender.federal_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ federal_tender.federal_notice?.notice_name }}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -446,18 +446,6 @@
                     psc_code: "Select All",
                     children: [],
                 },
-                state_filter:{
-                    state_notices : [],
-                    response_date:false,
-                    response_from_date:false,
-                    response_to_date:false,
-                    posted_date:false,
-                    posted_from_date:false,
-                    posted_to_date:false,
-                    categories:[],
-                    states:[],
-                    state_agencies:[],
-                },
                 federal_filter:{
                     keywords:[],
                     federal_notices : [],
@@ -522,6 +510,53 @@
 
         watch: {
             'region': function(){
+                this.state_filter.keywords = [] 
+                this.state_filter.state_notices  =  [] 
+                this.state_filter.response_date = false 
+                this.state_filter.response_from_date = false 
+                this.state_filter.response_to_date = false 
+                this.state_filter.posted_date = false 
+                this.state_filter.posted_from_date = false 
+                this.state_filter.posted_to_date = false 
+                this.state_filter.categories = [] 
+                this.state_filter.states = [] 
+                this.state_filter.state_agencies = [] 
+                this.state_filter.search =  null 
+                this.state_filter.order_by =  "asc" 
+                this.state_filter.field = null
+                this.state_filter.per_page =  15 
+                this.state_filter.totalRows =  0 
+                this.state_filter.page =  1 
+                this.state_filter.lastPage =  1 
+                this.state_filter.from =  1 
+                this.state_filter.maxPage =  1 
+                this.state_filter.to = null 
+
+                this.federal_filter.keywords = [],
+                this.federal_filter.federal_notices  =  [],
+                this.federal_filter.response_date = false,
+                this.federal_filter.response_from_date = false,
+                this.federal_filter.response_to_date = false,
+                this.federal_filter.posted_date = false,
+                this.federal_filter.posted_from_date = false,
+                this.federal_filter.posted_to_date = false,
+                this.federal_filter.states = []
+                this.federal_filter.federal_agencies = []
+                this.federal_filter.naics = []
+                this.federal_filter.pscs = []
+                this.federal_filter.search = null
+                this.federal_filter.order_by =  "asc"
+                this.federal_filter.field = null
+                this.federal_filter.per_page =  15
+                this.federal_filter.totalRows =  0
+                this.federal_filter.page =  1
+                this.federal_filter.lastPage =  1
+                this.federal_filter.from =  1
+                this.federal_filter.maxPage =  1
+                this.federal_filter.to =  null
+
+                this.tags = []
+
                 if(this.region == 'State'){
                     this.paginateStateTenders()
                 }else if(this.region == 'Federal'){
@@ -626,8 +661,13 @@
             handleChangeTag(tags) {
                 let vm = this
                 vm.tags = tags
-                vm.federal_filter.keywords = vm.tags
-                vm.getFederalTenders()
+                if(this.region == 'State'){
+                    vm.state_filter.keywords = vm.tags
+                    this.getStateTenders()
+                }else if(this.region == 'Federal'){
+                    vm.federal_filter.keywords = vm.tags
+                    this.getFederalTenders()
+                }
             }, 
 
             dateFormat(value) {

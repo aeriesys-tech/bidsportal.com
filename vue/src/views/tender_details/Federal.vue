@@ -8,15 +8,15 @@
                         <li class="list-inline-item">
                             <button class="mybutton-secondary mybutton-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
                         </li>
-                        <li class="list-inline-item" v-if="federal_tender?.tdr_region ==2">
-                            <a :href="openWebSite()" target="blank" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
+                        <li class="list-inline-item" v-if="federal_tender?.notice_id">
+                            <a href="javascript:void(0)" @click="openWebSite()" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
                         <li class="list-inline-item" v-else>
-                            <a :href="federal_tender?.tdr_posting_link" target="blank" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
+                            <a href="javascript:void(0)" @click="showAlert()" style="padding: 5px;" class="mybutton-secondary mybutton-success px-2"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
 
                         <li class="list-inline-item" v-if="$store.getters.user">
-                            <button class="mybutton-secondary2 mybutton-success" @click.prevent="sharefederal_tenders()" v-modal="shareBid.bids"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                            <button class="mybutton-secondary2 mybutton-success" @click.prevent="sharefederal_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                         </li>
                     </ul>
                 </div>
@@ -86,7 +86,7 @@
                                             <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                             <p>
                                                 {{ federal_tender.federal_office_address.city}}<span v-if="federal_tender.federal_office_address.city">, </span>
-                                                <spa>{{federal_tender.federal_office_address.state+' '+federal_tender.federal_office_address.country}}</spa>
+                                                <span>{{federal_tender.federal_office_address.state+' '+federal_tender.federal_office_address.country}}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -371,7 +371,7 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-disabled="!sharebid" v-if="sharebid">
+    <teleport to="#modals" v-if="sharebid">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -435,7 +435,7 @@
             </div>
         </div>
     </teleport>
-    <teleport to="#modals" v-disabled="!interstmodal" v-if="interstmodal">
+    <teleport to="#modals" v-if="interstmodal">
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -485,7 +485,7 @@
             </div>
         </div>
     </teleport>
-    <teleport to="#modals" v-disabled="!alertmodal" v-if="alertmodal">
+    <teleport to="#modals" v-if="alertmodal">
         <div class="modal-overlay">
             <div id="popup1" class="confirm1" style="background-color: white !important;">
                 <div class="">
@@ -496,7 +496,7 @@
             </div>
         </div>
     </teleport>
-    <teleport to="#modals" :disabled="!erroralertmodal" v-if="erroralertmodal">
+    <teleport to="#modals" v-if="erroralertmodal">
         <div class="modal-overlay">
             <div class="confirm" style="background-color: white !important;">
                 <h1>Are you sure?</h1>
@@ -518,6 +518,7 @@
         props: ["items"],
         data() {
             return {
+                userintertsed:'',
                 federal_tender:'',
                 meta: {
                     search: "",
@@ -623,8 +624,12 @@
                 value = value.replaceAll("_", " ");
                 return value;
             },
+            showAlert(){
+                this.$store.dispatch("info", "Didn't find notice id to open");
+            },
+
             openWebSite() {
-                return "https://sam.gov/opp/" + this.federal_tender.noticeId + "/view";
+                window.open("https://sam.gov/opp/" + this.federal_tender.notice_id + "/view")
             },
             checkIfEmpty(str) {
                 if (str?.trim()) {
@@ -647,7 +652,7 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
             },
             format_date(value) {
-                return moment(String(value)).format("MMMM D, YYYY");
+                return moment(value).format("MMMM D, YYYY");
             },
             checkContact() {
                 if (this.federal_tender?.tdr_pri_fullname !== "" || this.federal_tender?.tdr_pri_phone !== "" || this.federal_tender?.tdr_pri_email !== "" || this.federal_tender?.tdr_sec_phone !== "" || this.federal_tender?.tdr_sec_email !== "") {
@@ -965,7 +970,7 @@
                 this.getBidInterest();
             },
             format_date(value) {
-                return moment(String(value)).format("MMMM D, YYYY");
+                return moment(value).format("MMMM D, YYYY");
             },
             deleteAlertpopup(userintersted) {
                 this.erroralertmodal = true;
