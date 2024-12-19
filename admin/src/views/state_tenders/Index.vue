@@ -360,7 +360,7 @@ export default {
         index() {
             let vm = this;
             vm.$store
-                .dispatch("post", { uri: "paginateStateTenders", data: vm.meta })
+                .dispatch("post", { uri: "paginateInactiveStateTenders", data: vm.meta })
                 .then((response) => {
                     vm.tenders = response.data.data
                     vm.meta.totalRows = response.data.meta.total

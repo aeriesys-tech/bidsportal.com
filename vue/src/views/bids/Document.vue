@@ -56,7 +56,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="region" value="Commercial" v-model="region" />
+                                            <input class="form-check-input" type="radio" name="region" value="Private" v-model="region" />
                                             <label class="form-check-label">Private/Commercial</label>
                                         </div>
                                     </div>
@@ -74,6 +74,12 @@
                             </div>
                             <div v-if="region == 'Federal'">
                                 <FederalFilter :clear_federal_filters="clear_federal_filters" :naics_codes="naics_codes" :service_codes="service_codes" @updateFederalFilters="updateFederalFilters" ref="federal_filter" />
+                            </div>
+                            <div v-if="region == 'Private'">
+                                <PrivateFilter :clear_private_filters="clear_private_filters"  @updatePrivateFilters="updatePrivateFilters" ref="state_filter" />
+                            </div>
+                            <div v-if="region == 'International'">
+                                <InternationalFilter :clear_international_filters="clear_international_filters"  @updateInternationalFilters="updateInternationalFilters" ref="state_filter" />
                             </div>
                         </form>
                     </div>
@@ -370,6 +376,298 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-8 col-xl-9" v-if="region == 'Private'">
+                    <div class="vl-parent">
+                        <Skeleton v-if="isLoading" />
+                        <div class="scroll-div" ref="myscroll" v-if="!isLoading">
+                            <div class="hstack flex-wrap gap-2">
+                                <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in state_filters" :key="index">
+                                    <span class="me-1" style="color: white;">{{ filter.name }}</span>
+                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeStateFilter(filter)" aria-label="Close">
+                                        <i class="fa fa-light fa-xmark text-white"></i>
+                                    </button>
+                                </div>
+
+                                <div v-if="private_filters?.length">
+                                    <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
+                                </div>
+                            </div>
+                        </div>
+                        <section v-if="!private_tenders.length && !isLoading">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-md-10 text-center mx-auto">
+                                        <img src="assets/images/no-search-results.svg" class="mb-4" width="230px" alt="" />
+
+                                        <h3>No results found</h3>
+
+                                        <p class="mb-4">Try adjusting your serarch or filter to find what you're looking for.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="text-end" v-if="private_tenders.length">
+                            <ul class="list-inline mb-0 z-index-2 small">
+                                <li class="list-inline-item">
+                                    <a href="javascript:void(0)" style="text-decoration: none; pointer-events: none; cursor: default;" class="p-2 text-dark">{{'Showing '+private_filter.from+' - '+private_filter.to+' of '+private_filter.totalRows+' bids' }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div v-if="listview">
+                                <div class="card shadow mb-2" v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative" id="hovershadow">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="card-title mb-1">
+                                                <div v-if="$store.getters.user !==null && $store.getters.user.subscription_id !==0">
+                                                    <a href="javascript:void(0)" @click="privateTenderDetails(private_tender)" style="text-transform: uppercase;"><div v-html="highlight(private_tender.title)"></div></a>
+                                                </div>
+                                                <div v-else>
+                                                    <a href="javascript:void(0)" @click="showModal()"><div v-html="highlight(private_tender.title)"></div></a>
+                                                </div>
+                                            </strong>
+                                        </div>
+
+                                        <ul class="nav nav-divider mt-3" style="color: #646c9a;">
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ private_tender.private_notice?.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ private_tender.tender_no }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(private_tender.posted_date) }} &nbsp;<span>{{private_tender.time_ago  }} </span></li>
+                                            <li class="nav-item">
+                                                <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" /> {{ dateFormat(private_tender.expiry_date) }}
+                                                <span class="col-green" v-if="private_tender.days_difference">
+                                                    &nbsp; {{ private_tender.days_difference }} Days to Go
+                                                </span>
+                                                <span class="col-red" v-else>&nbsp; Expired </span>
+                                            </li>
+                                        </ul>
+
+                                        <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="private_tender.private_attachments?.length">
+                                            <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in private_tender.private_attachments" :key="key">
+                                                <p style="color: #595d6e; text-align: justify;">{{ attachment.attachment_name }}</p>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
+                                            <li class="list-group-item d-flex text-info p-0">
+                                                No files found in the attachments
+                                            </li>
+                                        </ul>
+
+                                        <div class="border-top d-sm-flex justify-content-sm-between align-items-center mt-3 mt-md-auto">
+                                            <div class="d-flex align-items-center">
+                                                <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
+                                                    <li class="nav-item text-primary"><i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ private_tender.private_agency?.private_agency_name}}</span></li>
+
+                                                    <li class="nav-item" v-if="private_tender.place_of_performance!=''">
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{private_tender.place_of_performance}}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <div class="card shadow" v-if="private_tenders.length !== 0">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th width="5%" scope="col" class="border-0">BID NUMBER & NOTICE TYPE</th>
+                                                        <th scope="col" class="border-0">TITLE</th>
+                                                        <th scope="col" class="border-0">AGENCY</th>
+                                                        <th scope="col" class="border-0">Place of Performance</th>
+                                                        <th scope="col" class="border-0">DUE DATE</th>
+                                                        <th scope="col" class="border-0"></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody class="border-top-0" v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <div class="row">
+                                                                    <div class="column">
+                                                                        <div v-if="$store.getters.user !==null && $store.getters.user.subscription_id !==0">
+                                                                            <a href="javascript:void(0)" @click="privateTenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+                                                                        </div>
+                                                                        <div v-else><a href="javascript:void(0)" @click="showModal()">{{ private_tender.tender_no }}</a></div>
+                                                                    </div>
+
+                                                                    <div class="column">
+                                                                        <a :style="{color:private_tender.private_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ private_tender.private_notice.notice_name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td><div v-html="highlight(private_tender.title)"></div></td>
+                                                        <td>{{ private_tender.private_agency?.private_agency_name }}</td>
+                                                        <td>{{ private_tender.place_of_performance }}</td>
+                                                        <td style="width: 110px;">{{ private_tender.expiry_date }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="private_tenders.length !== 0">
+                            <div style="float: left;">
+                                <input type="text" class="form-control" v-model="private_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                            </div>
+                            <div style="float: right;">
+                                <Pagination :maxPage="private_filter.maxPage" :totalPages="private_filter.lastPage" :currentPage="private_filter.page" @pagechanged="onPageChange" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-xl-9" v-if="region == 'International'">
+                    <div class="vl-parent">
+                        <Skeleton v-if="isLoading" />
+                        <div class="scroll-div" ref="myscroll" v-if="!isLoading">
+                            <div class="hstack flex-wrap gap-2">
+                                <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in international_filters" :key="index">
+                                    <span class="me-1" style="color: white;">{{ filter.name }}</span>
+                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeStateFilter(filter)" aria-label="Close">
+                                        <i class="fa fa-light fa-xmark text-white"></i>
+                                    </button>
+                                </div>
+
+                                <div v-if="international_filters?.length">
+                                    <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
+                                </div>
+                            </div>
+                        </div>
+                        <section v-if="!international_tenders.length && !isLoading">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-md-10 text-center mx-auto">
+                                        <img src="assets/images/no-search-results.svg" class="mb-4" width="230px" alt="" />
+
+                                        <h3>No results found</h3>
+
+                                        <p class="mb-4">Try adjusting your serarch or filter to find what you're looking for.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="text-end" v-if="international_tenders.length">
+                            <ul class="list-inline mb-0 z-index-2 small">
+                                <li class="list-inline-item">
+                                    <a href="javascript:void(0)" style="text-decoration: none; pointer-events: none; cursor: default;" class="p-2 text-dark">{{'Showing '+international_filter.from+' - '+international_filter.to+' of '+international_filter.totalRows+' bids' }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div v-if="listview">
+                                <div class="card shadow mb-2" v-for="international_tender in international_tenders" :key="international_tender.international_tender_id">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative" id="hovershadow">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="card-title mb-1">
+                                                <div v-if="$store.getters.user !==null && $store.getters.user.subscription_id !==0">
+                                                    <a href="javascript:void(0)" @click="internationalTenderDetails(international_tender)" style="text-transform: uppercase;"><div v-html="highlight(international_tender.title)"></div></a>
+                                                </div>
+                                                <div v-else>
+                                                    <a href="javascript:void(0)" @click="showModal()"><div v-html="highlight(international_tender.title)"></div></a>
+                                                </div>
+                                            </strong>
+                                        </div>
+
+                                        <ul class="nav nav-divider mt-3" style="color: #646c9a;">
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ international_tender.international_notice?.notice_name }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ international_tender.tender_no }}</li>
+                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(international_tender.posted_date) }} &nbsp;<span>{{international_tender.time_ago  }} </span></li>
+                                            <li class="nav-item">
+                                                <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" /> {{ dateFormat(international_tender.expiry_date) }}
+                                                <span class="col-green" v-if="international_tender.days_difference">
+                                                    &nbsp; {{ international_tender.days_difference }} Days to Go
+                                                </span>
+                                                <span class="col-red" v-else>&nbsp; Expired </span>
+                                            </li>
+                                        </ul>
+
+                                        <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="international_tender.international_attachments?.length">
+                                            <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in international_tender.international_attachments" :key="key">
+                                                <p style="color: #595d6e; text-align: justify;">{{ attachment.attachment_name }}</p>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
+                                            <li class="list-group-item d-flex text-info p-0">
+                                                No files found in the attachments
+                                            </li>
+                                        </ul>
+
+                                        <div class="border-top d-sm-flex justify-content-sm-between align-items-center mt-3 mt-md-auto">
+                                            <div class="d-flex align-items-center">
+                                                <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
+                                                    <li class="nav-item text-primary"><i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ international_tender.international_agency?.international_agency_name}}</span></li>
+
+                                                    <li class="nav-item" v-if="international_tender.place_of_performance!=''">
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{international_tender.place_of_performance}}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <div class="card shadow" v-if="international_tenders.length !== 0">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th width="5%" scope="col" class="border-0">BID NUMBER & NOTICE TYPE</th>
+                                                        <th scope="col" class="border-0">TITLE</th>
+                                                        <th scope="col" class="border-0">AGENCY</th>
+                                                        <th scope="col" class="border-0">Place of Performance</th>
+                                                        <th scope="col" class="border-0">DUE DATE</th>
+                                                        <th scope="col" class="border-0"></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody class="border-top-0" v-for="international_tender in international_tenders" :key="international_tender.international_tender_id">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <div class="row">
+                                                                    <div class="column">
+                                                                        <div v-if="$store.getters.user !==null && $store.getters.user.subscription_id !==0">
+                                                                            <a href="javascript:void(0)" @click="internationalTenderDetails(international_tender)">{{ international_tender.tender_no }}</a>
+                                                                        </div>
+                                                                        <div v-else><a href="javascript:void(0)" @click="showModal()">{{ international_tender.tender_no }}</a></div>
+                                                                    </div>
+
+                                                                    <div class="column">
+                                                                        <a :style="{color:international_tender.international_notice?.backround_color}" style="color:black" class="badge bg-success bg-opacity-10">{{ international_tender.international_notice.notice_name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td><div v-html="highlight(international_tender.title)"></div></td>
+                                                        <td>{{ international_tender.international_agency?.international_agency_name }}</td>
+                                                        <td>{{ international_tender.place_of_performance }}</td>
+                                                        <td style="width: 110px;">{{ international_tender.expiry_date }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="international_tenders.length !== 0">
+                            <div style="float: left;">
+                                <input type="text" class="form-control" v-model="international_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                            </div>
+                            <div style="float: right;">
+                                <Pagination :maxPage="international_filter.maxPage" :totalPages="international_filter.lastPage" :currentPage="international_filter.page" @pagechanged="onPageChange" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -408,13 +706,15 @@
     import "vue-loading-overlay/dist/css/index.css";
     import StateFilter from "@/components/documents/State";
     import FederalFilter from "@/components/documents/Federal";
+    import PrivateFilter from "@/components/documents/Private";
+    import InternationalFilter from "@/components/documents/International";
     export default {
         setup() {
             const isOpen = ref(false);
             const savebidopen = ref(false);
             return { isOpen, savebidopen };
         },
-        components: { Loading, DatePicker, Pagination, Vue3TagsInput, TreeItem, PscTree, LoginModal, SaveModal, SaveSearch, SetAlertModal, Skeleton, Region, StateFilter, FederalFilter },
+        components: { Loading, DatePicker, Pagination, Vue3TagsInput, TreeItem, PscTree, LoginModal, SaveModal, SaveSearch, SetAlertModal, Skeleton, Region, StateFilter, FederalFilter, PrivateFilter, InternationalFilter },
 
         data() {
             return {
@@ -493,13 +793,63 @@
                     maxPage: 1,
                     to: "",
                 },
+                private_filter:{
+                    keywords:[],
+                    private_notices : [],
+                    response_date:false,
+                    response_from_date:false,
+                    response_to_date:false,
+                    posted_date:false,
+                    posted_from_date:false,
+                    posted_to_date:false,
+                    states:[],
+                    categories:[],
+                    private_agencies:[],
+                    search: "",
+                    order_by: "asc",
+                    field: "",
+                    per_page: 15,
+                    totalRows: 0,
+                    page: 1,
+                    lastPage: 1,
+                    from: 1,
+                    maxPage: 1,
+                    to: "",
+                },
+                international_filter:{
+                    keywords:[],
+                    international_notices : [],
+                    response_date:false,
+                    response_from_date:false,
+                    response_to_date:false,
+                    posted_date:false,
+                    posted_from_date:false,
+                    posted_to_date:false,
+                    states:[],
+                    categories:[],
+                    international_agencies:[],
+                    search: "",
+                    order_by: "asc",
+                    field: "",
+                    per_page: 15,
+                    totalRows: 0,
+                    page: 1,
+                    lastPage: 1,
+                    from: 1,
+                    maxPage: 1,
+                    to: "",
+                },
                 federal_tenders:[],
                 federal_filters:[],
                 clear_federal_filters:false,
 
                 state_tenders:[],
+                private_tenders:[],
+                international_tenders:[],
                 state_filters:[],
                 clear_state_filters:false,
+                clear_private_filters:false,
+                clear_international_filters:false,
                 login_modal:false,
                 userModal : false,
                 tag:null,
@@ -563,6 +913,10 @@
                     this.getNaics()
                     this.getPscs()
                     this.paginateFederalTenders()
+                }else if(this.region == 'Private'){
+                    this.paginatePrivateTenders()
+                }else if(this.region == 'International'){
+                    this.paginateInternationalTenders()
                 }
 
             }
@@ -734,6 +1088,66 @@
                 }
             },
 
+            paginatePrivateTenders(cancel_token) {
+                if(this.region == 'Private'){
+                    let vm = this
+                    this.isLoading = true
+                    vm.private_tenders = []
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                    vm.$store
+                        .dispatch("post", { uri: "paginatePrivateTenders", data:vm.private_filter, cancel_token })
+                        .then(function (response) {
+                            vm.isLoading = false
+                            vm. auto_call = true
+                            vm.private_tenders = response.data.data
+                            vm.private_filter.totalRows = response.data.meta.total
+                            vm.private_filter.lastPage = response.data.meta.last_page
+                            vm.private_filter.from = response.data.meta.from
+                            vm.private_filter.maxPage = vm.private_filter.lastPage >= 3 ? 3 : vm.private_filter.lastPage
+                            vm.private_filter.to = response.data.meta.to
+                            vm.private_filter.page = response.data.meta.current_page
+                        })
+                        .catch(function (error) {
+                            if (axios.isCancel(error)) {
+                                console.log('Previous request was canceled:', error.message);
+                            } else {
+                                vm.errors = error.response.data.errors;
+                                vm.$store.dispatch("error", error.response.data.message);
+                            }
+                        });
+                }
+            },
+
+            paginateInternationalTenders(cancel_token) {
+                if(this.region == 'International'){
+                    let vm = this
+                    this.isLoading = true
+                    vm.international_tenders = []
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                    vm.$store
+                        .dispatch("post", { uri: "paginateInternationalTenders", data:vm.international_filter, cancel_token })
+                        .then(function (response) {
+                            vm.isLoading = false
+                            vm. auto_call = true
+                            vm.international_tenders = response.data.data
+                            vm.international_filter.totalRows = response.data.meta.total
+                            vm.international_filter.lastPage = response.data.meta.last_page
+                            vm.international_filter.from = response.data.meta.from
+                            vm.international_filter.maxPage = vm.international_filter.lastPage >= 3 ? 3 : vm.international_filter.lastPage
+                            vm.international_filter.to = response.data.meta.to
+                            vm.international_filter.page = response.data.meta.current_page
+                        })
+                        .catch(function (error) {
+                            if (axios.isCancel(error)) {
+                                console.log('Previous request was canceled:', error.message);
+                            } else {
+                                vm.errors = error.response.data.errors;
+                                vm.$store.dispatch("error", error.response.data.message);
+                            }
+                        });
+                }
+            },
+
             onPageChange(page) {
                 if(this.region == 'State'){
                     this.is_updating_meta = true
@@ -830,6 +1244,40 @@
                 this.state_filter.state_agencies = meta.state_agencies
                 this.state_filter.categories = meta.categories
                 this.getStateTenders()
+            },
+
+            updatePrivateFilters(meta){
+                console.log('meta', meta)
+                this.clear_private_filters = false
+                this.private_filters = meta.filters
+                this.private_filter.private_notices = meta.private_notices
+                this.private_filter.response_date = meta.response_date
+                this.private_filter.response_from_date = meta.response_from_date
+                this.private_filter.response_to_date = meta.response_to_date
+                this.private_filter.posted_date = meta.posted_date
+                this.private_filter.posted_from_date = meta.posted_from_date
+                this.private_filter.posted_to_date = meta.posted_to_date
+                this.private_filter.states = meta.states
+                this.private_filter.private_agencies = meta.private_agencies
+                this.private_filter.categories = meta.categories
+                this.getPrivateTenders()
+            },
+
+            updateInternationalFilters(meta){
+                console.log('meta', meta)
+                this.clear_international_filters = false
+                this.international_filters = meta.filters
+                this.international_filter.international_notices = meta.international_notices
+                this.international_filter.response_date = meta.response_date
+                this.international_filter.response_from_date = meta.response_from_date
+                this.international_filter.response_to_date = meta.response_to_date
+                this.international_filter.posted_date = meta.posted_date
+                this.international_filter.posted_from_date = meta.posted_from_date
+                this.international_filter.posted_to_date = meta.posted_to_date
+                this.international_filter.states = meta.states
+                this.international_filter.international_agencies = meta.international_agencies
+                this.international_filter.categories = meta.categories
+                this.getInternationalTenders()
             },
 
             getNaics() {

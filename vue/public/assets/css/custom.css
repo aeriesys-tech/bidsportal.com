@@ -62,6 +62,7 @@
 .bg-white {
     background-color: #fff !important;
 }
+
 /* .scroll-sidebar {
     height: 550px;
     box-shadow: rgb(0 0 0 / 24%) 0px 1px 3px;
@@ -74,6 +75,7 @@
     padding: 9px 16px;
     cursor: pointer;
 }
+
 .containercheckbox {
     display: block;
     position: relative;
@@ -82,6 +84,7 @@
     cursor: pointer;
     font-size: 12px;
 }
+
 .containercheckbox span {
     font-weight: 400;
     font-size: 12px;
@@ -102,6 +105,7 @@
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
 }
+
 .recommendation-component {
     -webkit-box-flex: 0;
     /* -ms-flex: 0 0 340px; */
@@ -110,16 +114,19 @@
     padding: 25px 20px;
     /* font-size: 13px; */
 }
+
 .recommendation-component h2 {
     font-size: 13px;
     text-transform: uppercase;
 }
+
 .ng-scope {
     font-weight: 600;
     font-size: 12px;
     background-color: transparent;
     cursor: pointer;
 }
+
 .recommendation-panel {
     border: 1px solid #c4ebfc !important;
     border-radius: 6px;
@@ -135,15 +142,18 @@
     flex-direction: column;
     margin-bottom: 10px;
 }
+
 .cursor-pointer {
     cursor: pointer;
 }
+
 .recommendation-header {
     display: flex;
     -webkit-box-pack: justify;
     /* -ms-flex-pack: justify; */
     justify-content: space-between;
 }
+
 .recommendation-panel h3 {
     color: #31708f;
     font-size: 15px;
@@ -151,12 +161,14 @@
     line-height: 23px;
     margin: 0 0 5px;
 }
+
 .recommendation-header img {
     position: relative;
     top: 6px;
     right: 9px;
     margin: 0 0 0 8px;
 }
+
 .recommendation-panel .recommendation-details {
     display: flex;
     -webkit-box-pack: justify;
@@ -166,6 +178,7 @@
     padding: 0 40px 0 0;
     font-size: 13px;
 }
+
 .recommendation-panel:after {
     position: absolute;
     background: rgba(0, 159, 193, 0.14);
@@ -182,4 +195,13 @@
 .margin-10 {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.border-2 {
+    border: 2px solid #dfdfe3;
+}
+
+.border-radius {
+    border-radius: 1rem;
+    border: 2px solid #dfdfe3;
 }

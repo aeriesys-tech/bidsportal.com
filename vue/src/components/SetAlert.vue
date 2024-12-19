@@ -2,9 +2,9 @@
     <transition name="fade">
         <transition name="drop-in">
             <div class="card border">
-                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <h5 class="modal-title" id="exampleModalLabel11">Set Alert</h5>
+                <div class="card-header p-3 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center ">
+                        <h5 class="modal-title" id="exampleModalLabel11 fw-500" style="color: #16a34a!important;font-weight: 500!important;">Set Alert</h5>
                     </div>
                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
                 </div>
@@ -38,10 +38,10 @@
                     <!-- <button type="button" style="margin:3px" class="btn btn-secondary" @click.prevent="closemodal()" ref="Close">
 										Close
 									</button> -->
-                    <button type="button" v-if="status" class="mb-0 btn btn-sm btn-primary" @click="updateAlert()">
+                    <button type="button" v-if="status" class="mb-0 btn btn-sm btn-success fw-400" @click="updateAlert()">
                         Update
                     </button>
-                    <button type="button" v-else class="mb-0 btn btn-sm btn-primary" @click="setAlert()">
+                    <button type="button" v-else class="mb-0 btn btn-sm btn-success fw-400" @click="setAlert()">
                         Save
                     </button>
                 </div>
@@ -121,4 +121,5 @@
         opacity: 0;
         transform: translateY(-50px);
     }
+
 </style>

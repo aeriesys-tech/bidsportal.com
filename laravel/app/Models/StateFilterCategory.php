@@ -13,5 +13,5 @@ class StateFilterCategory extends Model
     	'category_id'
     ];
 
-    protected $primaryKey = 'federal_filter_category_id';
+    protected $primaryKey = 'state_filter_category_id';
 }
