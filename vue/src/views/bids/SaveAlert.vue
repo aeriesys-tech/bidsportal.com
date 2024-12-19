@@ -41,7 +41,7 @@
                                         <input type="checkbox" class="dd-input" id="test" />
                                         <ul class="dd-menu">
                                             <li>
-                                                <router-link class="dropdown-item" :to="'bid-alert/Federal/Create'"> Federal </router-link>
+                                                <router-link class="dropdown-item" :to="'bid-alert/Federal/create'"> Federal </router-link>
                                             </li>
                                         </ul>
                                     </label>

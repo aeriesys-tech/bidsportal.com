@@ -10,6 +10,12 @@ import StateTenders from "@/views/state_tenders/Index.vue";
 import AddFederalTender from "@/views/federal_tenders/Create.vue";
 import FederalTenders from "@/views/federal_tenders/Index.vue";
 
+import AddInternationalTender from "@/views/international_tenders/Create.vue";
+import InternationalTenders from "@/views/international_tenders/Index.vue";
+
+import AddPrivateTender from "@/views/private_tenders/Create.vue";
+import PrivateTenders from "@/views/private_tenders/Index.vue";
+
 import Users from "@/views/Users/Index.vue";
 
 import Subscriptions from "@/views/Users/Subscription.vue";
@@ -71,6 +77,38 @@ const routes = [
     {
         path: "/state_tenders/:state_tender_id/edit", name: 'StateTender.Edit',
         component: AddStateTender,
+    },
+
+    // private tenders
+    {
+        path: "/add_private_tender",
+        name: "AddPrivateTender",
+        component: AddPrivateTender,
+    },
+    {
+        path: "/private_tenders",
+        name: "PrivateTenders",
+        component: PrivateTenders,
+    },
+    {
+        path: "/private_tenders/:private_tender_id/edit", name: 'PrivateTender.Edit',
+        component: AddPrivateTender,
+    },
+
+    // international tenders
+    {
+        path: "/add_international_tender",
+        name: "AddInternationalTender",
+        component: AddInternationalTender,
+    },
+    {
+        path: "/international_tenders",
+        name: "InternationalTenders",
+        component: InternationalTenders,
+    },
+    {
+        path: "/international_tenders/:international_tender_id/edit", name: 'InternationalTender.Edit',
+        component: AddInternationalTender,
     },
 
     // federal tender
@@ -145,8 +183,8 @@ const routes = [
         component: PrivateAgencies,
     },
 
-     //International agencies
-     {
+    //International agencies
+    {
         path: "/interanational_agencies",
         name: "InteranationalAgencies",
         component: InteranationalAgencies,

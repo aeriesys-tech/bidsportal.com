@@ -42,7 +42,7 @@ import 'vue-loading-overlay/dist/css/index.css';
                 this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
                 this.$store.dispatch("setToken", localStorage.getItem("token"));
                 this.$store.dispatch("setHeaderMenu", JSON.parse(localStorage.getItem("header_menu")));
-                
+
             }
 
             //Save the information in vuex to localStorage when the page is refreshed
@@ -54,7 +54,7 @@ import 'vue-loading-overlay/dist/css/index.css';
                 localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
                 localStorage.setItem("header_menu", JSON.stringify(this.$store?.getters?.header_menu));
             });
-			
+
         },
 
 		 methods: {
@@ -76,10 +76,10 @@ import 'vue-loading-overlay/dist/css/index.css';
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-           
+
         },
 
-		
+
 	}
 </script>
 <style>
@@ -97,13 +97,13 @@ import 'vue-loading-overlay/dist/css/index.css';
 }
 .myshadow {
 
-  
+
   -webkit-box-shadow: 0px -4px 3px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px -4px 3px rgba(50, 50, 50, 0.75);
  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 #filtershadow{
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
 }
 #hovershadow:hover{
    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -150,5 +150,8 @@ import 'vue-loading-overlay/dist/css/index.css';
         bottom: 0;
         width: 100%;
         height: 2.5rem;            /* Footer height */
+    }
+    .title-green{
+    color: #16a34a!important;
     }
 </style>

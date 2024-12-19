@@ -4,9 +4,11 @@ import Federal from "@/views/bids/Federal.vue";
 import State from "@/views/bids/State.vue";
 import Private from "@/views/bids/Private.vue";
 import International from "@/views/bids/International.vue";
+import InternationalTenderDetails from '@/views/tender_details/International.vue'
 import Document from "@/views/bids/Document.vue";
 import FederalTenderDetails from '@/views/tender_details/Federal.vue'
 import StateTenderDetails from '@/views/tender_details/State.vue'
+import PrivateTenderDetails from '@/views/tender_details/Private.vue'
 import BidsDetailsPage from '@/views/bids/BidsDetailsPage.vue'
 // auth
 import Login from "@/views/auth/Login.vue";
@@ -37,7 +39,7 @@ import Subscription from '@/views/users/Subscription';
 import SingleBidPurchases from '@/views/users/SingleBidPurchases';
 
 import MyPurchasedBids from '@/views/users/MyPurchasedBids'
-import SaveAlert from "@/views/bids/SaveAlert";
+
 import Profile from "@/views/auth/Profile"
 import CreateBidAlert from '@/views/bids/BidsAlert'
 import SubscriptionPlans from "@/views/subscriptions/SubscriptionPlan.vue";
@@ -51,48 +53,56 @@ import Payment_failure from '@/views/payment/Payment_failure'
 
 import PlansPricingNew from "@/views/PlansPricingNew.vue";
 
-import Test from "@/views/Test.vue";
+//Alerts
+import Alert from "@/views/alerts/Index";
+import FederalAlert from "@/views/alerts/FederalAlert";
+
 
 const routes = [
 	{
 		path: "/", name: "home",
 		component: Home,
 	},
-	
+
 	{
-		path: "/bids/save-alert", name: "saveAlert",
-		component: SaveAlert,
+		path: "/bids/alerts", name: "Alert",
+		component: Alert,
+	},
+	{
+		path: '/bids/federal_alert',
+		name: 'FederalAlert',
+		component: FederalAlert
 	},
 	{
 		path: "/cart", name: "Cart",
 		component: Cart,
 	},
 	{
-        path:'/subscription-payment/:item_number/:amount/:txn_id/:valid_upto',
-        name:'SubscriptionPayment',
-        component:SubscriptionPayment
-    },
+		path: '/subscription-payment/:item_number/:amount/:txn_id/:valid_upto',
+		name: 'SubscriptionPayment',
+		component: SubscriptionPayment
+	},
 	{
-        path:'/payment-failure',
-        name:'Payment_failure',
-        component:Payment_failure
-    },
+		path: '/payment-failure',
+		name: 'Payment_failure',
+		component: Payment_failure
+	},
 	{
-        path:'/normal-payment/:txn_id/:order_id/:payment_date/:first_name/:user_payment_id',
-        name:'Normal_payment',
-        component:Normal_payment
-    },
+		path: '/normal-payment/:txn_id/:order_id/:payment_date/:first_name/:user_payment_id',
+		name: 'Normal_payment',
+		component: Normal_payment
+	},
 	{
-         
-        path:'/bids/bid-alert/:region/Create',
-        name:'CreateBidAlert',
-        component:CreateBidAlert
-    },
+
+		path: '/bids/bid-alert/:region/create',
+		name: 'CreateBidAlert',
+		component: CreateBidAlert
+	},
 	{
-		path:'/bids/bid-alert/:region/:alert_id/edit',
-	   name:'EditBidAlert',
-	   component:CreateBidAlert
-   },
+		path: '/bids/bid-alert/:region/:alert_id/edit',
+		name: 'EditBidAlert',
+		component: CreateBidAlert
+	},
 	{
 		path: "/user/profile", name: "profile",
 		component: Profile,
@@ -103,10 +113,10 @@ const routes = [
 		component: ChangePassword,
 	},
 	{
-        path:'/reset-password/:fp_code/:email',
-        name:Reset_password,
-        component:Reset_password
-    },
+		path: '/reset-password/:fp_code/:email',
+		name: Reset_password,
+		component: Reset_password
+	},
 	{
 		path: "/user/single-bidpurchases", name: "singlebidpurchases",
 		component: SingleBidPurchases,
@@ -136,6 +146,10 @@ const routes = [
 		component: StateTenderDetails,
 	},
 	{
+		path: "/bids/private-commercial/:tender_id", name: "private_tender_details",
+		component: PrivateTenderDetails,
+	},
+	{
 		path: "/bids/:tdr_region/:tdr_id", name: "bidsDetailsPage",
 		component: BidsDetailsPage,
 	},
@@ -145,7 +159,7 @@ const routes = [
 	},
 
 	// {
-		
+
 	// 	path: "/bids/:tdr_region/:tdr_id", name: "bidsDetailsPage",
 	// 	component: BidsDetailsPage,
 	// },
@@ -161,6 +175,10 @@ const routes = [
 		path: "/bids/private", name: "private",
 		component: Private,
 	},
+	// {
+	// 	path: "/bids/private-commercial-new", name: "private_opportunities",
+	// 	component: Private,
+	// },
 	{
 		path: "/bids/private-commercial", name: "private_opportunities",
 		component: Private,
@@ -172,6 +190,10 @@ const routes = [
 	{
 		path: "/bids/international-opportunities", name: "international_opportunities",
 		component: International,
+	},
+	{
+		path: "/bids/international-opportunities/:tender_id", name: "international_tender_details",
+		component: InternationalTenderDetails,
 	},
 	{
 		path: "/bids/documents", name: "documents",
@@ -191,7 +213,7 @@ const routes = [
 		path: "/forgot_password", name: "ForgotPassword",
 		component: ForgotPassword,
 	},
-	
+
 	// contact us
 	{
 		path: "/contact_us", name: "Contact_us",
@@ -203,7 +225,7 @@ const routes = [
 		component: Contact_us_new,
 	},
 
-	//About us 
+	//About us
 	{
 		path: "/about_us", name: "AboutUs",
 		component: AboutUs,
@@ -230,21 +252,21 @@ const routes = [
 		component: DisclaimerEmailPolicy,
 	},
 	// Plans_pricing
-    {
-        path: "/subscription_plans", name: "SubscriptionPlans",
-        component: SubscriptionPlans,
-    },
-	// {
-    //     path:'/plans_pricing/:id',
-    //     name:'PlanAcitve',
-    //     component:Plans_pricing
-    // },
-
-	//plan pricing new 
 	{
-        path: "/plansPricingNew", name: "PlansPricingNew",
-        component: PlansPricingNew,
-    },
+		path: "/subscription_plans", name: "SubscriptionPlans",
+		component: SubscriptionPlans,
+	},
+	// {
+	//     path:'/plans_pricing/:id',
+	//     name:'PlanAcitve',
+	//     component:Plans_pricing
+	// },
+
+	//plan pricing new
+	{
+		path: "/plansPricingNew", name: "PlansPricingNew",
+		component: PlansPricingNew,
+	},
 
 
 
@@ -253,18 +275,12 @@ const routes = [
 	// Feedback
 	{
 		path: "/feedback", name: "Feedback",
-        component: Feedback,
+		component: Feedback,
 	},
 	{
 		path: "/plan_subscription", name: "PlanSubscription",
-        component: PlanSubscription,
-	},
-
-	{
-		path: "/test", name: "Test",
-        component: Test,
-	},
-	
+		component: PlanSubscription,
+	}
 
 ];
 

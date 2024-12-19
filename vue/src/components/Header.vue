@@ -44,7 +44,7 @@
                         <span class="text-dark  mb-0"><i class="fa-solid fa fa-globe me-1"></i> Call Us: &nbsp;(913) 232-2255</span>
                     </li>
                     <li class="nav-item ms-3 dropdown" v-if="$store.getters.user">
-                        <a class="nav-link nav-notification btn btn-light p-0 mb-0" href="javascript:void(0)" @click.prevent="goto_alert()" role="button" >
+                        <a class="nav-link nav-notification btn btn-light p-0 mb-0" href="javascript:void(0)" @click.prevent="showAlerts()" role="button" >
                             <i   class="bi bi-bell fa-fw fs-5"></i>
                         </a>
                         <span class="notif-badge animation-blink"></span>
@@ -200,15 +200,14 @@ export default {
             
         },
 
-        goto_alert(){
-        
-            let vm = this;
-            if(vm.$store.getters.user?.subscription_id ==0){           
-                    vm.alertSubscribe= true;
-                        setTimeout(() => vm.alertSubscribe = false, 5000)
-                    }else{
-                        vm.$router.push("/bids/save-alert")
-            }       
+        showAlerts(){
+            this.$router.push("/bids/alerts")
+            // if(vm.$store.getters.user?.subscription_id ==0){           
+            //         vm.alertSubscribe= true;
+            //             setTimeout(() => vm.alertSubscribe = false, 5000)
+            //         }else{
+            //             vm.$router.push("/bids/save-alert")
+            // }       
         },
         closemodal() {
             let vm = this;

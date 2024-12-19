@@ -38,58 +38,58 @@
 </template>
 <script>
 export default {
-    data(){
-        return{
-            state_active:'active',
-            federal_active:'',
-            commercial_active:'',
-            international_active:'',
-            document_active:'',
-            state_image:'/assets/icons/statewhite.svg',
-            federal_image:'/assets/icons/federalwhite.svg',
-            commercial_image:'/assets/icons/privatewhite.svg',
-            international_image:'/assets/icons/internationalwhite.svg',
-            document_image:'/assets/icons/documentwhite.svg'
+    data() {
+        return {
+            state_active: 'active',
+            federal_active: '',
+            commercial_active: '',
+            international_active: '',
+            document_active: '',
+            state_image: '/assets/icons/statewhite.svg',
+            federal_image: '/assets/icons/federalwhite.svg',
+            commercial_image: '/assets/icons/privatewhite.svg',
+            international_image: '/assets/icons/internationalwhite.svg',
+            document_image: '/assets/icons/documentwhite.svg'
         }
     },
 
-    mounted(){
-        if(this.$route.name == 'state_opportunities'){
+    mounted() {
+        if (this.$route.name == 'state_opportunities') {
             this.state_active = 'active'
             this.federal_active = ''
             this.commercial_active = ''
             this.international_active = '',
-            this.document_active = ''
+                this.document_active = ''
             this.state_image = '/assets/icons/stateblue.svg'
-        }else if(this.$route.name == 'federal_opportunities'){
+        } else if (this.$route.name == 'federal_opportunities') {
             this.state_active = ''
             this.federal_active = 'active',
-            this.commercial_active = '',
-            this.international_active = '',
-            this.document_active = ''
+                this.commercial_active = '',
+                this.international_active = '',
+                this.document_active = ''
             this.federal_image = '/assets/icons/federalblue.svg'
-        }else if(this.$route.name == 'private_opportunities'){
+        } else if (this.$route.name == 'private_opportunities') {
             this.state_active = ''
             this.federal_active = '',
-            this.commercial_active = 'active',
-            this.international_active = '',
-            this.document_active = ''
+                this.commercial_active = 'active',
+                this.international_active = '',
+                this.document_active = ''
             this.commercial_image = '/assets/icons/privateblue.svg'
-        }else if(this.$route.name == 'international_opportunities'){
+        } else if (this.$route.name == 'international_opportunities') {
             this.state_active = ''
             this.federal_active = '',
-            this.commercial_active = '',
-            this.international_active = 'active',
-            this.document_active = ''
+                this.commercial_active = '',
+                this.international_active = 'active',
+                this.document_active = ''
             this.international_image = '/assets/icons/internationalblue.svg'
-        }else{
+        } else {
             this.state_active = ''
             this.federal_active = '',
-            this.commercial_active = '',
-            this.international_active = '',
-            this.document_active = 'active'
+                this.commercial_active = '',
+                this.international_active = '',
+                this.document_active = 'active'
             this.document_image = '/assets/icons/documentblue.svg'
-        } 
+        }
 
 
     }

@@ -8,7 +8,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total registered users</label>
-                        <h3 class="card-value mb-1"><i class="ri-user-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-user-line"></i> {{ registered_users }}</h3>
                     </div>
                 </div>
             </div>
@@ -16,7 +16,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total users confirmed email address</label>
-                        <h3 class="card-value mb-1"><i class="ri-mail-check-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-mail-check-line"></i> {{ confirm_user_emails }}</h3>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total users not confirmed email address</label>
-                        <h3 class="card-value mb-1"><i class="ri-mail-close-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-mail-close-line"></i>{{ notconfirm_user_emails }}</h3>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total active actual subscriptions</label>
-                        <h3 class="card-value mb-1"><i class="ri-user-follow-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-user-follow-line"></i> {{ actual_subscritions }}</h3>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total expired actual subscriptions</label>
-                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-line"></i> {{ expired_subscritions }}</h3>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total Subscriptions purchase in a month</label>
-                        <h3 class="card-value mb-1"><i class="ri-user-star-fill"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-user-star-fill"></i> {{ subs_purchase_inmonth }}</h3>
                     </div>
                 </div>
             </div>
@@ -72,13 +72,13 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total Subscriptions expiring in a month</label>
-                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-fill"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-user-unfollow-fill"></i> {{ subs_expire_inmonth }}</h3>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row g-3">
-            <div class="col-12">
+            <div class="col-6">
                 <div class="card">
                     <div class="card-header">
                         <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;"><i class="ri-key-2-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Update API Key</span>
@@ -103,10 +103,47 @@
                     </div>
                 </div>
             </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;">
+                            <i class="ri-key-2-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Subscription Setting
+                        </span>
+                        <div style="float:right">
+                            <a href="javascript:void(0)" @click="subscription_key=true" v-if="!subscription_key">Show</a>
+                            <a href="javascript:void(0)" @click="subscription_key=false" v-if="subscription_key">Hide</a>
+                        </div>
+                    </div>
+                    <div class="card-body" v-if="subscription_key">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-weight: bold;">No. of Days</label>
+                                    <input type="number" class="form-control form-control-sm" v-model="dashboard.no_of_days">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-auto">
+                                <div class="form-group">
+                                    <label class="me-2" style="font-weight: bold;">Is Trial</label>
+                                    <input type="checkbox" v-model="dashboard.is_trial">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <br/>
+                                    <button class="btn btn-primary btn-sm" style="margin-left:10px" @click="updateSubscriptionSetting()">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;"><i class="ri-restart-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Update State Bids</span>
+                        <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;"><i class="ri-restart-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Update Bids</span>
                         <div style="float:right">
                             <a href="javascript:void(0)" @click="state_bids_div=true" v-if="!state_bids_div">Show</a>
                             <a href="javascript:void(0)" @click="state_bids_div=false" v-if="state_bids_div">Hide</a>
@@ -114,15 +151,25 @@
                     </div>
                     <div class="card-body" v-if="state_bids_div">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-weight: bold;">Region</label>
+                                    <select v-model="meta.region" class="form-control">
+                                        <option value="state">State</option>
+                                        <option value="private">Private</option>
+                                        <option value="international">International</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label style="font-weight: bold;">S3 Bucket Folders</label>
                                     <input type="date" id="calendar" v-model="meta.folder" class="form-control" :min="min_date" :max="max_date" @change="validateDate()" />
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <br/>
-                                <button class="btn btn-primary btn-sm" @click="updateStateBids()">Update</button>
+                                <button class="btn btn-primary btn-sm" @click="updateBids()">Update</button>
                             </div>
                             <div class="col-md-12" v-if="errors.length" style="margin-top: 10px;">
                                 <div class="table-responsive">
@@ -162,6 +209,16 @@
                     </div>
                     <div class="card-body" v-if="upload_excel_sheet_div">
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-weight: bold;">Region</label>
+                                    <select v-model="upload_excel.region" class="form-control">
+                                        <option value="state">State</option>
+                                        <option value="private">Private</option>
+                                        <option value="international">International</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label style="font-weight: bold;">S3 Bucket Folders</label>
@@ -233,36 +290,59 @@
                 allowed_dates:[],
                 dashboard:{
                     api_key_id:null,
-                    api_key:null
+                    api_key:null,
+                    is_trial:false,
+                    no_of_days:0
                 },
                 meta:{
+                    region: 'state',
                     folder:null,
                     upload_excel_folder:null
                 },
                 upload_excel:{
+                    region: 'state',
                     folder:'',
                     delete_files:[],
                     file:'',
                     errors:[]
                 },
                 api_key_div:false,
+                subscription_key:false,
                 state_bids_div:true,
                 upload_excel_sheet_div:false,
                 excel_files:[],
                 folders:[],
-                errors:[]
+                errors:[],
+
+                registered_users : 0,
+                confirm_user_emails:0,
+                notconfirm_user_emails:0,
+                actual_subscritions:0,
+                expired_subscritions:0,
+                subs_purchase_inmonth:0,
+                subs_expire_inmonth:0
             };
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
                 vm.getApiKey()
+                vm.getDashboardCount()
+                vm.getAdminSetting()
                 if (from.name == "login") {
                     vm.$router.go();
                 }
             });
         },
         methods: {
-        
+            updateBids(){
+                if(this.meta.region == 'state'){
+                    this.updateStateBids()
+                }else if(this.meta.region == 'private'){
+                    this.updatePrivateBids()
+                }else if(this.meta.region == 'international'){
+                    this.updateInternationalBids()
+                }
+            },
             validateDate(){
                 if(this.folders.includes(this.meta.folder)){
                     return true
@@ -271,6 +351,23 @@
                     return false
                 }
             }, 
+            updateSubscriptionSetting() {
+                let vm = this;
+                const payload = {
+                    is_trial: vm.dashboard.is_trial,
+                    no_of_days: vm.dashboard.no_of_days,
+                };
+
+                vm.$store.dispatch("post", { uri: "addAdminSetting", data: payload })
+                    .then((response) => {
+                        vm.dashboard.is_trial = response.data.subscription.is_trial;
+                        vm.dashboard.no_of_days = response.data.subscription.no_of_days;
+                        vm.$store.dispatch("success", response.data.message);
+                    })
+                    .catch((error) => {
+                        console.error("Error updating subscription settings:", error);
+                    });
+            },
             getExcelFile(e){
                 let vm = this
                 vm.upload_excel.file= e.target.files[0]
@@ -281,6 +378,19 @@
                     .dispatch("post", { uri: "getApiKey" })
                     .then((response) => {
                         vm.dashboard = response.data
+                        vm.getAwsFolders()
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    });
+            },
+
+            getAdminSetting() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "getAdminSetting" })
+                    .then((response) => {
+                        vm.dashboard = response.data.subscription
                         vm.getAwsFolders()
                     })
                     .catch(function (error) {
@@ -383,6 +493,27 @@
                     });
             },
 
+            getDashboardCount() {
+                let vm = this;
+                let loader = vm.$loading.show();
+                vm.$store
+                    .dispatch("post", { uri: "dashboardCounts" })
+                    .then((response) => {
+                        loader.hide();
+                        vm.registered_users = response.data?.registered_users
+                        vm.confirm_user_emails = response.data?.confirm_user_emails
+                        vm.notconfirm_user_emails = response.data?.notconfirm_user_emails
+                        vm.actual_subscritions = response.data?.actual_subscritions
+                        vm.expired_subscritions = response.data?.expired_subscritions
+                        vm.subs_purchase_inmonth = response.data?.subs_purchase_inmonth
+                        vm.subs_expire_inmonth = response.data?.subs_expire_inmonth
+                    })
+                    .catch(function (error) {
+                        loader.hide();
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
             updateStateBids() {
                 let vm = this;
                 let loader = vm.$loading.show();
@@ -398,6 +529,44 @@
                         loader.hide();
                         vm.errors = error?.response.data?.error
                         vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            updatePrivateBids() {
+                let vm = this;
+                let loader = vm.$loading.show();
+                vm.errors = []
+                vm.$store
+                    .dispatch("post", { uri: "updatePrivateBids", data:vm.meta })
+                    .then((response) => {
+                        loader.hide();
+                        vm.$store.dispatch("success", response.data.message);
+                        vm.$router.push('/state_tenders')
+                    })
+                    .catch(function (error) {
+                        loader.hide();
+                        console.log(error)
+                        // vm.errors = error?.response.data?.error
+                        // vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+
+            updateInternationalBids() {
+                let vm = this;
+                let loader = vm.$loading.show();
+                vm.errors = []
+                vm.$store
+                    .dispatch("post", { uri: "updateInternationalBids", data:vm.meta })
+                    .then((response) => {
+                        loader.hide();
+                        vm.$store.dispatch("success", response.data.message);
+                        vm.$router.push('/state_tenders')
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        // loader.hide();
+                        // vm.errors = error?.response.data?.error
+                        // vm.$store.dispatch("error", error.response.data.message);
                     });
             },
             

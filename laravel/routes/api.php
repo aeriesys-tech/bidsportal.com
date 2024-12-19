@@ -31,6 +31,10 @@ use App\Http\Controllers\PrivateAgencyController;
 use App\Http\Controllers\PrivateNoticeController;
 use App\Http\Controllers\InternationalNoticeController;
 use App\Http\Controllers\InternationalAgencyController;
+use App\Http\Controllers\PrivateTenderController;
+use App\Http\Controllers\InternationalTenderController;
+use App\Http\Controllers\PrivateFilterController;
+use App\Http\Controllers\InternationalFilterController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -55,6 +59,15 @@ Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTende
 Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
 Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
 
+//Private Tender
+Route::post("paginatePrivateTenders", [PrivateTenderController::class,'paginatePrivateTenders']);
+Route::post("updatePrivateTender", [PrivateTenderController::class,'updatePrivateTender']);
+Route::post('paginateInactivePrivateTenders', [PrivateTenderController::class,'paginateInactivePrivateTenders']);
+Route::post("updateTenderPrivate", [PrivateTenderController::class,'updateTenderPrivate']);
+Route::post("deletePrivateTender", [PrivateTenderController::class,'deletePrivateTender']);
+
+Route::post("addPrivateTender", [PrivateTenderController::class,'addPrivateTender']);
+Route::post("getPrivateTender", [PrivateTenderController::class,'getPrivateTender']);
 
 //AWS S3 Bucket
 Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
@@ -65,6 +78,10 @@ Route::post("uploadS3BucketFile",[AdminController::class,'uploadS3BucketFile']);
 Route::post("meAdmin",[AdminController::class,'meAdmin']);
 Route::post('updateAdminProfile',[AdminController::class, 'updateAdminProfile']); 
 Route::post("updateAdminPassword",[AdminController::class,'updateAdminPassword']);
+
+Route::post("dashboardCounts",[AdminController::class,'dashboardCounts']);
+Route::post("addAdminSetting",[AdminController::class,'addAdminSetting']);
+Route::post("getAdminSetting",[AdminController::class,'getAdminSetting']);
 
 
 //Pscs
@@ -103,7 +120,13 @@ Route::post('getSubscriptionPlans', [SubscriptionPlanController::class,'getSubsc
 
 Route::middleware(['api'])->group(function ($router) {
 
-	
+	//Private
+	Route::post("updatePrivateBids", [PrivateTenderController::class,'updatePrivateBids']);
+
+	//International
+	Route::post("paginateInternationalTenders", [InternationalTenderController::class,'paginateInternationalTenders']);
+	Route::post("updateInternationalBids", [InternationalTenderController::class,'updateInternationalBids']);
+
 	Route::post("changePassword",[UserController::class,'changePassword']);
 	Route::post("toggleUser",[UserController::class,'toggleUser']);
 
@@ -202,6 +225,14 @@ Route::middleware(['api'])->group(function ($router) {
 	//State Filter
 	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);	
 	Route::post("getStateFilters", [StateFilterController::class,'getStateFilters']);
+
+	//Private Filter
+	Route::post("addPrivateFilters", [PrivateFilterController::class,'addPrivateFilters']);	
+	Route::post("getPrivateFilters", [PrivateFilterController::class,'getPrivateFilters']);
+
+	//International Filter
+	Route::post("addInternationalFilters", [InternationalFilterController::class,'addInternationalFilters']);	
+	Route::post("getInternationalFilters", [InternationalFilterController::class,'getInternationalFilters']);
 
 	//Admin Controller
 	Route::post("paginateAdmins",[AdminController::class,'paginateAdmins']);

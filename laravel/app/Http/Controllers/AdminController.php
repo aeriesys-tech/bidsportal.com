@@ -10,6 +10,9 @@ use App\Models\ApiKey;
 use Storage;
 use App\Http\Resources\AdminResource;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\UserSubscription;
+use App\Models\AdminSetting;
 
 class AdminController extends Controller
 {
@@ -337,6 +340,80 @@ class AdminController extends Controller
             return response()->json([
                 'message' => ['Password is successfully updated'],
             ], 200);
+        }
+    }
+
+    public function dashboardCounts(Request $request)
+    {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        
+        //Counts
+        $registered_users = User::count();
+        $confirm_user_emails = User::whereNotNull('email_verified_at')->count();
+        $notconfirm_user_emails = User::whereNull('email_verified_at')->count();
+        $actual_subscritions = UserSubscription::where('active_status', 'active')->where('valid_to', '>', Carbon::today())->count();
+        $expired_subscritions = UserSubscription::where('active_status', '!=', 'active')->where('valid_to', '<', Carbon::today())->count();
+       
+        $subs_purchase_inmonth = UserSubscription::whereBetween('valid_from', [$startOfMonth, $endOfMonth])->count();
+        $subs_expire_inmonth = UserSubscription::whereBetween('valid_to', [$startOfMonth, $endOfMonth])->count();
+
+        return response()->json([
+            'registered_users' => $registered_users,
+            'confirm_user_emails' => $confirm_user_emails,
+            'notconfirm_user_emails' => $notconfirm_user_emails,
+            'actual_subscritions' => $actual_subscritions,
+            'expired_subscritions' => $expired_subscritions,
+            'subs_purchase_inmonth' => $subs_purchase_inmonth,
+            'subs_expire_inmonth' => $subs_expire_inmonth
+        ]);
+    }
+
+    public function addAdminSetting(Request $request)
+    {
+        $request->validate([
+            'is_trial' => 'required|boolean',
+            'no_of_days' => 'required|integer'
+        ]);
+    
+        $existingSetting = AdminSetting::first();
+        if ($existingSetting) 
+        {
+            $existingSetting->update([
+                'is_trial' => $request->is_trial,
+                'no_of_days' => $request->no_of_days
+            ]);
+    
+            $data = $existingSetting;
+        } 
+        else {
+            $data = AdminSetting::create([
+                'is_trial' => $request->is_trial,
+                'no_of_days' => $request->no_of_days
+            ]);
+        }
+    
+        return response()->json([
+            'subscription' => $data,  
+            'message' => "Subscription Created/Updated Successfully"  
+        ]);
+    }
+
+    public function getAdminSetting() 
+    {
+        $existingSetting = AdminSetting::first();
+        if ($existingSetting) {
+            return response()->json([
+                'subscription' => array_merge(
+                    $existingSetting->toArray(),
+                    ['is_trial' => $existingSetting->is_trial ? true : false]
+                )
+            ]);
+        } else {
+            return response()->json([
+                'subscription' => null,
+                'message' => "No subscription settings found, default values will be used."
+            ]);
         }
     }
 }
