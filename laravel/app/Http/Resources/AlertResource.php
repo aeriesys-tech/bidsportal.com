@@ -41,6 +41,21 @@ class AlertResource extends JsonResource
                 return $federal_notice['federal_notice_id'];
             })->toArray() : [],
 
+            //state_notices
+            'state_notices' => $this->StateAlertNotices ? collect($this->StateAlertNotices->toArray())->map(function($state_notice) {
+                return $state_notice['state_notice_id'];
+            })->toArray() : [],
+
+            //private_notices
+            'private_notices' => $this->PrivateAlertNotices ? collect($this->PrivateAlertNotices->toArray())->map(function($private_notice) {
+                return $private_notice['private_notice_id'];
+            })->toArray() : [],
+
+            //international_notices
+            'international_notices' => $this->InternationalAlertNotices ? collect($this->InternationalAlertNotices->toArray())->map(function($international_notice) {
+                return $international_notice['international_notice_id'];
+            })->toArray() : [],
+
             //federal_naics
             'naics' => $this->AlertNaics ? collect($this->AlertNaics->toArray())->map(function($federal_naics) {
                 return $federal_naics['naics_id'];
@@ -64,7 +79,27 @@ class AlertResource extends JsonResource
             //federal_agencies
             'federal_agencies' => $this->FederalAlertAgencies ? collect($this->FederalAlertAgencies->toArray())->map(function($federal_agency) {
                 return $federal_agency['federal_agency_id'];
-            })->toArray() : []
+            })->toArray() : [],
+
+            //state_agencies
+            'state_agencies' => $this->StateAlertAgencies ? collect($this->StateAlertAgencies->toArray())->map(function($state_agency) {
+                return $state_agency['state_agency_id'];
+            })->toArray() : [],
+
+            //private_agencies
+            'private_agencies' => $this->PrivateAlertAgencies ? collect($this->PrivateAlertAgencies->toArray())->map(function($private_agency) {
+                return $private_agency['private_agency_id'];
+            })->toArray() : [],
+
+            //international_agencies
+            'international_agencies' => $this->InternationalAlertAgencies ? collect($this->InternationalAlertAgencies->toArray())->map(function($international_agency) {
+                return $international_agency['international_agency_id'];
+            })->toArray() : [],
+
+            //categories
+            'categories' => $this->AlertCategories ? collect($this->AlertCategories->toArray())->map(function($category) {
+                return $category['category_id'];
+            })->toArray() : [],
         ];
     }
 }

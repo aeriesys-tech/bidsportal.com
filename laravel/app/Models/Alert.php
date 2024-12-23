@@ -37,6 +37,18 @@ class Alert extends Model
         return $this->hasMany('App\Models\FederalAlertNotice', 'alert_id', 'alert_id');
     }
 
+    public function StateAlertNotices(){
+        return $this->hasMany('App\Models\StateAlertNotice', 'alert_id', 'alert_id');
+    }
+
+    public function PrivateAlertNotices(){
+        return $this->hasMany('App\Models\PrivateAlertNotice', 'alert_id', 'alert_id');
+    }
+
+    public function InternationalAlertNotices(){
+        return $this->hasMany('App\Models\InternationalAlertNotice', 'alert_id', 'alert_id');
+    }
+
     public function AlertNaics(){
         return $this->hasMany('App\Models\AlertNaics', 'alert_id', 'alert_id');
     }
@@ -55,5 +67,21 @@ class Alert extends Model
 
     public function FederalAlertAgencies(){
         return $this->hasMany('App\Models\FederalAlertAgency', 'alert_id', 'alert_id');
+    }
+
+    public function StateAlertAgencies(){
+        return $this->hasMany('App\Models\StateAlertAgency', 'alert_id', 'alert_id');
+    }
+
+    public function PrivateAlertAgencies(){
+        return $this->hasMany('App\Models\PrivateAlertAgency', 'alert_id', 'alert_id');
+    }
+
+    public function InternationalAlertAgencies(){
+        return $this->hasMany('App\Models\InternationalAlertAgency', 'alert_id', 'alert_id');
+    }
+
+    public function AlertCategories(){
+        return $this->hasMany('App\Models\AlertCategory', 'alert_id', 'alert_id');
     }
 }

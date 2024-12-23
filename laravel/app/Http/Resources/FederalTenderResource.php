@@ -29,18 +29,13 @@ class FederalTenderResource extends JsonResource
             $time_ago  = $difference->diffForHumans();
         }
 
-        if ($this->posted_date && $this->expiry_date) {
-            $date1 = Carbon::parse($this->posted_date);
+        if($this->expiry_date && now()->lte($this->expiry_date)){
+            $is_expired = false;
+            $date1 = Carbon::parse(now());
             $date2 = Carbon::parse($this->expiry_date);
-
-            if ($date1->lessThan($date2)) {
-                $days_difference = round($date1->diffInDays($date2) + 1); 
-            } else if ($date2->lessThan($date1)){
-                $days_difference = round($date2->diffInDays($date1) + 1); 
-            } else  {
-                $days_difference = null; 
-            }
-        } else {
+            $days_difference = round($date1->diffInDays($date2) + 1);
+        }else{
+            $is_expired = true;
             $days_difference = null;
         }
 
@@ -119,7 +114,8 @@ class FederalTenderResource extends JsonResource
             'days_difference' => $days_difference,
             'federal_attachments' => $this->FederalAttachments,
             'federal_office_address' => $this->FederalOfficeAddress,
-            'cart_icon' => $cart_icon
+            'cart_icon' => $cart_icon,
+            'is_expired' => $is_expired
         ];
     }
 }

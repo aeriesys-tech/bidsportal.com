@@ -14,7 +14,8 @@ class SubscriptionPlan extends Model
         'days', 
         'month',
         'description', 
-        'discount' 
+        'discount',
+        'is_default' 
     ];
 
     protected $primaryKey = 'subscription_plan_id';

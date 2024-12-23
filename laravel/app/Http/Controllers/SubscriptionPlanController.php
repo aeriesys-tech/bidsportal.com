@@ -10,7 +10,7 @@ use App\Http\Resources\UserSubscriptionResource;
 class SubscriptionPlanController extends Controller
 {
     public function getSubscriptionPlans(){
-    	return SubscriptionPlan::whereIn('plan', ['Semi-Annual', 'Annual'])->get();
+    	return SubscriptionPlan::whereIn('plan', ['Semi-Annual', 'Annual', 'Trial'])->get();
     }
 
    	public function paginateUserSubscriptions(Request $request)

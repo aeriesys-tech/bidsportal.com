@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Models\UserSubscription;
 
 class UserResource extends JsonResource
 {
@@ -20,6 +21,19 @@ class UserResource extends JsonResource
             $formatted_date = $date->format('M d, Y'); // 
         }
 
+        $user_subscription = UserSubscription::where('user_id', $this->user_id)->where('active_status', 'like', 'active')->first();
+        $subscription = null;
+        if($user_subscription){
+            $today = Carbon::today();
+            if (Carbon::parse($user_subscription->valid_to)->gte($today)) {
+                $subscription = 'valid';
+            } else {
+                $subscription = 'expired';
+            }
+        }else{
+            $user_subscription = null;
+        }
+
         return [
             'user_id' => $this->user_id,
             'name' => $this->name,
@@ -33,7 +47,8 @@ class UserResource extends JsonResource
             'state' => $this->state,
             'pin_code' => $this->pin_code,
             'status' => $this->status,
-            'created_at' => $formatted_date
+            'created_at' => $formatted_date,
+            'subscription' => $subscription
        ];
     }
 }
