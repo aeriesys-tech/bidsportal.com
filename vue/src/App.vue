@@ -34,25 +34,28 @@ import 'vue-loading-overlay/dist/css/index.css';
 			main.setAttribute("src", "assets/js/functions.js");
 			document.head.appendChild(main);
             //Read the status information in sessionStorage when the page is loaded
-            if (localStorage.getItem("user")) {
-                this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
-                this.$store.dispatch("setCartProducts", JSON.parse(localStorage.getItem("cartItems")));
-                this.$store.dispatch("setAlert", JSON.parse(localStorage.getItem("alert")));
-                this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
-                this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
-                this.$store.dispatch("setToken", localStorage.getItem("token"));
-                this.$store.dispatch("setHeaderMenu", JSON.parse(localStorage.getItem("header_menu")));
+            if (sessionStorage.getItem("user")) {
+                this.$store.dispatch("setUser", JSON.parse(sessionStorage.getItem("user")));
+                this.$store.dispatch("setCartProducts", JSON.parse(sessionStorage.getItem("cartItems")));
+                this.$store.dispatch("setAlert", JSON.parse(sessionStorage.getItem("alert")));
+                this.$store.dispatch("setFederalTender", JSON.parse(sessionStorage.getItem("federal_tender")));
+                this.$store.dispatch("setStateTender", JSON.parse(sessionStorage.getItem("state_tender")));
+                this.$store.dispatch("setPrivateTender", JSON.parse(sessionStorage.getItem("private_tender")));
+                this.$store.dispatch("setInternationalTender", JSON.parse(sessionStorage.getItem("international_tender")));
+                this.$store.dispatch("setToken", sessionStorage.getItem("token"));
 
             }
 
-            //Save the information in vuex to localStorage when the page is refreshed
+            //Save the information in vuex to sessionStorage when the page is refreshed
             window.addEventListener("beforeunload", () => {
-                localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
-                localStorage.setItem("token", this.$store?.getters?.token);
-                localStorage.setItem("cartItems", JSON.stringify(this.$store?.getters?.cartItems))
-                localStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
-                localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
-                localStorage.setItem("header_menu", JSON.stringify(this.$store?.getters?.header_menu));
+                sessionStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
+                sessionStorage.setItem("token", this.$store?.getters?.token);
+                sessionStorage.setItem("cartItems", JSON.stringify(this.$store?.getters?.cartItems))
+                sessionStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
+                sessionStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
+                sessionStorage.setItem("state_tender", JSON.stringify(this.$store?.getters?.state_tender))
+                sessionStorage.setItem("private_tender", JSON.stringify(this.$store?.getters?.private_tender))
+                sessionStorage.setItem("international_tender", JSON.stringify(this.$store?.getters?.international_tender))
             });
 
         },

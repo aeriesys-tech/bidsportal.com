@@ -8,8 +8,8 @@
                         <div class="col-12 d-flex justify-content-md-between ">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
-                                    <router-link to="/bids/federal-opportunities" class="btn btn-sm btn-secondary"
-                                        @click.prevent="interstedmodalpop()">Back</router-link>
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
+                                        @click.prevent="previousPage()">Back</a>
                                 </li>
                             </ul>
                             <ul class="list-inline text-end">
@@ -689,27 +689,18 @@ export default {
 
     beforeRouteEnter(to, from, next) {
         next((vm) => {
+            vm.from_path = from.path
             if (vm.$store.getters.federal_tender) {
                 vm.federal_tender = vm.$store.getters.federal_tender
                 vm.getFederalTender()
             }
-            // if(to.params.id) {
-            //     vm.$store.commit("setBidsDetails", {tdr_id:to.params.id});
-            // }
-            // vm.from_path = from.path;
-            // console.log('searchfileter')
-            // console.log(vm.$store.getters.searchfilter)
-            // window.scrollTo(0, 0);
-            // // vm.checklogin();
-            // vm.index();
-            // vm.getBidInterest();
-            // moment.updateLocale("language_code", {
-            //     invalidDate: "--",
-            // });
         });
     },
 
     methods: {
+        previousPage(){
+            this.$router.push(this.from_path)
+        },
 
         getFederalTender() {
             let vm = this
@@ -726,11 +717,6 @@ export default {
                     vm.errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
-        },
-
-        backToBids() {
-            let vm = this;
-            vm.$router.push(vm.from_path);
         },
         replaceSpecialCharacters(value) {
             value = value.replaceAll("+", " ");

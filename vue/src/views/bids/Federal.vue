@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-md-3 d-flex justify-content-between search-left my-auto" style="">
                     <div class="label">Filters</div>
-                    <div class="empty" :class="{ bluetextclass: filters.length != 0 }">{{ countFilters }} filters
+                    <div class="empty" :class="{ bluetextclass: filters?.length != 0 }">{{ countFilters }} filters
                         selected
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         style="float: right;">
                         <li class="list-inline-item mb-0" v-if="tags?.length">
                             <a href="javascript:void(0)" class="" style="color: #747579;"
-                                @click.prevent="showModal()"><i
+                                @click.prevent="saveSearchModal()"><i
                                     class="fa fa-save fa-fw fs-6 cursor-pointer text-primary me-1"></i>Save View</a>
                         </li>
                         <li class="cursor list-inline-item mb-0">
@@ -357,12 +357,12 @@
                                 <div class="col-12 ml2 multi-collapse collapse show" id="location">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="mb-1">
-                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.states.length }} of {{
-                                                states.length }})</a>
-                                            <span v-if="meta.states.length !== sorted_states.length">
+                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.states?.length }} of {{
+                                                states?.length }})</a>
+                                            <span v-if="meta.states?.length !== sorted_states?.length">
                                                 <a href="" @click.prevent="selectAllStates()"
                                                     class="form-check-label text-primary me-2">| Select All</a></span>
-                                            <span v-if="meta.states.length">
+                                            <span v-if="meta.states?.length">
                                                 <a href="" class="form-check-label text-primary me-2"
                                                     @click.prevent="deselectAllStates()">| Reset</a>
                                             </span>
@@ -410,17 +410,17 @@
                                 <div class="col-12 ml2 multi-collapse collapse show" id="federalagency">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="mb-1">
-                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.federal_agencies.length }} of
-                                                {{ federal_agencies.length }})</a>
+                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.federal_agencies?.length }} of
+                                                {{ federal_agencies?.length }})</a>
                                             <span
-                                                v-if="meta.federal_agencies.length !== sorted_federal_agencies.length">
+                                                v-if="meta.federal_agencies?.length !== sorted_federal_agencies?.length">
                                                 <a href="" @click.prevent="selectAllFederalAgencies()"
                                                     class="form-check-label text-primary me-2">| Select All</a>
                                             </span>
-                                            <span v-if="meta.federal_agencies.length">
+                                            <span v-if="meta.federal_agencies?.length">
                                                 <a href="" class="form-check-label text-primary me-2"
                                                     @click.prevent="deselectAllFederalAgencies()"
-                                                    v-if="meta.federal_agencies.length !== 0">| Reset</a>
+                                                    v-if="meta.federal_agencies?.length !== 0">| Reset</a>
                                             </span>
                                         </div>
                                     </div>
@@ -466,14 +466,21 @@
                                         <i class="fa fa-light fa-xmark text-white"></i>
                                     </button>
                                 </div>
+                                <div v-for="(messages, field) in alert_errors" :key="field">
+                                    <ul v-if="!meta[field]?.length">
+                                        <li v-for="(message, index) in messages" :key="index" style="color:red">
+                                        {{ message }}
+                                        </li>
+                                    </ul>
+                                </div>
 
-                                <div v-if="filters.length != 0">
+                                <div v-if="filters?.length != 0">
                                     <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1"
                                         @click.prevent="clearAllFilters()">Clear all</button>
                                 </div>
                             </div>
                         </div>
-                        <section v-if="!federal_tenders.length && !isLoading">
+                        <section v-if="!federal_tenders?.length && !isLoading">
                             <div class="container">
                                 <div class="row align-items-center">
                                     <div class="col-md-10 text-center mx-auto">
@@ -488,7 +495,7 @@
                                 </div>
                             </div>
                         </section>
-                        <div class="text-end pb-2" v-if="federal_tenders.length">
+                        <div class="text-end pb-2" v-if="federal_tenders?.length">
                             <ul class="list-inline mb-0 z-index-2 small">
                                 <li class="list-inline-item">
                                     <a href="javascript:void(0)"
@@ -511,18 +518,10 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div
-                                                    v-if="$store.getters.user !== null && $store.getters.user.subscription_id !== 0">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(federal_tender)"
-                                                        style="text-transform: uppercase;">
-                                                        <div v-html="highlight(federal_tender.title)"></div>
-                                                    </a>
-                                                </div>
-                                                <div v-else>
-                                                    <a href="javascript:void(0)" @click="showModal(federal_tender)">
-                                                        <div v-html="highlight(federal_tender.title)"></div>
-                                                    </a>
-                                                </div>
+                                                <a href="javascript:void(0)" @click="tenderDetails(federal_tender)"
+                                                    style="text-transform: uppercase;">
+                                                    <div v-html="highlight(federal_tender.title)"></div>
+                                                </a>
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
                                                 <li class="list-inline-item">
@@ -611,7 +610,7 @@
                                 </div>
                             </div>
                             <div v-else>
-                                <div class="card shadow mb-3" v-if="federal_tenders.length !== 0">
+                                <div class="card shadow mb-3" v-if="federal_tenders?.length !== 0">
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
                                         <div class="table-responsive table-radius1">
                                             <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
@@ -643,17 +642,10 @@
                                                         <td class="padding-16">
                                                             <div class="row">
                                                                 <div class="column">
-                                                                    <div
-                                                                        v-if="$store.getters.user !== null && $store.getters.user.subscription_id !== 0">
-                                                                        <a href="javascript:void(0)"
-                                                                            @click="tenderDetails(federal_tender)">{{
-                                                                                federal_tender.tender_no }}</a>
-                                                                    </div>
-                                                                    <div v-else><a href="javascript:void(0)"
-                                                                            @click="showModal(federal_tender)">{{
-                                                                                federal_tender.tender_no }}</a></div>
+                                                                    <a href="javascript:void(0)"
+                                                                        @click="tenderDetails(federal_tender)">{{
+                                                                            federal_tender.tender_no }}</a>
                                                                 </div>
-
                                                                 <div class="column">
                                                                     <a :style="{ color: federal_tender.federal_notice?.backround_color }"
                                                                         style="color:black"
@@ -690,7 +682,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="federal_tenders.length !== 0">
+                        <div v-if="federal_tenders?.length !== 0">
                             <div style="float: left;">
                                 <input type="text" class="form-control" v-model="meta.page"
                                     @keypress.enter="getFederalTenders()" style="width: 60px;" />
@@ -822,32 +814,63 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-if="userModal">
+    <teleport to="#modals" v-if="modal.save_search">
         <div class="modal-overlay">
             <div class="" style="width: 500px;">
                 <div class="">
                     <div class=""></div>
                     <div class="">
-                        <LoginModal @closeModal="closeModal" ref="login_modal" v-if="login_modal" />
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addFederalFilter"
-                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"
-                            v-if="save_search" />
+                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
                     </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
             </div>
         </div>
     </teleport>
-
-    <teleport to="#modals" v-if="alertModal">
+    <teleport to="#modals" v-if="modal.subscribe">
+        <div class="modal-overlay">
+            <div id="popup1" class="confirm1" style="background-color: white !important;">
+                <div class="">
+                    <h1>Alert</h1>
+                    <p>Please SUBSCRIBE !</p>
+                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                </div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.share_tender">
+        <div class="modal-overlay">
+            <div id="popup1" class="confirm1" style="background-color: white !important;">
+                <div class="">
+                    <h1>Alert</h1>
+                    <p>Please select bid !</p>
+                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                </div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.login">
         <div class="modal-overlay">
             <div class="modal-dialog" style="width: 500px;">
                 <div class="modal-content">
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
-                        <LoginModal @closeModal="closeModal" ref="login_modal" v-if="login_modal" />
+                        <LoginModal @closeModal="closeModal" ref="login_modal" />
+                    </div>
+                </div>
+                <div class="modal-footer m-foot"></div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.set_alert">
+        <div class="modal-overlay">
+            <div class="modal-dialog" style="width: 500px;">
+                <div class="modal-content">
+                    <div class="modal-header m-header"></div>
+                    <div class="modal-body">
                         <SetAlertModal @closeModal="closeModal" :alert="savealert" @updateAlert="updateAlert"
-                            @setAlert="addAlert" ref="alert_search" v-if="set_alert" />
+                            @setAlert="addAlert" ref="alert_search" />
                     </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
@@ -1096,7 +1119,16 @@ export default {
                 message: '',
                 federal_tenders: []
             },
-            federal_cart_items: []
+            federal_cart_items: [],
+            alert_errors:[],
+            from_name : null,
+            modal:{
+                login: null,
+                subscribe: null,
+                save_search: null,
+                set_alert: null,
+                share_tender: null
+            }
         };
     },
 
@@ -1121,15 +1153,27 @@ export default {
 
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (from.name == 'saveAlert' && vm.$store.getters.alert) {
-                vm.getAlert()
-            } else {
-                vm.$store.commit("setAlert", null);
+            vm.from_name = from.name
+            if(vm.from_name == 'Alert' || vm.from_name == 'federal_tender_details'){
+                vm.isLoading = true;
+                vm.getFederalNotices()
+                vm.getPscs()
+                vm.getNaics()
+            }else{
+                vm.paginateFederalTenders()
+                vm.getFederalNotices()
+                vm.getPscs()
+                vm.getNaics()
             }
-            if (from.name == 'federal_tender_details' && vm.$store.getters.filters) {
-                vm.meta = vm.$store.getters.filters
-                vm.tags = vm.meta.keywords;
-            }
+            // if (from.name == 'Alert' && vm.$store.getters.alert) {
+            //     vm.getAlert()
+            // } else {
+            //     vm.$store.commit("setAlert", null);
+            // }
+            // if (from.name == 'federal_tender_details' && vm.$store.getters.filters) {
+            //     vm.meta = vm.$store.getters.filters
+            //     vm.tags = vm.meta.keywords;
+            // }
         })
     },
 
@@ -1143,16 +1187,9 @@ export default {
 
     mounted() {
         this.meta.time_zone = moment.tz.guess()
-        this.paginateFederalTenders()
-        this.getFederalNotices()
-        this.getPscs()
-        this.getNaics()
         this.$store.commit("setSelectedNaics", null)
         this.$store.commit("setFederalTender", null)
         this.$store.commit("setStateTender", null)
-        let header_menu = this.$store.getters.header_menu
-        header_menu.show_bidsearch = false
-        this.$store.dispatch('setHeaderMenu', header_menu)
     },
 
     computed: {
@@ -1276,36 +1313,40 @@ export default {
                 });
         },
 
-        setAletModal() {
-            this.alertModal = true;
-            if (this.$store.getters.user === null) {
-                this.login_modal = true;
-            } else {
-                if (this.$store.getters.user.subscription_id !== 0) {
-                    this.set_alert = true;
-                }
-                if (this.$store.getters.user?.subscription_id === 0) {
-                    this.alertSubscribe = true;
-                    this.login_modal = false;
-                    this.set_alert = false;
-                    this.alertModal = false;
-                }
-            }
-        },
-
         shareFederalTender(federal_tender) {
-            this.share_federal_tender.federal_tenders.push(federal_tender.federal_tender_id)
-            this.share_tender = true
-        },
-        shareFederalTenders() {
-            if (this.share_federal_tender.federal_tenders.length) {
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.share_federal_tender.federal_tenders.push(federal_tender.federal_tender_id)
                 this.share_tender = true
             } else {
-                this.$store.dispatch("info", "Select Federal Tender");
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
             }
         },
-        emailmodalpop() {
-            this.share_tender = true
+        shareFederalTenders() {
+            this.modal.login = false
+            this.modal.subscribe = false
+            this.modal.set_alert = false
+            this.modal.save_search = false
+            this.share_tender = false
+            this.modal.share_tender = false
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                if (this.share_federal_tender?.federal_tenders?.length) {
+                    this.share_tender = true;
+                } else {
+                    this.share_federal_tender.federal_tenders = []
+                    this.modal.share_tender = true
+                }
+            } else {
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
+            }
         },
         triggerFederalTenders() {
             if (this.auto_call) {
@@ -1378,9 +1419,11 @@ export default {
 
         addAlert(alert) {
             let vm = this
+            vm.alert_errors = []
             vm.meta.alert_title = alert.alert_label
             vm.meta.frequency = alert.frequency
             vm.meta.region = 'Federal'
+            vm.meta.user_id = vm.$store.getters.user?.user_id
             vm.$store
                 .dispatch("post", { uri: "addAlerts", data: vm.meta })
                 .then(function (response) {
@@ -1389,59 +1432,62 @@ export default {
                 })
                 .catch(function (error) {
                     console.log(error)
-                    vm.errors = error.response.data.errors;
+                    vm.closeModal()
+                    vm.alert_errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         },
 
-        closeModal(modal) {
-            if (modal == "login_modal") {
-                if (this.$store.getters.user) {
-                    this.getSavedsearch();
-                }
-                this.login_modal = false;
-            } else this.save_search = false;
-            this.userModal = false
-            this.alertModal = false
+        closeModal() {
+            this.modal.login = false
+            this.modal.subscribe = false
+            this.modal.set_alert = false
+            this.modal.save_search = false
             this.share_tender = false
-            this.share_federal_tender.recipient_email = ''
-            this.share_federal_tender.subject = ''
-            this.share_federal_tender.message = ''
+            this.modal.share_tender = false
             this.share_federal_tender.federal_tenders = []
         },
 
-        tenderDetails(federal_tender) {
-            localStorage.setItem("federal_tender", JSON.stringify(federal_tender));
-            this.$store.commit("setFederalTender", federal_tender)
-            this.$store.commit("setCurrentPage", this.meta.currentPage)
-            // window.open(this.$store.getters.appUrl + "bids/federal-opportunities/" + federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no, '_blank');
-            this.$router.push("federal-opportunities/" + federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no);
+        setAletModal() {
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.modal.set_alert = true
+            } else {
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
+            }
         },
 
-        showModal() {
-            // if(federal_tender){
-            //     let page_redirect_path =  this.$store.getters.appUrl+'bids/federal-opportunities/'+ federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no
-            //     localStorage.setItem("federal_tender", JSON.stringify(federal_tender))
-            //     localStorage.setItem('page_redirect_path', page_redirect_path)
-            // }
-            this.userModal = true;
-            if (this.$store.getters.user == null) {
-                this.login_modal = true;
+
+        saveSearchModal(){
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.modal.save_search = true
             } else {
-                this.save_search = true;
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
             }
-            // if (this.meta.alert_label) {
-            //     this.status = false;
-            // } else this.status = true;
-            // if (this.$store.getters.user?.subscription_id === 0) {
-            //     this.alertSubscribe = true;
-            // } else {
-            //     if (this.$store.getters.user == null) {
-            //         this.login_modal = true;
-            //     } else {
-            //         this.save_search = true;
-            //     }
-            // }
+        },
+
+        tenderDetails(federal_tender) {
+            this.closeModal()
+            if(this.$store.getters.user && this.$store.getters.user.subscription == 'valid'){
+                this.$store.commit("setFederalTender", federal_tender)
+                this.$store.commit("setCurrentPage", this.meta.currentPage)
+                this.$router.push("federal-opportunities/" + federal_tender.title.replace(/\//g, "") + "-" + federal_tender.tender_no)
+            }else{
+                if(this.$store.getters.user){
+                    this.modal.subscribe = true
+                }else{
+                    this.modal.login = true
+                }
+            }
         },
 
         handleSelectedTag(tag) {
@@ -1570,7 +1616,7 @@ export default {
                 vm.meta.all = false
             }
 
-            if (vm.meta.keywords.length) {
+            if (vm.meta.keywords?.length) {
                 vm.filters.push({
                     name: 'keywords',
                     id: 'keywords',
@@ -1579,13 +1625,13 @@ export default {
             }
 
             meta_fields.forEach(field => {
-                if (vm.meta[field.meta_field].length) {
+                if (vm.meta[field.meta_field]?.length) {
                     vm.meta[field.meta_field].map(function (ele) {
                         let matched_item = vm[field.data_field].filter(function (item) {
                             return item[field.id_field] == ele;
                         });
 
-                        if (matched_item.length) {
+                        if (matched_item?.length) {
                             vm.filters.push({
                                 name: matched_item[0][field.name_field],
                                 id: matched_item[0][field.id_field],
@@ -1611,8 +1657,8 @@ export default {
                     module: 'response_date'
                 })
             }
-            if (vm.meta.naics.length) {
-                let naics_length = vm.meta.naics.length
+            if (vm.meta.naics?.length) {
+                let naics_length = vm.meta.naics?.length
                 if (vm.$store.getters.is_all_naics) {
                     naics_length = 2197
                 }
@@ -1622,8 +1668,8 @@ export default {
                     module: 'naics'
                 })
             }
-            if (vm.meta.pscs.length) {
-                let pscs_length = vm.meta.pscs.length
+            if (vm.meta.pscs?.length) {
+                let pscs_length = vm.meta.pscs?.length
                 if (vm.$store.getters.is_all_pscs) {
                     pscs_length = 3074
                 }
@@ -1655,7 +1701,7 @@ export default {
         checkCartItem(tdr_id) {
             let items = this.$store.getters.cartItems;
 
-            if (items && items.length != 0) {
+            if (items && items?.length != 0) {
                 let item = items.find((items) => items.tdr_id === tdr_id);
                 if (item) {
                     return false;
@@ -1671,7 +1717,7 @@ export default {
         },
         highlight(title) {
             let keywords_arr = [];
-            if (typeof this.meta.keywords === 'string' && this.meta.keywords.length) {
+            if (typeof this.meta.keywords === 'string' && this.meta.keywords?.length) {
                 keywords_arr = this.meta.keywords.split(",");
             } else if (Array.isArray(this.meta.keywords)) {
                 keywords_arr = this.meta.keywords;
@@ -1762,6 +1808,15 @@ export default {
                     vm.sorted_federal_agencies = vm.federal_agencies
                     if (vm.$store.getters.user) {
                         vm.getFederalFilters()
+                        if (vm.from_name == 'Alert' && vm.$store.getters.alert) {
+                            vm.getAlert()
+                        } else {
+                            vm.$store.commit("setAlert", null);
+                        }
+                        if (vm.from_name == 'federal_tender_details' && vm.$store.getters.filters) {
+                            vm.meta = vm.$store.getters.filters
+                            vm.tags = vm.meta.keywords;
+                        }
                     }
                 })
                 .catch(function (error) {
@@ -1812,28 +1867,30 @@ export default {
             vm.applyFilters()
             window.scrollTo({ top: 0, behavior: "smooth" })
             vm.meta.user_id = this.$store.getters.user?.user_id
-            vm.$store
-                .dispatch("post", { uri: "paginateFederalTenders", data: vm.meta, cancel_token })
-                .then(function (response) {
-                    vm.isLoading = false
-                    vm.auto_call = true
-                    vm.federal_tenders = response.data.data
-                    vm.meta.totalRows = response.data.meta.total
-                    vm.meta.lastPage = response.data.meta.last_page
-                    vm.meta.from = response.data.meta.from
-                    vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage
-                    vm.meta.to = response.data.meta.to
-                    vm.meta.page = response.data.meta.current_page
-                    vm.getCartItemsCount()
-                })
-                .catch(function (error) {
-                    if (axios.isCancel(error)) {
-                        console.log('Previous request was canceled:', error.message);
-                    } else {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    }
-                });
+            if(vm.meta){
+                vm.$store
+                    .dispatch("post", { uri: "paginateFederalTenders", data: vm.meta, cancel_token })
+                    .then(function (response) {
+                        vm.isLoading = false
+                        vm.auto_call = true
+                        vm.federal_tenders = response.data.data
+                        vm.meta.totalRows = response.data.meta.total
+                        vm.meta.lastPage = response.data.meta.last_page
+                        vm.meta.from = response.data.meta.from
+                        vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage
+                        vm.meta.to = response.data.meta.to
+                        vm.meta.page = response.data.meta.current_page
+                        vm.getCartItemsCount()
+                    })
+                    .catch(function (error) {
+                        if (axios.isCancel(error)) {
+                            console.log('Previous request was canceled:', error.message);
+                        } else {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        }
+                    });
+            }
         },
         onPageChange(page) {
             this.is_updating_meta = true

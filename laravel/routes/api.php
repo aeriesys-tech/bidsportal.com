@@ -258,7 +258,8 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addStateAlerts", [AlertController::class,'addStateAlerts']);
 	Route::post("addPrivateAlerts", [AlertController::class,'addPrivateAlerts']);
 	Route::post("addInternationalAlerts", [AlertController::class,'addInternationalAlerts']);
-	Route::post("updateAlerts", [AlertController::class,'updateAlerts']);	
+	Route::post("updateAlerts", [AlertController::class,'updateAlerts']);
+	Route::post("updateStateAlerts", [AlertController::class,'updateStateAlerts']);	
 	Route::post("createAlerts", [AlertController::class,'createAlerts']);	
 	Route::post("getAlert", [AlertController::class,'getAlert']);
 	Route::post("paginateAlerts", [AlertController::class,'paginateAlerts']);

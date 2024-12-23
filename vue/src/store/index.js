@@ -5,8 +5,8 @@ import axios from 'axios';
 
 export default createStore({
 	state: {
-		// baseUrl: 'http://localhost/bidsportal_new/laravel/public/',
-		// appUrl: 'http://localhost:8081/#/',
+		// baseUrl: 'http://192.168.0.174/bidsportal_new/laravel/public/',
+		// appUrl: 'http://192.168.0.174:8080/#/',
 		// baseUrl: 'http://192.168.0.213/bidsportal.com/laravel/public/',
 		// appUrl: 'http://192.168.0.213/#/',
 		baseUrl:"http://64.227.157.66/",

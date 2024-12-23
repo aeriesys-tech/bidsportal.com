@@ -37,6 +37,10 @@
                             <router-link to="/private_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
                                 Private Bids</router-link>
                         </li>
+                        <li>
+                            <router-link to="/international_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                                International Bids</router-link>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

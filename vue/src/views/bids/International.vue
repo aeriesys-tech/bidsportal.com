@@ -28,7 +28,7 @@
                         style="float: right;">
                         <li class="list-inline-item mb-0" v-if="tags?.length">
                             <a href="javascript:void(0)" class="" style="color: #747579;"
-                                @click.prevent="showModal()"><i
+                                @click.prevent="saveSearchModal()"><i
                                     class="fa fa-save fa-fw fs-6 cursor-pointer text-primary me-1"></i>Save View</a>
                         </li>
                         <li class="cursor list-inline-item mb-0">
@@ -284,7 +284,7 @@
                                     data-bs-toggle="collapse" href="#location" role="button" aria-expanded="false"
                                     aria-controls="notice">
                                     <h6 style="font-size: 15px; font-weight: 500;" class="mb-2"
-                                        :class="{ 'bluetextclass': meta.states?.length !== 0 }">Categories</h6>
+                                        :class="{ 'bluetextclass': meta.categories?.length !== 0 }">Categories</h6>
                                     <a class="p-0 mb-0">
                                         <i class="fa-solid fa-angle-down ms-2"></i>
                                     </a>
@@ -453,6 +453,13 @@
                                         <i class="fa fa-light fa-xmark text-white"></i>
                                     </button>
                                 </div>
+                                <div v-for="(messages, field) in alert_errors" :key="field">
+                                    <ul v-if="!meta[field]?.length">
+                                        <li v-for="(message, index) in messages" :key="index" style="color:red">
+                                        {{ message }}
+                                        </li>
+                                    </ul>
+                                </div>
 
                                 <div v-if="filters.length != 0">
                                     <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1"
@@ -500,18 +507,10 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div
-                                                    v-if="$store.getters.user !== null && $store.getters.user.subscription_id !== 0">
                                                     <a href="javascript:void(0)" @click="tenderDetails(international_tender)"
                                                         style="text-transform: uppercase;">
                                                         <div v-html="highlight(international_tender.title)"></div>
                                                     </a>
-                                                </div>
-                                                <div v-else>
-                                                    <a href="javascript:void(0)" @click="showModal()">
-                                                        <div v-html="highlight(international_tender.title)"></div>
-                                                    </a>
-                                                </div>
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
                                                 <li class="list-inline-item">
@@ -521,7 +520,7 @@
                                                                 href="javascript:void(0)" class="">SELECT</a></small>
                                                         <input class="form-check-input" type="checkbox"
                                                             :value="international_tender.international_tender_id"
-                                                            id="flexCheckChecked" v-model="sendMails.bids" />
+                                                            id="flexCheckChecked" v-model="share_international_tender.international_tenders" />
                                                     </div>
                                                 </li>
                                             </ul>
@@ -628,21 +627,15 @@
                                                                 v-if="$store.getters.user !== null">
                                                                 <input class="form-check-input me-3" type="checkbox"
                                                                     :value="international_tender.international_tender_id"
-                                                                    v-model="sendMails.bids" />
+                                                                    v-model="share_international_tender.international_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="padding-16">
                                                             <div class="row">
                                                                 <div class="column">
-                                                                    <div
-                                                                        v-if="$store.getters.user !== null && $store.getters.user.subscription_id !== 0">
-                                                                        <a href="javascript:void(0)"
-                                                                            @click="tenderDetails(international_tender)">{{
-                                                                                international_tender.tender_no }}</a>
-                                                                    </div>
-                                                                    <div v-else><a href="javascript:void(0)"
-                                                                            @click="showModal()">{{
-                                                                                international_tender.tender_no }}</a></div>
+                                                                    <a href="javascript:void(0)"
+                                                                        @click="tenderDetails(international_tender)">{{
+                                                                            international_tender.tender_no }}</a>
                                                                 </div>
 
                                                                 <div class="column">
@@ -805,32 +798,63 @@
             </div>
         </div>
     </div>
-    <teleport to="#modals" v-if="userModal">
+    <teleport to="#modals" v-if="modal.save_search">
         <div class="modal-overlay">
             <div class="" style="width: 500px;">
                 <div class="">
                     <div class=""></div>
                     <div class="">
-                        <LoginModal @closeModal="closeModal" ref="login_modal" v-if="login_modal" />
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addInternationalFilter"
-                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"
-                            v-if="save_search" />
+                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
                     </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
             </div>
         </div>
     </teleport>
-
-    <teleport to="#modals" v-if="alertModal">
+    <teleport to="#modals" v-if="modal.subscribe">
+        <div class="modal-overlay">
+            <div id="popup1" class="confirm1" style="background-color: white !important;">
+                <div class="">
+                    <h1>Alert</h1>
+                    <p>Please SUBSCRIBE !</p>
+                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                </div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.share_tender">
+        <div class="modal-overlay">
+            <div id="popup1" class="confirm1" style="background-color: white !important;">
+                <div class="">
+                    <h1>Alert</h1>
+                    <p>Please select bid !</p>
+                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                </div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.login">
         <div class="modal-overlay">
             <div class="modal-dialog" style="width: 500px;">
                 <div class="modal-content">
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
-                        <LoginModal @closeModal="closeModal" ref="login_modal" v-if="login_modal" />
+                        <LoginModal @closeModal="closeModal" ref="login_modal" />
+                    </div>
+                </div>
+                <div class="modal-footer m-foot"></div>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="#modals" v-if="modal.set_alert">
+        <div class="modal-overlay">
+            <div class="modal-dialog" style="width: 500px;">
+                <div class="modal-content">
+                    <div class="modal-header m-header"></div>
+                    <div class="modal-body">
                         <SetAlertModal @closeModal="closeModal" :alert="savealert" @updateAlert="updateAlert"
-                            @setAlert="addAlert" ref="alert_search" v-if="set_alert" />
+                            @setAlert="addAlert" ref="alert_search" />
                     </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
@@ -1080,6 +1104,14 @@ export default {
             international_keyword: "",
             fullPage: "",
             tag: "",
+            alert_errors:[],
+            modal:{
+                login: null,
+                subscribe: null,
+                save_search: null,
+                set_alert: null,
+                share_tender: null
+            }
         };
     },
 
@@ -1107,18 +1139,26 @@ export default {
 
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (from.name == "saveAlert" && vm.$store.getters.alert) {
-                vm.getAlert();
-            } else {
-                vm.$store.commit("setAlert", null);
+            vm.from_name = from.name
+            if(vm.from_name == 'Alert' || vm.from_name == 'international_tender_details'){
+                vm.isLoading = true;
+                vm.getInternationalNotices();
+            }else{
+                vm.getInternationalNotices();
+                vm.paginateInternationalTenders();
             }
-            if (from.name == 'international_tender_details' && vm.$store.getters.filters) {
-                vm.meta = vm.$store.getters.filters
-                vm.tags = vm.meta.keywords
-            }
-            vm.meta.time_zone = moment.tz.guess()
-            vm.paginateInternationalTenders()
-            vm.getInternationalNotices()
+            // if (from.name == "saveAlert" && vm.$store.getters.alert) {
+            //     vm.getAlert();
+            // } else {
+            //     vm.$store.commit("setAlert", null);
+            // }
+            // if (from.name == 'international_tender_details' && vm.$store.getters.filters) {
+            //     vm.meta = vm.$store.getters.filters
+            //     vm.tags = vm.meta.keywords
+            // }
+            // vm.meta.time_zone = moment.tz.guess()
+            // vm.paginateInternationalTenders()
+            // vm.getInternationalNotices()
         });
     },
 
@@ -1208,15 +1248,39 @@ export default {
         },
 
         sharePrivateTender(international_tender) {
-            this.share_international_tender.international_tenders.push(international_tender.international_tender_id);
-            this.share_tender = true;
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.share_international_tender.international_tenders.push(international_tender.international_tender_id)
+                this.share_tender = true
+            } else {
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
+            }
         },
 
         sharePrivateTenders() {
-            if (this.share_international_tender.international_tenders.length) {
-                this.share_tender = true;
+            this.modal.login = false
+            this.modal.subscribe = false
+            this.modal.set_alert = false
+            this.modal.save_search = false
+            this.share_tender = false
+            this.modal.share_tender = false
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                if (this.share_international_tender?.international_tenders?.length) {
+                    this.share_tender = true;
+                } else {
+                    this.share_international_tender.international_tenders = []
+                    this.modal.share_tender = true
+                }
             } else {
-                this.$store.dispatch("info", "Select Federal Tender");
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
             }
         },
 
@@ -1290,12 +1354,6 @@ export default {
             }
         },
 
-        shareTender(international_tender) {
-            this.share_tender = true;
-        },
-        emailmodalpop() {
-            this.share_tender = true;
-        },
         triggerInternationalTenders() {
             if (this.auto_call) {
                 this.cancelPreviousRequest();
@@ -1360,39 +1418,75 @@ export default {
 
         addAlert(alert) {
             let vm = this;
+            vm.alert_errors = []
             vm.meta.alert_title = alert.alert_label;
             vm.meta.frequency = alert.frequency;
             vm.meta.region = "International";
+            vm.meta.user_id = vm.$store.getters.user?.user_id
             vm.$store
-                .dispatch("post", { uri: "addAlerts", data: vm.meta })
+                .dispatch("post", { uri: "addInternationalAlerts", data: vm.meta })
                 .then(function (response) {
                     vm.$store.dispatch("success", "Filters saved successfully");
                     vm.closeModal();
                 })
                 .catch(function (error) {
                     console.log(error);
-                    vm.errors = error.response.data.errors;
+                    vm.closeModal()
+                    vm.alert_errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         },
 
-        closeModal(modal) {
-            if (modal == "login_modal") {
+        closeModal() {
+            this.modal.login = false
+            this.modal.subscribe = false
+            this.modal.set_alert = false
+            this.modal.save_search = false
+            this.share_tender = false
+            this.modal.share_tender = false
+            this.share_international_tender.international_tenders = []
+        },
+
+        setAletModal() {
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.modal.set_alert = true
+            } else {
                 if (this.$store.getters.user) {
-                    this.getSavedsearch();
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
                 }
-                this.login_modal = false;
-            } else this.save_search = false;
-            this.userModal = false;
-            this.alertModal = false;
-            this.share_tender = false;
+            }
+        },
+
+
+        saveSearchModal(){
+            this.closeModal()
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
+                this.modal.save_search = true
+            } else {
+                if (this.$store.getters.user) {
+                    this.modal.subscribe = true
+                }else {
+                    this.modal.login = true
+                }
+            }
         },
 
         tenderDetails(international_tender) {
-            // console.log("private--", international_tender.tender_no)
-            this.$store.commit("setInternationalTender", international_tender)
-            this.$store.commit("setFilters", this.meta)
-            this.$router.push("international-opportunities/" + international_tender.title.replace(/ /g, "-") + "-" + international_tender.tender_no)
+            this.closeModal()
+            if(this.$store.getters.user && this.$store.getters.user.subscription == 'valid'){
+                this.$store.commit("setInternationalTender", international_tender)
+                this.$store.commit("setFilters", this.meta)
+                this.$router.push("international-opportunities/" + international_tender.title.replace(/ /g, "-") + "-" + international_tender.tender_no)
+            }else{
+                if(this.$store.getters.user){
+                    this.modal.subscribe = true
+                }else{
+                    this.modal.login = true
+                }
+            }
         },
 
         showModal() {
@@ -1700,6 +1794,16 @@ export default {
                     vm.sorted_international_agencies = vm.international_agencies;
                     if (vm.$store.getters.user) {
                         vm.getInternationalFilters();
+                    }
+
+                    if (vm.from_name == "Alert" && vm.$store.getters.alert) {
+                        vm.getAlert();
+                    } else {
+                        vm.$store.commit("setAlert", null);
+                    }
+                    if (vm.from_name == 'international_tender_details' && vm.$store.getters.filters) {
+                        vm.meta = vm.$store.getters.filters
+                        vm.tags = vm.meta.keywords;
                     }
                 })
                 .catch(function (error) {

@@ -55,7 +55,10 @@ import PlansPricingNew from "@/views/PlansPricingNew.vue";
 
 //Alerts
 import Alert from "@/views/alerts/Index";
+import StateAlert from "@/views/alerts/StateAlert";
 import FederalAlert from "@/views/alerts/FederalAlert";
+import PrivateAlert from "@/views/alerts/PrivateAlert";
+import InternationalAlert from "@/views/alerts/InternationalAlert";
 
 
 const routes = [
@@ -69,9 +72,37 @@ const routes = [
 		component: Alert,
 	},
 	{
+		path: '/bids/state_alert',
+		name: 'StateAlert',
+		component: StateAlert
+	},
+
+	{
+		path: '/bids/State/:alert_id/edit',
+		name: 'EditStateAlert',
+		component: StateAlert
+	},
+
+	{
 		path: '/bids/federal_alert',
 		name: 'FederalAlert',
 		component: FederalAlert
+	},
+	{
+		path: '/bids/Federal/:alert_id/edit',
+		name: 'EditFederalAlert',
+		component: FederalAlert
+	},
+
+	{
+		path: '/bids/private_alert',
+		name: 'PrivateAlert',
+		component: PrivateAlert
+	},
+	{
+		path: '/bids/international_alert',
+		name: 'InternationalAlert',
+		component: InternationalAlert
 	},
 	{
 		path: "/cart", name: "Cart",
@@ -254,6 +285,10 @@ const routes = [
 	// Plans_pricing
 	{
 		path: "/subscription_plans", name: "SubscriptionPlans",
+		component: SubscriptionPlans,
+	},
+	{
+		path: "/subscription_plans/:id", name: "ActivateUser",
 		component: SubscriptionPlans,
 	},
 	// {

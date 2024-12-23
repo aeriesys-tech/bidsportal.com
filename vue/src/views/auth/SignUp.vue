@@ -505,7 +505,6 @@ export default {
                     console.error("error", error);
                     vm.isLoading = false;
                     vm.errors = error.response?.data?.errors;
-                    vm.$store.dispatch("error", error.response.data.message);
                 });
         },
         toggle() {

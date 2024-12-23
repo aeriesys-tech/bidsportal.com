@@ -1,5 +1,5 @@
 <template>
-<div v-if="$store.getters.user !== null && $store.getters.user.status=='pending'" class="alert alert-warning py-2 m-0 bg-primary border-0 rounded-0 alert-dismissible fade show text-center overflow-hidden" role="alert">
+<div v-if="$store.getters.user && !$store.getters.user?.status" class="alert alert-warning py-2 m-0 bg-primary border-0 rounded-0 alert-dismissible fade show text-center overflow-hidden" role="alert">
  <span  ><p class="text-white m-0">Your email is not confirmed, please check your inbox or<a class="text-white" href="javascript:void(0);" style="font-weight:600;text-decoration: underline;" @click.prevent="resendEmail"> resend email</a></p></span>
  <button type="button" class="btn-close btn-close-white opacity-9 p-3" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
@@ -30,13 +30,13 @@
                     <!-- <li class="nav-item ms-0 ms-md-3" v-if="verifyPlan()" >
                      <div><a href="javascript:void(0)" @click="checkurlbid()"   class="nav-link" > Upgrade</a></div>
                     </li> -->
-                    <li class="nav-item" v-if="$store.getters.header_menu?.show_pricing">
+                    <li class="nav-item" v-if="show_pricing">
                         <router-link class="nav-link" to="/subscription_plans">Pricing</router-link>
                     </li>
-                    <li class="nav-item" v-if="$store.getters.header_menu?.show_upgrade">
+                    <li class="nav-item" v-if="show_upgrade">
                         <router-link class="nav-link" to="/subscription_plans">Upgrade</router-link>
                     </li>
-                    <li class="nav-item ms-0 ms-md-3" v-if="$store.getters.header_menu?.show_bidsearch">
+                    <li class="nav-item ms-0 ms-md-3" v-if="show_bidsearch">
                      <div><a href="javascript:void(0)" @click="checkurlprice()"  class="nav-link" > Bid Search</a></div>
                     </li>
                     <li class="nav-item ms-0 ms-md-3">
@@ -140,10 +140,28 @@ export default {
             show_upgrade: false,
             show_bidsearch: false,
             current_page: null,
-            tender_pages : ['state_opportunities', 'federal_opportunities', 'private_opportunities', 'international_opportunities']
-               
+            tender_pages : ['state_opportunities', 'federal_opportunities', 'private_opportunities', 'international_opportunities']      
         }
-        
+    },
+    watch: {
+        $route(to, from) {
+            this.show_pricing = false
+            this.show_upgrade = false
+            this.show_bidsearch = false
+            if(this.$store.getters.user){
+                if(to.name == 'SubscriptionPlans'){
+                    this.show_bidsearch = true
+                }else if (this.tender_pages.includes(to.name)){
+                    if(!this.$store.getters.user.subscription){
+                        this.show_pricing = true           
+                    }else{
+                        if(this.$store.getters.user.subscription && this.$store.getters.subscription == 'expired'){
+                            this.show_upgrade = true
+                        }
+                    }
+                }
+            }
+        }
     },
 
     methods:{
@@ -222,17 +240,17 @@ export default {
         sendConfirmeMail(){
             let vm = this;
             vm.resendemail = false;
-            vm.sendmail.id = vm.$store.getters.user?.id;
-            vm.sendmail.email = vm.$store.getters.user?.email;
-            vm.$store
-            .dispatch("post", { uri: "resend_email", data: vm.sendmail })
-            .then(function () {
-                vm.$store.dispatch("success", "Confirmation link resent to your registered email address");
-            })
-            .catch(function (error) {
-                vm.errors = error.response.data.errors;
-                vm.$store.dispatch("error", error.response.data.message);
-            });
+            if(vm.$store.getters.user){
+                vm.$store
+                .dispatch("post", { uri: "resendEmail", data: vm.$store.getters.user })
+                .then(function () {
+                    vm.$store.dispatch("success", "Confirmation link resent to your registered email address");
+                })
+                .catch(function (error) {
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
+            }
         }
     },
     computed: {

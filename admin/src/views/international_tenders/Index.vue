@@ -136,7 +136,7 @@
                                                 v-model="tender.international_notice_id">
                                                 <option value="null">Select Notice</option>
                                                 <option v-for="notice, notice_key in notices" :key="notice_key"
-                                                    :value="notice.international_notice_id">{{ notice.notice_name }}
+                                                    :value="notice.international_notice_id">{{ notice.international_notice_name }}
                                                 </option>
                                             </select>
                                             <span class="invalid-feedback"
@@ -393,7 +393,7 @@ export default {
                 .dispatch("post", { uri: "getInternationalNotices", data: { meta: { region_id: 1 } } })
                 .then((response) => {
                     loader.hide();
-                    vm.notices = response.data
+                    vm.notices = response.data.data
                     vm.getCategories()
                 })
                 .catch(function (error) {
@@ -425,7 +425,7 @@ export default {
             vm.$store
                 .dispatch("post", { uri: "getInternationalAgencies" })
                 .then((response) => {
-                    vm.agencies = response.data
+                    vm.agencies = response.data.data
                     vm.index()
                 })
                 .catch(function (error) {
