@@ -126,14 +126,24 @@ Route::middleware(['api'])->group(function ($router) {
 	//International
 	Route::post("paginateInternationalTenders", [InternationalTenderController::class,'paginateInternationalTenders']);
 	Route::post("updateInternationalBids", [InternationalTenderController::class,'updateInternationalBids']);
+	Route::post('paginateInactiveInternationalTenders', [InternationalTenderController::class,'paginateInactiveInternationalTenders']);
+	Route::post("updateTenderInternational", [InternationalTenderController::class,'updateTenderInternational']);
+	Route::post("deleteInternationalTender", [InternationalTenderController::class,'deleteInternationalTender']);
+
+	Route::post("addInternationalTender", [InternationalTenderController::class,'addInternationalTender']);
+	Route::post("getInternationalTender", [InternationalTenderController::class,'getInternationalTender']);
+	Route::post("updateInternationalTender", [InternationalTenderController::class,'updateInternationalTender']);
+	
 
 	Route::post("changePassword",[UserController::class,'changePassword']);
 	Route::post("toggleUser",[UserController::class,'toggleUser']);
+	Route::post("activateUser",[UserController::class,'activateUser']);
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
 
 	Route::post("getUserSubscriptions",[UserSubscriptionController::class,'getUserSubscriptions']);
 	Route::post("getActiveSubscription",[UserSubscriptionController::class,'getActiveSubscription']);
+	Route::post("addTrialSubscription",[UserSubscriptionController::class,'addTrialSubscription']);
 
 	Route::post("getUserPayments",[UserPaymentController::class,'getUserPayments']);
 
@@ -147,6 +157,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("deleteFederalAgency",[FederalAgencyController::class,'deleteFederalAgency']);
 
 	Route::post("paginateActiveUsers",[AuthController::class,'paginateActiveUsers']);
+	Route::post("resendEmail",[AuthController::class,'resendEmail']);
 	
 	//User setasides
 	Route::post('getUserSetAsideIds', [UserSetAsideController::class,'getUserSetAsideIds']);
@@ -244,6 +255,9 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//Alerts
 	Route::post("addAlerts", [AlertController::class,'addAlerts']);	
+	Route::post("addStateAlerts", [AlertController::class,'addStateAlerts']);
+	Route::post("addPrivateAlerts", [AlertController::class,'addPrivateAlerts']);
+	Route::post("addInternationalAlerts", [AlertController::class,'addInternationalAlerts']);
 	Route::post("updateAlerts", [AlertController::class,'updateAlerts']);	
 	Route::post("createAlerts", [AlertController::class,'createAlerts']);	
 	Route::post("getAlert", [AlertController::class,'getAlert']);

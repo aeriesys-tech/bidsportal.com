@@ -28,33 +28,18 @@ class PrivateTenderResource extends JsonResource
             $time_ago  = $difference->diffForHumans();
         }
 
-        if ($this->posted_date && $this->expiry_date) {
-            $date1 = Carbon::parse($this->posted_date);
+        if($this->expiry_date && now()->lte($this->expiry_date)){
+            $is_expired = false;
+            $date1 = Carbon::parse(now());
             $date2 = Carbon::parse($this->expiry_date);
-
-            if ($date1->lessThan($date2)) {
-                $days_difference = round($date1->diffInDays($date2) + 1); 
-            } else if ($date2->lessThan($date1)){
-                $days_difference = round($date2->diffInDays($date1) + 1); 
-            } else  {
-                $days_difference = null; 
-            }
-        } else {
+            $days_difference = round($date1->diffInDays($date2) + 1);
+        }else{
+            $is_expired = true;
             $days_difference = null;
         }
 
         $cart_icon = false;
-        // if($request->user_id){
-        //     $cutoff_date = Carbon::now()->subDays(30);
-        //     $cart_item = CartItem::where('user_id', $request->user_id)->where('private_tender_id', $this->private_tender_id)->where('cart_item_date', '>=', $cutoff_date)->first();
-        //     if($cart_item){
-        //         $cart_icon = false;
-        //     }else{
-        //         $cart_icon = true;
-        //     }
-        // }else{
-        //     $cart_icon = true;
-        // }
+        
 
         return [
             'private_tender_id' => $this->private_tender_id,

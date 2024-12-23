@@ -22,11 +22,14 @@ class PaypalController extends Controller
 
     public function paypalSubscriptionSuccess(Request $request)
 	{
-
+		
 		$item_number_user = $request->query('item_number');
 		$item_number_arr = explode("_", $item_number_user);
 		$item_number = $item_number_arr[0];
 		$user_id = $item_number_arr[1];
+		UserSubscription::where('user_id', $user_id)->where('active_status', 'like', 'active')->update([ 
+            'active_status' => 'inactive'
+        ]);
 		$order_id_no =$this->getNextSubscriptionOrderId();
         $order_id="BPSB-".$order_id_no."-".date("mdy");
         $subscription_plan = SubscriptionPlan::where('subscription_plan_id', $item_number)->first();

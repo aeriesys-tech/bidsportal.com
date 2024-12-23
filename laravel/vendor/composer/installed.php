@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '7222a7cf6da3c4efa8b3005e9abdf99dfd8c22d1',
+        'reference' => '7054710ff7cae43c92ea48946769ca946f07450b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -424,7 +424,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '7222a7cf6da3c4efa8b3005e9abdf99dfd8c22d1',
+            'reference' => '7054710ff7cae43c92ea48946769ca946f07450b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1084,6 +1084,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'sendpulse/rest-api' => array(
+            'pretty_version' => '2.0.1.2',
+            'version' => '2.0.1.2',
+            'reference' => '457ca31c0ff3a3f849182d053d50928085d432ae',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../sendpulse/rest-api',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'spatie/once' => array(
             'dev_requirement' => false,

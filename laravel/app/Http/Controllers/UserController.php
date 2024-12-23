@@ -177,4 +177,19 @@ class UserController extends Controller
         }
     }
 
+    public function activateUser(Request $request){
+        $data = $request->validate([
+            'user_id' => 'required'
+        ]);
+        $activate_user = User::where('user_id', $request->user_id)->update([
+            'status' => true
+        ]);
+        if($activate_user){
+            $user = User::where('user_id', $request->user_id)->first();
+            return new UserResource($user);
+        }else{
+            return response()->json(['error' => 'Unbale to activate'], 422);
+        }
+    }
+
 }
