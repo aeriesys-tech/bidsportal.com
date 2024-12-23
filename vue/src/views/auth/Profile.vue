@@ -155,8 +155,6 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                // vm.checklogin();
-                // let loader = vm.$loading.show();
                 vm.isLoading = true;
                 if (vm.$store.getters.user) {
                     vm.user = vm.$store.getters.user;

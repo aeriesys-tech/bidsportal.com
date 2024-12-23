@@ -37,8 +37,7 @@
                                                                 <span class="h6 fw-bold mb-0">Subscribed Plan :</span>
                                                             </div>
                                                             <div class="col-md-8 col-sm-8">
-                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.validity ==12">Annual Subscription</span>
-                                                                <span class="h6 fw-light mb-0" v-if="active_subscription.validity == 6">Semi-Annual Subscription</span>
+                                                                <span class="h6 fw-light mb-0" >{{ active_subscription.subscription_plan?.plan }}</span>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item py-0"></li>
@@ -99,22 +98,11 @@
                                                                             <span v-else class="mb-0">{{subscription.active_status}}</span>
                                                                         </td>
                                                                         <td>
-                                                                            <h6 class="mb-0" v-if="subscription.active_status=='active'">
-                                                                                <a href="javascript:void(0)">
-                                                                                    <span v-if="subscription.validity == 12">Annual</span>
-                                                                                    <span v-if="subscription.validity == 6">6 Months</span>
-                                                                                    <span v-if="subscription.validity==1">1 Months</span>
-                                                                                </a>
-                                                                            </h6>
-                                                                            <span class="mb-0" v-else>
-                                                                                <a href="javascript:void(0)" style="color: #747579;">
-                                                                                    <span v-if="subscription.validity == 12">Annual</span>
-                                                                                    <span v-if="subscription.validity == 6">6 Months</span>
-                                                                                    <span v-if="subscription.validity==1">1 Months</span>
-                                                                                </a>
-                                                                            </span>
+                                                                            <span class="mb-0" v-if="subscription.active_status=='active'">{{ subscription.subscription_plan?.plan }}</span>
+                                                                            <span class="mb-0" v-else style="color: #747579;">{{ subscription.subscription_plan?.plan }}</span>
                                                                         </td>
-                                                                        <td>${{subscription.payment_gross}}</td>
+                                                                        <td><span v-if="subscription.payment_gross">${{subscription.payment_gross}}</span>
+                                                                        <span class="text-center">-</span></td>
                                                                         <td>{{format_date(subscription.valid_from)}}</td>
                                                                         <td>{{format_date(subscription.valid_to)}}</td>
                                                                         <td class="">{{subscription.txn_id}}</td>
@@ -230,7 +218,7 @@
                         data: vm.user,
                     })
                     .then(function (response) {
-                        vm.active_subscription = response.data;
+                        vm.active_subscription = response.data.data
                         vm.getUserSubscriptions();
                     })
                     .catch(function (error) {
@@ -245,7 +233,7 @@
                 vm.$store
                     .dispatch("post", { uri: uri, data: vm.user })
                     .then(function (response) {
-                        vm.subscriptions = response.data;
+                        vm.subscriptions = response.data.data
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;

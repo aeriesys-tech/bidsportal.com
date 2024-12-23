@@ -1,4 +1,5 @@
 <template>
+    <loading v-model:active="isLoading" :can-cancel="false" :on-cancel="onCancel" :is-full-page="fullPage" />
     <section class="pt-4">
         <div class="container" data-sticky-container="">
             <div class="row mb-4">
@@ -304,26 +305,43 @@
             },
 
             subcribePlan(){
-                // console.log('userplan', this.user_plan)
-                // console.log('user', this.$store.getters.user)
-                let loggedInUserID = this.$store?.getters?.user?.user_id
-                let itemName = this.user_plan.plan
-                let itemNumber = this.user_plan.subscription_plan_id
-                let paypalAmt = this.user_plan.price - this.user_plan.discount
-                let paypalValid = 1
-                let params = '?loggedInUserID='+loggedInUserID+'&itemName='+itemName+'&itemNumber='+itemNumber+'&paypalAmt='+paypalAmt+'&paypalValid='+paypalValid
-                if(paypalAmt > 0){
-                
-                    if(this.user_plan.agree)
-                    //    <a href="this.$store.getters.baseUrl+'callPaypalSubscripton'+params" target="_blank"></a>             
-                        window.open(this.$store.getters.baseUrl+'callPaypalSubscripton'+params,"_self")
-                        // window.href(this.$store.getters.baseUrl+'callPaypalSubscripton'+params)
-                    else
-                        this.$store.dispatch("error", "Agree Terms and Condition");
-                }else{
-                    this.$store.dispatch("error", "Amount cannot be less than 0")
+                let vm = this
+                if(this.user_plan.agree){
+                    if(this.user_plan.plan == 'Trial'){
+                        if(vm.$store.getters.user){
+                            vm.isLoading = true
+                        let uri = "getSubscriptionPlans"
+                        vm.$store
+                            .dispatch("post", { uri: 'addTrialSubscription', data: vm.$store.getters.user })
+                            .then(function (response) {
+                                vm.isLoading = false
+                                vm.$store.dispatch("success", "Trial subscription added successfully")
+                                vm.$router.push('user/subscription')
+                            })
+                            .catch(function (error) {
+                                vm.isLoading = false
+                                vm.errors = error.response.data.errors;
+                                vm.$store.dispatch("error", error.response.data.message);
+                            });
+                        }
+                    } else{
+                        let loggedInUserID = this.$store?.getters?.user?.user_id
+                        let itemName = this.user_plan.plan
+                        let itemNumber = this.user_plan.subscription_plan_id
+                        let paypalAmt = this.user_plan.price - this.user_plan.discount
+                        let paypalValid = 1
+                        let params = '?loggedInUserID='+loggedInUserID+'&itemName='+itemName+'&itemNumber='+itemNumber+'&paypalAmt='+paypalAmt+'&paypalValid='+paypalValid
+                        if(paypalAmt > 0){
+                                window.open(this.$store.getters.baseUrl+'callPaypalSubscripton'+params,"_self")
+                        }else{
+                            this.$store.dispatch("error", "Amount cannot be less than 0")
+                        }
+                    }
+                } else {
+                    this.$store.dispatch("error", "Agree Terms and Condition")
                 }
             },
+
             index(){
                 let vm = this
                 let uri = "getSubscriptionPlans"

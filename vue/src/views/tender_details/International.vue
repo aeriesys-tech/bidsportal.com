@@ -9,7 +9,8 @@
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
-                                    <router-link to="/bids/international-opportunities" class="btn btn-sm btn-secondary">Back</router-link>
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
+                                        @click.prevent="previousPage()">Back</a>
                                 </li>
                             </ul>
                             <ul class="list-inline text-end">
@@ -654,29 +655,19 @@ export default {
 
     beforeRouteEnter(to, from, next) {
         next((vm) => {
+            vm.from_path = from.path
             if (vm.$store.getters.state_tender) {
                 vm.state_tender = vm.$store.getters.state_tender
                 vm.getStateTender()
             }
-            // vm.state_tender = vm.$store.getters.state_tender
-            // vm.getStateTender()
-            // if(to.params.id) {
-            //     vm.$store.commit("setBidsDetails", {tdr_id:to.params.id});
-            // }
-            // vm.from_path = from.path;
-            // console.log('searchfileter')
-            // console.log(vm.$store.getters.searchfilter)
-            // window.scrollTo(0, 0);
-            // // vm.checklogin();
-            // vm.index();
-            // vm.getBidInterest();
-            // moment.updateLocale("language_code", {
-            //     invalidDate: "--",
-            // });
         });
     },
 
     methods: {
+        previousPage(){
+            this.$router.push(this.from_path)
+        },
+
         showAlert() {
             this.$store.dispatch("info", "Didn't find the url to open");
         },

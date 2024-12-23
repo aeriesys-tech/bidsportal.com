@@ -249,13 +249,13 @@ import "@jobinsjp/vue3-datepicker/index.css";
 
 export default {
     props:{
-        'clear_state_filters': {
+        'clear_international_filters': {
             type: Boolean,
             requred: true
         }
     },
 
-    emits: ['updateStateFilters'],
+    emits: ['updateInternationalFilters'],
 
     components: { DatePicker },
 

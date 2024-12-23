@@ -108,26 +108,6 @@ export default {
             .then(function (response) {
                 vm.isLoading=false
                 let user = response.data.user
-                let header_menu = {
-                    show_pricing : false,
-                    show_upgrade : false,
-                    show_bidsearch : false
-                }
-                if(user.user_subscription){
-                    let valid_to = user.user_subscription.valid_to
-                    const today = moment().startOf('day')
-                    const validToDate = moment(valid_to)
-                    header_menu.show_pricing = false
-                    if(validToDate.isSameOrAfter(today)){
-                        header_menu.show_upgrade = false
-                    }else{
-                        header_menu.show_upgrade = true
-                    }
-                }else{
-                    header_menu.show_pricing = true
-                }
-
-                vm.$store.dispatch('setHeaderMenu', header_menu)
                 vm.$store.dispatch('success','Successfully logged in');
                 vm.$store.commit("setUser", response.data.user);
                 vm.$store.commit("setToken", response.data.access_token);
@@ -135,9 +115,9 @@ export default {
             })
             .catch(function (error) {
                 console.log(error)
-                // vm.isLoading=false
-                // vm.errors = error.response.data.errors;
-                // vm.$store.dispatch("error", error.response.data.message);
+                vm.isLoading=false
+                vm.errors = error.response.data.errors;
+                vm.$store.dispatch("error", error.response.data.message);
                
             });
         }

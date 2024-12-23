@@ -18,7 +18,23 @@
                 <p class="mb-0 text-dark">We believe pricing should be straightforward, fair and affordable for all businesses.</p>
             </div>
             <div class="row justify-content-center my-5">
-                <div class="col-sm-5" data-v-157df1e0="">
+                <div class="col-sm-4" data-v-157df1e0="">
+                    <div class="card h-100" data-v-157df1e0="">
+                        <div class="card-header pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Trial</h5></div>
+                        <div class="card-body p-4" data-v-157df1e0="">
+                            <p data-v-157df1e0="">
+                                Access our extensive contract database, receive daily email notifications of RFPs, and get direct customer support. Maximize opportunities with tools for finding, viewing, and qualifying bids.
+                            </p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center p-4 pt-0" data-v-157df1e0="">
+                            <div data-v-157df1e0="">
+                                <div class="d-flex align-items-center" data-v-157df1e0=""><h5 class="fw-bold mb-3 me-1" data-v-157df1e0="">Free / {{ trial.days }} Days</h5></div>
+                                <a href="#" class="btn btn-primary mb-2" disabled="true" data-v-157df1e0="" @click.prevent="getplan(trial)">SUBSCRIBE NOW</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4" data-v-157df1e0="">
                     <div class="card h-100" data-v-157df1e0="">
                         <div class="card-header pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Semi-Annual Subscription</h5></div>
                         <div class="card-body p-4" data-v-157df1e0="">
@@ -34,7 +50,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-5" data-v-157df1e0="">
+                <div class="col-sm-4" data-v-157df1e0="">
                     <div class="card h-100 bg-light" data-v-157df1e0="">
                         <div class="card-header pb-0 bg-light" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Yearly Subscription</h5></div>
                         <div class="card-body p-4" data-v-157df1e0="">
@@ -58,7 +74,7 @@
                             </div>
                         </div>
                     </div>
-                    <p class="text-end text-dark fnt-wt-500" data-v-157df1e0="">Save 15% by paying Yearly</p>
+                    <p class="text-end text-dark fnt-wt-500" data-v-157df1e0="">Save 15% by paying yearly</p>
                 </div>
             </div>
             <div class="row g-4 justify-content-center my-5">
@@ -251,7 +267,7 @@
                         <div class="modal-body mbodyaccess">
                             <div class="p-sm-2">
                                 <p class="mb-0">New here ? <router-link to="/sign_up"> Sign Up</router-link></p>
-                                <div class="bg-success bg-opacity-10 text-success fw-light rounded-2 p-2" role="alert" v-if="activeStatus">
+                                <div class="bg-success bg-opacity-10 text-success fw-light rounded-2 p-2" role="alert" v-if="active_status">
                                     You account has been Activated Login here
                                 </div>
                                 <!-- Form START -->
@@ -312,71 +328,54 @@
                 type: "password",
                 icon: false,
                 user: {
+                    user_id:null,
                     email: "",
                     password: "",
                 },
                 modal2: false,
-                activeStatus: false,
-                decodedid: "",
-                userid: "",
-                plans: [],
-                plans_details: {
-                    id: "",
-                },
-                discount1: "",
-                meta: {
-                    search: "",
-                    order_by: "asc",
-                    field: "",
-                    per_page: 10,
-                    totalRows: 0,
-                    currentPage: 1,
-                    lastPage: 1,
-                    from: 1,
-                    maxPage: 1,
-                },
-                showNotification: false,
+                active_status: false,
                 errors: [],
-                emailactive: [],
-                useremail: {
-                    id: "",
-                },
                 id: "",
                 isLoading: false,
                 fullPage: true,
                 subscription_plans:[],
                 semi_annual:'',
-                annual:''
-
+                annual:'',
+                trial:''
             };
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.$store.commit("setPage", "plans");
-                if (to.name == "PlanAcitve") {
-                    vm.id = atob(vm.$route.params.id);
-                    vm.useremail.id = vm.id;
-                    let uri = "activate";
+                if (to.name == "ActivateUser") {
+                    vm.user.user_id = atob(vm.$route.params.id)
+                    let uri = "activateUser";
                     vm.$store
-                        .dispatch("post", { uri: uri, data: vm.useremail })
+                        .dispatch("post", { uri: uri, data: vm.user })
                         .then(function (response) {
-                            // vm.state_country = response.data.data;
-                            vm.emailactive = response.data;
+                            vm.user = response.data;
                             vm.modal2 = true;
-                            vm.activeStatus = true;
-                            vm.index();
+                            vm.active_status = true
+                            vm.index()
                         })
                         .catch(function (error) {
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
                 } else {
-                    vm.activeStatus = false;
+                    vm.active_status = false;
                     vm.index();
                 }
             });
         },
         mounted() {
+            let header_menu = this.$store.getters.header_menu;
+            console.log(header_menu);
+            if (header_menu) {
+                header_menu.show_bidsearch = true
+                header_menu.show_pricing = false
+                header_menu.show_upgrade = false
+                this.$store.dispatch("setHeaderMenu", header_menu);
+            }
             window.scrollTo(0, 0);
         },
         methods: {
@@ -401,6 +400,14 @@
 
                         if(annual.length){
                             vm.annual = annual[0]
+                        }
+
+                        let trial = vm.subscription_plans.filter(function(element){
+                            return element.plan === 'Trial'
+                        })
+
+                        if(trial.length){
+                            vm.trial = trial[0]
                         }
                     })
                     .catch(function (error) {
@@ -435,6 +442,7 @@
                         vm.$store.commit("setUser", response.data.user);
                         vm.$store.commit("setToken", response.data.access_token);
                         vm.closemodal();
+                        vm.$router.push('/subscription_plans')
                     })
                     .catch(function (error) {
                         vm.isLoading = false;

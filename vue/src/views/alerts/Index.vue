@@ -41,7 +41,16 @@
                                         <input type="checkbox" class="dd-input" id="test" />
                                         <ul class="dd-menu">
                                             <li>
+                                                <router-link class="dropdown-item" :to="'state_alert'"> State </router-link>
+                                            </li>
+                                            <li>
                                                 <router-link class="dropdown-item" :to="'federal_alert'"> Federal </router-link>
+                                            </li>
+                                            <li>
+                                                <router-link class="dropdown-item" :to="'private_alert'"> Private </router-link>
+                                            </li>
+                                            <li>
+                                                <router-link class="dropdown-item" :to="'international_alert'"> International </router-link>
                                             </li>
                                         </ul>
                                     </label>
@@ -230,9 +239,18 @@
             },
 
             showTenders(alert) {
+                console.log(alert)
                 this.$store.commit("setAlert", alert);
                 if(alert.region == 'Federal'){
                     this.$router.push('/bids/federal-opportunities')
+                } else if(alert.region == 'State'){
+                    this.$router.push('/bids/state-opportunities')
+                } else if(alert.region == 'Private'){
+                    this.$router.push('/bids/private-commercial')
+                } else if(alert.region == 'International'){
+                    this.$router.push('/bids/international-opportunities')
+                }else{
+
                 }
             },
 
@@ -259,10 +277,10 @@
             edit(alert) {
                 console.log(alert)
 
-		path:'/bids/bid-alert/:region/:alert_id/edit',
+		        // path:'/bids/bid-alert/:region/:alert_id/edit',
                 // this.$store.commit("setSelectedNaics",intersted.naics_id ? intersted.naics_id.split(","):[]);
                 // this.$store.commit("setSelectedPsces",intersted.psc ? intersted.psc.split(","):[]);
-                this.$router.push("/bids/bid-alert/Federal/" + alert.alert_id +'/edit' );
+                this.$router.push('/bids/'+alert.region+'/'+alert.alert_id +'/edit' );
             },
 
             getInterstedUser() {
