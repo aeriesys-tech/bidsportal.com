@@ -42,6 +42,9 @@ import Categories from "@/views/Categories.vue";
 
 import DuplicateStateTenders from "@/views/duplicate_state_tenders/Index.vue";
 
+//Subscription
+import SubscriptionPlans from "@/views/SubscriptionPlans/SubscriptionPlan.vue";
+
 const routes = [
 
     {
@@ -226,6 +229,13 @@ const routes = [
         path: "/duplicate_state_tenders",
         name: "DuplicateStateTenders",
         component: DuplicateStateTenders,
+    },
+
+    //Subscription plans
+    {
+        path: "/subscription_plans",
+        name: "SubscriptionPlans",
+        component: SubscriptionPlans,
     },
 
 

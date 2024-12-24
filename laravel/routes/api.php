@@ -148,8 +148,13 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addTrialSubscription",[UserSubscriptionController::class,'addTrialSubscription']);
 
 	Route::post("getUserPayments",[UserPaymentController::class,'getUserPayments']);
-
+	
 	Route::post("paginateUserSubscriptions",[SubscriptionPlanController::class,'paginateUserSubscriptions']);
+	Route::post("paginateSubscriptionPlans",[SubscriptionPlanController::class,'paginateSubscriptionPlans']);
+	Route::post("addSubscriptionPlan",[SubscriptionPlanController::class,'addSubscriptionPlan']);
+	Route::post("getSubscriptionPlan",[SubscriptionPlanController::class,'getSubscriptionPlan']);
+	Route::post("updateSubscriptionPlan",[SubscriptionPlanController::class,'updateSubscriptionPlan']);
+	Route::post("deleteSubscriptionPlan",[SubscriptionPlanController::class,'deleteSubscriptionPlan']);
 
 	//Federal Agency
 	Route::post("paginateFederalAgencies",[FederalAgencyController::class,'paginateFederalAgencies']);

@@ -7,10 +7,10 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card">
-                                <div class="card-header">
+                                <!-- <div class="card-header">
                                     <strong>Update Avatar</strong>
-                                </div>
-                                <div class="card-body">
+                                </div> -->
+                                <!-- <div class="card-body">
                                     <div class="text-center" v-if="user.avatar">
                                         <img width="200" :src="user.avatar?user.avatar:'@/assets/deafult_user_image.png'" alt="user image" />
                                     </div>
@@ -19,7 +19,7 @@
                                         <input type="file" class="form-control" id="customFile" :class="{'is-invalid': errors.avatar}" @change="onImageChange($event)" accept="image/*" />
                                     </div>
                                     <span v-if="errors.avatar" class="invalid-feedback">{{ errors.avatar[0] }}</span>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -31,8 +31,8 @@
                                     <div class="row g-3">
                                         <div class="col-sm-6">
                                             <label class="form-label">Name</label><span class="text-danger"> *</span>
-                                            <input type="text" placeholder="Name" class="form-control" :class="{'is-invalid': errors.name}" v-model="user.name" ref="name" />
-                                            <span v-if="errors.name" class="invalid-feedback">{{ errors.name[0] }}</span>
+                                            <input type="text" placeholder="Name" class="form-control" :class="{'is-invalid': errors.first_name}" v-model="user.first_name" ref="name" />
+                                            <span v-if="errors.first_name" class="invalid-feedback">{{ errors.first_name[0] }}</span>
                                         </div>
                                         <div class="col-sm-6">
                                             <label class="form-label">Email</label><span class="text-danger"> *</span>
@@ -41,19 +41,19 @@
                                         </div>
                                         <div class="col-sm-6">
                                             <label class="form-label">Role</label>
-                                            <input type="text" placeholder="Role" class="form-control" :class="{'is-invalid': errors.role_name}" v-model="user.role.role_name" readonly />
-                                            <span v-if="errors.role_name" class="invalid-feedback">{{ errors.role_name[0] }}</span>
+                                            <input type="text" placeholder="Role" class="form-control" :class="{'is-invalid': errors.role}" v-model="user.role" readonly />
+                                            <span v-if="errors.role" class="invalid-feedback">{{ errors.role[0] }}</span>
                                         </div>
                                         <div class="col-sm-6">
                                             <label class="form-label">Mobile No.</label>
-                                            <input type="text" placeholder="Mobile No." class="form-control" :class="{'is-invalid': errors.mobile_no}" v-model="user.mobile_no" />
-                                            <span v-if="errors.mobile_no" class="invalid-feedback">{{ errors.mobile_no[0] }}</span>
+                                            <input type="text" placeholder="Mobile No." class="form-control" :class="{'is-invalid': errors.mobile1}" v-model="user.mobile1" />
+                                            <span v-if="errors.mobile1" class="invalid-feedback">{{ errors.mobile1[0] }}</span>
                                         </div>
-                                        <div class="col-sm-12">
+                                        <!-- <div class="col-sm-12">
                                             <label class="form-label">Address</label>
                                             <textarea type="text" placeholder="Address" class="form-control" :class="{'is-invalid': errors.address}" v-model="user.address"></textarea>
                                             <span v-if="errors.address" class="invalid-feedback">{{ errors.address[0] }}</span>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="card-footer text-end">
@@ -131,9 +131,9 @@
 
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.user.user_id = vm.$store.getters.user?.user_id;
+                vm.user.admin_id = vm.$store.getters.user?.admin_id;
                 let loader = vm.$loading.show();
-                let uri = { uri: "me", data: vm.user };
+                let uri = { uri: "meAdmin", data: vm.user };
                 vm.$store
                     .dispatch("post", uri)
                     .then(function (response) {
@@ -166,17 +166,19 @@
             },
             updateProfile() {
                 let vm = this;
+                vm.user.admin_id = vm.$store.getters.user?.admin_id;
                 let loader = vm.$loading.show();
                 let data = new FormData();
-                data.append("name", this.user.name);
+                data.append("first_name", this.user.first_name);
                 data.append("email", this.user.email);
-                data.append("mobile_no", this.user.mobile_no);
+                data.append("mobile1", this.user.mobile1);
                 data.append("avatar", this.image);
-                data.append("role_id", this.user.role_id);
+                data.append("role", this.user.role);
                 data.append("address", this.user.address);
 
                 vm.$store
-                    .dispatch("post", { uri: "updateProfile", data: data })
+                
+                    .dispatch("post", { uri: "updateAdminProfile", data: vm.user })
                     .then(function (response) {
                         console.log(response.data);
                         loader.hide();
@@ -193,9 +195,10 @@
 
             updatePassword() {
                 let vm = this;
+                vm.user.admin_id = vm.$store.getters.user?.admin_id;
                 let loader = vm.$loading.show();
                 vm.$store
-                    .dispatch("post", { uri: "updatePassword", data: vm.user })
+                    .dispatch("post", { uri: "updateAdminPassword", data: vm.user })
                     .then(function () {
                         loader.hide();
                         vm.$store.dispatch("success", "Password is successfully updated");
