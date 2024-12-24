@@ -18,7 +18,7 @@
                                     <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i
                                             class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
                                 </li>
-                                <li class="list-inline-item" v-if="state_tender?.tender_url">
+                                <li class="list-inline-item" v-if="international_tender?.tender_url">
                                     <a href="javascript:void(0)" @click="openWebSite()"
                                         class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open
                                         Website</a>
@@ -29,7 +29,8 @@
                                         Website</a>
                                 </li>
                                 <li class="list-inline-item" v-if="$store.getters.user">
-                                    <button class="btn btn-sm btn-primary" @click.prevent="sharestate_tenders()"><i
+                                    <button class="btn btn-sm btn-primary"
+                                        @click.prevent="shareinternational_tenders()"><i
                                             class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                                 </li>
                             </ul>
@@ -38,25 +39,25 @@
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
                                     <p class="" style="color: black; font-size: 18px;">
-                                        <img v-if="state_tender.region?.region_id == 2" class="icon"
+                                        <img v-if="international_tender.region?.region_id == 2" class="icon"
                                             src="/img/federalblue.6e218214.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 1"
+                                        <img class="icon" v-if="international_tender.region?.region_id == 1"
                                             src="/img/stateblue.16cfab6e.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 3"
+                                        <img class="icon" v-if="international_tender.region?.region_id == 3"
                                             src="/img/privateblue.c4518422.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 4"
+                                        <img class="icon" v-if="international_tender.region?.region_id == 4"
                                             src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                        State & Local Opportunities
+                                        International & Local Opportunities
                                     </p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
-                                        class="nav-item">{{ state_tender.tdr_title }}</h5>
+                                        class="nav-item">{{ international_tender.tdr_title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
                                         <li class="nav-item"><span
                                                 style="font-weight: 900 !important; color: black;">Solicitiation Number
-                                                :</span>&nbsp;{{ state_tender.tender_no }}</li>
+                                                :</span>&nbsp;{{ international_tender.tender_no }}</li>
                                         <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg"
                                                 width="17" />
-                                            Last Updated on {{ format_date(state_tender.posted_date) }}</li>
+                                            Last Updated on {{ format_date(international_tender.posted_date) }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -110,30 +111,49 @@
                                                 <li class="list-group-item">
                                                     <h6 class="mb-0 fw-normal">Department/Ind. Agency :</h6>
                                                     <span class="fw-light mb-0">{{
-                                                        state_tender.state_agency?.agency_name }}</span>
+                                                        international_tender.international_agency?.agency_name }}</span>
                                                 </li>
                                             </ul>
-                                            <p class="mb-4 text-align-justify" v-html="state_tender.description"></p>
+                                            <p class="mb-4 text-align-justify"
+                                                v-html="international_tender.description"></p>
 
                                             <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                                <div v-if='state_tender.place_of_performance'>
+                                                <div v-if='international_tender.place_of_performance'>
                                                     <h6 class="fw-normal mb-0">Place of Performance:</h6>
-                                                    <p>{{ state_tender.place_of_performance }}</p>
+                                                    <p>{{ international_tender.place_of_performance }}</p>
                                                 </div>
-                                                <div v-if="state_tender.state_office_address">
+                                                <!-- <div v-if="international_tender.international_office_address">
                                                     <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
-                                                    <!-- <p>
-                                                {{ state_tender.state_office_address.city }}<span
-                                                    v-if="state_tender.state_office_address.city">, </span>
-                                                <span>{{ state_tender.state_office_address.state + '
-                                                '+state_tender.state_office_address.country}}</span>
-                                            </p> -->
                                                     <p>
-                                                        {{ state_tender.state_office_address.city }}
-                                                        <span v-if="state_tender.state_office_address.city">, </span>
+                                                        {{ international_tender.international_office_address.city }}
+                                                        <span
+                                                            v-if="international_tender.international_office_address.city">,
+                                                        </span>
                                                         <span>
-                                                            {{ state_tender.state_office_address.state + ' ' +
-                                                                state_tender.state_office_address.country }}
+                                                            {{
+                                                                international_tender.international_office_address.state
+                                                                + ' ' +
+                                                                international_tender.international_office_address.country }}
+                                                        </span>
+                                                    </p>
+                                                </div> -->
+                                                <div
+                                                    v-if="international_tender.international_office_address && (international_tender.international_office_address.city || international_tender.international_office_address.state || international_tender.international_office_address.country)">
+                                                    <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
+                                                    <p>
+                                                        <span
+                                                            v-if="international_tender.international_office_address.city">
+                                                            {{ international_tender.international_office_address.city }}
+                                                        </span>
+                                                        <span
+                                                            v-if="international_tender.international_office_address.city && (international_tender.international_office_address.state || international_tender.international_office_address.country)">
+                                                            ,
+                                                        </span>
+                                                        <span
+                                                            v-if="international_tender.international_office_address.state || international_tender.international_office_address.country">
+                                                            {{ international_tender.international_office_address.state
+                                                            }} {{
+                                                                international_tender.international_office_address.country }}
                                                         </span>
                                                     </p>
                                                 </div>
@@ -143,15 +163,16 @@
                                     <div class="card ">
                                         <div class="card-body py-0 p-4">
                                             <div class="row g-3 align-items-center justify-content-between mb-3">
-                                                <div class="col-md-6" v-if="state_tender?.state_attachments?.length">
+                                                <div class="col-md-6"
+                                                    v-if="international_tender?.international_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{
-                                                        state_tender?.state_attachments?.length
-                                                        }})</strong>
+                                                        international_tender?.international_attachments?.length
+                                                    }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
                                                         <a target="_blank"
-                                                            :href="$store.state.baseUrl + 'downloadStateAttachments/' + state_tender.state_tender_id"
+                                                            :href="$store.state.baseUrl + 'downloadInternationalAttachments/' + international_tender.international_tender_id"
                                                             class="btn btn-sm btn-primary">
                                                             <i class="bi bi-cloud-download"></i> Download All
                                                             Attachments/Links
@@ -173,28 +194,30 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody class="border-top-0">
-                                                        <tr v-if="!state_tender?.state_attachments?.length">
+                                                        <tr
+                                                            v-if="!international_tender?.international_attachments?.length">
                                                             <td class="text-center" colspan="5">No Attachments Available
                                                             </td>
                                                         </tr>
-                                                        <tr v-for="state_attachment, att_key in state_tender.state_attachments"
+                                                        <tr v-for="international_attachment, att_key in international_tender.international_attachments"
                                                             :key="att_key">
-                                                            <td>
-                                                                <i :class="state_attachment.attachment_icon"
+                                                            <td class="text-center">
+                                                                <i :class="international_attachment.attachment_icon"
                                                                     class="fa-fw me-2 fs-5"></i>
                                                             </td>
-                                                            <!-- <td id="demo-3">{{ state_attachment.attachment_name }}</td> -->
-                                                            <td id="demo-3" :title="state_attachment.attachment_name">
+                                                            <!-- <td id="demo-3">{{ international_attachment.attachment_name }}</td> -->
+                                                            <td id="demo-3"
+                                                                :title="international_attachment.attachment_name">
                                                                 <span class="truncated-text">{{
-                                                                    state_attachment.attachment_name }}</span>
+                                                                    international_attachment.attachment_name }}</span>
                                                             </td>
-                                                            <td>{{ state_attachment.attachment_size
+                                                            <td>{{ international_attachment.attachment_size
                                                                 }}</td>
-                                                            <td>{{ state_attachment.attachment_date
+                                                            <td>{{ international_attachment.attachment_date
                                                                 }}</td>
                                                             <td class="text-center"
-                                                                v-if="state_attachment.attachment_url">
-                                                                <a :href="state_attachment.attachment_url"
+                                                                v-if="international_attachment.attachment_url">
+                                                                <a :href="international_attachment.attachment_url"
                                                                     target="_blank" class="btn btn-light btn-round mb-0"
                                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                                     data-bs-title="Download">
@@ -203,7 +226,7 @@
                                                             </td>
                                                             <td class="text-center" v-else>
                                                                 <!-- <a
-                                                            :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ state_tender.region.region_id +'/'+ attachment.name+'/'+state_tender.tdr_id"
+                                                            :href="$store.international.baseUrl+'singleBidDownloadFromS3/'+ international_tender.region.region_id +'/'+ attachment.name+'/'+international_tender.tdr_id"
                                                             target="_blank"
                                                             class="btn btn-light btn-round mb-0"
                                                             data-bs-toggle="tooltip"
@@ -225,7 +248,7 @@
                                     <div class="card bg-transparent p-4">
                                         <div class="card-body p-0">
                                             <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="state_tender.tdr_requirement"></p>
+                                            <p class="mb-4" v-html="international_tender.tdr_requirement"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -234,7 +257,7 @@
                                     <div class="card bg-transparent p-4">
                                         <div class="card-body p-0">
                                             <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="state_tender.tdr_prog_information"></p>
+                                            <p class="mb-4" v-html="international_tender.tdr_prog_information"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -278,14 +301,14 @@
                                                             </h6>
                                                             <span class="me-3">User Name : {{
                                                                 bidintersed.user_details.name
-                                                                }}</span><br />
+                                                            }}</span><br />
 
                                                             <span class="me-3">Position : {{
                                                                 bidintersed.bid_interested_type
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3">Website : {{
                                                                 bidintersed.user_details.web_address
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
                                                                 bidintersed.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
@@ -342,21 +365,21 @@
                                                     Notice Type
                                                 </div>
                                                 <div class="mb-0" style="color: #747579; font-size: 16px;">{{
-                                                    state_tender.state_notice?.notice_name }}</div>
+                                                    international_tender.international_notice?.notice_name }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                     Posted Date
                                                 </div>
                                                 <div class="mb-0" style="color: #747579; font-size: 16px;">{{
-                                                    format_date(state_tender.posted_date) }}</div>
+                                                    format_date(international_tender.posted_date) }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                     Response Date
                                                 </div>
                                                 <div class="mb-0" style="color: #747579; font-size: 16px;">{{
-                                                    format_date(state_tender.expiry_date) }}</div>
+                                                    format_date(international_tender.expiry_date) }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div>
@@ -364,41 +387,43 @@
                                                         Category
                                                     </div>
                                                     <div class="mb-0" style="color: #747579; font-size: 16px;">{{
-                                                        state_tender.category?.category_name }}</div>
+                                                        international_tender.category?.category_name }}</div>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-12" v-if="state_tender.state_contacts?.length">
+                                <div class="col-md-6 col-xl-12"
+                                    v-if="international_tender.international_contacts?.length">
                                     <div class="card border card-body border bg-light p-4">
                                         <!-- <div class="hstack gap-2 mb-1"> -->
                                         <h6 class="text-success fw-500" style="font-size: 18px;">Contact Information
                                         </h6>
                                         <!-- </div> -->
-                                        <div v-for="state_contact, key in state_tender.state_contacts" :key="key">
+                                        <div v-for="international_contact, key in international_tender.international_contacts"
+                                            :key="key">
                                             <strong class="mb-1 text-primary"
-                                                v-if="state_contact.type == 'Primary'">Primary
+                                                v-if="international_contact.type == 'Primary'">Primary
                                                 Contact:</strong>
                                             <strong class="mb-1 text-primary"
-                                                v-if="state_contact.type == 'Secondary'">Secondary
+                                                v-if="international_contact.type == 'Secondary'">Secondary
                                                 Contact:</strong>
                                             <ul lass="list-group list-group-borderless" style="border-top: none;">
-                                                <li class="list-group-item py-1" v-if="state_contact.fullName">
+                                                <li class="list-group-item py-1" v-if="international_contact.fullName">
                                                     <span class="text-info fw-light me -1 mb-0">{{
-                                                        state_contact.full_name
-                                                        }}</span>
+                                                        international_contact.full_name
+                                                    }}</span>
                                                 </li>
-                                                <li class="list-group-item py-1" v-if="state_contact.phone">
+                                                <li class="list-group-item py-1" v-if="international_contact.phone">
                                                     <span href="#" class="mb-0">
                                                         <i class="fa-solid fa-fw fa-phone text-warning fs-6"></i>
-                                                        {{ state_contact.phone }}
+                                                        {{ international_contact.phone }}
                                                     </span>
                                                 </li>
-                                                <li class="list-group-item py-1" v-if="state_contact.email">
+                                                <li class="list-group-item py-1" v-if="international_contact.email">
                                                     <span href="#" class="mb-0">
                                                         <i class="fa-solid fa-fw fa-envelope text-warning fs-6"></i>
-                                                        {{ state_contact.email }}
+                                                        {{ international_contact.email }}
                                                     </span>
                                                 </li>
                                             </ul>
@@ -598,7 +623,7 @@ export default {
         return {
             userintertsed: '',
             download_all_attachments: '',
-            state_tender: '',
+            international_tender: '',
             meta: {
                 search: "",
                 order_by: "asc",
@@ -615,7 +640,7 @@ export default {
             status: true,
             addinterestmodal: false,
             interstmodal: false,
-            state_tender: {},
+            international_tender: {},
             userinteresd: [],
             userinteresed_id: "",
             alertmodal: false,
@@ -656,28 +681,29 @@ export default {
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             vm.from_path = from.path
-            if (vm.$store.getters.state_tender) {
-                vm.state_tender = vm.$store.getters.state_tender
-                vm.getStateTender()
+            if (vm.$store.getters.international_tender) {
+                vm.international_tender = vm.$store.getters.international_tender
+                console.log("iii--tenders--", vm.international_tender)
+                vm.getInternationalTender()
             }
         });
     },
 
     methods: {
-        previousPage(){
+        previousPage() {
             this.$router.push(this.from_path)
         },
 
         showAlert() {
             this.$store.dispatch("info", "Didn't find the url to open");
         },
-        getStateTender() {
+        getInternationalTender() {
             let vm = this
             vm.$store
-                .dispatch("post", { uri: "getStateTender", data: vm.state_tender })
+                .dispatch("post", { uri: "getInternationalTender", data: vm.international_tender })
                 .then(function (response) {
-                    vm.state_tender = response.data.data
-                    vm.download_all_attachments = vm.state_tender.state_attachments.filter(
+                    vm.international_tender = response.data.data
+                    vm.download_all_attachments = vm.international_tender.international_attachments.filter(
                         attachment => attachment.attachment_url
                     ).length >= 2;
                 })
@@ -699,7 +725,7 @@ export default {
             return value;
         },
         openWebSite() {
-            window.open(this.state_tender.tender_url, '_target_blank')
+            window.open(this.international_tender.tender_url, '_target_blank')
         },
         checkIfEmpty(str) {
             if (str?.trim()) {
@@ -725,7 +751,7 @@ export default {
             return moment(value).format("MMMM D, YYYY");
         },
         checkContact() {
-            if (this.state_tender?.tdr_pri_fullname !== "" || this.state_tender?.tdr_pri_phone !== "" || this.state_tender?.tdr_pri_email !== "" || this.state_tender?.tdr_sec_phone !== "" || this.state_tender?.tdr_sec_email !== "") {
+            if (this.international_tender?.tdr_pri_fullname !== "" || this.international_tender?.tdr_pri_phone !== "" || this.international_tender?.tdr_pri_email !== "" || this.international_tender?.tdr_sec_phone !== "" || this.international_tender?.tdr_sec_email !== "") {
                 return true;
             }
         },
@@ -738,17 +764,17 @@ export default {
         checklogin() {
             let vm = this;
             if (vm.$store.getters.user == null) {
-                vm.$router.push("/bids/state-opportunities");
+                vm.$router.push("/bids/international-opportunities");
             }
         },
         //  window.location.reload();
-        sharestate_tenders() {
+        shareinternational_tenders() {
             let vm = this;
             vm.errors = [];
             vm.shareBid.bids = [];
             vm.shareBid.mails = [];
-            vm.shareBid.region_id = vm.state_tender.tdr_region;
-            vm.shareBid.bids.push(vm.state_tender.tdr_id);
+            vm.shareBid.region_id = vm.international_tender.tdr_region;
+            vm.shareBid.bids.push(vm.international_tender.tdr_id);
 
             if (vm.$store.getters.user == null) {
                 vm.userlogin = true;
@@ -810,7 +836,7 @@ export default {
                 .dispatch("post", { uri: "getBid", data: vm.tdr })
                 .then(function (response) {
                     vm.isLoading = false;
-                    vm.state_tender = response.data.data
+                    vm.international_tender = response.data.data
                 })
                 .catch(function (error) {
                     vm.isLoading = false;
