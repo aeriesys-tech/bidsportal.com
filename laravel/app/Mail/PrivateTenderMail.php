@@ -48,6 +48,7 @@ class PrivateTenderMail extends Mailable
 
 
         return $this->view('emails.PrivateTender', compact('bids','user','request', 'images', 'app_url'))
+        ->cc('notificatios@bidsportal.com')
         ->subject('BidsPortal :: '.$request->subject);
     }
 }

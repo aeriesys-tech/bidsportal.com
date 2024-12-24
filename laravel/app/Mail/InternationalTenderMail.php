@@ -48,6 +48,7 @@ class InternationalTenderMail extends Mailable
 
 
         return $this->view('emails.StateTender', compact('bids','user','request', 'images', 'app_url'))
+        ->cc('notificatios@bidsportal.com')
         ->subject('BidsPortal :: '.$request->subject);
     }
 }
