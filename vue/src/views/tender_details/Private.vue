@@ -45,7 +45,7 @@
                                             src="/img/privateblue.c4518422.svg" alt="icon" />
                                         <img class="icon" v-if="private_tender.region?.region_id == 4"
                                             src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                        State & Local Opportunities
+                                        Private / Commerical Opportunities
                                     </p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ private_tender.tdr_title }}</h5>
@@ -119,14 +119,33 @@
                                                     <h6 class="fw-normal mb-0">Place of Performance:</h6>
                                                     <p>{{ private_tender.place_of_performance }}</p>
                                                 </div>
-                                                <div v-if="private_tender.private_office_address">
+                                                <!-- <div v-if="private_tender.private_office_address">
                                                     <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                     <p>
                                                         {{ private_tender.private_office_address.city }}
                                                         <span v-if="private_tender.private_office_address.city">,
                                                         </span>
                                                         <span>
-                                                            {{ private_tender.private_office_address.private + ' ' +
+                                                            {{ private_tender.private_office_address.state + ' ' +
+                                                                private_tender.private_office_address.country }}
+                                                        </span>
+                                                    </p>
+                                                </div> -->
+
+                                                <div
+                                                    v-if="private_tender.private_office_address && (private_tender.private_office_address.city || private_tender.private_office_address.state || private_tender.private_office_address.country)">
+                                                    <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
+                                                    <p>
+                                                        <span v-if="private_tender.private_office_address.city">
+                                                            {{ private_tender.private_office_address.city }}
+                                                        </span>
+                                                        <span
+                                                            v-if="private_tender.private_office_address.city && (private_tender.private_office_address.state || private_tender.private_office_address.country)">
+                                                            ,
+                                                        </span>
+                                                        <span
+                                                            v-if="private_tender.private_office_address.state || private_tender.private_office_address.country">
+                                                            {{ private_tender.private_office_address.state }} {{
                                                                 private_tender.private_office_address.country }}
                                                         </span>
                                                     </p>
@@ -141,12 +160,12 @@
                                                     v-if="private_tender?.private_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{
                                                         private_tender?.private_attachments?.length
-                                                        }})</strong>
+                                                    }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
                                                         <a target="_blank"
-                                                            :href="$store.state.baseUrl + 'downloadStateAttachments/' + private_tender.private_tender_id"
+                                                            :href="$store.state.baseUrl + 'downloadPrivateAttachments/' + private_tender.private_tender_id"
                                                             class="btn btn-sm btn-primary">
                                                             <i class="bi bi-cloud-download"></i> Download All
                                                             Attachments/Links
@@ -174,7 +193,7 @@
                                                         </tr>
                                                         <tr v-for="private_attachment, att_key in private_tender.private_attachments"
                                                             :key="att_key">
-                                                            <td>
+                                                            <td class="text-center">
                                                                 <i :class="private_attachment.attachment_icon"
                                                                     class="fa-fw me-2 fs-5"></i>
                                                             </td>
@@ -264,14 +283,14 @@
                                                             </h6>
                                                             <span class="me-3">User Name : {{
                                                                 bidintersed.user_details.name
-                                                                }}</span><br />
+                                                            }}</span><br />
 
                                                             <span class="me-3">Position : {{
                                                                 bidintersed.bid_interested_type
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3">Website : {{
                                                                 bidintersed.user_details.web_address
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
                                                                 bidintersed.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
@@ -373,7 +392,7 @@
                                                 <li class="list-group-item py-1" v-if="private_contact.fullName">
                                                     <span class="text-info fw-light me -1 mb-0">{{
                                                         private_contact.full_name
-                                                        }}</span>
+                                                    }}</span>
                                                 </li>
                                                 <li class="list-group-item py-1" v-if="private_contact.phone">
                                                     <span href="#" class="mb-0">
@@ -644,23 +663,23 @@ export default {
             vm.from_path = from.path
             if (vm.$store.getters.private_tender) {
                 vm.private_tender = vm.$store.getters.private_tender
-                vm.getStateTender()
+                vm.getPrivateTender()
             }
         });
     },
 
     methods: {
-        previousPage(){
+        previousPage() {
             this.$router.push(this.from_path)
         },
 
         showAlert() {
             this.$store.dispatch("info", "Didn't find the url to open");
         },
-        getStateTender() {
+        getPrivateTender() {
             let vm = this
             vm.$store
-                .dispatch("post", { uri: "getStateTender", data: vm.private_tender })
+                .dispatch("post", { uri: "getPrivateTender", data: vm.private_tender })
                 .then(function (response) {
                     vm.private_tender = response.data.data
                     vm.download_all_attachments = vm.private_tender.private_attachments.filter(

@@ -146,7 +146,7 @@
                                                 <div class="col-md-6" v-if="state_tender?.state_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{
                                                         state_tender?.state_attachments?.length
-                                                        }})</strong>
+                                                    }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
@@ -179,7 +179,7 @@
                                                         </tr>
                                                         <tr v-for="state_attachment, att_key in state_tender.state_attachments"
                                                             :key="att_key">
-                                                            <td>
+                                                            <td class="text-center">
                                                                 <i :class="state_attachment.attachment_icon"
                                                                     class="fa-fw me-2 fs-5"></i>
                                                             </td>
@@ -278,14 +278,14 @@
                                                             </h6>
                                                             <span class="me-3">User Name : {{
                                                                 bidintersed.user_details.name
-                                                                }}</span><br />
+                                                            }}</span><br />
 
                                                             <span class="me-3">Position : {{
                                                                 bidintersed.bid_interested_type
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3">Website : {{
                                                                 bidintersed.user_details.web_address
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
                                                                 bidintersed.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
@@ -387,7 +387,7 @@
                                                 <li class="list-group-item py-1" v-if="state_contact.fullName">
                                                     <span class="text-info fw-light me -1 mb-0">{{
                                                         state_contact.full_name
-                                                        }}</span>
+                                                    }}</span>
                                                 </li>
                                                 <li class="list-group-item py-1" v-if="state_contact.phone">
                                                     <span href="#" class="mb-0">
@@ -658,13 +658,14 @@ export default {
             vm.from_path = from.path
             if (vm.$store.getters.state_tender) {
                 vm.state_tender = vm.$store.getters.state_tender
+                console.log("state-tender--", vm.state_tender)
                 vm.getStateTender()
             }
         });
     },
 
     methods: {
-        previousPage(){
+        previousPage() {
             this.$router.push(this.from_path)
         },
         showAlert() {
@@ -686,7 +687,7 @@ export default {
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         },
-        
+
         replaceSpecialCharacters(value) {
             value = value.replaceAll("+", " ");
             value = value.replaceAll("-", " ");
