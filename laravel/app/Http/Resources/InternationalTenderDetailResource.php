@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\InternationalAttachmentResource;
 
 class InternationalTenderDetailResource extends JsonResource
 {
@@ -84,7 +85,7 @@ class InternationalTenderDetailResource extends JsonResource
             'set_aside' => $this->SetAside,
             'naics' => $this->Naics,
             'psc' => $this->Psc,
-            'international_attachments' => InternationalAttachmentResource::collection($this->InternatinalAttachments),
+            'international_attachments' => InternationalAttachmentResource::collection($this->InternationalAttachments),
             'international_contacts' => $this->InternationalContacts,
             'status' => $this->status?true:false,
             'primary_address' => $primary_address,

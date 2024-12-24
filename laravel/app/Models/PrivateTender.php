@@ -38,6 +38,44 @@ class PrivateTender extends Model
 
     protected $primaryKey = 'private_tender_id';
 
+    public function PrivateTenderDetails(){
+        
+        $place_of_performance = null;
+        if($this->PrivateOfficeAddress && !$place_of_performance){
+            if($this->PrivateOfficeAddress->city){
+                $place_of_performance = $this->PrivateOfficeAddress->city;                
+            }
+
+            if($this->PrivateOfficeAddress->state){   
+                $place_of_performance = $place_of_performance ?  $place_of_performance.', '.$this->PrivateOfficeAddress->state : $this->PrivateOfficeAddress->state;
+            }
+
+            if($this->PrivateOfficeAddress->country){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->PrivateOfficeAddress->country : $this->PrivateOfficeAddress->country;
+            }            
+        } else{
+            $place_of_performance = null;
+        }
+
+        if($this->PrivateNotice){
+            $notice = $this->PrivateNotice->private_notice_name;
+        }else{
+            $notice = null;
+        }
+
+        if($this->Category){
+            $category = $this->Category->category_name;
+        }else{
+            $category = null;
+        }
+        return ([
+            'place_of_performance' => $place_of_performance,
+            'notice' => $notice,
+            'tender_url' => $this->tender_url,
+            'category' => $category
+        ]);   
+    }
+
     public function CartItem()
     {
         return $this->hasMany('App\Models\CartItem','private_tender_id','private_tender_id');
