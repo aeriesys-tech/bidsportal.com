@@ -17,6 +17,8 @@ use App\Http\Resources\InternationalTenderResource;
 use App\Http\Resources\InternationalTenderDetailResource;
 use App\Models\InternationalOfficeAddress;
 use App\Models\InternationalContact;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InternationalTenderMail;
 
 class InternationalTenderController extends Controller
 {
@@ -495,5 +497,33 @@ class InternationalTenderController extends Controller
     {
         $international_tender = InternationalTender::where('international_tender_id', $request->international_tender_id)->first();
         return new InternationalTenderDetailResource($international_tender);
+    }
+
+    public function sendInternationalTenderMail(Request $request)
+    {
+        $data = $request->validate([
+            'recipient_email' => ['required', function ($attribute, $value, $fail) {
+                $emails = array_map('trim', explode(',', $value));
+                foreach ($emails as $email) {
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $fail("The $attribute contains an invalid email: $email");
+                    }
+                }
+            }],
+            'subject' => 'required',
+            'message' => 'required',
+            'international_tenders' => 'required|array'
+        ]);
+
+        if(isset($request->international_tenders) && !empty($request->international_tenders)){
+            $bids = InternationalTender::whereIn('international_tender_id', $request->state_tenders)->get();
+            $user = User::where('user_id', $request->user_id)->first();
+            $emails = array_map('trim', explode(',', $request->recipient_email));
+            Mail::to($emails)->send(new InternationalTenderMail($bids, $user, $request));
+
+            return response()->json(['status' => 'Email sent successfully!']);
+        }else{
+            return response()->json(['status' => 'Error sending mail'], 422);
+        }
     }
 }

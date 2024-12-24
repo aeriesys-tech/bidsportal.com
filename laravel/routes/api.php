@@ -68,6 +68,7 @@ Route::post("deletePrivateTender", [PrivateTenderController::class,'deletePrivat
 
 Route::post("addPrivateTender", [PrivateTenderController::class,'addPrivateTender']);
 Route::post("getPrivateTender", [PrivateTenderController::class,'getPrivateTender']);
+Route::post("sendPrivateTenderMail", [PrivateTenderController::class,'sendPrivateTenderMail']);
 
 //AWS S3 Bucket
 Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
@@ -133,6 +134,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addInternationalTender", [InternationalTenderController::class,'addInternationalTender']);
 	Route::post("getInternationalTender", [InternationalTenderController::class,'getInternationalTender']);
 	Route::post("updateInternationalTender", [InternationalTenderController::class,'updateInternationalTender']);
+	Route::post("sendInternationalTenderMail", [InternationalTenderController::class,'sendInternationalTenderMail']);
 	
 
 	Route::post("changePassword",[UserController::class,'changePassword']);

@@ -14,9 +14,12 @@ use ZipArchive;
 use App\Models\PrivateAttachment;
 use App\Models\PrivateOfficeAddress;
 use App\Models\PrivateContact;
+use App\Models\User;
 use App\Http\Resources\PrivateTenderResource;
 use App\Http\Resources\PrivateTenderDetailResource;
 use App\Models\PrivateTender;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PrivateTenderMail;
 
 class PrivateTenderController extends Controller
 {
@@ -496,5 +499,33 @@ class PrivateTenderController extends Controller
     {
         $private_tender = PrivateTender::where('private_tender_id', $request->private_tender_id)->first();
         return new PrivateTenderDetailResource($private_tender);
+    }
+
+    public function sendPrivateTenderMail(Request $request)
+    {
+        $data = $request->validate([
+            'recipient_email' => ['required', function ($attribute, $value, $fail) {
+                $emails = array_map('trim', explode(',', $value));
+                foreach ($emails as $email) {
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $fail("The $attribute contains an invalid email: $email");
+                    }
+                }
+            }],
+            'subject' => 'required',
+            'message' => 'required',
+            'private_tenders' => 'required|array'
+        ]);
+
+        if(isset($request->private_tenders) && !empty($request->private_tenders)){
+            $bids = PrivateTender::whereIn('private_tender_id', $request->private_tenders)->get();
+            $user = User::where('user_id', $request->user_id)->first();
+            $emails = array_map('trim', explode(',', $request->recipient_email));
+            Mail::to($emails)->send(new PrivateTenderMail($bids, $user, $request));
+
+            return response()->json(['status' => 'Email sent successfully!']);
+        }else{
+            return response()->json(['status' => 'Error sending mail'], 422);
+        }
     }
 }

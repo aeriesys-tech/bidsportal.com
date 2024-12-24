@@ -304,7 +304,12 @@ class AuthController extends Controller
                 'user' => new UserResource($user)
             ]);
         }else{
-            return response()->json(['message' => 'These credentials donot match']);
+            return response()->json([
+                'errors' => [
+                    'email' => ['These credentials do not match our records'],
+                ],
+                'message' => 'These credentials do not match our records'
+            ], 422);
         }
     }
 
