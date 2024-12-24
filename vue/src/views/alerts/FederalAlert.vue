@@ -15,9 +15,9 @@
                             <div
                                 class="card-header bg-light-green border-bottom d-sm-flex justify-content-between align-items-center p-3">
                                 <h5 class="card-header-title title-green fw-500" v-if="status">
-                                    Create {{ $route.params.region }} Alert
+                                    Create Federal Alert
                                 </h5>
-                                <h5 class="card-header-title title-green fw-500" v-else>Update Alert</h5>
+                                <h5 class="card-header-title title-green fw-500" v-else>Update Federal Alert</h5>
 
                                 <span class="">
                                     <!-- <router-link to="/bids/state-opportunities" class="btn btn-sm btn-primary me-2"
@@ -584,7 +584,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (to.name == 'EditBidAlert') {
+            if (to.name == 'EditFederalAlert') {
                 vm.alert.alert_id = to.params.alert_id
                 vm.getAlert()
             }
@@ -973,7 +973,7 @@ export default {
                     .dispatch("post", { uri: 'createAlerts', data: vm.alert })
                     .then(function (response) {
                         vm.$store.dispatch("success", "Alert is added successfully");
-                        vm.$router.push("/bids/save-alert");
+                        vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -999,7 +999,7 @@ export default {
                         vm.$store.dispatch("success", "Alert is updated successfully");
                         vm.$store.dispatch("setSelectedNaics", null)
                         vm.$store.dispatch("setSelectedPscs", null)
-                        vm.$router.push("/bids/save-alert");
+                        vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {
                         console.log(error)

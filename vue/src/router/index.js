@@ -100,6 +100,11 @@ const routes = [
 		component: PrivateAlert
 	},
 	{
+		path: '/bids/Private/:alert_id/edit',
+		name: 'EditPrivateAlert',
+		component: PrivateAlert
+	},
+	{
 		path: '/bids/international_alert',
 		name: 'InternationalAlert',
 		component: InternationalAlert
