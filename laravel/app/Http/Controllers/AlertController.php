@@ -80,10 +80,10 @@ class AlertController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
     	try{
-	        $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
-	        	$que->whereIn('keyword', $request->keywords);
-	        })->where('user_id', $request->user_id)->first();
- 
+	        // $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
+	        // 	$que->whereIn('keyword', $request->keywords);
+	        // })->where('user_id', $request->user_id)->where('region', 'like', 'Federal')->first();
+ 			$alert = false;
 	        if (!$alert){
 		        $alert = Alert::create([
 		            'user_id' => $request->user_id,
