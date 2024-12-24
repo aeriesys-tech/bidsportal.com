@@ -113,6 +113,9 @@
                 <li class="nav-item">
                     <router-link to="/categories" class="nav-link">Category</router-link>
                 </li>
+                <li class="nav-item">
+                    <router-link to="/subscription_plans" class="nav-link">Subscription Plans</router-link>
+                </li>
             </ul>
             <div class="dropdown dropdown-profile ms-3 ms-xl-4 mt-4" v-if="$store.getters.user">
                 <a href="#" class="dropdown-link d-flex" data-bs-toggle="dropdown" data-bs-auto-close="outside">
