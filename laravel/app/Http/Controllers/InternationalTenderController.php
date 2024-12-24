@@ -16,6 +16,7 @@ use App\Jobs\UpdateInternationalFileSize;
 use App\Http\Resources\InternationalTenderResource;
 use App\Http\Resources\InternationalTenderDetailResource;
 use App\Models\InternationalOfficeAddress;
+use App\Models\User;
 use App\Models\InternationalContact;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InternationalTenderMail;
@@ -516,7 +517,7 @@ class InternationalTenderController extends Controller
         ]);
 
         if(isset($request->international_tenders) && !empty($request->international_tenders)){
-            $bids = InternationalTender::whereIn('international_tender_id', $request->state_tenders)->get();
+            $bids = InternationalTender::whereIn('international_tender_id', $request->international_tenders)->get();
             $user = User::where('user_id', $request->user_id)->first();
             $emails = array_map('trim', explode(',', $request->recipient_email));
             Mail::to($emails)->send(new InternationalTenderMail($bids, $user, $request));
