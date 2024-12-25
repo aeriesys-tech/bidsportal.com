@@ -1609,6 +1609,7 @@ export default {
         removeFilter(filter) {
             console.log(filter);
             if (filter.id == "status" || filter.id == "date") {
+                console.log("date",filter.id)
                 this.meta[filter.module] = false;
             } else if (typeof filter.id === "number") {
                 if (Array.isArray(this.meta[filter.module])) {
