@@ -2,19 +2,12 @@
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <section class="pt-4 pt-lg-5 result pb-4">
         <div class="container position-relative">
-            <div class="card shadow">
-                <div class="card-body">
-
-                    <div class="row">
+            <div class="row">
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
                                         @click.prevent="previousPage()">Back</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
-                                        <span style="font-size: 16pt;">State & Local Opportunities</span>
                                 </li>
                             </ul>
                             <ul class="list-inline text-end">
@@ -35,6 +28,18 @@
                                 <li class="list-inline-item" v-if="$store.getters.user">
                                     <button class="btn btn-sm btn-primary" @click.prevent="sharestate_tenders()"><i
                                             class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                                </li>
+                            </ul>
+                        </div>
+            </div>
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-md-between">
+                            <ul class="list-inline text-end">
+                                <li class="list-inline-item">
+                                    <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
+                                        <span style="font-size: 16pt;">State & Local Opportunities</span>
                                 </li>
                             </ul>
                         </div>
