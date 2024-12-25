@@ -38,6 +38,44 @@ class InternationalTender extends Model
 
     protected $primaryKey = 'international_tender_id';
 
+    public function InternationalTenderDetails(){
+        
+        $place_of_performance = null;
+        if($this->InternationalOfficeAddress && !$place_of_performance){
+            if($this->InternationalOfficeAddress->city){
+                $place_of_performance = $this->InternationalOfficeAddress->city;                
+            }
+
+            if($this->InternationalOfficeAddress->state){   
+                $place_of_performance = $place_of_performance ?  $place_of_performance.', '.$this->InternationalOfficeAddress->state : $this->InternationalOfficeAddress->state;
+            }
+
+            if($this->InternationalOfficeAddress->country){
+                $place_of_performance = $place_of_performance ? $place_of_performance.', '.$this->InternationalOfficeAddress->country : $this->InternationalOfficeAddress->country;
+            }            
+        } else{
+            $place_of_performance = null;
+        }
+
+        if($this->InternationalNotice){
+            $notice = $this->InternationalNotice->international_notice_name;
+        }else{
+            $notice = null;
+        }
+
+        if($this->Category){
+            $category = $this->Category->category_name;
+        }else{
+            $category = null;
+        }
+        return ([
+            'place_of_performance' => $place_of_performance,
+            'notice' => $notice,
+            'tender_url' => $this->tender_url,
+            'category' => $category
+        ]);   
+    }
+
     public function Country()
     {
         return $this->belongsTo('App\Models\Country','country_id','country_id');

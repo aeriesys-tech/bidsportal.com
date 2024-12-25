@@ -45,7 +45,7 @@
                                             src="/img/privateblue.c4518422.svg" alt="icon" />
                                         <img class="icon" v-if="private_tender.region?.region_id == 4"
                                             src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                        State & Local Opportunities
+                                        Private / Commerical Opportunities
                                     </p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ private_tender.tdr_title }}</h5>
@@ -119,14 +119,33 @@
                                                     <h6 class="fw-normal mb-0">Place of Performance:</h6>
                                                     <p>{{ private_tender.place_of_performance }}</p>
                                                 </div>
-                                                <div v-if="private_tender.private_office_address">
+                                                <!-- <div v-if="private_tender.private_office_address">
                                                     <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                     <p>
                                                         {{ private_tender.private_office_address.city }}
                                                         <span v-if="private_tender.private_office_address.city">,
                                                         </span>
                                                         <span>
-                                                            {{ private_tender.private_office_address.private + ' ' +
+                                                            {{ private_tender.private_office_address.state + ' ' +
+                                                                private_tender.private_office_address.country }}
+                                                        </span>
+                                                    </p>
+                                                </div> -->
+
+                                                <div
+                                                    v-if="private_tender.private_office_address && (private_tender.private_office_address.city || private_tender.private_office_address.state || private_tender.private_office_address.country)">
+                                                    <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
+                                                    <p>
+                                                        <span v-if="private_tender.private_office_address.city">
+                                                            {{ private_tender.private_office_address.city }}
+                                                        </span>
+                                                        <span
+                                                            v-if="private_tender.private_office_address.city && (private_tender.private_office_address.state || private_tender.private_office_address.country)">
+                                                            ,
+                                                        </span>
+                                                        <span
+                                                            v-if="private_tender.private_office_address.state || private_tender.private_office_address.country">
+                                                            {{ private_tender.private_office_address.state }} {{
                                                                 private_tender.private_office_address.country }}
                                                         </span>
                                                     </p>
@@ -141,12 +160,12 @@
                                                     v-if="private_tender?.private_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{
                                                         private_tender?.private_attachments?.length
-                                                        }})</strong>
+                                                    }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
                                                         <a target="_blank"
-                                                            :href="$store.state.baseUrl + 'downloadStateAttachments/' + private_tender.private_tender_id"
+                                                            :href="$store.state.baseUrl + 'downloadPrivateAttachments/' + private_tender.private_tender_id"
                                                             class="btn btn-sm btn-primary">
                                                             <i class="bi bi-cloud-download"></i> Download All
                                                             Attachments/Links
@@ -174,7 +193,7 @@
                                                         </tr>
                                                         <tr v-for="private_attachment, att_key in private_tender.private_attachments"
                                                             :key="att_key">
-                                                            <td>
+                                                            <td class="text-center">
                                                                 <i :class="private_attachment.attachment_icon"
                                                                     class="fa-fw me-2 fs-5"></i>
                                                             </td>
@@ -264,14 +283,14 @@
                                                             </h6>
                                                             <span class="me-3">User Name : {{
                                                                 bidintersed.user_details.name
-                                                                }}</span><br />
+                                                            }}</span><br />
 
                                                             <span class="me-3">Position : {{
                                                                 bidintersed.bid_interested_type
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3">Website : {{
                                                                 bidintersed.user_details.web_address
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
                                                                 bidintersed.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
@@ -373,7 +392,7 @@
                                                 <li class="list-group-item py-1" v-if="private_contact.fullName">
                                                     <span class="text-info fw-light me -1 mb-0">{{
                                                         private_contact.full_name
-                                                        }}</span>
+                                                    }}</span>
                                                 </li>
                                                 <li class="list-group-item py-1" v-if="private_contact.phone">
                                                     <span href="#" class="mb-0">
@@ -462,27 +481,27 @@
                                 <div class="mb-3">
                                     <input class="form-control" :class="{ 'is-invalid': errors.mails }"
                                         placeholder="Employee/Colleague Email Address" autocomplet="off" type="text"
-                                        id="recipient-name" v-model="mails" ref="mails" />
+                                        id="recipient-name" v-model="share_tender.recipient_email" ref="mails" />
                                     <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0]
                                         }}</span>
                                 </div>
                                 <div class="mb-3">
                                     <input class="form-control" type="text" name="email_subject"
                                         :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
-                                        autocomplet="off" id="email_subject" v-model="shareBid.subject" ref="subject" />
+                                        autocomplet="off" id="email_subject" v-model="share_tender.subject" ref="subject" />
                                     <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
                                         }}</span>
                                 </div>
                                 <div class="">
                                     <textarea class="form-control" rows="3" name="email_message"
                                         :class="{ 'is-invalid': errors.message }" placeholder="Brief Messsage/Note"
-                                        autocomplet="off" id="email_message" v-model="shareBid.message"></textarea>
+                                        autocomplet="off" id="email_message" v-model="share_tender.message"></textarea>
                                     <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
                                         }}</span>
                                 </div>
                             </form>
                             <div class="card-footer text-end pt-0">
-                                <a href="javascript:void(0)" @click="shareMail()"
+                                <a href="javascript:void(0)" @click="sendPrivateTenderMail()"
                                     class="btn btn-sm btn-success mb-0 mt-2">Send</a>
                             </div>
                         </div>
@@ -635,7 +654,14 @@ export default {
             erroralertmodal: false,
             var: "",
             from_path: null,
-            attachments: false
+            attachments: false,
+            share_tender: {
+                user_id: null,
+                recipient_email: null,
+                subject: "",
+                message: "",
+                private_tenders: [],
+            },
         };
     },
 
@@ -644,23 +670,23 @@ export default {
             vm.from_path = from.path
             if (vm.$store.getters.private_tender) {
                 vm.private_tender = vm.$store.getters.private_tender
-                vm.getStateTender()
+                vm.getPrivateTender()
             }
         });
     },
 
     methods: {
-        previousPage(){
+        previousPage() {
             this.$router.push(this.from_path)
         },
 
         showAlert() {
             this.$store.dispatch("info", "Didn't find the url to open");
         },
-        getStateTender() {
+        getPrivateTender() {
             let vm = this
             vm.$store
-                .dispatch("post", { uri: "getStateTender", data: vm.private_tender })
+                .dispatch("post", { uri: "getPrivateTender", data: vm.private_tender })
                 .then(function (response) {
                     vm.private_tender = response.data.data
                     vm.download_all_attachments = vm.private_tender.private_attachments.filter(
@@ -742,32 +768,31 @@ export default {
                 vm.sharebid = true;
             }
         },
-        shareMail() {
+        sendPrivateTenderMail() {
             let vm = this;
-            vm.shareBid.mails = vm.mails.split(",");
-            if (vm.shareBid.mails[0] == "") {
-                vm.shareBid.mails.splice(0);
-            } else {
-                vm.shareBid.mails = vm.mails.split(",");
-            }
-            // let loader = vm.$loading.show();
+            vm.fullPage = true;
             vm.isLoading = true;
+            vm.share_tender.user_id = this.$store.getters.user.user_id
+            vm.share_tender.private_tenders.push(vm.private_tender.private_tender_id)
             vm.$store
-                .dispatch("post", { uri: "sendMailWithBids", data: vm.shareBid })
+                .dispatch("post", { uri: "sendPrivateTenderMail", data: vm.share_tender })
                 .then(function () {
-                    // loader.hide();
+                    vm.fullPage = false;
                     vm.isLoading = false;
-                    vm.$store.dispatch("success", "Share Bids successfully");
-                    vm.shareBid.bids = [];
-                    vm.shareBid.mails = [];
-                    vm.closemodal();
+                    vm.sharebid = false;
+                    vm.share_tender.recipient_email = "";
+                    vm.share_tender.subject = "";
+                    vm.share_tender.message = "";
+                    vm.share_tender.state_tenders = [];
+                    vm.$store.dispatch("success", "Mail sent successfully");
                 })
                 .catch(function (error) {
+                    console.log(error);
+                    vm.fullPage = false;
                     vm.isLoading = false;
                     vm.errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
-            // }
         },
 
         closemodal() {

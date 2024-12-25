@@ -146,7 +146,7 @@
                                                 <div class="col-md-6" v-if="state_tender?.state_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{
                                                         state_tender?.state_attachments?.length
-                                                        }})</strong>
+                                                    }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
@@ -179,7 +179,7 @@
                                                         </tr>
                                                         <tr v-for="state_attachment, att_key in state_tender.state_attachments"
                                                             :key="att_key">
-                                                            <td>
+                                                            <td class="text-center">
                                                                 <i :class="state_attachment.attachment_icon"
                                                                     class="fa-fw me-2 fs-5"></i>
                                                             </td>
@@ -278,14 +278,14 @@
                                                             </h6>
                                                             <span class="me-3">User Name : {{
                                                                 bidintersed.user_details.name
-                                                                }}</span><br />
+                                                            }}</span><br />
 
                                                             <span class="me-3">Position : {{
                                                                 bidintersed.bid_interested_type
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3">Website : {{
                                                                 bidintersed.user_details.web_address
-                                                                }}</span><br />
+                                                            }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
                                                                 bidintersed.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
@@ -387,7 +387,7 @@
                                                 <li class="list-group-item py-1" v-if="state_contact.fullName">
                                                     <span class="text-info fw-light me -1 mb-0">{{
                                                         state_contact.full_name
-                                                        }}</span>
+                                                    }}</span>
                                                 </li>
                                                 <li class="list-group-item py-1" v-if="state_contact.phone">
                                                     <span href="#" class="mb-0">
@@ -476,27 +476,27 @@
                                 <div class="mb-3">
                                     <input class="form-control" :class="{ 'is-invalid': errors.mails }"
                                         placeholder="Employee/Colleague Email Address" autocomplet="off" type="text"
-                                        id="recipient-name" v-model="mails" ref="mails" />
+                                        id="recipient-name" v-model="share_tender.recipient_email" ref="mails" />
                                     <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0]
                                         }}</span>
                                 </div>
                                 <div class="mb-3">
                                     <input class="form-control" type="text" name="email_subject"
                                         :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
-                                        autocomplet="off" id="email_subject" v-model="shareBid.subject" ref="subject" />
+                                        autocomplet="off" id="email_subject" v-model="share_tender.subject" ref="subject" />
                                     <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
                                         }}</span>
                                 </div>
                                 <div class="">
                                     <textarea class="form-control" rows="3" name="email_message"
                                         :class="{ 'is-invalid': errors.message }" placeholder="Brief Messsage/Note"
-                                        autocomplet="off" id="email_message" v-model="shareBid.message"></textarea>
+                                        autocomplet="off" id="email_message" v-model="share_tender.message"></textarea>
                                     <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
                                         }}</span>
                                 </div>
                             </form>
                             <div class="card-footer text-end pt-0">
-                                <a href="javascript:void(0)" @click="shareMail()"
+                                <a href="javascript:void(0)" @click="sendStateTenderMail()"
                                     class="btn btn-sm btn-success mb-0 mt-2">Send</a>
                             </div>
                         </div>
@@ -649,7 +649,14 @@ export default {
             erroralertmodal: false,
             var: "",
             from_path: null,
-            attachments: false
+            attachments: false,
+            share_tender: {
+                user_id: null,
+                recipient_email: null,
+                subject: "",
+                message: "",
+                state_tenders: [],
+            },
         };
     },
 
@@ -658,13 +665,14 @@ export default {
             vm.from_path = from.path
             if (vm.$store.getters.state_tender) {
                 vm.state_tender = vm.$store.getters.state_tender
+                console.log("state-tender--", vm.state_tender)
                 vm.getStateTender()
             }
         });
     },
 
     methods: {
-        previousPage(){
+        previousPage() {
             this.$router.push(this.from_path)
         },
         showAlert() {
@@ -686,7 +694,7 @@ export default {
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         },
-        
+
         replaceSpecialCharacters(value) {
             value = value.replaceAll("+", " ");
             value = value.replaceAll("-", " ");
@@ -750,6 +758,32 @@ export default {
             } else {
                 vm.sharebid = true;
             }
+        },
+        sendStateTenderMail() {
+            let vm = this;
+            vm.fullPage = true;
+            vm.isLoading = true;
+            vm.share_tender.user_id = this.$store.getters.user.user_id
+            vm.share_tender.state_tenders.push(vm.state_tender.state_tender_id)
+            vm.$store
+                .dispatch("post", { uri: "sendStateTenderMail", data: vm.share_tender })
+                .then(function () {
+                    vm.fullPage = false;
+                    vm.isLoading = false;
+                    vm.sharebid = false;
+                    vm.share_tender.recipient_email = "";
+                    vm.share_tender.subject = "";
+                    vm.share_tender.message = "";
+                    vm.share_tender.state_tenders = [];
+                    vm.$store.dispatch("success", "Mail sent successfully");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    vm.fullPage = false;
+                    vm.isLoading = false;
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
         },
         shareMail() {
             let vm = this;
