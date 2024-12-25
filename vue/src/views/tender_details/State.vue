@@ -38,16 +38,10 @@
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
                                     <p class="" style="color: black; font-size: 18px;">
-                                        <img v-if="state_tender.region?.region_id == 2" class="icon"
-                                            src="/img/federalblue.6e218214.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 1"
-                                            src="/img/stateblue.16cfab6e.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 3"
-                                            src="/img/privateblue.c4518422.svg" alt="icon" />
-                                        <img class="icon" v-if="state_tender.region?.region_id == 4"
-                                            src="/img/internationalblue.2bdbd466.svg" alt="icon" />
+                                        <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
                                         State & Local Opportunities
                                     </p>
+                                    <p>{{ state_tender.title }}</p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ state_tender.tdr_title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
