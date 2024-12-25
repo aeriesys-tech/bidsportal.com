@@ -915,7 +915,7 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <a href="javascript:void(0)" @click="sendPrivateTenderMail()"
+                                            <a href="javascript:void(0)" @click="sendInternationalTenderMail()"
                                                 class="mybutton-secondary2">Send</a>
                                         </div>
                                     </form>
@@ -1284,13 +1284,13 @@ export default {
             }
         },
 
-        sendPrivateTenderMail() {
+        sendInternationalTenderMail() {
             let vm = this;
             vm.fullPage = true;
             vm.isLoading = true;
             vm.share_international_tender.user_id = this.$store.getters.user.user_id;
             vm.$store
-                .dispatch("post", { uri: "sendPrivateTenderMail", data: vm.share_international_tender })
+                .dispatch("post", { uri: "sendInternationalTenderMail", data: vm.share_international_tender })
                 .then(function () {
                     vm.fullPage = false;
                     vm.isLoading = false;
