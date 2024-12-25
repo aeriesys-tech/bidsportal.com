@@ -25,10 +25,6 @@ class UserPaymentController extends Controller
 
     public function generateSubscriptionPdf(Request $request)
     {
-        // $request->validate([
-        //     'user_id' => 'required|exists:users,user_id'
-        // ]);
-
         // $subscriptions = UserSubscription::where('user_id', $request->user_id)->where('txn_id', $request->txn_id)->orderBy('created_at', 'desc')->first();
         $subscriptions = UserSubscription::where('user_id', $request->user_id)->orderBy('created_at', 'desc')->first();
         $data = [
@@ -36,10 +32,6 @@ class UserPaymentController extends Controller
             'amount' => $subscriptions->payment_gross,
             'payment_type' => $subscriptions->payment_method,
             'valid_upto' => $subscriptions->valid_to,
-            // 'user' => "Sammed Teerth",
-            // 'amount' => 365,
-            // 'payment_type' => "Online",
-            // 'valid_upto' => "2025-01-25",
         ];
 
         $pdf = PDF::loadView('subscription_pdf', $data);
