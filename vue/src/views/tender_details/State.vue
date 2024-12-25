@@ -1,8 +1,8 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="pt-4 pt-lg-5 result pb-4">
+    <section class="pt-4 pt-lg-4 result pb-4">
         <div class="container position-relative">
-            <div class="row">
+            <div class="row px-2">
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
@@ -38,8 +38,8 @@
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
-                                    <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
-                                        <span style="font-size: 16pt;">State & Local Opportunities</span>
+                                    <img class="icon me-2" src="/assets/icons/stateblue.svg" alt="icon">
+                                        <span style="font-size: 16pt;">State Opportunities</span>
                                 </li>
                             </ul>
                         </div>
