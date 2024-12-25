@@ -273,7 +273,7 @@ export default {
     components: { TreeItem, PscTree, Loading },
     data() {
         return {
-            private_border_red: '',
+            state_border_red: '',
             states: [],
             sorted_states: [],
             state_keyword: '',
@@ -316,7 +316,7 @@ export default {
             selectedNaicses: [],
             childItems: [],
             filterAgency: [],
-            private_country1: [],
+            state_country1: [],
             allFilterAgency: [],
             SpecificAgency: [],
             agencycheck: "",
@@ -420,7 +420,7 @@ export default {
             }
         })
     },
-    
+
     mounted() {
         this.getSates()
     },
@@ -737,14 +737,14 @@ export default {
             this.$router.push("/bids/alerts");
         },
 
-        
+
 
         handleChangeTag(tags) {
             let vm = this;
             vm.tags = tags;
             vm.keywords = vm.tags;
         },
-        
+
         removeTag(index) {
             this.agency_fedral.splice(index, 1);
         },
