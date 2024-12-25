@@ -140,6 +140,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("changePassword",[UserController::class,'changePassword']);
 	Route::post("toggleUser",[UserController::class,'toggleUser']);
 	Route::post("activateUser",[UserController::class,'activateUser']);
+	Route::post("getUser",[UserController::class,'getUser']);
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
 
@@ -267,6 +268,8 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addInternationalAlerts", [AlertController::class,'addInternationalAlerts']);
 	Route::post("updateAlerts", [AlertController::class,'updateAlerts']);
 	Route::post("updateStateAlerts", [AlertController::class,'updateStateAlerts']);	
+	Route::post("updatePrivateAlerts", [AlertController::class,'updatePrivateAlerts']);
+	Route::post("updateInternationalAlerts", [AlertController::class,'updateInternationalAlerts']);		
 	Route::post("createAlerts", [AlertController::class,'createAlerts']);	
 	Route::post("getAlert", [AlertController::class,'getAlert']);
 	Route::post("paginateAlerts", [AlertController::class,'paginateAlerts']);

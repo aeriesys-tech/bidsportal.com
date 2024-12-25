@@ -193,7 +193,11 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                vm.user = vm.$store.getters.user;
+                vm.user = vm.$store.getters.user
+                if(from.name == 'PlanSubscription'){
+                    vm.getUser()
+                }
+
             });
         },
         mounted() {
@@ -201,6 +205,22 @@
             // this.checklogin();
         },
         methods: {
+            getUser() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", {
+                        uri: "getUser", data: vm.user,
+                    })
+                    .then(function (response) {
+                        vm.user = response.data.data
+                        vm.$store.dispatch('setUser', vm.user)
+                        vm.getUserSubscriptions();
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {

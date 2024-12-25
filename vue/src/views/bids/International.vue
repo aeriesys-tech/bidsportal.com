@@ -1406,6 +1406,7 @@ export default {
                     .dispatch("post", { uri: "addInternationalFilters", data: vm.meta })
                     .then(function (response) {
                         vm.$store.dispatch("success", "Filters saved successfully");
+                        vm.getInternationalFilters()
                         vm.closeModal();
                     })
                     .catch(function (error) {
@@ -1608,6 +1609,7 @@ export default {
         removeFilter(filter) {
             if (filter.id == "status" || filter.id == "date") {
                 this.meta[filter.module] = false;
+                this.applyFilters()
             } else if (typeof filter.id === "number") {
                 if (Array.isArray(this.meta[filter.module])) {
                     this.meta[filter.module] = this.meta[filter.module].filter(function (ele) {

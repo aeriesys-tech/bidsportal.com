@@ -12,7 +12,7 @@ use Auth;
 class UserController extends Controller
 {
     public function getUser(Request $request){
-    	$data = $reqeust->validate([
+    	$data = $request->validate([
     		'user_id' => 'required'
     	]);
     	$user = User::where('user_id', $request->user_id)->first();
