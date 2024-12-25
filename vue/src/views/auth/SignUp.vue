@@ -493,7 +493,7 @@ export default {
                 vm.user.socioeconomic_status = null
             }
             vm.user.phone = vm.user.phone.replace(/-/g, "");
-            // vm.isLoading = true;
+            vm.isLoading = true;
             vm.$store
                 .dispatch("auth", { uri: "register", data: vm.user })
                 .then(function (response) {
