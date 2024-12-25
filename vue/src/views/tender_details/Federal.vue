@@ -350,14 +350,6 @@
                                             <li class="list-group-item">
                                                 <div>
                                                     <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        Category</div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{
-                                                        federal_tender.category?.category_name }}</div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div>
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                         Set Aside</div>
                                                     <div class="mb-0" style="color: #747579; font-size: 16px;">{{
                                                         federal_tender.set_aside?.set_aside_name }}</div>
@@ -389,14 +381,6 @@
                                                         Contract Type</div>
                                                     <div class="mb-0" style="color: #747579; font-size: 16px;">
                                                         {{ federal_tender.tenderType?.tdr_type_name }}</div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div>
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        Type of Award</div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">
-                                                        {{ federal_tender.type_of_award }}</div>
                                                 </div>
                                             </li>
                                         </ul>

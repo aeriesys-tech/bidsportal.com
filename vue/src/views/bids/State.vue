@@ -1455,6 +1455,7 @@ export default {
                     .dispatch("post", { uri: "addStateFilters", data: vm.meta })
                     .then(function (response) {
                         vm.$store.dispatch("success", "Filters saved successfully");
+                        vm.getStateFilters()
                         vm.closeModal();
                     })
                     .catch(function (error) {

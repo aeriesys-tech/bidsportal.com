@@ -6,7 +6,7 @@
     <header class="navbar-light header-sticky">
         <nav class="navbar navbar-expand-xl header-shadow">
             <div class="container-fluid">
-                <router-link to="/bids/federal-opportunities" class="navbar-brand">
+                <router-link to="/bids/state-opportunities" class="navbar-brand">
                     <img class="light-mode-item navbar-brand-item" src="@/assets/logo.png" alt="logo" />
                     <img class="dark-mode-item navbar-brand-item" src="@/assets/logo-light.png" alt="logo" />
                 </router-link>

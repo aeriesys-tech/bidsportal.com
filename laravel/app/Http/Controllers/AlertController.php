@@ -311,7 +311,7 @@ class AlertController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
     	try{
-	        $alert_update = Alert::where('user_id', $request->user_id)->first();
+	        $alert_update = Alert::where('alert_id', $request->alert_id)->first();
 	        if ($alert_update){
 		        $alert = $alert_update->update([
 		            'user_id' => $request->user_id,
@@ -328,7 +328,7 @@ class AlertController extends Controller
 				    'response_to_date' => $request->response_to_date ?: null,
 				    'status' => true
 		        ]);
-		        $this->deleteStateAssociations($alert);
+		        $this->deleteStateAssociations($alert_update);
 
 
 		        // Handle the related data associations
@@ -399,9 +399,10 @@ class AlertController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
     	try{
-	        $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
-	        	$que->whereIn('keyword', $request->keywords);
-	        })->where('user_id', $request->user_id)->first();
+	        // $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
+	        // 	$que->whereIn('keyword', $request->keywords);
+	        // })->where('user_id', $request->user_id)->first();
+	        $alert = false;
  
 	        if (!$alert){
 		        $alert = Alert::create([
@@ -468,6 +469,184 @@ class AlertController extends Controller
 	        return $alert;
 	    } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
+        }
+	}
+
+	public function updatePrivateAlerts(Request $request)
+	{
+	    $data = $request->validate([
+	    	'alert_id' => 'required',
+	    	'user_id' => 'required',
+	        'alert_title' => 'required',
+	        'frequency' => 'required',
+	        'region' => 'required',
+	        'posted_date' => 'sometimes|nullable',
+	        'posted_from_date' => 'sometimes|nullable',
+	        'posted_to_date' => 'sometimes|nullable',
+	        'response_date' => 'sometimes|nullable',
+	        'response_from_date' => 'sometimes|nullable',
+	        'response_to_date' => 'sometimes|nullable',
+	        'private_notices' => 'required|array',
+	        'states' => 'required|array',
+	        'categories' => 'sometimes|nullable|array',
+	        'private_agencies' => 'sometimes|nullable|array',
+	        'keywords' => 'required|array', 
+	        'statuses' => 'sometimes|nullable|array'
+	    ]);
+    	try{
+	        $alert_update = Alert::where('alert_id', $request->alert_id)->first();
+	        if ($alert_update){
+		        $alert = $alert_update->update([
+		            'user_id' => $request->user_id,
+				    'alert_title' => $request->alert_title,
+				    'region' => $request->region,
+				    'frequency' => $request->frequency,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null,
+				    'status' => true
+		        ]);
+		        $this->deletePrivateAssociations($alert_update);
+
+
+		        // Handle the related data associations
+		        if ($request->has('keywords')) {
+		            foreach ($request->keywords as $keyword) {
+		                AlertKeyword::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'keyword' => $keyword]
+		                );
+		            }
+		        }
+
+		        if ($request->has('states')) {
+		            foreach ($request->states as $state) {
+		                AlertState::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'state_id' => $state]
+		                );
+		            }
+		        }
+
+		        if ($request->has('categories')) {
+		            foreach ($request->categories as $category) {
+		                AlertCategory::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'category_id' => $category]
+		                );
+		            }
+		        }
+
+		        if ($request->has('private_notices')) {
+		            foreach ($request->private_notices as $notice) {
+		                PrivateAlertNotice::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'private_notice_id' => $notice]
+		                );
+		            }
+		        }
+
+		        if ($request->has('private_agencies')) {
+		            foreach ($request->private_agencies as $agency) {
+		                PrivateAlertAgency::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'private_agency_id' => $agency]
+		                );
+		            }
+		        }
+	        	return $alert;
+	        }
+	    } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while updating alert', 'details' => $e->getMessage()], 500);
+        }
+	}
+
+	public function updateInternationalAlerts(Request $request)
+	{
+	    $data = $request->validate([
+	    	'alert_id' => 'required',
+	    	'user_id' => 'required',
+	        'alert_title' => 'required',
+	        'frequency' => 'required',
+	        'region' => 'required',
+	        'posted_date' => 'sometimes|nullable',
+	        'posted_from_date' => 'sometimes|nullable',
+	        'posted_to_date' => 'sometimes|nullable',
+	        'response_date' => 'sometimes|nullable',
+	        'response_from_date' => 'sometimes|nullable',
+	        'response_to_date' => 'sometimes|nullable',
+	        'international_notices' => 'required|array',
+	        'states' => 'required|array',
+	        'categories' => 'sometimes|nullable|array',
+	        'international_agencies' => 'sometimes|nullable|array',
+	        'keywords' => 'required|array', 
+	        'statuses' => 'sometimes|nullable|array'
+	    ]);
+    	try{
+	        $alert_update = Alert::where('alert_id', $request->alert_id)->first();
+	        if ($alert_update){
+		        $alert = $alert_update->update([
+		            'user_id' => $request->user_id,
+				    'alert_title' => $request->alert_title,
+				    'region' => $request->region,
+				    'frequency' => $request->frequency,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null,
+				    'status' => true
+		        ]);
+		        $this->deleteInternationalAssociations($alert_update);
+
+
+		        // Handle the related data associations
+		        if ($request->has('keywords')) {
+		            foreach ($request->keywords as $keyword) {
+		                AlertKeyword::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'keyword' => $keyword]
+		                );
+		            }
+		        }
+
+		        if ($request->has('states')) {
+		            foreach ($request->states as $state) {
+		                AlertState::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'state_id' => $state]
+		                );
+		            }
+		        }
+
+		        if ($request->has('categories')) {
+		            foreach ($request->categories as $category) {
+		                AlertCategory::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'category_id' => $category]
+		                );
+		            }
+		        }
+
+		        if ($request->has('private_notices')) {
+		            foreach ($request->private_notices as $notice) {
+		                PrivateAlertNotice::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'private_notice_id' => $notice]
+		                );
+		            }
+		        }
+
+		        if ($request->has('private_agencies')) {
+		            foreach ($request->private_agencies as $agency) {
+		                PrivateAlertAgency::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'private_agency_id' => $agency]
+		                );
+		            }
+		        }
+	        	return $alert;
+	        }
+	    } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while updating alert', 'details' => $e->getMessage()], 500);
         }
 	}
 
@@ -704,7 +883,7 @@ class AlertController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
 
-	    	// try{
+	    	try{
 	    		$alert = Alert::where('alert_id', $request->alert_id)->first();
 	    		$alert->update([
 		            'user_id' => $request->user_id,
@@ -785,9 +964,9 @@ class AlertController extends Controller
 		        }
 
 		        return $alert;
-		    // } catch (\Exception $e) {
-	     //        return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
-	     //    }
+		    } catch (\Exception $e) {
+	            return response()->json(['error' => 'Error while updating alert', 'details' => $e->getMessage()], 500);
+	        }
 	}
 
 	private function deleteAssociations($alert)
