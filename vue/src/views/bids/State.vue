@@ -1610,6 +1610,7 @@ export default {
             console.log(filter);
             if (filter.id == "status" || filter.id == "date") {
                 this.meta[filter.module] = false;
+                this.applyFilters()
             } else if (typeof filter.id === "number") {
                 if (Array.isArray(this.meta[filter.module])) {
                     this.meta[filter.module] = this.meta[filter.module].filter(function (ele) {
