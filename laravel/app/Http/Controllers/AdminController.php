@@ -354,6 +354,12 @@ class AdminController extends Controller
         $notconfirm_user_emails = User::whereNull('email_verified_at')->count();
         $actual_subscritions = UserSubscription::where('active_status', 'active')->where('valid_to', '>', Carbon::today())->count();
         $expired_subscritions = UserSubscription::where('active_status', '!=', 'active')->where('valid_to', '<', Carbon::today())->count();
+        $total_trial_actives = UserSubscription::where('active_status', 'active')->whereHas('SubscriptionPlan', function($que) {
+            $que->where('plan', "Trial");
+        })->count();
+        $total_trial_Inactives = UserSubscription::where('active_status', 'inactive')->whereHas('SubscriptionPlan', function($que) {
+            $que->where('plan', "Trial");
+        })->count();
        
         $subs_purchase_inmonth = UserSubscription::whereBetween('valid_from', [$startOfMonth, $endOfMonth])->count();
         $subs_expire_inmonth = UserSubscription::whereBetween('valid_to', [$startOfMonth, $endOfMonth])->count();
@@ -365,7 +371,9 @@ class AdminController extends Controller
             'actual_subscritions' => $actual_subscritions,
             'expired_subscritions' => $expired_subscritions,
             'subs_purchase_inmonth' => $subs_purchase_inmonth,
-            'subs_expire_inmonth' => $subs_expire_inmonth
+            'subs_expire_inmonth' => $subs_expire_inmonth,
+            'total_trial_actives' => $total_trial_actives,
+            'total_trial_Inactives' => $total_trial_Inactives 
         ]);
     }
 
