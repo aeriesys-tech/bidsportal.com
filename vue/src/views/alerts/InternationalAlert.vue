@@ -102,19 +102,19 @@
                                     <hr />
                                     <label class="form-label" style="font-size: 20px; font-weight: 600;">Notice type
                                         <span class="text-danger">*</span></label>
-                                    <span v-if="errors.state_notices" style="color: #dc3545;margin-top:-10px">{{
-                                        errors.state_notices[0] }}</span>
+                                    <span v-if="errors.international_notices" style="color: #dc3545;margin-top:-10px">{{
+                                        errors.international_notices[0] }}</span>
                                     <div class="row">
-                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in state_notices"
+                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in international_notices"
                                             :key="notice.notice_id">
                                             <ul class="list-group list-group-borderless mb-0">
                                                 <li class="list-group-item">
                                                     <input type="checkbox" class="form-check-input me-2"
-                                                        id="rememberCheck" :value="notice.state_notice_id"
-                                                        v-model="alert.state_notices"
-                                                        @click="updateStateNotices(notice, $event)" />
+                                                        id="rememberCheck" :value="notice.international_notice_id"
+                                                        v-model="alert.international_notices"
+                                                        @click="updateInternationalNotices(notice, $event)" />
                                                     <label class="form-check-label" for="flexRadioDefault1">
-                                                        {{ notice.notice_name }}
+                                                        {{ notice.international_notice_name }}
                                                     </label>
                                                 </li>
                                             </ul>
@@ -174,15 +174,15 @@
                                     <div class="collapse show" id="collapseExample7">
                                         <div class="collapse show" id="collapseExample7">
                                             <div class="">
-                                                {{ alert.state_agencies?.length }} of {{ sorted_state_agencies?.length
+                                                {{ alert.international_agencies?.length }} of {{ sorted_international_agencies?.length
                                                 }}
                                                 <span
-                                                    v-if="alert.state_agencies?.length !== sorted_state_agencies?.length">
-                                                    <a href="javascript:void(0)" @click="selectAllStateAgencies()"
+                                                    v-if="alert.international_agencies?.length !== sorted_international_agencies?.length">
+                                                    <a href="javascript:void(0)" @click="selectAllInternationalAgencies()"
                                                         class="" ref="selectState">
                                                         Select All /
                                                     </a></span>
-                                                <a href="javascript:void(0)" @click="deselectFederalAgencies()" class=""
+                                                <a href="javascript:void(0)" @click="deselectInternationalAgencies()" class=""
                                                     ref="selectState">
                                                     Reset all
                                                 </a>
@@ -190,38 +190,38 @@
                                                     <div class="ss-filter-search">
                                                         <input class="form-control pe-5" type="search"
                                                             placeholder="Search" aria-label="Search"
-                                                            v-model="state_agency_keyword"
-                                                            @keyup="sortStateAgency()"
+                                                            v-model="international_agency_keyword"
+                                                            @keyup="sortInternationalAgency()"
                                                             style="border-radius: 0.5rem 0.5rem 0px 0px;" />
                                                         <div class="liststate scroll1 hgt" id="style-3"
                                                             style="border:1px solid #c5c5c7; border-top:0px">
                                                             <ul class="list-group checkbox"
-                                                                v-for="state_agency in sorted_state_agencies"
-                                                                :key="state_agency.agency_id">
+                                                                v-for="international_agency in sorted_international_agencies"
+                                                                :key="international_agency.agency_id">
                                                                 <li
                                                                     class="list-group-item d-flex border-0 border-bottom">
                                                                     &nbsp; <input class="form-check-input me-1"
                                                                         type="checkbox"
-                                                                        :value="state_agency.state_agency_id"
-                                                                        v-model="alert.state_agencies"
-                                                                        @click="updateStateAgencies(state_agency, $event)" />
-                                                                    &nbsp; {{ state_agency.state_agency_name }}
+                                                                        :value="international_agency.international_agency_id"
+                                                                        v-model="alert.international_agencies"
+                                                                        @click="updateInternationalAgencies(international_agency, $event)" />
+                                                                    &nbsp; {{ international_agency.international_agency_name }}
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mt-4 scroll1" v-if="selected_state_agencies?.length">
+                                                <div class="row mt-4 scroll1" v-if="selected_international_agencies?.length">
                                                     <div class="col-sm-8 col-lg-4 col-xl-3"
-                                                        v-for="agency, index in selected_state_agencies" :key="index">
+                                                        v-for="agency, index in selected_international_agencies" :key="index">
                                                         <div
                                                             class="bg-success bg-opacity-10 text-success d-flex justify-content-between align-items-center mb-3">
                                                             <div class="" style="padding-left: 10px;">
-                                                                <span>{{ agency.state_agency_name }}</span>
+                                                                <span>{{ agency.international_agency_name }}</span>
                                                             </div>
                                                             <a href="javascript:void(0)"
                                                                 class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0"
-                                                                @click="removeStateAgency(agency)">
+                                                                @click="removeInternationalAgency(agency)">
                                                                 <i class="bi bi-x fa-fw"></i>
                                                             </a>
                                                         </div>
@@ -277,12 +277,12 @@ export default {
             states: [],
             sorted_states: [],
             state_keyword: '',
-            state_notices: [],
-            state_agencies: [],
+            international_notices: [],
+            international_agencies: [],
             sorted_categories: [],
             category_keyword: null,
-            sorted_state_agencies: [],
-            selected_state_agencies: [],
+            sorted_international_agencies: [],
+            selected_international_agencies: [],
             categories: [],
             selected_categories : [],
             naics: [],
@@ -290,12 +290,12 @@ export default {
                 alert_id: '',
                 titel: '',
                 frequency: '',
-                region: 'State',
+                region: 'International',
                 keywords: [],
                 states: [],
                 categories:[],
-                state_notices: [],
-                state_agencies: [],
+                international_notices: [],
+                international_agencies: [],
                 categories: [],
                 naics: [],
                 pscs: []
@@ -405,7 +405,7 @@ export default {
             },
             clear_all_naics: false,
             clear_all_psc: false,
-            state_agency_keyword: null
+            international_agency_keyword: null
         };
     },
 
@@ -414,7 +414,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (to.name == 'EditStateAlert') {
+            if (to.name == 'EditInternationalAlert') {
                 vm.alert.alert_id = to.params.alert_id
                 vm.getAlert()
             }
@@ -433,7 +433,7 @@ export default {
 
         filterSpecifyAgency() {
             return this.agencySpecific.filter((statefederal) => {
-                return statefederal.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
+                return statefederal.international_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
             });
         },
     },
@@ -484,14 +484,14 @@ export default {
                     });
             }
         },
-        removeStateAgency(state_agency) {
-            console.log(state_agency)
+        removeInternationalAgency(international_agency) {
+            console.log(international_agency)
             let vm = this
-            let agency = vm.selected_state_agencies.filter(function(element){
-                return element.state_agency_id != state_agency.state_agency_id
+            let agency = vm.selected_international_agencies.filter(function(element){
+                return element.international_agency_id != international_agency.international_agency_id
             })
-            vm.selected_state_agencies = agency
-            vm.alert.state_agencies = []
+            vm.selected_international_agencies = agency
+            vm.alert.international_agencies = []
         },
 
         removeTag(index) {
@@ -502,29 +502,29 @@ export default {
                 this.removeTag(this.alert.keywords.length - 1);
             }
         },
-        updateStateAgencies(state_agency, event) {
+        updateInternationalAgencies(international_agency, event) {
             let vm = this
             if (event.target.checked) {
-                if (!vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                    vm.alert.state_agencies.push(state_agency.state_agency_id)
+                if (!vm.alert.international_agencies.includes(international_agency.international_agency_id)) {
+                    vm.alert.international_agencies.push(international_agency.international_agency_id)
                 }
             } else {
-                if (vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                    let state_agencies = vm.alert.state_agencies.filter(function (element) {
-                        return element != state_agency.state_agency_id
+                if (vm.alert.international_agencies.includes(international_agency.international_agency_id)) {
+                    let international_agencies = vm.alert.international_agencies.filter(function (element) {
+                        return element != international_agency.international_agency_id
                     })
-                    vm.alert.state_agencies = state_agencies
+                    vm.alert.international_agencies = international_agencies
                 }
             }
-            vm.selected_state_agencies = []
-            vm.alert.state_agencies.map(function (element) {
-                let selected = vm.sorted_state_agencies.filter(function (ele) {
-                    return ele.state_agency_id == element
+            vm.selected_international_agencies = []
+            vm.alert.international_agencies.map(function (element) {
+                let selected = vm.sorted_international_agencies.filter(function (ele) {
+                    return ele.international_agency_id == element
                 })
                 if (selected.length) {
-                    vm.selected_state_agencies.push({
-                        federeal_agency_id: selected[0].state_agency_id,
-                        state_agency_name: selected[0].state_agency_name
+                    vm.selected_international_agencies.push({
+                        federeal_agency_id: selected[0].international_agency_id,
+                        international_agency_name: selected[0].international_agency_name
                     })
                 }
             })
@@ -558,53 +558,53 @@ export default {
             }
         },
 
-        updateStateNotices(notice, event) {
+        updateInternationalNotices(notice, event) {
             if (event.target.checked) {
-                if (!this.alert.state_notices.includes(notice.state_notice_id)) {
-                    this.alert.state_notices.push(notice.state_notice_id)
+                if (!this.alert.international_notices.includes(notice.international_notice_id)) {
+                    this.alert.international_notices.push(notice.international_notice_id)
                 }
             } else {
-                if (this.alert.state_notices.includes(notice.state_notice_id)) {
-                    let state_notices = this.alert.state_notices.filter(function (element) {
-                        return element != notice.state_notice_id
+                if (this.alert.international_notices.includes(notice.international_notice_id)) {
+                    let international_notices = this.alert.international_notices.filter(function (element) {
+                        return element != notice.international_notice_id
                     })
-                    this.alert.state_notices = state_notices
+                    this.alert.international_notices = international_notices
                 }
             }
         },
 
-        sortStateAgency() {
+        sortInternationalAgency() {
             let vm = this
-            vm.sorted_state_agencies = vm.state_agencies.filter(function (element) {
-                return element.state_agency_name.toLowerCase().includes(vm.state_agency_keyword.toLowerCase());
+            vm.sorted_international_agencies = vm.international_agencies.filter(function (element) {
+                return element.international_agency_name.toLowerCase().includes(vm.international_agency_keyword.toLowerCase());
             })
         },
 
-        selectAllStateAgencies() {
+        selectAllInternationalAgencies() {
             let vm = this
-            vm.alert.state_agencies = []
-            vm.sorted_state_agencies.map(function (element) {
-                vm.alert.state_agencies.push(element.state_agency_id)
+            vm.alert.international_agencies = []
+            vm.sorted_international_agencies.map(function (element) {
+                vm.alert.international_agencies.push(element.international_agency_id)
             })
-            vm.selected_state_agencies = []
-            vm.alert.state_agencies.map(function (element) {
-                let selected = vm.sorted_state_agencies.filter(function (ele) {
-                    return ele.state_agency_id == element
+            vm.selected_international_agencies = []
+            vm.alert.international_agencies.map(function (element) {
+                let selected = vm.sorted_international_agencies.filter(function (ele) {
+                    return ele.international_agency_id == element
                 })
                 if (selected.length) {
-                    vm.selected_state_agencies.push({
-                        federeal_agency_id: selected[0].state_agency_id,
-                        state_agency_name: selected[0].state_agency_name
+                    vm.selected_international_agencies.push({
+                        federeal_agency_id: selected[0].international_agency_id,
+                        international_agency_name: selected[0].international_agency_name
                     })
                 }
             })
         },
 
-        deselectFederalAgencies() {
-            this.sorted_state_agencies = this.state_agencies
-            this.state_agency_keyword = null
-            this.alert.state_agencies = []
-            this.selected_state_agencies = []
+        deselectInternationalAgencies() {
+            this.sorted_international_agencies = this.international_agencies
+            this.international_agency_keyword = null
+            this.alert.international_agencies = []
+            this.selected_international_agencies = []
         },
 
         selectAllStates() {
@@ -627,7 +627,7 @@ export default {
                 .then(function (response) {
                     vm.states = response.data
                     vm.sorted_states = vm.states
-                    vm.getStateNotices()
+                    vm.getInternationalNotices()
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;
@@ -641,13 +641,13 @@ export default {
             })
         },
 
-        getStateNotices() {
+        getInternationalNotices() {
             let vm = this;
             vm.$store
-                .dispatch("post", { uri: "getStateNotices" })
+                .dispatch("post", { uri: "getInternationalNotices" })
                 .then(function (response) {
-                    vm.state_notices = response.data
-                    vm.getStateAgencies()
+                    vm.international_notices = response.data.data
+                    vm.getInternationalAgencies()
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;
@@ -655,13 +655,13 @@ export default {
                 });
         },
 
-        getStateAgencies() {
+        getInternationalAgencies() {
             let vm = this;
             vm.$store
-                .dispatch("post", { uri: "getStateAgencies" })
+                .dispatch("post", { uri: "getInternationalAgencies" })
                 .then(function (response) {
-                    vm.state_agencies = response.data
-                    vm.sorted_state_agencies = vm.state_agencies
+                    vm.international_agencies = response.data.data
+                    vm.sorted_international_agencies = vm.international_agencies
                     vm.getCategories()
                 })
                 .catch(function (error) {
@@ -690,7 +690,7 @@ export default {
             if (vm.$store.getters.user) {
                 vm.alert.user_id = vm.$store.getters.user.user_id
                 vm.$store
-                    .dispatch("post", { uri: 'addStateAlerts', data: vm.alert })
+                    .dispatch("post", { uri: 'addInternationalAlerts', data: vm.alert })
                     .then(function (response) {
                         vm.$store.dispatch("success", "Alert is added successfully");
                         vm.$router.push("/bids/alerts");
@@ -714,7 +714,7 @@ export default {
             if (vm.$store.getters.user) {
                 vm.alert.user_id = vm.$store.getters.user.user_id
                 vm.$store
-                    .dispatch("post", { uri: 'updateStateAlerts', data: vm.alert })
+                    .dispatch("post", { uri: 'updateInternationalAlerts', data: vm.alert })
                     .then(function (response) {
                         vm.$store.dispatch("success", "Alert is updated successfully");
                         vm.$router.push("/bids/alerts");
@@ -1099,7 +1099,7 @@ export default {
                 this.filterAgency = this.allFilterAgency;
             }
             this.filterAgency = this.allFilterAgency.filter((entry) => {
-                return entry.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
+                return entry.international_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
             });
         },
         select() {
@@ -1138,7 +1138,7 @@ export default {
             this.selectedState = [];
             if (!this.selectAllState) {
                 for (let i in this.filterAgency) {
-                    this.selectedState.push(this.filterAgency[i].state_agency_name);
+                    this.selectedState.push(this.filterAgency[i].international_agency_name);
                 }
 
                 this.agency_fedral = this.selectedState;

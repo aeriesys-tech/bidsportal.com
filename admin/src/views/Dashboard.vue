@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="row g-3">
-            <div class="col-6">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;"><i class="ri-key-2-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Update API Key</span>
@@ -98,42 +98,6 @@
                             <div class="col-md-6">
                                 <br/>
                                 <button class="btn btn-primary btn-sm" style="margin-left:10px" @click="updateApiKey()">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size:1.2rem; font-weight: 500; font-family: 'Inter', 'sans-serif'; color: #212830;">
-                            <i class="ri-key-2-line" style="color:blue;font-size: 14pt;font-weight: bold"></i> Subscription Setting
-                        </span>
-                        <div style="float:right">
-                            <a href="javascript:void(0)" @click="subscription_key=true" v-if="!subscription_key">Show</a>
-                            <a href="javascript:void(0)" @click="subscription_key=false" v-if="subscription_key">Hide</a>
-                        </div>
-                    </div>
-                    <div class="card-body" v-if="subscription_key">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label style="font-weight: bold;">No. of Days</label>
-                                    <input type="number" class="form-control form-control-sm" v-model="dashboard.no_of_days">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mt-auto">
-                                <div class="form-group">
-                                    <label class="me-2" style="font-weight: bold;">Is Trial</label>
-                                    <input type="checkbox" v-model="dashboard.is_trial">
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <br/>
-                                    <button class="btn btn-primary btn-sm" style="margin-left:10px" @click="updateSubscriptionSetting()">Update</button>
-                                </div>
                             </div>
                         </div>
                     </div>
