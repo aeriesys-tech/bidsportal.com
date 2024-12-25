@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('generateSubscriptionPdf/{user_id}', [UserPaymentController::class, 'generateSubscriptionPdf']);
 Route::post("login", [AuthController::class,'login']);
 Route::post("adminLogin",[AdminController::class,'adminLogin']);
 Route::post("register",[AuthController::class,'register']);
@@ -148,7 +149,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addTrialSubscription",[UserSubscriptionController::class,'addTrialSubscription']);
 
 	Route::post("getUserPayments",[UserPaymentController::class,'getUserPayments']);
-	
+
 	Route::post("paginateUserSubscriptions",[SubscriptionPlanController::class,'paginateUserSubscriptions']);
 	Route::post("paginateSubscriptionPlans",[SubscriptionPlanController::class,'paginateSubscriptionPlans']);
 	Route::post("addSubscriptionPlan",[SubscriptionPlanController::class,'addSubscriptionPlan']);
