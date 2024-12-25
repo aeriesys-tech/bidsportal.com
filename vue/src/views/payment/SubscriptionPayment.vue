@@ -44,10 +44,7 @@
                     txn_id: '',
                     valid_upto: ''
                 },
-                user: {
-                    id: "",
-                },
-                users: [],
+                user: {}
             
             };
         },
@@ -69,30 +66,30 @@
                 if ((letter == "S")) {
                     vm.subscription_payment.item_number = "Semi-Annual";
                 }
+                vm.getUser()
             });
         },
-        mounted() {},
+        mounted() {
+            this.user = this.$store.getters.user
+        },
         methods: {
             getUrl(){
             // let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.id+'/'+this.subscription_payment.txn_id
             let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.user_id
             return url
             },
-            getUserData() {
-                // showUser
+            getUser() {
                 let vm = this;
-                vm.isLoading = true;
                 vm.$store
-                    .dispatch("post", { uri: "showUser", data: vm.user })
+                    .dispatch("post", {
+                        uri: "getUser", data: vm.user,
+                    })
                     .then(function (response) {
-                        console.log(response.data.data)
-                        vm.isLoading = false;
-                        vm.$store.commit("setUser", response.data.data);
-                        vm.$router.push("/user/subscription");
-                        vm.$router.reload(0);
+                        vm.user = response.data.data
+                        vm.$store.dispatch('setUser', vm.user)
+                        vm.getUserSubscriptions();
                     })
                     .catch(function (error) {
-                        vm.isLoading = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });

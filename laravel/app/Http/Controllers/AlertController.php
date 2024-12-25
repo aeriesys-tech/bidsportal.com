@@ -31,8 +31,21 @@ class AlertController extends Controller
 	}
 
 	public function deleteAlert(Request $request){ 
-		$this->deleteAssociations($request);
-		return Alert::where('alert_id', $request->alert_id)->delete();
+		if($request->region == 'State'){
+			$alert = $this->deleteStateAssociations($request);
+		}else if($request->region == 'Federal'){
+			$alert = $this->deleteAssociations($request);
+		}else if($request->region == 'Private'){
+			$alert = $this->deletePrivateAssociations($request);
+		}else if($request->region == 'International'){
+			$alert = $this->deleteInternationalAssociations($request);
+		}
+
+		if($alert){
+			return Alert::where('alert_id', $request->alert_id)->delete();
+		}else{
+			return response()->json(['message' => 'Alert is being used by some table'], 422);
+		}
 	}
 
 
@@ -628,18 +641,18 @@ class AlertController extends Controller
 		            }
 		        }
 
-		        if ($request->has('private_notices')) {
-		            foreach ($request->private_notices as $notice) {
-		                PrivateAlertNotice::updateOrCreate(
-		                    ['alert_id' => $request->alert_id, 'private_notice_id' => $notice]
+		        if ($request->has('international_notices')) {
+		            foreach ($request->international_notices as $notice) {
+		                InternationalAlertNotice::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'international_notice_id' => $notice]
 		                );
 		            }
 		        }
 
-		        if ($request->has('private_agencies')) {
-		            foreach ($request->private_agencies as $agency) {
-		                PrivateAlertAgency::updateOrCreate(
-		                    ['alert_id' => $request->alert_id, 'private_agency_id' => $agency]
+		        if ($request->has('international_agencies')) {
+		            foreach ($request->international_agencies as $agency) {
+		                InternationalAlertAgency::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'international_agency_id' => $agency]
 		                );
 		            }
 		        }
@@ -980,6 +993,7 @@ class AlertController extends Controller
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
 		    AlertSetAside::where('alert_id', $alert->alert_id)->delete();
 		    FederalAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    return true;
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
@@ -994,6 +1008,7 @@ class AlertController extends Controller
 		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
 		    StateAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    return true;
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
@@ -1008,6 +1023,7 @@ class AlertController extends Controller
 		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
 		    PrivateAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    return true;
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
@@ -1021,7 +1037,8 @@ class AlertController extends Controller
 		    InternationalAlertNotice::where('alert_id', $alert->alert_id)->delete();
 		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
-		    PrivateAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    InternationalAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    return true;
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }

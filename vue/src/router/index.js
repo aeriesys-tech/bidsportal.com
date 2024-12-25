@@ -110,6 +110,11 @@ const routes = [
 		component: InternationalAlert
 	},
 	{
+		path: '/bids/International/:alert_id/edit',
+		name: 'EditInternationalAlert',
+		component: InternationalAlert
+	},
+	{
 		path: "/cart", name: "Cart",
 		component: Cart,
 	},
