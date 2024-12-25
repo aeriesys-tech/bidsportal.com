@@ -420,7 +420,7 @@ export default {
             }
         })
     },
-    
+
     mounted() {
         this.getSates()
     },
