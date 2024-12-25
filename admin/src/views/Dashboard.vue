@@ -48,7 +48,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total active trail subscriptions</label>
-                        <h3 class="card-value mb-1"><i class="ri-check-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-check-line"></i>{{ total_trial_actives }}</h3>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <div class="card card-one">
                     <div class="card-body">
                         <label class="card-title fs-sm fw-medium mb-1">Total expired trail subscriptions</label>
-                        <h3 class="card-value mb-1"><i class="ri-close-line"></i> 8,327</h3>
+                        <h3 class="card-value mb-1"><i class="ri-close-line"></i> {{ total_trial_Inactives }}</h3>
                     </div>
                 </div>
             </div>
@@ -320,7 +320,9 @@
                 actual_subscritions:0,
                 expired_subscritions:0,
                 subs_purchase_inmonth:0,
-                subs_expire_inmonth:0
+                subs_expire_inmonth:0,
+                total_trial_actives:0,
+                total_trial_Inactives:0
             };
         },
         beforeRouteEnter(to, from, next) {
@@ -507,6 +509,8 @@
                         vm.expired_subscritions = response.data?.expired_subscritions
                         vm.subs_purchase_inmonth = response.data?.subs_purchase_inmonth
                         vm.subs_expire_inmonth = response.data?.subs_expire_inmonth
+                        vm.total_trial_actives = response.data?.total_trial_actives
+                        vm.total_trial_Inactives = response.data?.total_trial_Inactives
                     })
                     .catch(function (error) {
                         loader.hide();

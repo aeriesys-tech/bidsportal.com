@@ -29,7 +29,7 @@
             </div>
             <div class="col-md- order-md-2 m-3" style="text-align: center;">
                 <a :href="getUrl()" target="_blank" class="btn btn-secondary mb-0 m-3">Print Receipt</a>
-                <a href="javascript:void(0)" @click="getUserData()" class="btn btn-success mb-0 m-3">Subscription Details</a>
+                <router-link to="/user/subscription" class="btn btn-success mb-0 m-3">Subscription Details</router-link>
             </div>
         </div>
     </section>
@@ -74,7 +74,8 @@
         mounted() {},
         methods: {
             getUrl(){
-            let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.id+'/'+this.subscription_payment.txn_id
+            // let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.id+'/'+this.subscription_payment.txn_id
+            let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.user_id
             return url
             },
             getUserData() {

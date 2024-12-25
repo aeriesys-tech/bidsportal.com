@@ -15,8 +15,14 @@ class UserSubscriptionController extends Controller
     	return UserSubscriptionResource::collection($user_subscriptions);
     }
 
-    public function getActiveSubscription(Request $request){
-    	$user_subscription = UserSubscription::where('user_id', $request->user_id)->where('active_status', 'active')->first();
+    // public function getActiveSubscription(Request $request){
+    // 	$user_subscription = UserSubscription::where('user_id', $request->user_id)->where('active_status', 'active')->first();
+    // 	return new UserSubscriptionResource($user_subscription);
+    // }
+
+    public function getActiveSubscription(Request $request)
+    {
+    	$user_subscription = UserSubscription::where('user_id', $request->user_id)->orderBy('created_at', 'desc')->first();
     	return new UserSubscriptionResource($user_subscription);
     }
 

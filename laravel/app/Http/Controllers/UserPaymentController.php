@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\UserPayment;
+use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserPaymentResource;
 use Auth;
+use PDF;
 
 class UserPaymentController extends Controller
 {
@@ -19,5 +21,20 @@ class UserPaymentController extends Controller
         ]);
     	$user_payments = UserPayment::where('user_id', $request->user_id)->get();
 		return UserPaymentResource::collection($user_payments);
+    }
+
+    public function generateSubscriptionPdf(Request $request)
+    {
+        // $subscriptions = UserSubscription::where('user_id', $request->user_id)->where('txn_id', $request->txn_id)->orderBy('created_at', 'desc')->first();
+        $subscriptions = UserSubscription::where('user_id', $request->user_id)->orderBy('created_at', 'desc')->first();
+        $data = [
+            'user' => $subscriptions->User->name,
+            'amount' => $subscriptions->payment_gross,
+            'payment_type' => $subscriptions->payment_method,
+            'valid_upto' => $subscriptions->valid_to,
+        ];
+
+        $pdf = PDF::loadView('subscription_pdf', $data);
+        return $pdf->download('subscription_receipt.pdf');
     }
 }
