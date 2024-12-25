@@ -12,6 +12,10 @@
                                     <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
                                         @click.prevent="previousPage()">Back</a>
                                 </li>
+                                <li class="list-inline-item">
+                                    <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
+                                        <span style="font-size: 16pt;">State & Local Opportunities</span>
+                                </li>
                             </ul>
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
@@ -37,10 +41,6 @@
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <p class="" style="color: black; font-size: 18px;">
-                                        <img class="icon" src="/assets/icons/stateblue.svg" alt="icon">
-                                        State & Local Opportunities
-                                    </p>
                                     <p>{{ state_tender.title }}</p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ state_tender.tdr_title }}</h5>
