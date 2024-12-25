@@ -487,6 +487,11 @@
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <div v-if="isLoading" class="global-loader">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
                         <!-- <div class="card border">
@@ -506,9 +511,9 @@
                             </div>
                             <form class="card-body" style="min-width: 350px;">
                                 <div class="mb-3">
-                                    <input class="form-control" placeholder="Employee/Colleague Email Address"
-                                        autocomplet="off" type="text" id="recipient-name" v-model="share_tender.recipient_email" ref="mails" />
-                                    <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0] }}</span>
+                                    <input class="form-control" placeholder="Employee/Colleague Email Address" :class="{ 'is-invalid': errors.recipient_email }"
+                                        autocomplet="off" type="text" id="recipient-name" v-model="share_tender.recipient_email" ref="recipient_email" />
+                                    <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
                                 </div>
                                 <div class="mb-3">
                                     <input class="form-control" type="text" name="email_subject"
@@ -1394,5 +1399,17 @@ img {
     vertical-align: top;
     cursor: pointer;
     /* Optional for hover indication */
+}
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Optional: Dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Higher than modal */
 }
 </style>

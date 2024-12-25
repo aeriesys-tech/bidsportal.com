@@ -294,8 +294,8 @@
                                         <div class="mb-1">
                                             <a class="btn btn-link p-0 mb-0 me-2">({{ meta.categories?.length }} of {{
                                                 categories.length }})</a>
-                                            <span v-if="meta.categories?.length !== sorted_categories.length"> <a href=""
-                                                    @click.prevent="selectAllCategories()"
+                                            <span v-if="meta.categories?.length !== sorted_categories.length"> <a
+                                                    href="" @click.prevent="selectAllCategories()"
                                                     class="form-check-label text-primary me-2">| Select All</a></span>
                                             <span v-if="meta.categories?.length">
                                                 <a href="" class="form-check-label text-primary me-2"
@@ -452,7 +452,7 @@
                                 <div v-for="(messages, field) in alert_errors" :key="field">
                                     <ul v-if="!meta[field]?.length">
                                         <li v-for="(message, index) in messages" :key="index" style="color:red">
-                                        {{ message }}
+                                            {{ message }}
                                         </li>
                                     </ul>
                                 </div>
@@ -479,11 +479,12 @@
                         </section>
                         <div class="text-end pb-2" v-if="state_tenders.length">
                             <ul class="list-inline mb-0 z-index-2 small">
-                                <li class="list-inline-item">
+                                <!-- <li class="list-inline-item">
                                     <a href="javascript:void(0)"
                                         style="text-decoration: none; pointer-events: none; cursor: default;"
-                                        class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of '+meta.totalRows+' bids' }}</a>
-                                </li>
+                                        class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of
+                                        '+meta.totalRows+' bids' }}</a>
+                                </li> -->
 
                                 <li class="list-inline-item" v-if="$store.getters.user">
                                     <a href="javascript:void(0)" @click.prevent="shareStateTenders()"
@@ -509,8 +510,7 @@
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
                                                 <li class="list-inline-item">
-                                                    <div class="form-check-inline mb-0"
-                                                        v-if="$store.getters.user">
+                                                    <div class="form-check-inline mb-0" v-if="$store.getters.user">
                                                         <small class="form-check-label mb-0 me-2"><a
                                                                 href="javascript:void(0)" class="">SELECT</a></small>
                                                         <input class="form-check-input" type="checkbox"
@@ -607,8 +607,7 @@
                                                     :key="state_tender.state_tender_id">
                                                     <tr>
                                                         <td class="padding-16">
-                                                            <div class="form-check my-auto"
-                                                                v-if="$store.getters.user">
+                                                            <div class="form-check my-auto" v-if="$store.getters.user">
                                                                 <input class="form-check-input me-3" type="checkbox"
                                                                     :value="state_tender.state_tender_id"
                                                                     v-model="share_state_tender.state_tenders" />
@@ -617,7 +616,8 @@
                                                         <td class="padding-16">
                                                             <div class="row">
                                                                 <div class="column">
-                                                                    <a href="javascript:void(0)" @click="tenderDetails(state_tender)">
+                                                                    <a href="javascript:void(0)"
+                                                                        @click="tenderDetails(state_tender)">
                                                                         {{ state_tender.tender_no }}
                                                                     </a>
                                                                 </div>
@@ -858,7 +858,7 @@
                     <div class=""></div>
                     <div class="">
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addStateFilter"
-                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
+                            :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search" />
                     </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
@@ -1156,9 +1156,9 @@ export default {
             state_keyword: "",
             fullPage: "",
             tag: "",
-            from_name:null,
-            alert_errors:[],
-            modal:{
+            from_name: null,
+            alert_errors: [],
+            modal: {
                 login: null,
                 subscribe: null,
                 save_search: null,
@@ -1189,10 +1189,10 @@ export default {
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             vm.from_name = from.name
-            if(vm.from_name == 'Alert' || vm.from_name == 'state_tender_details'){
+            if (vm.from_name == 'Alert' || vm.from_name == 'state_tender_details') {
                 vm.isLoading = true;
                 vm.getStateNotices();
-            }else{
+            } else {
                 vm.getStateNotices();
                 vm.paginateStateTenders();
             }
@@ -1293,7 +1293,7 @@ export default {
             } else {
                 if (this.$store.getters.user) {
                     this.modal.subscribe = true
-                }else {
+                } else {
                     this.modal.login = true
                 }
             }
@@ -1316,7 +1316,7 @@ export default {
             } else {
                 if (this.$store.getters.user) {
                     this.modal.subscribe = true
-                }else {
+                } else {
                     this.modal.login = true
                 }
             }
@@ -1382,20 +1382,20 @@ export default {
             } else {
                 if (this.$store.getters.user) {
                     this.modal.subscribe = true
-                }else {
+                } else {
                     this.modal.login = true
                 }
             }
         },
 
-        saveSearchModal(){
+        saveSearchModal() {
             this.closeModal()
             if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
                 this.modal.save_search = true
             } else {
                 if (this.$store.getters.user) {
                     this.modal.subscribe = true
-                }else {
+                } else {
                     this.modal.login = true
                 }
             }
@@ -1426,7 +1426,7 @@ export default {
             if (this.cancel_token_source) {
                 console.log("Cancelling previous request");
                 this.cancel_token_source.cancel("Operation canceled due to new request.")
-                this.cancel_token_source = null 
+                this.cancel_token_source = null
             }
         },
 
@@ -1498,14 +1498,14 @@ export default {
 
         tenderDetails(state_tender) {
             this.closeModal()
-            if(this.$store.getters.user && this.$store.getters.user.subscription == 'valid'){
+            if (this.$store.getters.user && this.$store.getters.user.subscription == 'valid') {
                 this.$store.commit("setStateTender", state_tender)
                 this.$store.commit("setFilters", this.meta)
                 this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
-            }else{
-                if(this.$store.getters.user){
+            } else {
+                if (this.$store.getters.user) {
                     this.modal.subscribe = true
-                }else{
+                } else {
                     this.modal.login = true
                 }
             }
