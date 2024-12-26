@@ -1,11 +1,9 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="pt-4 pt-lg-5 result pb-4">
+    <section class="pt-4 pt-lg-4 result pb-4">
         <div class="container position-relative">
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 d-flex justify-content-md-between ">
+            <div class="row px-2">
+                 <div class="col-12 d-flex justify-content-md-between ">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
@@ -35,20 +33,22 @@
                                 </li>
                             </ul>
                         </div>
+            </div>
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-md-between">
+                            <ul class="list-inline text-end">
+                                <li class="list-inline-item">
+                                    <img class="icon me-2" src="/assets/icons/federalblue.svg" alt="icon">
+                                        <span style="font-size: 16pt;">Federal Opportunities </span>
+                                </li>
+                            </ul>
+                        </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <p class="" style="color: black; font-size: 18px;">
-                                        <img v-if="federal_tender.region?.region_id == 2" class="icon"
-                                            src="/img/federalblue.6e218214.svg" alt="icon" />
-                                        <img class="icon" v-if="federal_tender.region?.region_id == 1"
-                                            src="/img/stateblue.16cfab6e.svg" alt="icon" />
-                                        <img class="icon" v-if="federal_tender.region?.region_id == 3"
-                                            src="/img/privateblue.c4518422.svg" alt="icon" />
-                                        <img class="icon" v-if="federal_tender.region?.region_id == 4"
-                                            src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                        Federal Opportunities > SAM.Gov Details
-                                    </p>
+                                      <p>{{ federal_tender.title }}</p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ federal_tender.tdr_title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
