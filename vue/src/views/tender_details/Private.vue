@@ -1,52 +1,52 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="pt-4 pt-lg-5 result pb-4">
+    <section class="pt-4 pt-lg-4 result pb-4">
         <div class="container position-relative">
+            <div class="row px-2">
+                <div class="col-12 d-flex justify-content-md-between">
+                        <ul class="list-inline text-end">
+                            <li class="list-inline-item">
+                                <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
+                                    @click.prevent="previousPage()">Back</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline text-end">
+                            <li class="list-inline-item">
+                                <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i
+                                        class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
+                            </li>
+                            <li class="list-inline-item" v-if="private_tender?.tender_url">
+                                <a href="javascript:void(0)" @click="openWebSite()"
+                                    class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open
+                                    Website</a>
+                            </li>
+                            <li class="list-inline-item" v-else>
+                                <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i
+                                        class="fa-solid fa-globe m-1"></i>Open
+                                    Website</a>
+                            </li>
+                            <li class="list-inline-item" v-if="$store.getters.user">
+                                <button class="btn btn-sm btn-primary" @click.prevent="shareprivate_tenders()"><i
+                                        class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                            </li>
+                        </ul>
+                </div>
+            </div>
             <div class="card shadow">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
-                                    <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
-                                        @click.prevent="previousPage()">Back</a>
-                                </li>
-                            </ul>
-                            <ul class="list-inline text-end">
-                                <li class="list-inline-item">
-                                    <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i
-                                            class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
-                                </li>
-                                <li class="list-inline-item" v-if="private_tender?.tender_url">
-                                    <a href="javascript:void(0)" @click="openWebSite()"
-                                        class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open
-                                        Website</a>
-                                </li>
-                                <li class="list-inline-item" v-else>
-                                    <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i
-                                            class="fa-solid fa-globe m-1"></i>Open
-                                        Website</a>
-                                </li>
-                                <li class="list-inline-item" v-if="$store.getters.user">
-                                    <button class="btn btn-sm btn-primary" @click.prevent="shareprivate_tenders()"><i
-                                            class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                                    <img class="icon me-2" src="/assets/icons/privateblue.svg" alt="icon">
+                                        <span style="font-size: 16pt;">Private / Commerical </span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <p class="" style="color: black; font-size: 18px;">
-                                        <img v-if="private_tender.region?.region_id == 2" class="icon"
-                                            src="/img/federalblue.6e218214.svg" alt="icon" />
-                                        <img class="icon" v-if="private_tender.region?.region_id == 1"
-                                            src="/img/stateblue.16cfab6e.svg" alt="icon" />
-                                        <img class="icon" v-if="private_tender.region?.region_id == 3"
-                                            src="/img/privateblue.c4518422.svg" alt="icon" />
-                                        <img class="icon" v-if="private_tender.region?.region_id == 4"
-                                            src="/img/internationalblue.2bdbd466.svg" alt="icon" />
-                                        Private / Commerical Opportunities
-                                    </p>
+                                    <p>{{ private_tender.title }}</p>
                                     <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ private_tender.tdr_title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
