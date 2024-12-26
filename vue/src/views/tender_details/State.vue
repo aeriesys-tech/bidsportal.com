@@ -39,16 +39,15 @@
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <img class="icon me-2" src="/assets/icons/stateblue.svg" alt="icon">
-                                        <span style="font-size: 16pt;">State Opportunities</span>
+                                        <span style="color: black; font-size: 18px;">State Opportunities</span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <p>{{ state_tender.title }}</p>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
-                                        class="nav-item">{{ state_tender.tdr_title }}</h5>
+                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;"
+                                        class="nav-item">{{ state_tender.title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
                                         <li class="nav-item"><span
                                                 style="font-weight: 900 !important; color: black;">Solicitiation Number

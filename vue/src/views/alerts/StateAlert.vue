@@ -420,7 +420,7 @@ export default {
             }
         })
     },
-    
+
     mounted() {
         this.getSates()
     },
@@ -686,17 +686,20 @@ export default {
 
         createAlerts() {
             let vm = this
+            vm.isLoading=true
             vm.alert.keywords = vm.tags
             if (vm.$store.getters.user) {
                 vm.alert.user_id = vm.$store.getters.user.user_id
                 vm.$store
                     .dispatch("post", { uri: 'addStateAlerts', data: vm.alert })
                     .then(function (response) {
+                        vm.isLoading=false
                         vm.$store.dispatch("success", "Alert is added successfully");
                         vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {
                         console.log(error)
+                        vm.isLoading=false
                         if (error.response.data.errors.states) {
                             vm.state_border_red = 'border-color:red'
                         }
@@ -708,6 +711,7 @@ export default {
 
         updateAlerts() {
             let vm = this
+            vm.isLoading=true
             vm.alert.naics = vm.$store.getters.selected_naics
             vm.alert.pscs = vm.$store.getters.selected_pscs
             vm.alert.keywords = vm.tags
@@ -716,10 +720,12 @@ export default {
                 vm.$store
                     .dispatch("post", { uri: 'updateStateAlerts', data: vm.alert })
                     .then(function (response) {
+                        vm.isLoading=false
                         vm.$store.dispatch("success", "Alert is updated successfully");
                         vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {
+                        vm.isLoading=false
                         console.log(error)
                         if (error.response.data.errors.states) {
                             vm.state_border_red = 'border-color:red'
