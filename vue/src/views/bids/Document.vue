@@ -40,7 +40,7 @@
                                         <i class="fa-solid fa-angle-down ms-2"></i>
                                     </a>
                                 </div>
-                             
+
                                 <div class="col-12 ml2 multi-collapse collapse show">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="form-check">
@@ -126,7 +126,7 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div>
                             <div v-if="listview">
                                 <div class="card shadow mb-3" v-for="state_tender in state_tenders"
@@ -223,25 +223,26 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="state_tenders.length">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-radius1">
-                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive table-responsive-sm border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top">
-                                                        <th scope="col" colspan="2" width="20%">Bid number & notice
+                                                    <tr class="vertical-align-top1">
+                                                        <th class="border-0"></th>
+                                                        <th scope="col" class="border-0">Bid number &<br> notice
                                                             type</th>
-                                                        <th scope="col" width="25%">Title</th>
-                                                        <th scope="col" width="25%">Agency</th>
-                                                        <th scope="col" width="20%">Location
+                                                        <th scope="col" class="border-0">Title</th>
+                                                        <th scope="col" class="border-0">Agency</th>
+                                                        <th scope="col" class="border-0">Location
                                                         </th>
-                                                        <th scope="col" width="10%">Due date</th>
+                                                        <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
                                                 <tbody class="border-top-0" v-for="state_tender in state_tenders"
                                                     :key="state_tender.state_tender_id">
                                                     <tr>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="form-check my-auto"
                                                                 v-if="$store.getters.user">
                                                                 <input class="form-check-input me-3" type="checkbox"
@@ -249,7 +250,7 @@
                                                                     v-model="share_bid.tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="row">
                                                                 <div class="column">
                                                                     <a href="javascript:void(0)" @click="tenderDetails(state_tender)">
@@ -266,14 +267,14 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div v-html="highlight(state_tender.title)"></div>
                                                         </td>
-                                                        <td class="padding-16">{{ state_tender.state_agency?.agency_name
+                                                        <td class="">{{ state_tender.state_agency?.agency_name
                                                             }}</td>
-                                                        <td class="padding-16">{{ state_tender.place_of_performance }}
+                                                        <td class="">{{ state_tender.place_of_performance }}
                                                         </td>
-                                                        <td class="padding-16" style="width: 110px;">{{
+                                                        <td class="" style="width: 110px;">{{
                                                             state_tender.expiry_date }}</td>
                                                     </tr>
                                                 </tbody>
@@ -430,25 +431,25 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="federal_tenders.length">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-radius1">
-                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive table-responsive-sm border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top">
-                                                        <th scope="col" colspan="2" width="20%">Bid number & notice
+                                                    <tr class="vertical-align-top1">
+                                                        <th scope="col" colspan="2" class="border-0">Bid number &<br> notice
                                                             type</th>
-                                                        <th scope="col" width="25%">Title</th>
-                                                        <th scope="col" width="25%">Agency</th>
-                                                        <th scope="col" width="20%">Location
+                                                        <th scope="col" class="border-0">Title</th>
+                                                        <th scope="col" class="border-0">Agency</th>
+                                                        <th scope="col" class="border-0">Location
                                                         </th>
-                                                        <th scope="col" width="10%">Due date</th>
+                                                        <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
                                                 <tbody class="border-top-0" v-for="federal_tender in federal_tenders"
                                                     :key="federal_tender.federal_tender_id">
                                                     <tr>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="form-check my-auto"
                                                                 v-if="$store.getters.user">
                                                                 <input class="form-check-input me-3" type="checkbox"
@@ -456,7 +457,7 @@
                                                                     v-model="share_bid.tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="row">
                                                                 <div class="column">
                                                                     <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">
@@ -473,14 +474,14 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div v-html="highlight(federal_tender.title)"></div>
                                                         </td>
-                                                        <td class="padding-16">{{ federal_tender.federal_agency?.agency_name
+                                                        <td class="">{{ federal_tender.federal_agency?.agency_name
                                                             }}</td>
-                                                        <td class="padding-16">{{ federal_tender.place_of_performance }}
+                                                        <td class="">{{ federal_tender.place_of_performance }}
                                                         </td>
-                                                        <td class="padding-16" style="width: 110px;">{{
+                                                        <td class="" style="width: 110px;">{{
                                                             federal_tender.expiry_date }}</td>
                                                     </tr>
                                                 </tbody>
@@ -636,25 +637,28 @@
                                 </div>
                             </div>
                             <div v-else>
-                                <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                    <div class="table-responsive table-radius1">
-                                        <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+
+
+                            <div class="card shadow mb-3">
+                                <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                    <div class="table-responsive table-responsive-sm border-0">
+                                        <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                             <thead class="table-light">
-                                                <tr class="vertical-align-top">
-                                                    <th scope="col" colspan="2" width="20%">Bid number & notice
+                                                <tr class="vertical-align-top1">
+                                                    <th scope="col" colspan="2" class="border-0">Bid number &<br> notice
                                                         type</th>
-                                                    <th scope="col" width="25%">Title</th>
-                                                    <th scope="col" width="25%">Agency</th>
-                                                    <th scope="col" width="20%">Location
+                                                    <th scope="col" class="border-0">Title</th>
+                                                    <th scope="col" class="border-0">Agency</th>
+                                                    <th scope="col" class="border-0">Location
                                                     </th>
-                                                    <th scope="col" width="10%">Due date</th>
+                                                    <th scope="col" class="border-0">Due date</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody class="border-top-0" v-for="private_tender in private_tenders"
                                                 :key="private_tender.private_tender_id">
                                                 <tr>
-                                                    <td class="padding-16">
+                                                    <td class="">
                                                         <div class="form-check my-auto"
                                                             v-if="$store.getters.user">
                                                             <input class="form-check-input me-3" type="checkbox"
@@ -662,7 +666,7 @@
                                                                 v-model="share_bid.tenders" />
                                                         </div>
                                                     </td>
-                                                    <td class="padding-16">
+                                                    <td class="">
                                                         <div class="row">
                                                             <div class="column">
                                                                 <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
@@ -679,14 +683,14 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="padding-16">
+                                                    <td class="">
                                                         <div v-html="highlight(private_tender.title)"></div>
                                                     </td>
-                                                    <td class="padding-16">{{ private_tender.private_agency?.agency_name
+                                                    <td class="">{{ private_tender.private_agency?.agency_name
                                                         }}</td>
-                                                    <td class="padding-16">{{ private_tender.place_of_performance }}
+                                                    <td class="">{{ private_tender.place_of_performance }}
                                                     </td>
-                                                    <td class="padding-16" style="width: 110px;">{{
+                                                    <td class="" style="width: 110px;">{{
                                                         private_tender.expiry_date }}</td>
                                                 </tr>
                                             </tbody>
@@ -694,6 +698,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                         <div v-if="private_tenders.length">
                             <div style="float: left;">
@@ -843,24 +848,24 @@
                             <div v-else>
                                 <div class="card shadow" v-if="international_tenders.length !== 0">
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-radius1">
-                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+                                        <div class="table-responsive table-responsive-sm border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top">
-                                                        <th scope="col" colspan="2" width="20%">Bid number & notice
+                                                    <tr class="vertical-align-top1">
+                                                        <th scope="col" colspan="2" class="border-0">Bid number &<br> notice
                                                             type</th>
-                                                        <th scope="col" width="25%">Title</th>
-                                                        <th scope="col" width="25%">Agency</th>
-                                                        <th scope="col" width="20%">Location
+                                                        <th scope="col" class="border-0">Title</th>
+                                                        <th scope="col" class="border-0">Agency</th>
+                                                        <th scope="col" class="border-0">Location
                                                         </th>
-                                                        <th scope="col" width="10%">Due date</th>
+                                                        <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
                                                 <tbody class="border-top-0" v-for="international_tender in international_tenders"
                                                     :key="international_tender.international_tender_id">
                                                     <tr>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="form-check my-auto"
                                                                 v-if="$store.getters.user">
                                                                 <input class="form-check-input me-3" type="checkbox"
@@ -868,7 +873,7 @@
                                                                     v-model="share_bid.tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="row">
                                                                 <div class="column">
                                                                     <a href="javascript:void(0)" @click="tenderDetails(international_tender)">
@@ -885,14 +890,14 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div v-html="highlight(international_tender.title)"></div>
                                                         </td>
-                                                        <td class="padding-16">{{ international_tender.international_agency?.agency_name
+                                                        <td class="">{{ international_tender.international_agency?.agency_name
                                                             }}</td>
-                                                        <td class="padding-16">{{ international_tender.place_of_performance }}
+                                                        <td class="">{{ international_tender.place_of_performance }}
                                                         </td>
-                                                        <td class="padding-16" style="width: 110px;">{{
+                                                        <td class="" style="width: 110px;">{{
                                                             international_tender.expiry_date }}</td>
                                                     </tr>
                                                 </tbody>
@@ -1206,27 +1211,27 @@
 
         watch: {
             'region': function(){
-                this.state_filter.keywords = [] 
-                this.state_filter.state_notices  =  [] 
-                this.state_filter.response_date = false 
-                this.state_filter.response_from_date = false 
-                this.state_filter.response_to_date = false 
-                this.state_filter.posted_date = false 
-                this.state_filter.posted_from_date = false 
-                this.state_filter.posted_to_date = false 
-                this.state_filter.categories = [] 
-                this.state_filter.states = [] 
-                this.state_filter.state_agencies = [] 
-                this.state_filter.search =  null 
-                this.state_filter.order_by =  "asc" 
+                this.state_filter.keywords = []
+                this.state_filter.state_notices  =  []
+                this.state_filter.response_date = false
+                this.state_filter.response_from_date = false
+                this.state_filter.response_to_date = false
+                this.state_filter.posted_date = false
+                this.state_filter.posted_from_date = false
+                this.state_filter.posted_to_date = false
+                this.state_filter.categories = []
+                this.state_filter.states = []
+                this.state_filter.state_agencies = []
+                this.state_filter.search =  null
+                this.state_filter.order_by =  "asc"
                 this.state_filter.field = null
-                this.state_filter.per_page =  15 
-                this.state_filter.totalRows =  0 
-                this.state_filter.page =  1 
-                this.state_filter.lastPage =  1 
-                this.state_filter.from =  1 
-                this.state_filter.maxPage =  1 
-                this.state_filter.to = null 
+                this.state_filter.per_page =  15
+                this.state_filter.totalRows =  0
+                this.state_filter.page =  1
+                this.state_filter.lastPage =  1
+                this.state_filter.from =  1
+                this.state_filter.maxPage =  1
+                this.state_filter.to = null
 
                 this.federal_filter.keywords = [],
                 this.federal_filter.federal_notices  =  [],
@@ -1270,7 +1275,7 @@
 
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                
+
             })
         },
 
@@ -1423,7 +1428,7 @@
             gridviewgrid() {
                 this.listview = true
                 this.gridview = false
-                if(this.region == 'State'){    
+                if(this.region == 'State'){
                     this.state_filter.per_page=10
                     this.getStateTenders()
                 }else if (this.region == 'Federal'){
@@ -1450,7 +1455,7 @@
                     vm.federal_filter.keywords = vm.tags
                     this.getFederalTenders()
                 }
-            }, 
+            },
 
             dateFormat(value) {
                 return moment(value).format("ll");
@@ -1746,7 +1751,7 @@
                         });
                 }
             }
-            
+
         }
     };
 </script>

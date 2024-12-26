@@ -4,54 +4,51 @@
         <div class="container position-relative">
             <div class="row px-2">
                  <div class="col-12 d-flex justify-content-md-between">
-                            <ul class="list-inline text-end">
-                                <li class="list-inline-item">
-                                    <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
-                                        @click.prevent="previousPage()">Back</a>
-                                </li>
-                            </ul>
-                            <ul class="list-inline text-end">
-                                <li class="list-inline-item">
-                                    <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i
-                                            class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
-                                </li>
-                                <li class="list-inline-item" v-if="international_tender?.tender_url">
-                                    <a href="javascript:void(0)" @click="openWebSite()"
-                                        class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open
-                                        Website</a>
-                                </li>
-                                <li class="list-inline-item" v-else>
-                                    <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i
-                                            class="fa-solid fa-globe m-1"></i>Open
-                                        Website</a>
-                                </li>
-                                <li class="list-inline-item" v-if="$store.getters.user">
-                                    <button class="btn btn-sm btn-primary"
-                                        @click.prevent="shareinternational_tenders()"><i
-                                            class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
-                                </li>
-                            </ul>
+                    <ul class="list-inline text-end">
+                        <li class="list-inline-item">
+                            <a href="javascript:void(0)" class="btn btn-sm btn-secondary"
+                                @click.prevent="previousPage()">Back</a>
+                        </li>
+                    </ul>
+                    <ul class="list-inline text-end">
+                        <li class="list-inline-item">
+                            <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i
+                                    class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
+                        </li>
+                        <li class="list-inline-item" v-if="international_tender?.tender_url">
+                            <a href="javascript:void(0)" @click="openWebSite()"
+                                class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open
+                                Website</a>
+                        </li>
+                        <li class="list-inline-item" v-else>
+                            <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i
+                                    class="fa-solid fa-globe m-1"></i>Open
+                                Website</a>
+                        </li>
+                        <li class="list-inline-item" v-if="$store.getters.user">
+                            <button class="btn btn-sm btn-primary"
+                                @click.prevent="shareinternational_tenders()"><i
+                                    class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="card shadow">
                 <div class="card-body">
-
                     <div class="row">
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <img class="icon me-2" src="/assets/icons/internationalblue.svg" alt="icon">
-                                        <span style="font-size: 16pt;">International Opportunities</span>
+                                        <span style="font-size: 18px;color: black;">International Opportunities</span>
                                 </li>
                             </ul>
                         </div>
-
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <p>{{ international_tender.title }}</p>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
-                                        class="nav-item">{{ international_tender.tdr_title }}</h5>
+                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;"
+                                        class="nav-item">{{ international_tender.title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
                                         <li class="nav-item"><span
                                                 style="font-weight: 900 !important; color: black;">Solicitiation Number
