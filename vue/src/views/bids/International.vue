@@ -602,27 +602,27 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="international_tenders.length !== 0">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-radius1">
-                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive table-responsive-sm border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top">
-                                                        <th class="padding-12-16"></th>
-                                                        <th scope="col" class="padding-12-16">Bid number & <br>notice
+                                                    <tr class="vertical-align-top1">
+                                                        <th class="border-0"></th>
+                                                        <th scope="col" class="border-0">Bid number & notice
                                                             type</th>
-                                                        <th scope="col" class="padding-12-16">Title</th>
-                                                        <th scope="col" class="padding-12-16">Agency</th>
-                                                        <th scope="col" class="padding-12-16">Place of <br>performance
+                                                        <th scope="col" class="border-0">Title</th>
+                                                        <th scope="col" class="border-0">Agency</th>
+                                                        <th scope="col" class="border-0">Place of <br>performance
                                                         </th>
-                                                        <th scope="col" class="padding-12-16">Due date</th>
-                                                        <th scope="col" class="padding-12-16"></th>
+                                                        <th scope="col" class="border-0">Due date</th>
+                                                        <th scope="col" class="border-0"></th>
                                                     </tr>
                                                 </thead>
 
                                                 <tbody class="border-top-0" v-for="international_tender in international_tenders"
                                                     :key="international_tender.international_tender_id">
                                                     <tr>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="form-check my-auto"
                                                                 v-if="$store.getters.user !== null">
                                                                 <input class="form-check-input me-3" type="checkbox"
@@ -630,7 +630,7 @@
                                                                     v-model="share_international_tender.international_tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="row">
                                                                 <div class="column">
                                                                     <a href="javascript:void(0)"
@@ -647,15 +647,15 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div v-html="highlight(international_tender.title)"></div>
                                                         </td>
-                                                        <td class="padding-16">{{
+                                                        <td class="">{{
                                                             international_tender.international_agency?.agency_name
                                                         }}</td>
-                                                        <td class="padding-16">{{ international_tender.place_of_performance }}
+                                                        <td class="">{{ international_tender.place_of_performance }}
                                                         </td>
-                                                        <td class="padding-16" style="width: 110px;">{{
+                                                        <td class="" style="width: 110px;">{{
                                                             international_tender.expiry_date }}</td>
                                                         <td>
 
@@ -866,61 +866,60 @@
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
+                     <div v-if="isLoading" class="global-loader">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
                         <div class="card border">
-                            <div class="card-body vstack gap-4">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center p-0">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
-                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                            </div>
-
-                                            <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
-                                            </div>
-                                        </div>
-
-                                        <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
-                                                type="button" @click.prevent="closeModal()"
-                                                class="btn-close"></button></a>
+                            <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-xs">
+                                        <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
                                     </div>
 
-                                    <form class="card-body" style="min-width: 350px;">
-                                        <div class="mb-3">
-                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }"
-                                                placeholder="Employee/Colleague Email Address" autocomplet="off"
-                                                type="text" id="recipient-name"
-                                                v-model="share_international_tender.recipient_email" ref="mails" />
-                                            <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0]
-                                                }}</span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input class="form-control" type="text" name="email_subject"
-                                                :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
-                                                autocomplet="off" id="email_subject"
-                                                v-model="share_international_tender.subject" ref="subject" />
-                                            <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
-                                                }}</span>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <textarea class="form-control" rows="3" name="email_message"
-                                                :class="{ 'is-invalid': errors.message }"
-                                                placeholder="Brief Messsage/Note" autocomplet="off" id="email_message"
-                                                v-model="share_international_tender.message"></textarea>
-                                            <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
-                                                }}</span>
-                                        </div>
-
-                                        <div class="text-end">
-                                            <a href="javascript:void(0)" @click="sendInternationalTenderMail()"
-                                                class="mybutton-secondary2">Send</a>
-                                        </div>
-                                    </form>
+                                    <div class="ms-2">
+                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
+                                    </div>
                                 </div>
+
+                                <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
+                                        type="button" @click.prevent="closeModal()"
+                                        class="btn-close"></button></a>
                             </div>
+                            <form class="card-body" style="min-width: 350px;">
+                                <div class="mb-3">
+                                    <input class="form-control" :class="{ 'is-invalid': errors.recipient_email }"
+                                        placeholder="Employee/Colleague Email Address" autocomplet="off"
+                                        type="text" id="recipient-name"
+                                        v-model="share_international_tender.recipient_email" ref="recipient_email" />
+                                    <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0]
+                                        }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <input class="form-control" type="text" name="email_subject"
+                                        :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
+                                        autocomplet="off" id="email_subject"
+                                        v-model="share_international_tender.subject" ref="subject" />
+                                    <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
+                                        }}</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <textarea class="form-control" rows="3" name="email_message"
+                                        :class="{ 'is-invalid': errors.message }"
+                                        placeholder="Brief Messsage/Note" autocomplet="off" id="email_message"
+                                        v-model="share_international_tender.message"></textarea>
+                                    <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
+                                        }}</span>
+                                </div>
+
+                                <div class="text-end">
+                                    <button class="mb-0 btn btn-sm btn-success fw-400" @click="sendInternationalTenderMail()">Send</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
@@ -2406,5 +2405,17 @@ export default {
 
 .card1 {
     background-color: transparent;
+}
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Optional: Dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Higher than modal */
 }
 </style>

@@ -586,34 +586,34 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="state_tenders.length !== 0">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-radius1">
-                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive table-responsive-sm border-0">
+                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top">
-                                                        <th class="padding-12-16"></th>
-                                                        <th scope="col" class="padding-12-16">Bid number & <br>notice
+                                                    <tr class="vertical-align-top1">
+                                                        <th class="border-0"></th>
+                                                        <th scope="col" class="border-0">Bid number & notice
                                                             type</th>
-                                                        <th scope="col" class="padding-12-16">Title</th>
-                                                        <th scope="col" class="padding-12-16">Agency</th>
-                                                        <th scope="col" class="padding-12-16">Place of <br>performance
+                                                        <th scope="col" class="border-0">Title</th>
+                                                        <th scope="col" class="border-0">Agency</th>
+                                                        <th scope="col" class="border-0">Place of <br>performance
                                                         </th>
-                                                        <th scope="col" class="padding-12-16">Due date</th>
-                                                        <th scope="col" class="padding-12-16"></th>
+                                                        <th scope="col" class="border-0">Due date</th>
+                                                        <th scope="col" class="border-0"></th>
                                                     </tr>
                                                 </thead>
 
                                                 <tbody class="border-top-0" v-for="state_tender in state_tenders"
                                                     :key="state_tender.state_tender_id">
                                                     <tr>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="form-check my-auto" v-if="$store.getters.user">
                                                                 <input class="form-check-input me-3" type="checkbox"
                                                                     :value="state_tender.state_tender_id"
                                                                     v-model="share_state_tender.state_tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div class="row">
                                                                 <div class="column">
                                                                     <a href="javascript:void(0)"
@@ -631,14 +631,14 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="padding-16">
+                                                        <td class="">
                                                             <div v-html="highlight(state_tender.title)"></div>
                                                         </td>
-                                                        <td class="padding-16">{{ state_tender.state_agency?.agency_name
+                                                        <td class="">{{ state_tender.state_agency?.agency_name
                                                             }}</td>
-                                                        <td class="padding-16">{{ state_tender.place_of_performance }}
+                                                        <td class="">{{ state_tender.place_of_performance }}
                                                         </td>
-                                                        <td class="padding-16" style="width: 110px;">{{
+                                                        <td class="" style="width: 110px;">{{
                                                             state_tender.expiry_date }}</td>
                                                         <td>
 
@@ -919,22 +919,25 @@
         <div class="modal-overlay">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <div v-if="isLoading" class="global-loader">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
                         <div class="card border">
-                            <div class="card-body vstack gap-4">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center p-0">
+                            <!-- <div class="card-body vstack gap-4">
+                                <div class="card"> -->
+                                    <div class="card-header d-flex justify-content-between align-items-center p-3">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
+                                            <div class="avatar avatar-xs">
                                                 <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
                                             </div>
-
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                                <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
                                             </div>
                                         </div>
-
                                         <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
                                                 type="button" @click.prevent="closeModal()"
                                                 class="btn-close"></button></a>
@@ -942,11 +945,11 @@
 
                                     <form class="card-body" style="min-width: 350px;">
                                         <div class="mb-3">
-                                            <input class="form-control" :class="{ 'is-invalid': errors.mails }"
+                                            <input class="form-control" :class="{ 'is-invalid': errors.recipient_email }"
                                                 placeholder="Employee/Colleague Email Address" autocomplet="off"
                                                 type="text" id="recipient-name"
-                                                v-model="share_state_tender.recipient_email" ref="mails" />
-                                            <span v-if="errors.mails" class="invalid-feedback">{{ errors.mails[0]
+                                                v-model="share_state_tender.recipient_email" ref="recipient_email" />
+                                            <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0]
                                                 }}</span>
                                         </div>
                                         <div class="mb-3">
@@ -968,12 +971,11 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <a href="javascript:void(0)" @click="sendStateTenderMail()"
-                                                class="mybutton-secondary2">Send</a>
+                                            <button type="button" class="mb-0 btn btn-sm btn-success fw-400" @click="sendStateTenderMail()">Send</button>
                                         </div>
                                     </form>
-                                </div>
-                            </div>
+                                <!-- </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
@@ -2404,5 +2406,17 @@ export default {
 
 .card1 {
     background-color: transparent;
+}
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Optional: Dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Higher than modal */
 }
 </style>
