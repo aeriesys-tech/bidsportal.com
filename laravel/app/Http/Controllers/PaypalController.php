@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
 use App\Models\CartItem;
 use App\Models\PurchaseItem;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SubscriptionMail;
 
 class PaypalController extends Controller
 {
@@ -62,6 +64,25 @@ class PaypalController extends Controller
         	$valid_upto = $valid_to->format('M d - Y');
         	return Redirect::to(config('app.base_url').'/#/subscription-payment'.'/'.$item_number.'/'.$request->query('amt').'/'.$request->query('tx').'/'.$valid_upto);
         }
+        $user = User::where('user_id', 33)->first();
+        if($user && $subscription_plan){
+        	$amount = $subscription_plan->price;
+        	$discount = $subscription_plan->discount;
+        	$subtotal = $amount - $discount;
+        	$data = ([
+        		'amt' => $amount,
+        		'plan' => $subscription_plan->plan,
+        		'order_id' => $order_id,
+        		'txn_id' => $request->query('tx'),
+        		'payment_type' => 'Online',
+        		'tran_date' => date('Y-m-d'),
+        		'tran_time' => date('H:i'),
+        		'subtotal' => $subtotal,
+        		'coupon_discout' => $discount,
+        		'total' => $subtotal
+        	]);
+	        Mail::to($user->email)->send(new SubscriptionMail($user, $data));
+	    }
 	}
 
     public function paypal_success_common_func()
@@ -126,7 +147,7 @@ class PaypalController extends Controller
 	                'payment_date' => $payment_date,
 	                'created_date' => $created_date
 	            ]); 
-	            $user = $userSubscriptions = UserSubscription::updateOrcreate([ 
+	            $userSubscriptions = UserSubscription::updateOrcreate([ 
 	                'user_id' => $user_id,
 	                'txn_id' => $txn_id
 	            ],
@@ -146,45 +167,23 @@ class PaypalController extends Controller
 	                'subscr_month' => $subscr_month,
 	                'payment_date' => $payment_date,
 	                'created_date' => $created_date
-	            ]); 
+	            ]);
+	             
+	            $user_subscription = UserSubscription:: where('txn_id', $txn_id)->where('user_id', $user_id)->first();
 
-	            Log::info(" userSubscriptions  : ".$userSubscriptions); 
-	            Log::info("Data inserted in UserSubscriptions : ".print_r($data,true));
-	            $subscriptions_count = UserSubscription::where('txn_id', $txn_id)->where('user_id', $user_id)->count();  
-
-	            Log::info(" subscriptions_count  : ".$subscriptions_count); 
-	            $subscriptions_details = UserSubscription:: where('txn_id', $txn_id)->where('user_id', $user_id)->orderBy('id', 'DESC')->first();  
-	            Log::info("subscriptions_details : ".print_r($subscriptions_details,true));
-
-	            if($subscriptions_count>0)
+	            if($user_subscription)
 	            {
-	                $data['item_number']=$item_number;
-	                $data['order_id']=$subscriptions_details['order_id'];
-	                $data['valid_from']=$subscriptions_details['valid_from'];
-	                $data['valid_to']=$subscriptions_details['valid_to'];
-	                $data['months']=$subscriptions_details['subscr_month'];
-	                $data['txn_id']=$txn_id;
-	                $data['amount']=$payment_gross;
-	                $data['payment_status']=$payment_status;
-	                $data['getECResponse']="Success";
-	                $data['currency_code']=$currency_code;
-	                 
-	                if($subscriptions_details->payment_date!='')
-	                {
-	                    $paymentDateInFormat = date("M d, y", strtotime($subscriptions_details->payment_date));
-	                    $data['payment_date']=$paymentDateInFormat;
-	                }
-	                else
-	                {
-	                    $data['payment_date']=""; 
-	                }
-	                $updateData=array(
-	                    'subscription_id'=> $subscriptions_details->id,
-	                    'status'=>'approved'
-	                );
-	                $UpdateUserSubscription=User::where('id', $user_id)->update($updateData); 
-	                 
-	                Log::info("data before call success_page_for_subscription_func : ".print_r($data,true));
+	                $data['item_number'] = $item_number;
+	                $data['order_id'] = $user_subscription->order_id;
+	                $data['valid_from'] = $user_subscription->valid_from;
+	                $data['valid_to'] = $user_subscription->valid_to;
+	                $data['months'] = $user_subscription->subscr_month;
+	                $data['txn_id'] = $txn_id;
+	                $data['amount'] = $payment_gross;
+	                $data['payment_status'] = $payment_status;
+	                $data['getECResponse'] = "Success";
+	                $data['currency_code'] = $currency_code; 
+
 	                return Redirect::to(config('app.base_url').'/#/subscription-payment'.'/'.$data['item_number'].'/'.$data['amount'].'/'.$data['txn_id']);
 	            }
 	        }
@@ -234,7 +233,28 @@ class PaypalController extends Controller
 	            Log::info("Data inserted in UserPayments : ".print_r($data,true));
 	            Log::info("success_page_for_payment_custom will open here");
 	            return Redirect::to(config('app.base_url').'/#/normal-payment/'.$data['txn_id'].'/'.$data['order_id'].'/'.$data['payment_date'].'/'.$data['first_name'].'/'.$data['item_number'].'/'.$data['payment_amount']);
-	        }
+	       }
+	       	$subscription_plan = SubscriptionPlan::where('price', $payment_gross)->first();
+	       	$user = User::where('user_id', $user_id)->first();
+
+	       	if($user && $subscription_plan){
+	        	$amount = $subscription_plan->price;
+	        	$discount = $subscription_plan->discount;
+	        	$subtotal = $amount - $discount;
+	        	$subscription = ([
+	        		'amt' => $amount,
+	        		'plan' => $subscription_plan->plan,
+	        		'order_id' => $order_id,
+	        		'txn_id' => $request->query('tx'),
+	        		'payment_type' => 'Online',
+	        		'tran_date' => date('Y-m-d'),
+	        		'tran_time' => date('H:i'),
+	        		'subtotal' => $subtotal,
+	        		'coupon_discout' => $discount,
+	        		'total' => $subtotal
+	        	]);
+		        Mail::to($user->email)->send(new SubscriptionMail($user, $subscription));
+		    }
 	    }   
 	}
 
