@@ -35,6 +35,7 @@ use App\Http\Controllers\PrivateTenderController;
 use App\Http\Controllers\InternationalTenderController;
 use App\Http\Controllers\PrivateFilterController;
 use App\Http\Controllers\InternationalFilterController;
+use App\Http\Controllers\UserStateInterestController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -303,6 +304,11 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getCategory",[CategoryController::class,'getCategory']);
 	Route::post("updateCategory",[CategoryController::class,'updateCategory']);
 	Route::post("deleteCategory",[CategoryController::class,'deleteCategory']);
+
+	//User State Interest
+	Route::post("addStateInterest",[UserStateInterestController::class,'addStateInterest']);
+	Route::post("paginateStateInterests",[UserStateInterestController::class,'paginateStateInterests']);
+	Route::post("deleteStateInterest",[UserStateInterestController::class,'deleteStateInterest']);
 });
 
 //paypal

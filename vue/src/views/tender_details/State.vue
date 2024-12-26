@@ -264,31 +264,31 @@
                                         <div class="card-body p-0">
                                             <div class="border-bottom-rounded p-3 text-center"
                                                 style="margin-bottom: 5px; border: 1px solid #dfdfe3;"
-                                                v-if="userinteresd.length == 0">
+                                                v-if="!state_interests.length">
                                                 No records found
                                             </div>
                                             <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;"
-                                                v-for="bidintersed in userinteresd" :key="bidintersed.bid_interest_id">
+                                                v-for="state_interest in state_interests" :key="state_interest.user_state_interest_id">
                                                 <div class="d-sm-flex justify-content-between">
                                                     <div class="d-sm-flex align-items-center mb-3">
                                                         <div>
                                                             <h6 class="m-0 mb-2">{{
-                                                                bidintersed.user_details.company_name }}
+                                                                state_interest.user?.company_name }}
                                                             </h6>
                                                             <span class="me-3">User Name : {{
-                                                                bidintersed.user_details.name
+                                                                state_interest.user?.name
                                                             }}</span><br />
 
                                                             <span class="me-3">Position : {{
-                                                                bidintersed.bid_interested_type
+                                                                state_interest.interest_type
                                                             }}</span><br />
                                                             <span class="me-3">Website : {{
-                                                                bidintersed.user_details.web_address
+                                                                state_interest.user_details.web_address
                                                             }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
-                                                                bidintersed.user_details.phone }}</span>
+                                                                state_interest.user_details.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
-                                                                bidintersed.user_details.email }}</span><br />
+                                                                state_interest.user_details.email }}</span><br />
                                                         </div>
                                                     </div>
                                                     <ul class="list-inline mb-2 mb-sm-0">
@@ -297,22 +297,22 @@
                                                 <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
                                                 <ul>
                                                     <li type="1"
-                                                        v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(',')"
+                                                        v-for="(value, key) in state_interest.user_details?.socioeconomic_status_description?.split(',')"
                                                         :key="key">
                                                         {{ value }}
                                                     </li>
                                                 </ul>
                                                 <div class="d-flex align-items-center">
                                                     <a href="javascript:void(0)"
-                                                        v-if="bidintersed.bid_interested_user == $store.getters.user.id"
-                                                        @click.prevent="edit(bidintersed)"
+                                                        v-if="state_interest.bid_interested_user == $store.getters.user.id"
+                                                        @click.prevent="edit(state_interest)"
                                                         class="btn btn-xs btn-success-soft" style="margin: 5px;">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                     <span
-                                                        v-if="bidintersed.bid_interested_user == $store.getters.user.id">
+                                                        v-if="state_interest.bid_interested_user == $store.getters.user.id">
                                                         <a href="javascript:void(0)"
-                                                            @click.prevent="deleteAlertpopup(bidintersed.bid_interest_id)"
+                                                            @click.prevent="deleteAlertpopup(state_interest.bid_interest_id)"
                                                             class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i
                                                                 class="bi bi-trash"></i></a>
                                                     </span>
@@ -412,7 +412,7 @@
         </div>
     </section>
 
-    <div class="modal fade" id="flightdetail" aria-hidden="true">
+    <!-- <div class="modal fade" id="flightdetail" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -424,21 +424,21 @@
                         <a href="#" class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                 class="fab fa-codepen"></i> </a>
                         <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming"
-                            v-model="addinterst.bid_interested_type" />
+                            v-model="state_interest.bid_interested_type" />
                         <label class="form-check-label" for="Priming">Priming</label>
                     </div>
                     <div class="form-check form-check-md my-3">
                         <a href="#" class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                 class="fab fa-dribbble"></i></a>
                         <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing"
-                            v-model="addinterst.bid_interested_type" />
+                            v-model="state_interest.bid_interested_type" />
                         <label class="form-check-label" for="Subbing">Subbing</label>
                     </div>
                     <div class="form-check form-check-md my-3">
                         <a href="#" class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                 class="fab fa-behance"></i> </a>
                         <input class="form-check-input" type="radio" name="box" value="Any" id="Any"
-                            v-model="addinterst.bid_interested_type" />
+                            v-model="state_interest.bid_interested_type" />
                         <label class="form-check-label" for="Any">Any</label>
                     </div>
                 </div>
@@ -451,7 +451,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <teleport to="#modals" v-if="sharebid">
         <div class="modal-overlay">
             <div class="modal-dialog">
@@ -532,7 +532,7 @@
                                         class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                             class="fab fa-codepen"></i> </a>
                                     <input class="form-check-input mt-0" type="radio" name="box" value="Priming"
-                                        id="Priming" v-model="addinterst.bid_interested_type" />
+                                        id="Priming" v-model="state_interest.interest_type" />
                                     <label class="form-check-label" for="Priming">Priming</label>
                                 </div>
                                 <div class="form-check form-check-md mb-2">
@@ -540,7 +540,7 @@
                                         class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                             class="fab fa-dribbble"></i></a>
                                     <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing"
-                                        v-model="addinterst.bid_interested_type" />
+                                        v-model="state_interest.interest_type" />
                                     <label class="form-check-label" for="Subbing">Subbing</label>
                                 </div>
                                 <div class="form-check form-check-md">
@@ -548,7 +548,7 @@
                                         class="btn btn-primary-soft btn-round flex-shrink-0 ms-2 mb-0"><i
                                             class="fab fa-behance"></i> </a>
                                     <input class="form-check-input" type="radio" name="box" value="Any" id="Any"
-                                        v-model="addinterst.bid_interested_type" />
+                                        v-model="state_interest.interest_type" />
                                     <label class="form-check-label" for="Any">Any</label>
                                 </div>
                                 <span style="color: red;" v-if="errors.bid_interested_type">{{
@@ -556,7 +556,7 @@
                             </form>
                             <div class="card-footer text-end pt-0">
                                 <button class="btn btn-sm btn-success mb-0" @click.prevent="submit()">
-                                    <span v-if="status">Add </span>
+                                    <span v-if="state_interest.status">Add </span>
                                     <span v-else>Update </span>
                                 </button>
                             </div>
@@ -638,12 +638,13 @@ export default {
             bid_documents: {
                 tdr_documents: [],
             },
-            addinterst: {
-                bid_interested_id: "",
-                tdr_id: "",
-                bid_interested_type: "",
-                bid_interested_user: "",
+            state_interest: {
+                user_state_interest_id: '',
+                state_tender_id: '',
+                interest_type: '',
+                status: true
             },
+            state_interests:[],
             tdr: {
                 tdr_id: "",
             },
@@ -670,7 +671,8 @@ export default {
             vm.from_path = from.path
             if (vm.$store.getters.state_tender) {
                 vm.state_tender = vm.$store.getters.state_tender
-                console.log("state-tender--", vm.state_tender)
+                vm.state_interest.state_tender_id = vm.state_tender?.state_tender_id
+                vm.state_interest.user_id = vm.$store.getters.user?.user_id
                 vm.getStateTender()
             }
         });
@@ -691,7 +693,23 @@ export default {
                     vm.state_tender = response.data.data
                     vm.download_all_attachments = vm.state_tender.state_attachments.filter(
                         attachment => attachment.attachment_url
-                    ).length >= 2;
+                    ).length >= 2
+                    vm.paginateStateInterests()
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
+        },
+
+        paginateStateInterests() {
+            let vm = this
+            vm.$store
+                .dispatch("post", { uri: "paginateStateInterests", data: vm.state_interest })
+                .then(function (response) {
+                    vm.state_interest = response.data.state_interest
+                    vm.state_interests = response.data.state_interests
                 })
                 .catch(function (error) {
                     console.log(error)
@@ -858,7 +876,7 @@ export default {
             let vm = this;
             vm.status = 0;
             vm.interstmodal = true;
-            vm.addinterst = bidintersed;
+            vm.state_interest = bidintersed;
         },
         getBidInterest() {
             let vm = this;
@@ -901,41 +919,42 @@ export default {
         submit() {
             let vm = this;
             if (vm.status) {
-                vm.addInterest();
+                vm.addStateInterest();
             } else {
                 vm.updateInterest();
             }
         },
-        addInterest() {
+        addStateInterest() {
             let vm = this;
             vm.status = 1;
             vm.isLoading = true;
-            vm.addinterst.tdr_id = vm.$store.getters.bidsdetails.tdr_id;
-            vm.addinterst.bid_interested_user = vm.$store.getters.user.id;
-            var userintertsed = vm.userinteresd.find((obj) => obj.bid_interested_user == vm.$store.getters.user.id);
+            // vm.state_interest.tdr_id = vm.$store.getters.bidsdetails.tdr_id;
+            // vm.state_interest.bid_interested_user = vm.$store.getters.user.id;
+            // var userintertsed = vm.userinteresd.find((obj) => obj.bid_interested_user == vm.$store.getters.user.id);
 
-            if (userintertsed?.bid_interested_user == vm.$store.getters?.user.id) {
-                // alert("User interest Added");
-                vm.alertmodal = true;
-                vm.interstmodal = false;
-                vm.isLoading = false;
-            } else {
+            // if (userintertsed?.bid_interested_user == vm.$store.getters?.user.id) {
+            //     // alert("User interest Added");
+            //     vm.alertmodal = true;
+            //     vm.interstmodal = false;
+            //     vm.isLoading = false;
+            // } else {
                 vm.$store
-                    .dispatch("post", { uri: "addBidInterest", data: vm.addinterst })
+                    .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
                     .then(function () {
                         vm.isLoading = false;
                         vm.$store.dispatch("success", "Added successfully");
-                        vm.getBidInterest();
+                        // vm.getBidInterest();
                         vm.interstmodal = false;
-                        vm.$refs.Close.click();
-                        vm.closemodal();
+                        // vm.$refs.Close.click();
+                        // vm.closemodal()
+                        vm.paginateStateInterests()
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-            }
+            // }
         },
 
         // getFileExtension(filename) {
@@ -945,14 +964,14 @@ export default {
         updateInterest() {
             let vm = this;
             vm.status = 1;
-            vm.addinterst.tdr_id = vm.$route.params.tdr_id;
-            vm.addinterst.bid_interested_user = vm.$store.getters.user.id;
+            vm.state_interest.tdr_id = vm.$route.params.tdr_id;
+            vm.state_interest.bid_interested_user = vm.$store.getters.user.id;
 
             vm.isLoading = true;
             vm.$store
                 .dispatch("post", {
-                    uri: "updateBidInterest/" + vm.addinterst.bid_interest_id,
-                    data: vm.addinterst,
+                    uri: "updateBidInterest/" + vm.state_interest.bid_interest_id,
+                    data: vm.state_interest,
                 })
                 .then(function () {
                     vm.isLoading = false;
