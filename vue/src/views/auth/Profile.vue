@@ -216,6 +216,7 @@
                 isLoading: false,
                 fullPage: true,
                 coutsetside: 0,
+                set_aside_keyword: null
             };
         },
         computed: {
@@ -254,6 +255,9 @@
             this.$store.dispatch("setHeaderMenu", header_menu);
         },
     methods: {
+            onCancel(){
+
+            },
             sortSetAside(){
                 this.set_aside_sorted = []
                 this.set_aside_sorted = this.set_asides.filter((set_aside) => {
@@ -327,30 +331,22 @@
             },
             UpdateUser() {
                 let vm = this;
-                // vm.tdr.tdr_id = vm.$route.params.tdr_id;
-                vm.user.id = vm.$store.getters.user.id;
-                vm.user.socioeconomic_status = vm.regSetAside.toString();
-                vm.isLoading = true;
-                // alert(vm.user.id);
-                if (vm.buttontogle == 0) {
-                    vm.$store
-                        .dispatch("post", { uri: "updateUser/" + vm.user.id, data: vm.user })
-                        .then(function () {
-                            vm.isLoading = false;
-                            vm.$store.dispatch("setUser", vm.user);
-                            vm.$store.dispatch("success", "User Profile Update is successfully ");
-                            vm.disabled = true;
-                            vm.errors == [];
-                            vm.buttontogle = 1;
-                        })
-                        .catch(function (error) {
-                            vm.isLoading = false;
-                            vm.errors = error.response.data.errors;
-                            vm.$store.dispatch("error", error.response.data.message);
-                        });
-                } else {
-                    return false;
-                }
+                vm.isLoading = true
+                vm.$store
+                    .dispatch("post", { uri: "updateUser", data: vm.user })
+                    .then(function () {
+                        vm.isLoading = false;
+                        vm.$store.dispatch("setUser", vm.user);
+                        vm.$store.dispatch("success", "User Profile Update is successfully ");
+                        vm.disabled = true;
+                        vm.errors == [];
+                        vm.buttontogle = 1;
+                    })
+                    .catch(function (error) {
+                        vm.isLoading = false;
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
             },
             // getBids
             UpdatePassword() {

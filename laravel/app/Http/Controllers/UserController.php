@@ -59,23 +59,17 @@ class UserController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'position' => 'required',
+            'mailing_address' => 'required|string|email|max:255',
             'company_name' => 'required',
             'phone' => 'required',
             'web_address' => 'required',
-            'mailing_address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'zipcode' => 'required',
-            'set_asides' => 'required|array',
-            'terms' => 'accepted',
+            'set_asides' => 'required|array'
         ]);
-        $data['pin_code'] = $data['zipcode'];
 
         $user = User::where('user_id', $request->user_id)->first();
         if($user){
             $user->update($data);
+            UserSetAside::where('user_id', $request->user_id)->delete();
             foreach ($request->set_asides as $set_aside_id) {
                 UserSetAside::updateOrCreate([
                   'user_id' => $user->user_id,
