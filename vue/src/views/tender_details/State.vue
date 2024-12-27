@@ -919,40 +919,45 @@ export default {
             if (vm.status) {
                 vm.addStateInterest();
             } else {
-                vm.updateInterest();
+                vm.updateStateInterest();
             }
         },
         addStateInterest() {
             let vm = this;
             vm.status = 1;
-            vm.isLoading = true;
-            // vm.state_interest.tdr_id = vm.$store.getters.bidsdetails.tdr_id;
-            // vm.state_interest.bid_interested_user = vm.$store.getters.user.id;
-            // var userintertsed = vm.userinteresd.find((obj) => obj.bid_interested_user == vm.$store.getters.user.id);
+            vm.isLoading = true
+            vm.$store
+                .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
+                .then(function () {
+                    vm.isLoading = false;
+                    vm.$store.dispatch("success", "State interest updated successfully");
+                    vm.interstmodal = false
+                    vm.paginateStateInterests()
+                })
+                .catch(function (error) {
+                    vm.isLoading = false;
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
+        },
 
-            // if (userintertsed?.bid_interested_user == vm.$store.getters?.user.id) {
-            //     // alert("User interest Added");
-            //     vm.alertmodal = true;
-            //     vm.interstmodal = false;
-            //     vm.isLoading = false;
-            // } else {
-                vm.$store
-                    .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
-                    .then(function () {
-                        vm.isLoading = false;
-                        vm.$store.dispatch("success", "Added successfully");
-                        // vm.getBidInterest();
-                        vm.interstmodal = false;
-                        // vm.$refs.Close.click();
-                        // vm.closemodal()
-                        vm.paginateStateInterests()
-                    })
-                    .catch(function (error) {
-                        vm.isLoading = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            // }
+        updateStateInterest() {
+            let vm = this;
+            vm.status = 1;
+            vm.isLoading = true
+            vm.$store
+                .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
+                .then(function () {
+                    vm.isLoading = false;
+                    vm.$store.dispatch("success", "State interest updated successfully");
+                    vm.interstmodal = false
+                    vm.paginateStateInterests()
+                })
+                .catch(function (error) {
+                    vm.isLoading = false;
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
         },
 
         // getFileExtension(filename) {
