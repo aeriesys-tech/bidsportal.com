@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\UserSubscription', 'user_id', 'user_id')->latest('user_subscription_id');
     }
+
+    public function UserSetAsides()
+    {
+        return $this->hasMany('App\Models\UserSetAside', 'user_id', 'user_id');
+    }
 }

@@ -39,15 +39,16 @@
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <img class="icon me-2" src="/assets/icons/stateblue.svg" alt="icon">
-                                        <span style="color: black; font-size: 18px;">State Opportunities</span>
+                                        <span style="font-size: 16pt;">State Opportunities</span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;"
-                                        class="nav-item">{{ state_tender.title }}</h5>
+                                    <p>{{ state_tender.title }}</p>
+                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
+                                        class="nav-item">{{ state_tender.tdr_title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
                                         <li class="nav-item"><span
                                                 style="font-weight: 900 !important; color: black;">Solicitiation Number
@@ -282,12 +283,12 @@
                                                                 state_interest.interest_type
                                                             }}</span><br />
                                                             <span class="me-3">Website : {{
-                                                                state_interest.user_details.web_address
+                                                                state_interest.user?.web_address
                                                             }}</span><br />
                                                             <span class="me-3"><i class="fas fa-phone"></i> {{
-                                                                state_interest.user_details.phone }}</span>
+                                                                state_interest.user?.phone }}</span>
                                                             <span class="me-3"><i class="msg11 far fa-envelope"></i> {{
-                                                                state_interest.user_details.email }}</span><br />
+                                                                state_interest.user?.email }}</span><br />
                                                         </div>
                                                     </div>
                                                     <ul class="list-inline mb-2 mb-sm-0">
@@ -296,22 +297,19 @@
                                                 <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
                                                 <ul>
                                                     <li type="1"
-                                                        v-for="(value, key) in state_interest.user_details?.socioeconomic_status_description?.split(',')"
-                                                        :key="key">
-                                                        {{ value }}
+                                                        v-for="(user_set_aside, key) in state_interest.user?.user_set_asides" :key="key">
+                                                        {{ user_set_aside.set_aside?.set_aside_name }}
                                                     </li>
                                                 </ul>
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center" v-if="state_interest.user_id == $store.getters.user.user_id">
                                                     <a href="javascript:void(0)"
-                                                        v-if="state_interest.bid_interested_user == $store.getters.user.id"
                                                         @click.prevent="edit(state_interest)"
                                                         class="btn btn-xs btn-success-soft" style="margin: 5px;">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <span
-                                                        v-if="state_interest.bid_interested_user == $store.getters.user.id">
+                                                    <span>
                                                         <a href="javascript:void(0)"
-                                                            @click.prevent="deleteAlertpopup(state_interest.bid_interest_id)"
+                                                            @click.prevent="deleteAlertpopup(state_interest)"
                                                             class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i
                                                                 class="bi bi-trash"></i></a>
                                                     </span>
@@ -584,7 +582,7 @@
                 <p>Do you really want to delete these records? This process cannot be undone.</p>
                 <button style="background-color: white !important;" @click.prevent="closemodal()">Cancel</button>
                 <button style="color: red !important; background-color: white !important;"
-                    @click.prevent="deleteInteresedUser(deleteduser)">Confirm</button>
+                    @click.prevent="deleteStateInterest()">Confirm</button>
             </div>
         </div>
     </teleport>
@@ -662,6 +660,7 @@ export default {
                 message: "",
                 state_tenders: [],
             },
+            delete_state_interest:null
         };
     },
 
@@ -896,15 +895,15 @@ export default {
                 });
         },
 
-        deleteInteresedUser(deleteduser) {
+        deleteStateInterest() {
             let vm = this;
             vm.isLoading = true;
-            let uri = { uri: "deleteBidInterest/" + deleteduser };
+            let uri = { uri: "deleteStateInterest", data: vm.delete_state_interest };
             vm.$store
-                .dispatch("delete", uri)
+                .dispatch("post", uri)
                 .then(function () {
                     vm.isLoading = false;
-                    vm.$store.dispatch("success", "Interested User is successfully deleted");
+                    vm.$store.dispatch("success", "Interest successfully deleted");
                     vm.index();
                     window.location.reload();
                 })
@@ -960,31 +959,7 @@ export default {
         //     return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
         // },
 
-        updateInterest() {
-            let vm = this;
-            vm.status = 1;
-            vm.state_interest.tdr_id = vm.$route.params.tdr_id;
-            vm.state_interest.bid_interested_user = vm.$store.getters.user.id;
-
-            vm.isLoading = true;
-            vm.$store
-                .dispatch("post", {
-                    uri: "updateBidInterest/" + vm.state_interest.bid_interest_id,
-                    data: vm.state_interest,
-                })
-                .then(function () {
-                    vm.isLoading = false;
-                    vm.$store.dispatch("success", "Bids Interested is successfully updated");
-
-                    vm.interstmodal = false;
-                    vm.closemodal();
-                })
-                .catch(function (error) {
-                    vm.isLoading = false;
-                    vm.errors = error.response.data.errors;
-                    vm.$store.dispatch("error", error.response.data.message);
-                });
-        },
+        
         getDocumentSize(tdr_documents_size, key) {
             let size = [];
             if (tdr_documents_size) {
@@ -1060,9 +1035,9 @@ export default {
         format_date(value) {
             return moment(value).format("MMMM D, YYYY");
         },
-        deleteAlertpopup(userintersted) {
+        deleteAlertpopup(state_interest) {
             this.erroralertmodal = true;
-            this.deleteduser = userintersted;
+            this.delete_state_interest = state_interest
         },
     },
 };
