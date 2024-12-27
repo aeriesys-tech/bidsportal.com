@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
 use App\Models\UserSubscription;
+use App\Models\UserSetAside;
 
 class UserResource extends JsonResource
 {
@@ -34,6 +35,8 @@ class UserResource extends JsonResource
             $user_subscription = null;
         }
 
+        $set_asides = UserSetAside::where('user_id', $this->user_id)->pluck('set_aside_id')->implode(',');
+
         return [
             'user_id' => $this->user_id,
             'name' => $this->name,
@@ -49,6 +52,7 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'created_at' => $formatted_date,
             'subscription' => $subscription,
+            'set_asides' => $set_asides,
             'user_set_asides' => UserSetAsideResource::collection($this->UserSetAsides)
        ];
     }
