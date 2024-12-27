@@ -249,9 +249,9 @@
                                                                 src="assets/icons/advertising-icon.png" width="24" />
                                                             Advertise Your Interest</a>
                                                     </li>
-                                                    <li v-if="userintertsed?.length == 0"
+                                                    <li v-if="state_interests?.length"
                                                         class="list-inline-item h6 fw-normal mb-0">
-                                                        <a href="javascript:void:(0)" class=""><img class="mb-1"
+                                                        <a :href="download_state_interests" class=""><img class="mb-1"
                                                                 src="assets/icons/excel-icon.png" width="24" />Download
                                                             to
                                                             Excel</a>
@@ -658,7 +658,8 @@ export default {
                 message: "",
                 state_tenders: [],
             },
-            delete_state_interest:null
+            delete_state_interest:null,
+            download_state_interests: null
         };
     },
 
@@ -669,6 +670,7 @@ export default {
                 vm.state_tender = vm.$store.getters.state_tender
                 vm.state_interest.state_tender_id = vm.state_tender?.state_tender_id
                 vm.state_interest.user_id = vm.$store.getters.user?.user_id
+                vm.download_state_interests = vm.$store.getters.baseUrl+'api/downloadStateInterests?state_tender_id='+vm.state_tender.state_tender_id
                 vm.getStateTender()
             }
         });

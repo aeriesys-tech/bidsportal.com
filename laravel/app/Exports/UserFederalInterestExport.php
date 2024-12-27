@@ -10,19 +10,20 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class UserStateInterestExport implements FromCollection, WithHeadings, WithColumnWidths, WithStyles
+class UserFederalInterestExport implements FromCollection, WithHeadings, WithColumnWidths, WithStyles
 {
-    protected $stateInterests;
+    protected $federalInterests;
 
-    public function __construct($stateInterests)
+    public function __construct($federalInterests)
     {
-        $this->stateInterests = $stateInterests;
+        $this->federalInterests = $federalInterests;
     }
 
     public function collection()
     {
-        return $this->stateInterests->map(function ($stateInterest, $index) {
-            $user = $stateInterest->User;
+        return $this->federalInterests->map(function ($federalInterest, $index) 
+        {
+            $user = $federalInterest->User;
             $userSetAsides = $user ? $user->UserSetAsides->pluck('SetAside.set_aside_name') : [];
     
             $formattedSetAsides = $userSetAsides->map(function ($setAside, $index) {
@@ -64,7 +65,7 @@ class UserStateInterestExport implements FromCollection, WithHeadings, WithColum
             'D' => 20,
             'E' => 16,
             'F' => 30,
-            'G' => 120
+            'G' => 200
         ];
     }
 
@@ -75,8 +76,7 @@ class UserStateInterestExport implements FromCollection, WithHeadings, WithColum
         $sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
         $sheet->getStyle('A1:G1')->getFill()->getStartColor()->setARGB('0000FF');
     
-        $sheet->getStyle('G2:G' . $sheet->getHighestRow())
-            ->getAlignment()
-            ->setWrapText(true);
+        $sheet->getStyle('G2:G' . $sheet->getHighestRow())->getAlignment()->setWrapText(true);
     }    
 }
+

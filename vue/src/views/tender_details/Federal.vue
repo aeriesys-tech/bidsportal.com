@@ -210,8 +210,8 @@
                                                     <li class="list-inline-item h6 fw-normal mb-0">
                                                         <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                                     </li>
-                                                    <li v-if="userintertsed?.length == 0" class="list-inline-item h6 fw-normal mb-0">
-                                                        <a href="javascript:void:(0)" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                    <li v-if="federal_interests?.length" class="list-inline-item h6 fw-normal mb-0">
+                                                        <a :href="download_federal_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -589,6 +589,7 @@
                     federal_tenders: [],
                 },
                 delete_federal_interest: null,
+                download_federal_interests: null
             };
         },
 
@@ -599,6 +600,7 @@
                     vm.federal_tender = vm.$store.getters.federal_tender;
                     vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
                     vm.federal_interest.user_id = vm.$store.getters.user?.user_id;
+                    vm.download_federal_interests = vm.$store.getters.baseUrl+'api/downloadFederalInterests?federal_tender_id='+vm.federal_tender.federal_tender_id
                     vm.getFederalTender();
                 }
             });

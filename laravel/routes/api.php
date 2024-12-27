@@ -89,6 +89,11 @@ Route::post("dashboardCounts",[AdminController::class,'dashboardCounts']);
 Route::post("addAdminSetting",[AdminController::class,'addAdminSetting']);
 Route::post("getAdminSetting",[AdminController::class,'getAdminSetting']);
 
+//UserStateInterest
+Route::get("downloadStateInterests",[UserStateInterestController::class,'downloadStateInterests']);
+Route::get("downloadFederalInterests",[UserFederalInterestController::class,'downloadFederalInterests']);
+Route::get("downloadPrivateInterests",[UserPrivateInterestController::class,'downloadPrivateInterests']);
+Route::get("downloadInternationalInterests",[UserInternationalInterestController::class,'downloadInternationalInterests']);
 
 //Pscs
 Route::post('getPscs', [PscController::class,'getPscs']);
