@@ -36,6 +36,11 @@ class UserResource extends JsonResource
         }
 
         $set_asides = UserSetAside::where('user_id', $this->user_id)->pluck('set_aside_id')->implode(',');
+        if($set_asides){
+            $set_asides_arr = explode(",", $set_asides);
+        }else{
+            $set_asides_arr = [];
+        }
 
         return [
             'user_id' => $this->user_id,
@@ -52,7 +57,7 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'created_at' => $formatted_date,
             'subscription' => $subscription,
-            'set_asides' => $set_asides,
+            'set_asides' => $set_asides_arr,
             'user_set_asides' => UserSetAsideResource::collection($this->UserSetAsides)
        ];
     }
