@@ -9,7 +9,7 @@
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
                     <div class="card border-0 p-5 pt-0">
-                        <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
+                        <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="card-header-title">Profile</h5>
                             </div>
@@ -71,6 +71,75 @@
                                     <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.pin_code }" ref="pin_code" v-model="user.pin_code" :disabled="disabled" placeholder="Enter your Zip Code" />
                                     <span v-if="errors.pin_code" class="invalid-feedback">{{ errors.pin_code[0] }}</span>
                                 </div> -->
+
+                                <!-- try starts -->
+                                   <div class="col-md-12">
+                                        <label for="inputfrequen1" class="form-label head1">Set Aside <span
+                                                class="text-danger">*</span> </label> <label>{{ user.set_asides.length
+                                            }} of {{ set_asides.length }} Selected</label>
+                                        <div class="">
+                                            <button type="button" style="border: 1px solid #3d85d8;"
+                                                class="btn btnwht10 form-select" data-bs-toggle="dropdown">
+                                                <span class="text-center"
+                                                    style="float: left; color: #1e4c82; font-size: 16px; font-weight: 400;">Select
+                                                    Set Aside</span>
+                                            </button>
+                                            <label for="inputfrequen1" class="form-label"> </label>
+                                            <ul class="dropdown-menu">
+                                                <li class="dropdown-item">
+                                                    <div class="">
+                                                        {{ user.set_asides.length }} of {{ set_asides.length }}
+                                                        <router-link to="" @click="selectAllSetAsides()"
+                                                            class="" ref="selectState">
+                                                            Select All /
+                                                        </router-link>
+                                                        <router-link to="" @click="deselectSetAsides()"
+                                                            class="" ref="selectState">
+                                                            Reset all
+                                                        </router-link>
+                                                        <div class="ss-filter-search scrollaside">
+                                                            <input autocomplete="off" class="form-control"
+                                                                type="text" v-model="set_aside_keyword"
+                                                                placeholder="Search Set Aside" @keyup="sortSetAside()" />
+                                                            <div class="liststate" id="style-3">
+                                                                <ul class="checkbox pl-0">
+                                                                    <li class="list-group-item fnt">
+                                                                        <input type="checkbox" :value="'nosetaside'"
+                                                                            v-model="user.set_asides"
+                                                                            class="form-check-input me-2"
+                                                                            @click="noSetAside('nosetaside')"
+                                                                            ref="rolesSelected" />No Set Aside
+                                                                    </li>
+                                                                    <li class="list-group-item fnt"
+                                                                        v-for="set_aside, key in set_aside_sorted"
+                                                                        :key="key">
+                                                                        <input class="form-check-input me-1"
+                                                                            type="checkbox"
+                                                                            :value="set_aside.set_aside_id"
+                                                                            v-model="user.set_asides"
+                                                                            @change="updateCheckall"
+                                                                            aria-label="..." />
+
+                                                                        {{ set_aside.set_aside_name }}
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <span v-if="errors.set_asides"
+                                            style="color:#dc3545; margin-top:5px;font-size:0.875em">{{
+                                            errors.set_asides[0] }}</span>
+                                    </div>
+
+
+
+
+                                    <!-- try emds -->
+
+
                                 <div class="col-md-12">
                                     <div class="text-end">
                                         <button type="button" href="#" class="btn-sm btn btn-primary mb-0 me-2" @click="UpdateUser()">Save Changes</button>
@@ -99,6 +168,8 @@
                 disabled: true,
                 icon: false,
                 icon1: false,
+                set_asides: [],
+            set_aside_sorted: [],
                 userbids: {
                     bids: [1000, 1001],
                 },
@@ -132,6 +203,7 @@
                     pin_code: "",
                     sub_details: {},
                     socioeconomic_status: "",
+                    set_asides: []
                 },
                 password: {
                     id: "",
@@ -159,11 +231,13 @@
                 if (vm.$store.getters.user) {
                     vm.user = vm.$store.getters.user;
                     vm.$store
-                        .dispatch("post", { uri: "getUserSetAsideIds", data: vm.user })
+                        .dispatch("post", { uri: "getSetAsides" })
                         .then(function (response) {
                             // loader.hide();
                             vm.isLoading = false;
-                            vm.user.set_asides = response.data;
+                            vm.set_asides = response.data;
+                            vm.set_aside_sorted = vm.set_asides
+                            console.log("set-aside---",vm.set_asides)
                         })
                         .catch(function (error) {
                             vm.isLoading = false;
@@ -179,7 +253,13 @@
             header_menu.show_bidsearch = true;
             this.$store.dispatch("setHeaderMenu", header_menu);
         },
-        methods: {
+    methods: {
+            sortSetAside(){
+                this.set_aside_sorted = []
+                this.set_aside_sorted = this.set_asides.filter((set_aside) => {
+                    return set_aside.set_aside_name.toLowerCase().includes(this.set_aside_keyword.toLowerCase());
+                });
+            },
             getSetAsideStatus() {
                 let vm = this;
 
@@ -353,7 +433,7 @@
             Deselect() {
                 this.regSetAside = [];
                 this.status_id = [];
-            },
+        },
             updateCheckall() {
                 if (this.SetAsideStatus.length == this.regSetAside.length) {
                     this.selectAll = true;
@@ -362,7 +442,38 @@
                     this.selectAll = false;
                     this.status_id = this.regSetAside;
                 }
-            },
+        },
+            selectAllSetAsides() {
+            let vm = this
+                this.set_aside_sorted.map(function (element) {
+                console.log("elemm--",element)
+                vm.user.set_asides.push(element.set_aside_id)
+            })
+        },
+        deselectSetAsides() {
+            this.set_aside_sorted = this.set_asides
+            this.user.set_asides = [];
+        },
+        updateCheckall() {
+            if (this.regSetAside.length > 0) {
+                if (this.regSetAside[0] == 'nosetaside') {
+                    this.regSetAside.splice(0, 1);
+                }
+            }
+            if (this.set_asides.length == this.regSetAside.length) {
+                // this.no_Set_Aside=false;
+                this.selectAll = true;
+                this.status_id = this.regSetAside;
+            } else {
+                this.selectAll = false;
+                this.status_id = this.regSetAside;
+            }
+        },
+        noSetAside(data) {
+            let vm = this;
+            vm.regSetAside = [];
+            vm.regSetAside.push(data);
+        },
         },
     };
 </script>
