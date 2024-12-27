@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserPrivateInterest;
 use App\Http\Resources\UserPrivateInterestResource;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserPrivateInterestExport;
 
 class UserPrivateInterestController extends Controller
 {
@@ -64,4 +66,16 @@ class UserPrivateInterestController extends Controller
 		    return response()->json(['error' => 'Error deleting the interest', 'details' => $e->getMessage()], 422);
 		}
     }
+
+    	public function downloadPrivateInterests(Request $request)
+	{
+		$data = $request->validate([
+			'private_tender_id' => 'required'
+		]);
+
+		$privateInterests = UserPrivateInterest::where('private_tender_id', $request->private_tender_id)
+		->with(['User.UserSetAsides'])->get();
+	
+		return Excel::download(new UserPrivateInterestExport($privateInterests), 'federal_interests.xlsx');
+	}
 }
