@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserFederalInterest;
 use App\Http\Resources\UserFederalInterestResource;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserFederalInterestExport;
 
 class UserFederalInterestController extends Controller
 {
@@ -64,4 +66,16 @@ class UserFederalInterestController extends Controller
 		    return response()->json(['error' => 'Error deleting the interest', 'details' => $e->getMessage()], 422);
 		}
     }
+
+    	public function downloadFederalInterests(Request $request)
+	{
+		$data = $request->validate([
+			'federal_tender_id' => 'required'
+		]);
+
+		$federalInterests = UserFederalInterest::where('federal_tender_id', $request->federal_tender_id)
+		->with(['User.UserSetAsides'])->get();
+	
+		return Excel::download(new UserFederalInterestExport($federalInterests), 'federal_interests.xlsx');
+	}
 }
