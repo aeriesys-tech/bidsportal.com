@@ -48,7 +48,8 @@ class UserResource extends JsonResource
             'pin_code' => $this->pin_code,
             'status' => $this->status,
             'created_at' => $formatted_date,
-            'subscription' => $subscription
+            'subscription' => $subscription,
+            'user_set_asides' => UserSetAsideResource::collection($this->UserSetAsides)
        ];
     }
 }

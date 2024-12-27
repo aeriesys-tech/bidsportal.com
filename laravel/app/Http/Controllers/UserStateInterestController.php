@@ -48,7 +48,8 @@ class UserStateInterestController extends Controller
     				'state_tender_id' => $request->state_tender_id,
     				'interest_type' => '',
     				'status' => true
-    			]
+    			],
+                'state_interests' => []
     		]);
     	}
     }

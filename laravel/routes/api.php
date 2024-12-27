@@ -36,6 +36,9 @@ use App\Http\Controllers\InternationalTenderController;
 use App\Http\Controllers\PrivateFilterController;
 use App\Http\Controllers\InternationalFilterController;
 use App\Http\Controllers\UserStateInterestController;
+use App\Http\Controllers\UserFederalInterestController;
+use App\Http\Controllers\UserPrivateInterestController;
+use App\Http\Controllers\UserInternationalInterestController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -143,6 +146,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("toggleUser",[UserController::class,'toggleUser']);
 	Route::post("activateUser",[UserController::class,'activateUser']);
 	Route::post("getUser",[UserController::class,'getUser']);
+	Route::post("updateUser",[UserController::class,'updateUser']);
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
 
@@ -309,6 +313,21 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("addStateInterest",[UserStateInterestController::class,'addStateInterest']);
 	Route::post("paginateStateInterests",[UserStateInterestController::class,'paginateStateInterests']);
 	Route::post("deleteStateInterest",[UserStateInterestController::class,'deleteStateInterest']);
+
+	//User Federal Interest
+	Route::post("addFederalInterest",[UserFederalInterestController::class,'addFederalInterest']);
+	Route::post("paginateFederalInterests",[UserFederalInterestController::class,'paginateFederalInterests']);
+	Route::post("deleteFederalInterest",[UserFederalInterestController::class,'deleteFederalInterest']);
+
+	//User Private Interest
+	Route::post("addPrivateInterest",[UserPrivateInterestController::class,'addPrivateInterest']);
+	Route::post("paginatePrivateInterests",[UserPrivateInterestController::class,'paginatePrivateInterests']);
+	Route::post("deletePrivateInterest",[UserPrivateInterestController::class,'deletePrivateInterest']);
+
+	//User International Interest
+	Route::post("addInternationalInterest",[UserInternationalInterestController::class,'addInternationalInterest']);
+	Route::post("paginateInternationalInterests",[UserInternationalInterestController::class,'paginateInternationalInterests']);
+	Route::post("deleteInternationalInterest",[UserInternationalInterestController::class,'deleteInternationalInterest']);
 });
 
 //paypal

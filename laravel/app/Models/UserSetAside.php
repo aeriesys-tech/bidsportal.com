@@ -15,4 +15,9 @@ class UserSetAside extends Model
     ];
 
     protected $primaryKey = 'user_set_aside_id';
+
+    public function SetAside()
+    {
+        return $this->hasOne('App\Models\SetAside', 'set_aside_id', 'set_aside_id');
+    }
 }
