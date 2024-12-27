@@ -32,6 +32,7 @@ return array(
     'App\\Console\\Commands\\FetchFederalData' => $baseDir . '/app/Console/Commands/FetchFederalData.php',
     'App\\Console\\Commands\\UpdateFederalAttachments' => $baseDir . '/app/Console/Commands/UpdateFederalAttachments.php',
     'App\\Console\\Commands\\UpdateFederalDescription' => $baseDir . '/app/Console/Commands/UpdateFederalDescription.php',
+    'App\\Exports\\UserStateInterestExport' => $baseDir . '/app/Exports/UserStateInterestExport.php',
     'App\\Http\\Controllers\\AdminController' => $baseDir . '/app/Http/Controllers/AdminController.php',
     'App\\Http\\Controllers\\AlertController' => $baseDir . '/app/Http/Controllers/AlertController.php',
     'App\\Http\\Controllers\\AttachmentController' => $baseDir . '/app/Http/Controllers/AttachmentController.php',

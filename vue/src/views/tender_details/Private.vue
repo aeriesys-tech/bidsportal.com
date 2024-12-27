@@ -210,8 +210,8 @@
                                                     <li class="list-inline-item h6 fw-normal mb-0">
                                                         <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                                     </li>
-                                                    <li v-if="userintertsed?.length == 0" class="list-inline-item h6 fw-normal mb-0">
-                                                        <a href="javascript:void:(0)" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                    <li v-if="private_interests?.length" class="list-inline-item h6 fw-normal mb-0">
+                                                        <a :href="download_private_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -549,6 +549,7 @@
                     private_tenders: [],
                 },
                 delete_private_interest: null,
+                download_private_interests: null
             };
         },
 
@@ -558,7 +559,8 @@
                 if (vm.$store.getters.private_tender) {
                     vm.private_tender = vm.$store.getters.private_tender;
                     vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-                    vm.private_interest.user_id = vm.$store.getters.user?.user_id;
+                    vm.private_interest.user_id = vm.$store.getters.user?.user_id
+                    vm.download_private_interests = vm.$store.getters.baseUrl+'api/downloadPrivateInterests?private_tender_id='+vm.private_tender.private_tender_id
                     vm.getPrivateTender();
                 }
             });

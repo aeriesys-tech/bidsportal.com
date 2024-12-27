@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserInternationalInterest;
 use App\Http\Resources\UserInternationalInterestResource;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserInternationalInterestExport;
 
 class UserInternationalInterestController extends Controller
 {
@@ -64,4 +66,16 @@ class UserInternationalInterestController extends Controller
 		    return response()->json(['error' => 'Error deleting the interest', 'details' => $e->getMessage()], 422);
 		}
     }
+
+    	public function downloadInternationalInterests(Request $request)
+	{
+		$request->validate([
+			'international_tender_id' => 'required'
+		]);
+
+		$internationalInterests = UserInternationalInterest::where('international_tender_id', $request->international_tender_id)
+		->with(['User.UserSetAsides'])->get();
+	
+		return Excel::download(new UserInternationalInterestExport($internationalInterests), 'international_interests.xlsx');
+	}
 }

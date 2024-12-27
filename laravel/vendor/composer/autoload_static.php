@@ -658,6 +658,7 @@ class ComposerStaticInitafe8f8e8af862182cb522fe56442cf9d
         'App\\Console\\Commands\\FetchFederalData' => __DIR__ . '/../..' . '/app/Console/Commands/FetchFederalData.php',
         'App\\Console\\Commands\\UpdateFederalAttachments' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateFederalAttachments.php',
         'App\\Console\\Commands\\UpdateFederalDescription' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateFederalDescription.php',
+        'App\\Exports\\UserStateInterestExport' => __DIR__ . '/../..' . '/app/Exports/UserStateInterestExport.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\AlertController' => __DIR__ . '/../..' . '/app/Http/Controllers/AlertController.php',
         'App\\Http\\Controllers\\AttachmentController' => __DIR__ . '/../..' . '/app/Http/Controllers/AttachmentController.php',

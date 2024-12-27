@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserStateInterest;
 use App\Http\Resources\UserStateInterestResource;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserStateInterestExport;
 
 class UserStateInterestController extends Controller
 {
@@ -64,4 +66,16 @@ class UserStateInterestController extends Controller
 		    return response()->json(['error' => 'Error deleting the interest', 'details' => $e->getMessage()], 422);
 		}
     }
+
+    public function downloadStateInterests(Request $request)
+	{
+		$data = $request->validate([
+			'state_tender_id' => 'required'
+		]);
+
+		$stateInterests = UserStateInterest::where('state_tender_id', $request->state_tender_id)
+		->with(['User.UserSetAsides'])->get();
+	
+		return Excel::download(new UserStateInterestExport($stateInterests), 'state_interests.xlsx');
+	}
 }

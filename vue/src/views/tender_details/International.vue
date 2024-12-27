@@ -233,7 +233,7 @@
                                                         <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                                     </li>
                                                     <li v-if="userintertsed?.length == 0" class="list-inline-item h6 fw-normal mb-0">
-                                                        <a href="javascript:void:(0)" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                        <a :href="download_international_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -571,6 +571,7 @@
                     international_tenders: [],
                 },
                 delete_international_interest: null,
+                download_international_interests: null
             };
         },
 
@@ -580,7 +581,8 @@
                 if (vm.$store.getters.international_tender) {
                     vm.international_tender = vm.$store.getters.international_tender;
                     vm.international_interest.international_tender_id = vm.international_tender?.international_tender_id;
-                    vm.international_interest.user_id = vm.$store.getters.user?.user_id;
+                    vm.international_interest.user_id = vm.$store.getters.user?.user_id
+                    vm.download_international_interests = vm.$store.getters.baseUrl+'api/downloadInternationalInterests?international_tender_id='+vm.international_tender.international_tender_id
                     vm.getInternationalTender();
                 }
             });
