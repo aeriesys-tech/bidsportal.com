@@ -2,9 +2,10 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class UserStateInterestExport implements FromCollection
+class UserStateInterestExport implements FromView
 {
     /**
     * @return \Illuminate\Support\Collection
