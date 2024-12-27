@@ -304,6 +304,7 @@ export default {
         },
         'meta.international_notices': 'applyFilters',
         'meta.posted_date' : 'applyFilters',
+        'meta.categories' : 'applyFilters',
         'meta.response_date': 'applyFilters',
         'meta.states': 'applyFilters',
         'meta.international_agencies' : 'applyFilters',
@@ -316,7 +317,7 @@ export default {
     },
     methods:{
         updateFilters(){
-            this.$emit('updateStateFilters', this.meta)
+            this.$emit('updateInternationalFilters', this.meta)
         },
 
         clearAllFilters(){
@@ -359,7 +360,7 @@ export default {
             let vm = this
             vm.meta.filters = []
             const meta_fields = [
-                { meta_field: 'international_notices', data_field: 'international_notices', id_field: 'state_notice_id', name_field: 'international_notice_name' },
+                { meta_field: 'international_notices', data_field: 'international_notices', id_field: 'international_notice_id', name_field: 'international_notice_name' },
                 { meta_field: 'categories', data_field: 'categories', id_field: 'category_id', name_field: 'category_name' },
                 { meta_field: 'states', data_field: 'states', id_field: 'state_id', name_field: 'state_name' },
                 { meta_field: 'international_agencies', data_field: 'international_agencies', id_field: 'international_agency_id', name_field: 'international_agency_name' }

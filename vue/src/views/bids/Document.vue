@@ -286,7 +286,7 @@
                         </div>
                         <div v-if="state_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getStateTenders()" style="width: 60px;" />
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="state_filter.maxPage" :totalPages="state_filter.lastPage" :currentPage="state_filter.page" @pagechanged="onPageChange" />
@@ -506,9 +506,9 @@
                         <Skeleton v-if="isLoading" />
                         <div class="scroll-div" ref="myscroll" v-if="!isLoading">
                             <div class="hstack flex-wrap gap-2">
-                                <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in state_filters" :key="index">
+                                <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in private_filters" :key="index">
                                     <span class="me-1" style="color: white;">{{ filter.name }}</span>
-                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeStateFilter(filter)" aria-label="Close">
+                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removePrivateFilter(filter)" aria-label="Close">
                                         <i class="fa fa-light fa-xmark text-white"></i>
                                     </button>
                                 </div>
@@ -717,7 +717,7 @@
                             <div class="hstack flex-wrap gap-2">
                                 <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in international_filters" :key="index">
                                     <span class="me-1" style="color: white;">{{ filter.name }}</span>
-                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeStateFilter(filter)" aria-label="Close">
+                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removePrivateFilter(filter)" aria-label="Close">
                                         <i class="fa fa-light fa-xmark text-white"></i>
                                     </button>
                                 </div>
@@ -1185,7 +1185,9 @@
                 international_tenders:[],
                 state_filters:[],
                 clear_state_filters:false,
+                private_filters:[],
                 clear_private_filters:false,
+                international_filters: [],
                 clear_international_filters:false,
                 login_modal:false,
                 userModal : false,
@@ -1423,6 +1425,12 @@
                 }else if (this.region == 'Federal'){
                     this.federal_filter.per_page=28;
                     this.getFederalTenders()
+                }else if (this.region == 'Private'){
+                    this.private_filter.per_page=28;
+                    this.getPrivateTenders()
+                }else if (this.region == 'International'){
+                    this.international_filter.per_page=28;
+                    this.getInternationalTenders()
                 }
             },
             gridviewgrid() {
@@ -1434,6 +1442,12 @@
                 }else if (this.region == 'Federal'){
                     this.federal_filter.per_page=10
                     this.getFederalTenders()
+                }else if (this.region == 'Private'){
+                    this.private_filter.per_page=10
+                    this.getPrivateTenders()
+                }else if (this.region == 'International'){
+                    this.international_filter.per_page=10
+                    this.getInternationalTenders()
                 }
             },
 
@@ -1445,6 +1459,14 @@
                 this.$refs.federal_filter.removeFilter(filter)
             },
 
+            removePrivateFilter(filter){
+                this.$refs.private_filter.removeFilter(filter)
+            },
+
+            removeInternationalFilter(filter){
+                this.$refs.international_filter.removeFilter(filter)
+            },
+
             handleChangeTag(tags) {
                 let vm = this
                 vm.tags = tags
@@ -1454,6 +1476,12 @@
                 }else if(this.region == 'Federal'){
                     vm.federal_filter.keywords = vm.tags
                     this.getFederalTenders()
+                }else if(this.region == 'Private'){
+                    vm.private_filter.keywords = vm.tags
+                    this.getPrivateTenders()
+                }else if(this.region == 'International'){
+                    vm.international_filter.keywords = vm.tags
+                    this.getInternationalTenders()
                 }
             },
 
@@ -1592,6 +1620,16 @@
                     this.pageChangeInProgress = true;
                     this.federal_filter.page = page;
                     this.getFederalTenders()
+                }else if(this.region == 'Private'){
+                    this.is_updating_meta = true
+                    this.pageChangeInProgress = true;
+                    this.private_filter.page = page;
+                    this.getPrivateTenders()
+                }else if(this.region == 'International'){
+                    this.is_updating_meta = true
+                    this.pageChangeInProgress = true;
+                    this.international_filter.page = page;
+                    this.getInternationalTenders()
                 }
             },
 
@@ -1602,6 +1640,24 @@
                 this.cancel_token_source = axios.CancelToken.source();
                 console.log('cancel token source:', this.cancel_token_source)
                 this.paginateFederalTenders(this.cancel_token_source.token)
+            },
+
+            getPrivateTenders(){
+                if (this.cancel_token_source) {
+                    this.cancel_token_source.cancel('Operation canceled due to new request.');
+                }
+                this.cancel_token_source = axios.CancelToken.source();
+                console.log('cancel token source:', this.cancel_token_source)
+                this.paginatePrivateTenders(this.cancel_token_source.token)
+            },
+
+            getInternationalTenders(){
+                if (this.cancel_token_source) {
+                    this.cancel_token_source.cancel('Operation canceled due to new request.');
+                }
+                this.cancel_token_source = axios.CancelToken.source();
+                console.log('cancel token source:', this.cancel_token_source)
+                this.paginateInternationalTenders(this.cancel_token_source.token)
             },
 
             getStateTenders(){
@@ -1620,6 +1676,12 @@
                 }else if(this.region == 'Federal'){
                     this.federal_filter.page = 1;
                     this.paginateFederalTenders();
+                }else if(this.region == 'Private'){
+                    this.private_filter.page = 1;
+                    this.paginatePrivateTenders();
+                }else if(this.region == 'International'){
+                    this.international_filter.page = 1;
+                    this.paginateInternationalTenders();
                 }
             },
 
@@ -1641,6 +1703,8 @@
             clearAllFilters(){
                 this.clear_federal_filters = true
                 this.clear_state_filters = true
+                this.clear_private_filters = true
+                this.clear_international_filters = true
                 this.$store.dispatch("setSelectedNaics", [])
                 this.$store.dispatch("setSelectedPscs", [])
             },

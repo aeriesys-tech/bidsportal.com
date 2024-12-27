@@ -305,6 +305,7 @@ export default {
         'meta.private_notices': 'applyFilters',
         'meta.posted_date' : 'applyFilters',
         'meta.response_date': 'applyFilters',
+        'meta.categories': 'applyFilters',
         'meta.states': 'applyFilters',
         'meta.private_agencies' : 'applyFilters',
         'clear_private_filters' : 'clearAllFilters'
@@ -359,8 +360,8 @@ export default {
             let vm = this
             vm.meta.filters = []
             const meta_fields = [
-                { meta_field: 'private_notices', data_field: 'private_notices', id_field: 'private_notice_id', name_field: 'notice_name' },
-                { meta_field: 'categories', data_field: 'categories', id_fieprivate_ld: 'category_id', name_field: 'category_name' },
+                { meta_field: 'private_notices', data_field: 'private_notices', id_field: 'private_notice_id', name_field: 'private_notice_name' },
+                { meta_field: 'categories', data_field: 'categories', id_field: 'category_id', name_field: 'category_name' },
                 { meta_field: 'states', data_field: 'states', id_field: 'state_id', name_field: 'state_name' },
                 { meta_field: 'private_agencies', data_field: 'private_agencies', id_field: 'private_agency_id', name_field: 'private_agency_name' }
             ];

@@ -305,6 +305,7 @@ export default {
         'meta.state_notices': 'applyFilters',
         'meta.posted_date' : 'applyFilters',
         'meta.response_date': 'applyFilters',
+        'meta.categories': 'applyFilters',
         'meta.states': 'applyFilters',
         'meta.state_agencies' : 'applyFilters',
         'clear_state_filters' : 'clearAllFilters'
