@@ -10,7 +10,7 @@
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
                     <div class="card border-0 p-5 pt-0">
-                        <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
+                        <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="card-header-title">Account details</h5>
                             </div>

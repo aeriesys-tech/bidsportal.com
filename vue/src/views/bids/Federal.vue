@@ -16,9 +16,8 @@
                                     class="form-control form-control-sm p-0 tag-center scrollinput"
                                     @on-tags-changed="handleChangeTag"
                                     placeholder="Input keywords separated by comma"
-                                    v-model:tags="tags"
+                                    v-model="tags"
                                     :add-tag-on-keys="[13, 188]"
-                                    v-model="tag"
                                     @allow-duplicates="false"
                                     style="text-wrap: nowrap;"
                                 />
@@ -161,11 +160,11 @@
                                                 <div class="row" v-if="meta.posted_date == 'custom'" style="margin-left: 0px;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
 
@@ -218,11 +217,11 @@
                                                 <div class="row" v-if="meta.response_date == 'custom'" style="margin-left: 0px !important;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
                                                 <span style="color: #dc3545;">{{ errors?.response_error }}</span>
@@ -1635,7 +1634,7 @@
                         .dispatch("post", { uri: "getFederalNotices" })
                         .then(function (response) {
                             vm.federal_notices = response.data
-                            vm.$store.dispatch('setFederalNotices',response.data.data)
+                            vm.$store.dispatch('setFederalNotices',response.data)
                         })
                         .catch(function (error) {
                             vm.errors = error.response.data.errors;
@@ -1646,17 +1645,21 @@
             },
 
             getSetAsides() {
-                let vm = this;
+                let vm = this
+                if(vm.$store.getters.federal_notices?.length && !this.isMoreThan24Hours()){
+                    vm.federal_notices = vm.$store.getters.federal_notices
+                } else{
                 vm.$store
                     .dispatch("post", { uri: "getSetAsides" })
                     .then(function (response) {
-                        vm.set_asides = response.data;
-                        vm.getStates();
+                        vm.set_asides = response.data
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
+                }
+                vm.getStates();
             },
 
             getStates() {
