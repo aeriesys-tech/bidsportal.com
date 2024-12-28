@@ -7,10 +7,10 @@ export default createStore({
 	state: {
 		// baseUrl: 'http://192.168.0.213/bidsportal.com/laravel/public/',
 		// appUrl: 'http://192.168.0.213:8080/#/',
-		baseUrl: 'http://192.168.0.174/bidsportal_new/laravel/public/',
-		appUrl: 'http://192.168.0.174/#/',
-		// baseUrl:"http://64.227.157.66/",
-		// appUrl:'http://64.227.157.66/#/',
+		// baseUrl: 'http://localhost/bidsportal_new/laravel/public/',
+		// appUrl: 'http://localhost/#/',
+		baseUrl:"http://64.227.157.66/",
+		appUrl:'http://64.227.157.66/#/',
 		token: null,
 		user: null,
 		cart: [],
@@ -62,6 +62,9 @@ export default createStore({
 	},
 
 	mutations: {
+		setSetAsides(state, set_asides) {
+			state.set_asides = set_asides
+		},
 		setAllNaics(state, is_all_naics) {
 			state.is_all_naics = is_all_naics
 		},
@@ -176,6 +179,9 @@ export default createStore({
 	},
 
 	getters: {
+		set_asides(state) {
+			return state.set_asides
+		},
 		is_all_naics(state) {
 			return state.is_all_naics
 		},
@@ -289,6 +295,9 @@ export default createStore({
 	},
 
 	actions: {
+		async setSetAsides(context, payload) {
+			await context.commit('setSetAsides', payload);
+		},
 		async setAllNaics(context, payload) {
 			await context.commit('setAllNaics', payload);
 		},
