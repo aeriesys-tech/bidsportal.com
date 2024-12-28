@@ -46,7 +46,7 @@
                                 <!-- Website Address -->
                                 <div class="col-md-12">
                                     <label class="form-label">Website Address<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-sm" :class="{ 'is-invalid': errors.web_address }" ref="mailaddress" v-model="user.web_address" placeholder="Enter your Website Address" />
+                                    <input type="text" class="form-control" :class="{ 'is-invalid': errors.web_address }" ref="mailaddress" v-model="user.web_address" placeholder="Enter your Website Address" />
                                     <span v-if="errors.web_address" class="invalid-feedback">{{ errors.web_address[0] }}</span>
                                 </div>
                                 <!-- <div class="col-md-12">

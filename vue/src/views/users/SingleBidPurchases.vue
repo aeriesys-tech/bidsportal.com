@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card border-0 p-5 pt-0 rounded-3" style="margin-bottom: 195px;">
-                                <div class="card-header border-bottom d-sm-flex justify-content-between align-items-center">
+                                <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
                                     <h6 class="mb-2 mb-sm-0" v-if="payment.length===0">This section includes the purchase details history of single Bids only - NOT APPLICABLE for subscriptions based user</h6>
                                     <h5 v-else class="mb-2 mb-sm-0">Single Bid Purchases</h5>
                                 </div>

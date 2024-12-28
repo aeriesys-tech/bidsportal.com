@@ -39,14 +39,14 @@
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
                                     <img class="icon me-2" src="/assets/icons/stateblue.svg" alt="icon">
-                                        <span style="font-size: 18px; color: black;">State Opportunities</span>
+                                        <span style="font-size: 16px; color: black;">State Opportunities</span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;"
+                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;"
                                         class="nav-item">{{ state_tender.title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
                                         <li class="nav-item"><span
@@ -237,7 +237,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel"
                                     aria-labelledby="tour-pills-tab-4">
-                                    <div class="card bg-transparent p-4">
+                                    <div class="card bg-transparent p-4 pt-0">
                                         <div class="card-header p-3 d-flex justify-content-between align-items-center"
                                             style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
                                             <div class="rounded">
