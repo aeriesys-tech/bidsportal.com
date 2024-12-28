@@ -1,16 +1,18 @@
 <template>
-<loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage"/>
-<div id="page-container">
-    <div id="content-wrap">
-        <Header></Header>
-        <main>
-            <router-view />
-        </main>
+    <div>
+        <loading v-model="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage"/>
+        <div id="page-container">
+            <div id="content-wrap">
+                <Header></Header>
+                <main>
+                    <router-view />
+                </main>
+            </div>
+            <div id="footer">
+                <Footer></Footer>
+            </div>
+        </div>
     </div>
-    <div id="footer">
-        <Footer></Footer>
-    </div>
-</div>
 </template>
 <script>
     import Header from '@/components/Header.vue'
@@ -34,28 +36,25 @@ import 'vue-loading-overlay/dist/css/index.css';
 			main.setAttribute("src", "assets/js/functions.js");
 			document.head.appendChild(main);
             //Read the status information in sessionStorage when the page is loaded
-            if (sessionStorage.getItem("user")) {
-                this.$store.dispatch("setUser", JSON.parse(sessionStorage.getItem("user")));
-                this.$store.dispatch("setCartProducts", JSON.parse(sessionStorage.getItem("cartItems")));
-                this.$store.dispatch("setAlert", JSON.parse(sessionStorage.getItem("alert")));
-                this.$store.dispatch("setFederalTender", JSON.parse(sessionStorage.getItem("federal_tender")));
-                this.$store.dispatch("setStateTender", JSON.parse(sessionStorage.getItem("state_tender")));
-                this.$store.dispatch("setPrivateTender", JSON.parse(sessionStorage.getItem("private_tender")));
-                this.$store.dispatch("setInternationalTender", JSON.parse(sessionStorage.getItem("international_tender")));
-                this.$store.dispatch("setToken", sessionStorage.getItem("token"));
-
+            if (localStorage.getItem("user")) {
+                this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
+                this.$store.dispatch("setAlert", JSON.parse(localStorage.getItem("alert")));
+                this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
+                this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
+                this.$store.dispatch("setPrivateTender", JSON.parse(localStorage.getItem("private_tender")));
+                this.$store.dispatch("setInternationalTender", JSON.parse(localStorage.getItem("international_tender")));
+                this.$store.dispatch("setToken", localStorage.getItem("token"));
             }
 
-            //Save the information in vuex to sessionStorage when the page is refreshed
+            //Save the information in vuex to localStorage when the page is refreshed
             window.addEventListener("beforeunload", () => {
-                sessionStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
-                sessionStorage.setItem("token", this.$store?.getters?.token);
-                sessionStorage.setItem("cartItems", JSON.stringify(this.$store?.getters?.cartItems))
-                sessionStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
-                sessionStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
-                sessionStorage.setItem("state_tender", JSON.stringify(this.$store?.getters?.state_tender))
-                sessionStorage.setItem("private_tender", JSON.stringify(this.$store?.getters?.private_tender))
-                sessionStorage.setItem("international_tender", JSON.stringify(this.$store?.getters?.international_tender))
+                localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
+                localStorage.setItem("token", this.$store?.getters?.token);
+                localStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
+                localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
+                localStorage.setItem("state_tender", JSON.stringify(this.$store?.getters?.state_tender))
+                localStorage.setItem("private_tender", JSON.stringify(this.$store?.getters?.private_tender))
+                localStorage.setItem("international_tender", JSON.stringify(this.$store?.getters?.international_tender))
             });
 
         },

@@ -1,519 +1,521 @@
 <template>
-    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="pt-4 pt-lg-4 result pb-4">
-        <div class="container position-relative">
-            <div class="row px-2">
-                <div class="col-12 d-flex justify-content-md-between">
-                    <ul class="list-inline text-end">
-                        <li class="list-inline-item">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-secondary" @click.prevent="previousPage()">Back</a>
-                        </li>
-                    </ul>
-                    <ul class="list-inline text-end">
-                        <!-- <li class="list-inline-item">
-                            <button class="mybutton-secondary mybutton-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
-                        </li> -->
-                        <li class="list-inline-item">
-                            <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
-                        </li>
-                        <li class="list-inline-item" v-if="federal_tender?.notice_id">
-                            <button class="btn btn-sm btn-success" @click="openWebSite()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
-                        </li>
-                        <li class="list-inline-item" v-else>
-                            <button class="btn btn-sm btn-success" @click="showAlert()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
-                        </li>
+    <div>
+        <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+        <section class="pt-4 pt-lg-4 result pb-4">
+            <div class="container position-relative">
+                <div class="row px-2">
+                    <div class="col-12 d-flex justify-content-md-between">
+                        <ul class="list-inline text-end">
+                            <li class="list-inline-item">
+                                <a href="javascript:void(0)" class="btn btn-sm btn-secondary" @click.prevent="previousPage()">Back</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline text-end">
+                            <!-- <li class="list-inline-item">
+                                <button class="mybutton-secondary mybutton-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
+                            </li> -->
+                            <li class="list-inline-item">
+                                <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
+                            </li>
+                            <li class="list-inline-item" v-if="federal_tender?.notice_id">
+                                <button class="btn btn-sm btn-success" @click="openWebSite()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
+                            </li>
+                            <li class="list-inline-item" v-else>
+                                <button class="btn btn-sm btn-success" @click="showAlert()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
+                            </li>
 
-                        <li class="list-inline-item" v-if="$store.getters.user">
-                            <button class="btn btn-sm btn-primary" @click.prevent="sharefederal_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 d-flex justify-content-md-between">
-                            <ul class="list-inline text-end">
-                                <li class="list-inline-item">
-                                    <img class="icon me-2" src="/assets/icons/federalblue.svg" alt="icon" />
-                                    <span style="font-size: 18px; color: black;">Federal Opportunities </span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-12">
-                            <div class="d-md-flex justify-content-md-between">
-                                <div>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;" class="nav-item">{{ federal_tender.title }}</h5>
-                                    <ul class="nav nav-divider text-body mb-0">
-                                        <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ federal_tender.tender_no }}</li>
-                                        <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(federal_tender.posted_date) }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                            <li class="list-inline-item" v-if="$store.getters.user">
+                                <button class="btn btn-sm btn-primary" @click.prevent="sharefederal_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-    <section class="py-0 result">
-        <div class="container">
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <ul class="nav nav-tabs nav-bottom-line" id="tour-pills-tab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active mb-0" id="tour-pills-tab-1" data-bs-toggle="pill" data-bs-target="#tour-pills-tab1" type="button" role="tab" aria-controls="tour-pills-tab1" aria-selected="true">
-                                        Notice Details
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link mb-0" id="tour-pills-tab-4" data-bs-toggle="pill" data-bs-target="#tour-pills-tab4" type="button" role="tab" aria-controls="tour-pills-tab4" aria-selected="false">
-                                        Vendors & Teaming
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="pt-2 result">
-        <div class="container">
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="row g-4 g-md-5">
-                        <div class="col-xl-8">
-                            <div class="tab-content mb-0" id="tour-pills-tabContent">
-                                <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
-                                    <div class="card bg-transparent py-0 p-4">
-                                        <div class="card-body p-0">
-                                            <ul class="list-group list-group-borderless mb-3">
-                                                <li class="list-group-item">
-                                                    <h6 class="mb-0 fw-normal">Department/Ind. Agency :</h6>
-                                                    <span class="fw-light mb-0">{{ federal_tender.federal_agency?.agency_name }}</span>
-                                                </li>
-                                            </ul>
-                                            <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
-
-                                            <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                                <div v-if="federal_tender.place_of_performance">
-                                                    <h6 class="fw-normal mb-0">Place of Performance:</h6>
-                                                    <p>{{ federal_tender.place_of_performance }}</p>
-                                                </div>
-                                                <div v-if="federal_tender.federal_office_address">
-                                                    <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
-                                                    <p>
-                                                        {{ federal_tender.federal_office_address.city }}<span v-if="federal_tender.federal_office_address.city">, </span>
-                                                        <span>{{ federal_tender.federal_office_address.state + '' + federal_tender.federal_office_address.country }}</span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-body py-0 p-4">
-                                            <div class="row g-3 align-items-center justify-content-between mb-3">
-                                                <div class="col-md-6" v-if="federal_tender?.federal_attachments?.length">
-                                                    <strong class="text-primary">Downloads ({{ federal_tender?.federal_attachments?.length }})</strong>
-                                                </div>
-                                                <div class="col-md-6 text-end">
-                                                    <span v-if="download_all_attachments">
-                                                        <!-- <a target="_blank"
-                                                            :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id"
-                                                            class="mybutton-secondary1 mb-0">
-                                                            <i class="bi bi-cloud-download"></i> Download All
-                                                            Attachments/Links
-                                                        </a> -->
-                                                        <a target="_blank" :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id" class="btn btn-sm btn-primary">
-                                                            <i class="bi bi-cloud-download"></i> Download All Attachments/Links
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="table-responsive border-2 border-radius">
-                                                <table class="table align-middle p-4 mb-0 table-hover table-shrink">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th scope="col" class="border-0 rounded-start"></th>
-                                                            <th scope="col" class="border-0">Name</th>
-                                                            <th scope="col" class="border-0">Size</th>
-                                                            <th scope="col" class="border-0">Date</th>
-
-                                                            <th scope="col" class="border-0 rounded-end text-center">
-                                                                Action
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="border-top-0">
-                                                        <tr v-if="!federal_tender?.federal_attachments?.length">
-                                                            <td class="text-center" colspan="5">No Attachments Available</td>
-                                                        </tr>
-                                                        <tr v-for="federal_attachment, att_key in federal_tender.federal_attachments" :key="att_key">
-                                                            <td class="text-center">
-                                                                <i :class="federal_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
-                                                            </td>
-                                                            <td id="demo-3" :title="federal_attachment.attachment_name">
-                                                                <span class="truncated-text">
-                                                                    {{ federal_attachment.attachment_name }}
-                                                                </span>
-                                                            </td>
-                                                            <td>{{ federal_attachment.attachment_size }}</td>
-                                                            <td>{{ federal_attachment.attachment_date }}</td>
-                                                            <td class="text-center" v-if="federal_attachment.download_url">
-                                                                <a :href="federal_attachment.download_url" target="_blank" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download">
-                                                                    <i class="bi bi-cloud-download"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="text-center" v-else>
-                                                                <!-- <a
-                                                                    :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ federal_tender.region.region_id +'/'+ attachment.name+'/'+federal_tender.tdr_id"
-                                                                    target="_blank"
-                                                                    class="btn btn-light btn-round mb-0"
-                                                                    data-bs-toggle="tooltip"
-                                                                    data-bs-placement="top"
-                                                                    data-bs-title="Download"
-                                                                >
-                                                                    <i class="bi bi-cloud-download"></i>
-                                                                </a> -->
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="tour-pills-tab2" role="tabpanel" aria-labelledby="tour-pills-tab-2">
-                                    <div class="card bg-transparent p-4">
-                                        <div class="card-body p-0">
-                                            <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="federal_tender.tdr_requirement"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="tour-pills-tab3" role="tabpanel" aria-labelledby="tour-pills-tab-3">
-                                    <div class="card bg-transparent p-4">
-                                        <div class="card-body p-0">
-                                            <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="federal_tender.tdr_prog_information"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
-                                    <div class="card bg-transparent p-4">
-                                        <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
-                                            <div class="rounded">
-                                                <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
-                                                    <li class="list-inline-item h6 fw-normal mb-0">
-                                                        <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
-                                                    </li>
-                                                    <li v-if="federal_interests?.length" class="list-inline-item h6 fw-normal mb-0">
-                                                        <a :href="download_federal_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!federal_interests.length">
-                                                No records found
-                                            </div>
-                                            <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="federal_interest in federal_interests" :key="federal_interest.user_federal_interest_id">
-                                                <div class="d-sm-flex justify-content-between">
-                                                    <div class="d-sm-flex align-items-center mb-3">
-                                                        <div>
-                                                            <h6 class="m-0 mb-2">{{ federal_interest.user?.company_name }}</h6>
-                                                            <span class="me-3">User Name : {{ federal_interest.user?.name }}</span><br />
-
-                                                            <span class="me-3">Position : {{ federal_interest.interest_type }}</span><br />
-                                                            <span class="me-3">Website : {{ federal_interest.user?.web_address }}</span><br />
-                                                            <span class="me-3"><i class="fas fa-phone"></i> {{ federal_interest.user?.phone }}</span>
-                                                            <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ federal_interest.user?.email }}</span><br />
-                                                        </div>
-                                                    </div>
-                                                    <ul class="list-inline mb-2 mb-sm-0"></ul>
-                                                </div>
-                                                <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
-                                                <ul>
-                                                    <!-- <li type="1" v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(
-                                                        ','
-                                                    )" :key="key">
-                                                        {{ value }}
-                                                    </li> -->
-                                                    <li type="1" v-for="(user_set_aside, key) in federal_interest.user?.user_set_asides" :key="key">
-                                                        {{ user_set_aside.set_aside?.set_aside_name }}
-                                                    </li>
-                                                </ul>
-                                                <div class="d-flex align-items-center" v-if="federal_interest.user_id == $store.getters.user.user_id">
-                                                    <a href="javascript:void(0)" @click.prevent="edit(federal_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </a>
-                                                    <span>
-                                                        <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(federal_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="kt-portlet mb-0">
-                                                <div class="kt-portlet__body" v-if="userinteresd.length == 0">
-                                                    <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.currentPage" @pagechanged="onPageChange" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-md-between">
+                                <ul class="list-inline text-end">
+                                    <li class="list-inline-item">
+                                        <img class="icon me-2" src="/assets/icons/federalblue.svg" alt="icon" />
+                                        <span style="font-size: 18px; color: black;">Federal Opportunities </span>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                        <aside class="col-xl-4">
-                            <div class="row g-3">
-                                <div class="col-md-6 col-xl-12">
-                                    <div class="card border card-body bg-light p-4">
-                                        <h6 class="text-success fw-500" style="font-size: 18px;">GENERAL INFORMATION</h6>
-                                        <ul class="list-group list-group-borderless border-top-0 mb-0">
-                                            <li class="list-group-item">
-                                                <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                    Notice Type
-                                                </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.federal_notice?.notice_name }}</div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                    Posted Date
-                                                </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.posted_date) }}</div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                    Response Date
-                                                </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.expiry_date) }}</div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div>
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        Set Aside
-                                                    </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.set_aside?.set_aside_name }}</div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div>
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        PSC Code
-                                                    </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">
-                                                        {{ federal_tender.psc?.psc_code }}-{{ federal_tender.psc?.psc_description }}
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div>
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        NAICS Code
-                                                    </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">
-                                                        {{ federal_tender.naics?.naics_code }}-{{ federal_tender.naics?.naics_description }}
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div v-if="federal_tender.tender_type && federal_tender.tender_type != 25 && federal_tender.region?.region_id == 2">
-                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                        Contract Type
-                                                    </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">
-                                                        {{ federal_tender.tenderType?.tdr_type_name }}
-                                                    </div>
-                                                </div>
-                                            </li>
+                            <div class="col-12">
+                                <div class="d-md-flex justify-content-md-between">
+                                    <div>
+                                        <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 500;" class="nav-item">{{ federal_tender.title }}</h5>
+                                        <ul class="nav nav-divider text-body mb-0">
+                                            <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ federal_tender.tender_no }}</li>
+                                            <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(federal_tender.posted_date) }}</li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
-                                    <div class="card card-body border bg-light p-4">
-                                        <!-- <div class="hstack gap-2 mb-1"> -->
-                                        <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
-                                        <!-- </div> -->
-                                        <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
-                                            <strong class="mb-1" v-if="federal_contact.type == 0">Primary Contact:</strong>
-                                            <strong class="mb-1" v-if="federal_contact.type == 1">Secondary Contact:</strong>
-                                            <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
-                                                <li class="list-group-item py-1" v-if="federal_contact.fullName">
-                                                    <span class="text-info fw-light me -1 mb-0">{{ federal_contact.full_name }}</span>
-                                                </li>
-                                                <li class="list-group-item py-1" v-if="federal_contact.phone">
-                                                    <span href="#" class="mb-0">
-                                                        <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
-                                                        {{ federal_contact.phone }}
-                                                    </span>
-                                                </li>
-                                                <li class="list-group-item py-1" v-if="federal_contact.email">
-                                                    <span href="#" class="mb-0">
-                                                        <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
-                                                        {{ federal_contact.email }}
-                                                    </span>
-                                                </li>
-                                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-0 result">
+            <div class="container">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="nav nav-tabs nav-bottom-line" id="tour-pills-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active mb-0" id="tour-pills-tab-1" data-bs-toggle="pill" data-bs-target="#tour-pills-tab1" type="button" role="tab" aria-controls="tour-pills-tab1" aria-selected="true">
+                                            Notice Details
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link mb-0" id="tour-pills-tab-4" data-bs-toggle="pill" data-bs-target="#tour-pills-tab4" type="button" role="tab" aria-controls="tour-pills-tab4" aria-selected="false">
+                                            Vendors & Teaming
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="pt-2 result">
+            <div class="container">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="row g-4 g-md-5">
+                            <div class="col-xl-8">
+                                <div class="tab-content mb-0" id="tour-pills-tabContent">
+                                    <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
+                                        <div class="card bg-transparent py-0 p-4">
+                                            <div class="card-body p-0">
+                                                <ul class="list-group list-group-borderless mb-3">
+                                                    <li class="list-group-item">
+                                                        <h6 class="mb-0 fw-normal">Department/Ind. Agency :</h6>
+                                                        <span class="fw-light mb-0">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                    </li>
+                                                </ul>
+                                                <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
+
+                                                <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
+                                                    <div v-if="federal_tender.place_of_performance">
+                                                        <h6 class="fw-normal mb-0">Place of Performance:</h6>
+                                                        <p>{{ federal_tender.place_of_performance }}</p>
+                                                    </div>
+                                                    <div v-if="federal_tender.federal_office_address">
+                                                        <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
+                                                        <p>
+                                                            {{ federal_tender.federal_office_address.city }}<span v-if="federal_tender.federal_office_address.city">, </span>
+                                                            <span>{{ federal_tender.federal_office_address.state + '' + federal_tender.federal_office_address.country }}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-body py-0 p-4">
+                                                <div class="row g-3 align-items-center justify-content-between mb-3">
+                                                    <div class="col-md-6" v-if="federal_tender?.federal_attachments?.length">
+                                                        <strong class="text-primary">Downloads ({{ federal_tender?.federal_attachments?.length }})</strong>
+                                                    </div>
+                                                    <div class="col-md-6 text-end">
+                                                        <span v-if="download_all_attachments">
+                                                            <!-- <a target="_blank"
+                                                                :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id"
+                                                                class="mybutton-secondary1 mb-0">
+                                                                <i class="bi bi-cloud-download"></i> Download All
+                                                                Attachments/Links
+                                                            </a> -->
+                                                            <a target="_blank" :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id" class="btn btn-sm btn-primary">
+                                                                <i class="bi bi-cloud-download"></i> Download All Attachments/Links
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive border-2 border-radius">
+                                                    <table class="table align-middle p-4 mb-0 table-hover table-shrink">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th scope="col" class="border-0 rounded-start"></th>
+                                                                <th scope="col" class="border-0">Name</th>
+                                                                <th scope="col" class="border-0">Size</th>
+                                                                <th scope="col" class="border-0">Date</th>
+
+                                                                <th scope="col" class="border-0 rounded-end text-center">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="border-top-0">
+                                                            <tr v-if="!federal_tender?.federal_attachments?.length">
+                                                                <td class="text-center" colspan="5">No Attachments Available</td>
+                                                            </tr>
+                                                            <tr v-for="federal_attachment, att_key in federal_tender.federal_attachments" :key="att_key">
+                                                                <td class="text-center">
+                                                                    <i :class="federal_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
+                                                                </td>
+                                                                <td id="demo-3" :title="federal_attachment.attachment_name">
+                                                                    <span class="truncated-text">
+                                                                        {{ federal_attachment.attachment_name }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>{{ federal_attachment.attachment_size }}</td>
+                                                                <td>{{ federal_attachment.attachment_date }}</td>
+                                                                <td class="text-center" v-if="federal_attachment.download_url">
+                                                                    <a :href="federal_attachment.download_url" target="_blank" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download">
+                                                                        <i class="bi bi-cloud-download"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td class="text-center" v-else>
+                                                                    <!-- <a
+                                                                        :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ federal_tender.region.region_id +'/'+ attachment.name+'/'+federal_tender.tdr_id"
+                                                                        target="_blank"
+                                                                        class="btn btn-light btn-round mb-0"
+                                                                        data-bs-toggle="tooltip"
+                                                                        data-bs-placement="top"
+                                                                        data-bs-title="Download"
+                                                                    >
+                                                                        <i class="bi bi-cloud-download"></i>
+                                                                    </a> -->
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tour-pills-tab2" role="tabpanel" aria-labelledby="tour-pills-tab-2">
+                                        <div class="card bg-transparent p-4">
+                                            <div class="card-body p-0">
+                                                <h6 class="">Synopis:</h6>
+                                                <p class="mb-4" v-html="federal_tender.tdr_requirement"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tour-pills-tab3" role="tabpanel" aria-labelledby="tour-pills-tab-3">
+                                        <div class="card bg-transparent p-4">
+                                            <div class="card-body p-0">
+                                                <h6 class="">Synopis:</h6>
+                                                <p class="mb-4" v-html="federal_tender.tdr_prog_information"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
+                                        <div class="card bg-transparent p-4">
+                                            <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
+                                                <div class="rounded">
+                                                    <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
+                                                        <li class="list-inline-item h6 fw-normal mb-0">
+                                                            <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
+                                                        </li>
+                                                        <li v-if="federal_interests?.length" class="list-inline-item h6 fw-normal mb-0">
+                                                            <a :href="download_federal_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!federal_interests.length">
+                                                    No records found
+                                                </div>
+                                                <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="federal_interest in federal_interests" :key="federal_interest.user_federal_interest_id">
+                                                    <div class="d-sm-flex justify-content-between">
+                                                        <div class="d-sm-flex align-items-center mb-3">
+                                                            <div>
+                                                                <h6 class="m-0 mb-2">{{ federal_interest.user?.company_name }}</h6>
+                                                                <span class="me-3">User Name : {{ federal_interest.user?.name }}</span><br />
+
+                                                                <span class="me-3">Position : {{ federal_interest.interest_type }}</span><br />
+                                                                <span class="me-3">Website : {{ federal_interest.user?.web_address }}</span><br />
+                                                                <span class="me-3"><i class="fas fa-phone"></i> {{ federal_interest.user?.phone }}</span>
+                                                                <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ federal_interest.user?.email }}</span><br />
+                                                            </div>
+                                                        </div>
+                                                        <ul class="list-inline mb-2 mb-sm-0"></ul>
+                                                    </div>
+                                                    <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
+                                                    <ul>
+                                                        <!-- <li type="1" v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(
+                                                            ','
+                                                        )" :key="key">
+                                                            {{ value }}
+                                                        </li> -->
+                                                        <li type="1" v-for="(user_set_aside, key) in federal_interest.user?.user_set_asides" :key="key">
+                                                            {{ user_set_aside.set_aside?.set_aside_name }}
+                                                        </li>
+                                                    </ul>
+                                                    <div class="d-flex align-items-center" v-if="federal_interest.user_id == $store.getters.user.user_id">
+                                                        <a href="javascript:void(0)" @click.prevent="edit(federal_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <span>
+                                                            <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(federal_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-portlet mb-0">
+                                                    <div class="kt-portlet__body" v-if="userinteresd.length == 0">
+                                                        <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.currentPage" @pagechanged="onPageChange" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </aside>
+                            <aside class="col-xl-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-xl-12">
+                                        <div class="card border card-body bg-light p-4">
+                                            <h6 class="text-success fw-500" style="font-size: 18px;">GENERAL INFORMATION</h6>
+                                            <ul class="list-group list-group-borderless border-top-0 mb-0">
+                                                <li class="list-group-item">
+                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                        Notice Type
+                                                    </div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.federal_notice?.notice_name }}</div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                        Posted Date
+                                                    </div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.posted_date) }}</div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                        Response Date
+                                                    </div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.expiry_date) }}</div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div>
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            Set Aside
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.set_aside?.set_aside_name }}</div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div>
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            PSC Code
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.psc?.psc_code }}-{{ federal_tender.psc?.psc_description }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div>
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            NAICS Code
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.naics?.naics_code }}-{{ federal_tender.naics?.naics_description }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div v-if="federal_tender.tender_type && federal_tender.tender_type != 25 && federal_tender.region?.region_id == 2">
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            Contract Type
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.tenderType?.tdr_type_name }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
+                                        <div class="card card-body border bg-light p-4">
+                                            <!-- <div class="hstack gap-2 mb-1"> -->
+                                            <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
+                                            <!-- </div> -->
+                                            <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
+                                                <strong class="mb-1" v-if="federal_contact.type == 0">Primary Contact:</strong>
+                                                <strong class="mb-1" v-if="federal_contact.type == 1">Secondary Contact:</strong>
+                                                <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
+                                                    <li class="list-group-item py-1" v-if="federal_contact.fullName">
+                                                        <span class="text-info fw-light me -1 mb-0">{{ federal_contact.full_name }}</span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_contact.phone">
+                                                        <span href="#" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
+                                                            {{ federal_contact.phone }}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_contact.email">
+                                                        <span href="#" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
+                                                            {{ federal_contact.email }}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <teleport to="#modals" v-if="sharebid">
-        <div class="modal-overlay">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div v-if="isLoading" class="global-loader">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <!-- <div class="card border">
-                            <div class="card-body vstack gap-4"> -->
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center p-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-xs">
-                                        <img class="avatar-img" src="assets/images/emailicon1.png" alt="avatar" />
-                                    </div>
-                                    <div class="ms-2">
-                                        <h6 class="mb-0 title-green" style="font-weight: 500;">Share Bid Detail</h6>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
-                            </div>
-                            <form class="card-body" style="min-width: 350px;">
-                                <div class="mb-3">
-                                    <input
-                                        class="form-control"
-                                        placeholder="Employee/Colleague Email Address"
-                                        :class="{ 'is-invalid': errors.recipient_email }"
-                                        autocomplet="off"
-                                        type="text"
-                                        id="recipient-name"
-                                        v-model="share_tender.recipient_email"
-                                        ref="recipient_email"
-                                    />
-                                    <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
-                                </div>
-                                <div class="mb-3">
-                                    <input
-                                        class="form-control"
-                                        type="text"
-                                        name="email_subject"
-                                        :class="{ 'is-invalid': errors.subject }"
-                                        placeholder="Subject of Email"
-                                        autocomplet="off"
-                                        id="email_subject"
-                                        v-model="share_tender.subject"
-                                        ref="subject"
-                                    />
-                                    <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
-                                </div>
-                                <div class="">
-                                    <textarea
-                                        class="form-control"
-                                        rows="3"
-                                        name="email_message"
-                                        :class="{ 'is-invalid': errors.message }"
-                                        placeholder="Brief Messsage/Note"
-                                        autocomplet="off"
-                                        id="email_message"
-                                        v-model="share_tender.message"
-                                    ></textarea>
-                                    <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
-                                </div>
-                            </form>
-                            <div class="card-footer text-end pt-0">
-                                <a href="javascript:void(0)" @click="sendFederalTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
+        <teleport to="#modals" v-if="sharebid">
+            <div class="modal-overlay">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div v-if="isLoading" class="global-loader">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
                         </div>
-                        <!-- </div>
-                        </div> -->
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <!-- <div class="card border">
+                                <div class="card-body vstack gap-4"> -->
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-xs">
+                                            <img class="avatar-img" src="assets/images/emailicon1.png" alt="avatar" />
+                                        </div>
+                                        <div class="ms-2">
+                                            <h6 class="mb-0 title-green" style="font-weight: 500;">Share Bid Detail</h6>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
+                                </div>
+                                <form class="card-body" style="min-width: 350px;">
+                                    <div class="mb-3">
+                                        <input
+                                            class="form-control"
+                                            placeholder="Employee/Colleague Email Address"
+                                            :class="{ 'is-invalid': errors.recipient_email }"
+                                            autocomplet="off"
+                                            type="text"
+                                            id="recipient-name"
+                                            v-model="share_tender.recipient_email"
+                                            ref="recipient_email"
+                                        />
+                                        <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input
+                                            class="form-control"
+                                            type="text"
+                                            name="email_subject"
+                                            :class="{ 'is-invalid': errors.subject }"
+                                            placeholder="Subject of Email"
+                                            autocomplet="off"
+                                            id="email_subject"
+                                            v-model="share_tender.subject"
+                                            ref="subject"
+                                        />
+                                        <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
+                                    </div>
+                                    <div class="">
+                                        <textarea
+                                            class="form-control"
+                                            rows="3"
+                                            name="email_message"
+                                            :class="{ 'is-invalid': errors.message }"
+                                            placeholder="Brief Messsage/Note"
+                                            autocomplet="off"
+                                            id="email_message"
+                                            v-model="share_tender.message"
+                                        ></textarea>
+                                        <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
+                                    </div>
+                                </form>
+                                <div class="card-footer text-end pt-0">
+                                    <a href="javascript:void(0)" @click="sendFederalTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
+                                </div>
+                            </div>
+                            <!-- </div>
+                            </div> -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="interstmodal">
-        <div class="modal-overlay">
-            <div class="modal-dialog" style="width: 350px;">
-                <div class="modal-content">
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center p-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="ms-2">
-                                        <h6 class="mb-0 title-green fw-500">
-                                            <span v-if="federal_interest.status">Add Interest</span>
-                                            <span v-else>Update Interest</span>
-                                        </h6>
+        </teleport>
+        <teleport to="#modals" v-if="interstmodal">
+            <div class="modal-overlay">
+                <div class="modal-dialog" style="width: 350px;">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="mb-0 title-green fw-500">
+                                                <span v-if="federal_interest.status">Add Interest</span>
+                                                <span v-else>Update Interest</span>
+                                            </h6>
+                                        </div>
                                     </div>
+                                    <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
                                 </div>
-                                <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
-                            </div>
-                            <form class="card-body">
-                                <div class="form-check form-check-md mb-2">
-                                    <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-codepen"></i> </a>
-                                    <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="federal_interest.interest_type" />
-                                    <label class="form-check-label" for="Priming">Priming</label>
+                                <form class="card-body">
+                                    <div class="form-check form-check-md mb-2">
+                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-codepen"></i> </a>
+                                        <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="federal_interest.interest_type" />
+                                        <label class="form-check-label" for="Priming">Priming</label>
+                                    </div>
+                                    <div class="form-check form-check-md mb-2">
+                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-dribbble"></i></a>
+                                        <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="federal_interest.interest_type" />
+                                        <label class="form-check-label" for="Subbing">Subbing</label>
+                                    </div>
+                                    <div class="form-check form-check-md">
+                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-behance"></i> </a>
+                                        <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="federal_interest.interest_type" />
+                                        <label class="form-check-label" for="Any">Any</label>
+                                    </div>
+                                    <span style="color: red;" v-if="errors.bid_interested_type">{{ errors.bid_interested_type[0] }}</span>
+                                </form>
+                                <div class="card-footer text-end pt-0">
+                                    <button class="btn btn-sm btn-success mb-0" @click.prevent="submit()">
+                                        <span v-if="federal_interest.status">Add </span>
+                                        <span v-else>Update </span>
+                                    </button>
                                 </div>
-                                <div class="form-check form-check-md mb-2">
-                                    <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-dribbble"></i></a>
-                                    <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="federal_interest.interest_type" />
-                                    <label class="form-check-label" for="Subbing">Subbing</label>
-                                </div>
-                                <div class="form-check form-check-md">
-                                    <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-behance"></i> </a>
-                                    <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="federal_interest.interest_type" />
-                                    <label class="form-check-label" for="Any">Any</label>
-                                </div>
-                                <span style="color: red;" v-if="errors.bid_interested_type">{{ errors.bid_interested_type[0] }}</span>
-                            </form>
-                            <div class="card-footer text-end pt-0">
-                                <button class="btn btn-sm btn-success mb-0" @click.prevent="submit()">
-                                    <span v-if="federal_interest.status">Add </span>
-                                    <span v-else>Update </span>
-                                </button>
                             </div>
                         </div>
+                        <div class="modal-footer m-foot"></div>
                     </div>
-                    <div class="modal-footer m-foot"></div>
                 </div>
             </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="alertmodal">
-        <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Already Added!</p>
-                    <button style="background-color: white !important;" @click.prevent="closemodal()">Close</button>
+        </teleport>
+        <teleport to="#modals" v-if="alertmodal">
+            <div class="modal-overlay">
+                <div id="popup1" class="confirm1" style="background-color: white !important;">
+                    <div class="">
+                        <h1>Alert</h1>
+                        <p>Already Added!</p>
+                        <button style="background-color: white !important;" @click.prevent="closemodal()">Close</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="erroralertmodal">
-        <div class="modal-overlay">
-            <div class="confirm" style="background-color: white !important;">
-                <h1>Are you sure?</h1>
-                <p>Do you really want to delete these records? This process cannot be undone.</p>
-                <button style="background-color: white !important;" @click.prevent="closemodal()">Cancel</button>
-                <button style="color: red !important; background-color: white !important;" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</button>
+        </teleport>
+        <teleport to="#modals" v-if="erroralertmodal">
+            <div class="modal-overlay">
+                <div class="confirm" style="background-color: white !important;">
+                    <h1>Are you sure?</h1>
+                    <p>Do you really want to delete these records? This process cannot be undone.</p>
+                    <button style="background-color: white !important;" @click.prevent="closemodal()">Cancel</button>
+                    <button style="color: red !important; background-color: white !important;" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</button>
+                </div>
             </div>
-        </div>
-    </teleport>
+        </teleport>
+    </div>
 </template>
 <script>
     import Pagination from "@/components/Pagination.vue";

@@ -95,14 +95,23 @@ class InternationalTenderController extends Controller
             $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, international_tender_id DESC", [$searchQuery]);
         }
 
-        if($request->search!='')
-        {
-            $query->where('tender_no', 'like', "%$request->search%")->orWhere('title', 'like', "%$request->search%")
-            ->orWhere('opening_date', 'like', "%$request->search%")->orWhereHas('Category', function($que) use($request){
-                $que->where('category_name', 'like', "%$request->search%");
-            })->orwhereHas('State', function($qu) use($request){
-                $qu->where('state_name', 'like', "%$request->search%");
+        if (!empty($request->keywords)) {
+            if (is_string($request->keywords)) {
+                $keywords = array_map('trim', explode(',', $request->keywords));
+            } else {
+                $keywords = array_map('trim', $request->keywords);
+            }
+            $searchQuery = implode(' ', $keywords);
+            $query->where(function ($subQuery) use ($searchQuery, $keywords) {
+                $subQuery->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+                foreach ($keywords as $keyword) {
+                    if (strlen($keyword) < 4) {
+                        $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+                                 ->orWhere('title', 'LIKE', "%{$keyword}%");
+                    }
+                }
             });
+            $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, international_tender_id DESC", [$searchQuery]);
         }
 
         $query->orderBy('international_tender_id', 'DESC');

@@ -1,803 +1,804 @@
 <template>
-    <Region />
-    <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" />
-    <div class="search">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3 d-flex justify-content-between search-left my-auto" style="">
-                    <div class="label">Filters</div>
-                    <div class="empty" :class="{ bluetextclass: filters?.length != 0 }">{{ countFilters }} filters selected</div>
-                </div>
+    <div>
+        <Region />
+        <div class="search">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3 d-flex justify-content-between search-left my-auto" style="">
+                        <div class="label">Filters</div>
+                        <div class="empty" :class="{ bluetextclass: filters?.length != 0 }">{{ countFilters }} filters selected</div>
+                    </div>
 
-                <div class="col-md-4 my-auto">
-                    <form class="bg-body shadow rounded-2">
-                        <div class="input-group input-group-sm">
-                            <vue3-tags-input
-                                class="form-control form-control-sm p-0 tag-center scrollinput"
-                                @on-tags-changed="handleChangeTag"
-                                placeholder="Input keywords separated by comma"
-                                v-model:tags="tags"
-                                :add-tag-on-keys="[13, 188]"
-                                v-model="tag"
-                                @allow-duplicates="false"
-                                style="text-wrap: nowrap;"
-                            />
-                            <span class="input-group-text p-0 bg-transparent"> <button class="btn btn-sm" @click.prevent="handleSelectedTag(tag)" type="button" id="button-addon2">Search</button> </span>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="col-md-5 my-auto">
-                    <ul class="list-inline hstack flex-wrap gap-4 mb-0 s-dropdown dropdown my-auto" style="float: right;">
-                        <li class="list-inline-item mb-0" v-if="tags?.length">
-                            <a href="javascript:void(0)" class="" style="color: #747579;" @click.prevent="saveSearchModal()"><i class="fa fa-save fa-fw fs-6 cursor-pointer text-primary me-1"></i>Save View</a>
-                        </li>
-                        <li class="cursor list-inline-item mb-0">
-                            <a href="javascript:void(0)" style="color: #747579;" data-bs-toggle="modal" @click.prevent="setAletModal()"><i class="fa fa-bell fa-fw fs-6 text-dark me-1"></i>Set Alert</a>
-                        </li>
-                        <li class="cursor list-inline-item mb-0 s-dropdown dropdown hover1 mb-0 dropdown-toggle" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-save fa-fw text-success me-1"></i>Saved View
-
-                            <ul class="s-dropdown-content dropdown-menu dphover" style="max-height: 200px; overflow-y: scroll;" aria-labelledby="demoMenu">
-                                <li v-for="federal_filter, key in federal_filters" :key="key" class="dropdown-item dropitem1 p-0 px-2">
-                                    <i class="fas fa-caret-right text-primary my-auto"></i>
-                                    <a class="dropdown-item dropitem2" href="javascript:void(0)" @click="showFederalFilter(federal_filter)">{{ federal_filter.federal_filter_name }}</a>
-                                    <a href="javascript:void(0)" class="icon red my-auto">
-                                        <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="list-inline-item mb-0">
-                            <a href="" @click.prevent="gridviewgrid()"> <i :class="{ gridblockcolor: gridview }" class="fa fa-th-large me-3"></i></a>
-                            <a href="" @click.prevent="listviewgrid()"><i :class="{ gridblockcolor: listview }" class="fa fa-bars text-gray me-1"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="result pt-3 pb-4">
-        <div class="container-fluid">
-            <div class="row g-2 g-lg-4">
-                <div class="col-lg-4 col-xl-3">
-                    <div class="flex-column p-4 p-xl-0" id="filtershadow">
-                        <form class="rounded-3 shadow" id="federal">
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#status" role="button" aria-expanded="false" aria-controls="status">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ bluetextclass: meta.active || meta.expired }">Status</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="status">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="all" v-model="meta.all" @click="updateStatus($event)" />
-                                            <label class="form-check-label">All</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="active" v-model="meta.active" />
-                                            <label class="form-check-label">Active</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="expired" v-model="meta.expired" />
-                                            <label class="form-check-label">Expired</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-0" />
-
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#noticetype" role="button" aria-expanded="false" aria-controls="status">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ bluetextclass: meta.federal_notices?.length !== 0 }">Notice Type</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="noticetype" v-for="notice in federal_notices" :key="notice.notice_id">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" v-model="meta.federal_notices" :value="notice.federal_notice_id" />
-                                            <label class="form-check-label">{{ notice.notice_name }}</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#posted" role="button" aria-expanded="false" aria-controls="response">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.posted_date }">Posted Date</h6>
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="posted">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="hour7" id="hour7" v-model="meta.posted_date" value="24 Hours" />
-                                            <label class="form-check-label" for="hour7">24 Hours</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour8" name="hour7" v-model="meta.posted_date" value="2 Days" />
-                                            <label class="form-check-label" for="hour8">2 Days</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour9" name="hour7" v-model="meta.posted_date" value="7 Days" />
-                                            <label class="form-check-label" for="hour9">7 Days</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour10" name="hour7" v-model="meta.posted_date" value="21 Days" />
-                                            <label class="form-check-label" for="hour10">21 Days</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="">
-                                            <input class="form-check-input" type="radio" name="hour12" v-model="meta.posted_date" value="custom" />
-                                            <label class="form-check-label" for="custom12"> &nbsp; Custom</label>
-                                            <div class="row" v-if="meta.posted_date == 'custom'" style="margin-left: 0px;">
-                                                <div class="col-sm-6">
-                                                    <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                    <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_from_date" :clearable="false"></date-picker>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                    <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_to_date" :clearable="false"></date-picker>
-                                                </div>
-                                            </div>
-
-                                            <span style="color: #dc3545;">{{ errors?.post_error }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#response" role="button" aria-expanded="false" aria-controls="response">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.response_date }">Response Date</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="response">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="hour" id="hour1" v-model="meta.response_date" value="24 Hours" />
-                                            <label class="form-check-label" for="hour1">24 Hours</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour2" name="hour3" v-model="meta.response_date" value="2 Days" />
-                                            <label class="form-check-label" for="hour2">2 Days</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour3" name="hour2" v-model="meta.response_date" value="7 Days" />
-                                            <label class="form-check-label" for="hour3">7 Days</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" id="hour4" name="hour11" v-model="meta.response_date" value="21 Days" />
-                                            <label class="form-check-label" for="hour4">21 Days</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="">
-                                            <input class="form-check-input" type="radio" name="hour" v-model="meta.response_date" value="custom" />
-                                            <label class="form-check-label" for="custom1"> &nbsp; Custom</label>
-                                            <div class="row" v-if="meta.response_date == 'custom'" style="margin-left: 0px !important;">
-                                                <div class="col-sm-6">
-                                                    <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                    <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_from_date" :clearable="false"></date-picker>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                    <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_to_date" :clearable="false"></date-picker>
-                                                </div>
-                                            </div>
-                                            <span style="color: #dc3545;">{{ errors?.response_error }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more d-flex justify-content-between align-items-center" href="" role="button" aria-expanded="false" aria-controls="notice">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.naics?.length !== 0 }">Primary NAICS Code</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <a class="gryy1" data-bs-toggle="modal" data-bs-target="#flightdetail" role="button" aria-expanded="true" aria-controls="collapseExample5">
-                                            <i class="fa fa-filter" aria-hidden="true"></i>
-                                        </a>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more d-flex justify-content-between align-items-center" href="" role="button" aria-expanded="false" aria-controls="notice">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.pscs?.length !== 0 }">Product & Service Code</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <a href="#" class="" data-bs-toggle="modal" data-bs-target="#detailModal">
-                                            <i class="fa fa-filter" aria-hidden="true"></i>
-                                        </a>
-                                    </a>
-                                </div>
-                            </div>
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#setaside" role="button" aria-expanded="false" aria-controls="notice">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.set_asides?.length !== 0 }">
-                                        Competition(Set-Aside)
-                                    </h6>
-
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show mb-3" id="setaside">
-                                    <div class="scroll1 hgt-250">
-                                        <div class="d-flex justify-content-between align-items-center" v-for="set_aside in set_asides" :key="set_aside.set_aside_id">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :value="set_aside.set_aside_id" v-model="meta.set_asides" />
-                                                <label class="form-check-label"> {{ set_aside.set_aside_name }}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-0" />
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#location" role="button" aria-expanded="false" aria-controls="notice">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.states?.length !== 0 }">Location (Place of Performance)</h6>
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="location">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="mb-1">
-                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.states?.length }} of {{ states?.length }})</a>
-                                            <span v-if="meta.states?.length !== sorted_states?.length"> <a href="" @click.prevent="selectAllStates()" class="form-check-label text-primary me-2">| Select All</a></span>
-                                            <span v-if="meta.states?.length">
-                                                <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllStates()">| Reset</a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <form class="position-relative w-100 me-4 mb-2">
-                                            <input class="form-control form-control-sm bg-light pe-5" type="search" @keyup="searchStates()" v-model="state_keyword" placeholder="Search State" aria-label="Search" />
-                                            <button class="bg-transparent px-2 py-0 border-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 text-primary"></i></button>
-                                        </form>
-                                    </div>
-
-                                    <div class="scroll1">
-                                        <div class="d-flex justify-content-between align-items-center" v-for="state in sorted_states" :key="state.state_id">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :value="state.state_id" v-model="meta.states" />
-                                                <label class="form-check-label"> {{ state.state_name }}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-0" />
-
-                            <div class="card card-body card1 rounded-0 p-3">
-                                <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#federalagency" role="button" aria-expanded="false" aria-controls="notice">
-                                    <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.federal_agencies?.length !== 0 }">Federal Agency</h6>
-
-                                    <a class="p-0 mb-0">
-                                        <i class="fa-solid fa-angle-down ms-2"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-12 ml2 multi-collapse collapse show" id="federalagency">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="mb-1">
-                                            <a class="btn btn-link p-0 mb-0 me-2">({{ meta.federal_agencies?.length }} of {{ federal_agencies?.length }})</a>
-                                            <span v-if="meta.federal_agencies?.length !== sorted_federal_agencies?.length">
-                                                <a href="" @click.prevent="selectAllFederalAgencies()" class="form-check-label text-primary me-2">| Select All</a>
-                                            </span>
-                                            <span v-if="meta.federal_agencies?.length">
-                                                <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllFederalAgencies()" v-if="meta.federal_agencies?.length !== 0">| Reset</a>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <form class="position-relative w-100 me-4 mb-2">
-                                            <input class="form-control form-control-sm bg-light pe-5" type="search" @keyup="searchFederalAgencies()" v-model="federal_agency_keword" placeholder="Search Agency" aria-label="Search" />
-                                            <button class="bg-transparent px-2 py-0 border-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 text-primary"></i></button>
-                                        </form>
-                                    </div>
-
-                                    <div class="scroll3">
-                                        <div class="d-flex justify-content-between align-items-center" v-for="federal in sorted_federal_agencies" :key="federal.agency_id">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :value="federal.federal_agency_id" v-model="meta.federal_agencies" />
-                                                <label class="form-check-label"> {{ federal.agency_name }}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="col-md-4 my-auto">
+                        <form class="bg-body shadow rounded-2">
+                            <div class="input-group input-group-sm">
+                                <vue3-tags-input
+                                    class="form-control form-control-sm p-0 tag-center scrollinput"
+                                    @on-tags-changed="handleChangeTag"
+                                    placeholder="Input keywords separated by comma"
+                                    v-model:tags="tags"
+                                    :add-tag-on-keys="[13, 188]"
+                                    v-model="tag"
+                                    @allow-duplicates="false"
+                                    style="text-wrap: nowrap;"
+                                />
+                                <span class="input-group-text p-0 bg-transparent"> <button class="btn btn-sm" @click.prevent="handleSelectedTag(tag)" type="button" id="button-addon2">Search</button> </span>
                             </div>
                         </form>
                     </div>
+
+                    <div class="col-md-5 my-auto">
+                        <ul class="list-inline hstack flex-wrap gap-4 mb-0 s-dropdown dropdown my-auto" style="float: right;">
+                            <li class="list-inline-item mb-0" v-if="tags?.length">
+                                <a href="javascript:void(0)" class="" style="color: #747579;" @click.prevent="saveSearchModal()"><i class="fa fa-save fa-fw fs-6 cursor-pointer text-primary me-1"></i>Save View</a>
+                            </li>
+                            <li class="cursor list-inline-item mb-0">
+                                <a href="javascript:void(0)" style="color: #747579;" data-bs-toggle="modal" @click.prevent="setAletModal()"><i class="fa fa-bell fa-fw fs-6 text-dark me-1"></i>Set Alert</a>
+                            </li>
+                            <li class="cursor list-inline-item mb-0 s-dropdown dropdown hover1 mb-0 dropdown-toggle" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-save fa-fw text-success me-1"></i>Saved View
+
+                                <ul class="s-dropdown-content dropdown-menu dphover" style="max-height: 200px; overflow-y: scroll;" aria-labelledby="demoMenu">
+                                    <li v-for="federal_filter, key in federal_filters" :key="key" class="dropdown-item dropitem1 p-0 px-2">
+                                        <i class="fas fa-caret-right text-primary my-auto"></i>
+                                        <a class="dropdown-item dropitem2" href="javascript:void(0)" @click="showFederalFilter(federal_filter)">{{ federal_filter.federal_filter_name }}</a>
+                                        <a href="javascript:void(0)" class="icon red my-auto">
+                                            <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="list-inline-item mb-0">
+                                <a href="" @click.prevent="gridviewgrid()"> <i :class="{ gridblockcolor: gridview }" class="fa fa-th-large me-3"></i></a>
+                                <a href="" @click.prevent="listviewgrid()"><i :class="{ gridblockcolor: listview }" class="fa fa-bars text-gray me-1"></i></a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="col-lg-8 col-xl-9">
-                    <div class="vl-parent">
-                        <Skeleton v-if="isLoading" />
-                        <div class="scroll-div" ref="myscroll" v-if="!isLoading">
-                            <div class="hstack flex-wrap gap-2">
-                                <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in filters" :key="index">
-                                    <span class="me-1" style="color: white;">{{ filter.name }}</span>
-                                    <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeFilter(filter)" aria-label="Close">
-                                        <i class="fa fa-light fa-xmark text-white"></i>
-                                    </button>
-                                </div>
-                                <div v-for="(messages, field) in alert_errors" :key="field">
-                                    <ul v-if="!meta[field]?.length">
-                                        <li v-for="(message, index) in messages" :key="index" style="color: red;">
-                                            {{ message }}
-                                        </li>
-                                    </ul>
-                                </div>
+        <div class="result pt-3 pb-4">
+            <div class="container-fluid">
+                <div class="row g-2 g-lg-4">
+                    <div class="col-lg-4 col-xl-3">
+                        <div class="flex-column p-4 p-xl-0" id="filtershadow">
+                            <form class="rounded-3 shadow" id="federal">
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#status" role="button" aria-expanded="false" aria-controls="status">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ bluetextclass: meta.active || meta.expired }">Status</h6>
 
-                                <div v-if="filters?.length != 0">
-                                    <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
-                                </div>
-                            </div>
-                        </div>
-                        <section v-if="!federal_tenders?.length && !isLoading">
-                            <div class="container">
-                                <div class="row align-items-center">
-                                    <div class="col-md-10 text-center mx-auto">
-                                        <img src="assets/images/no-search-results.svg" class="mb-4" width="230px" alt="" />
-
-                                        <h3>No results found</h3>
-
-                                        <p class="mb-4">Try adjusting your serarch or filter to find what you're looking for.</p>
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
                                     </div>
-                                </div>
-                            </div>
-                        </section>
-                        <div class="text-end pb-2" v-if="federal_tenders?.length">
-                            <ul class="list-inline mb-0 z-index-2 small">
-                                <li class="list-inline-item">
-                                    <a href="javascript:void(0)" style="text-decoration: none; pointer-events: none; cursor: default;" class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of '+meta.totalRows+' bids' }}</a>
-                                </li>
 
-                                <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                    <a href="javascript:void(0)" @click.prevent="shareFederalTenders()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <div v-if="listview">
-                                <div class="card shadow mb-3" v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="status">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <strong class="card-title mb-1">
-                                                <a href="javascript:void(0)" @click="tenderDetails(federal_tender)" style="text-transform: uppercase;">
-                                                    <div v-html="highlight(federal_tender.title)"></div>
-                                                </a>
-                                            </strong>
-                                            <ul class="list-inline mb-0 z-index-2">
-                                                <li class="list-inline-item">
-                                                    <div class="form-check-inline mb-0" v-if="$store.getters.user !== null">
-                                                        <small class="form-check-label mb-0 me-2"><a href="javascript:void(0)" class="">SELECT</a></small>
-                                                        <input class="form-check-input" type="checkbox" :value="federal_tender.federal_tender_id" id="flexCheckChecked" v-model="share_federal_tender.federal_tenders" />
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="all" v-model="meta.all" @click="updateStatus($event)" />
+                                                <label class="form-check-label">All</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="active" v-model="meta.active" />
+                                                <label class="form-check-label">Active</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="expired" v-model="meta.expired" />
+                                                <label class="form-check-label">Expired</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-0" />
+
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#noticetype" role="button" aria-expanded="false" aria-controls="status">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ bluetextclass: meta.federal_notices?.length !== 0 }">Notice Type</h6>
+
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="noticetype" v-for="notice in federal_notices" :key="notice.notice_id">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" v-model="meta.federal_notices" :value="notice.federal_notice_id" />
+                                                <label class="form-check-label">{{ notice.notice_name }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#posted" role="button" aria-expanded="false" aria-controls="response">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.posted_date }">Posted Date</h6>
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="posted">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="hour7" id="hour7" v-model="meta.posted_date" value="24 Hours" />
+                                                <label class="form-check-label" for="hour7">24 Hours</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour8" name="hour7" v-model="meta.posted_date" value="2 Days" />
+                                                <label class="form-check-label" for="hour8">2 Days</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour9" name="hour7" v-model="meta.posted_date" value="7 Days" />
+                                                <label class="form-check-label" for="hour9">7 Days</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour10" name="hour7" v-model="meta.posted_date" value="21 Days" />
+                                                <label class="form-check-label" for="hour10">21 Days</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="">
+                                                <input class="form-check-input" type="radio" name="hour12" v-model="meta.posted_date" value="custom" />
+                                                <label class="form-check-label" for="custom12"> &nbsp; Custom</label>
+                                                <div class="row" v-if="meta.posted_date == 'custom'" style="margin-left: 0px;">
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label">Start Date<span class="text-danger">*</span></label>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_from_date" :clearable="false"></date-picker>
                                                     </div>
-                                                </li>
-                                            </ul>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label">End Date<span class="text-danger">*</span></label>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_to_date" :clearable="false"></date-picker>
+                                                    </div>
+                                                </div>
+
+                                                <span style="color: #dc3545;">{{ errors?.post_error }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#response" role="button" aria-expanded="false" aria-controls="response">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.response_date }">Response Date</h6>
+
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="response">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="hour" id="hour1" v-model="meta.response_date" value="24 Hours" />
+                                                <label class="form-check-label" for="hour1">24 Hours</label>
+                                            </div>
                                         </div>
 
-                                        <ul class="nav nav-divider mt-3" style="color: #646c9a;">
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ federal_tender.tender_no }}</li>
-                                            <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{ federal_tender.time_ago }} </span></li>
-                                            <li class="nav-item">
-                                                <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" />
-                                                {{ dateFormat(federal_tender.expiry_date) }}
-                                                <span class="col-green" v-if="federal_tender.days_difference">
-                                                    &nbsp; {{ federal_tender.days_difference }} Days to Go
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour2" name="hour3" v-model="meta.response_date" value="2 Days" />
+                                                <label class="form-check-label" for="hour2">2 Days</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour3" name="hour2" v-model="meta.response_date" value="7 Days" />
+                                                <label class="form-check-label" for="hour3">7 Days</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="hour4" name="hour11" v-model="meta.response_date" value="21 Days" />
+                                                <label class="form-check-label" for="hour4">21 Days</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="">
+                                                <input class="form-check-input" type="radio" name="hour" v-model="meta.response_date" value="custom" />
+                                                <label class="form-check-label" for="custom1"> &nbsp; Custom</label>
+                                                <div class="row" v-if="meta.response_date == 'custom'" style="margin-left: 0px !important;">
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label">Start Date<span class="text-danger">*</span></label>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_from_date" :clearable="false"></date-picker>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label">End Date<span class="text-danger">*</span></label>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_to_date" :clearable="false"></date-picker>
+                                                    </div>
+                                                </div>
+                                                <span style="color: #dc3545;">{{ errors?.response_error }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more d-flex justify-content-between align-items-center" href="" role="button" aria-expanded="false" aria-controls="notice">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.naics?.length !== 0 }">Primary NAICS Code</h6>
+
+                                        <a class="p-0 mb-0">
+                                            <a class="gryy1" data-bs-toggle="modal" data-bs-target="#flightdetail" role="button" aria-expanded="true" aria-controls="collapseExample5">
+                                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                            </a>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more d-flex justify-content-between align-items-center" href="" role="button" aria-expanded="false" aria-controls="notice">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.pscs?.length !== 0 }">Product & Service Code</h6>
+
+                                        <a class="p-0 mb-0">
+                                            <a href="#" class="" data-bs-toggle="modal" data-bs-target="#detailModal">
+                                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                            </a>
+                                        </a>
+                                    </div>
+                                </div>
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#setaside" role="button" aria-expanded="false" aria-controls="notice">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.set_asides?.length !== 0 }">
+                                            Competition(Set-Aside)
+                                        </h6>
+
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show mb-3" id="setaside">
+                                        <div class="scroll1 hgt-250">
+                                            <div class="d-flex justify-content-between align-items-center" v-for="set_aside in set_asides" :key="set_aside.set_aside_id">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" :value="set_aside.set_aside_id" v-model="meta.set_asides" />
+                                                    <label class="form-check-label"> {{ set_aside.set_aside_name }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-0" />
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#location" role="button" aria-expanded="false" aria-controls="notice">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.states?.length !== 0 }">Location (Place of Performance)</h6>
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="location">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="mb-1">
+                                                <a class="btn btn-link p-0 mb-0 me-2">({{ meta.states?.length }} of {{ states?.length }})</a>
+                                                <span v-if="meta.states?.length !== sorted_states?.length"> <a href="" @click.prevent="selectAllStates()" class="form-check-label text-primary me-2">| Select All</a></span>
+                                                <span v-if="meta.states?.length">
+                                                    <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllStates()">| Reset</a>
                                                 </span>
-                                                <span class="col-red" v-else>&nbsp; Expired </span>
-                                            </li>
-                                        </ul>
-
-                                        <ul class="list-group list-group-borderless small mb-0 mt-2">
-                                            <li class="list-group-item d-flex text-success p-0">
-                                                <p class="limited-text" style="color: #595d6e; text-align: justify;" v-html="federal_tender.description" v-if="federal_tender.description != '0' && federal_tender.description != '-'"></p>
-                                            </li>
-                                        </ul>
-
-                                        <div class="border-top d-sm-flex justify-content-sm-between align-items-center mt-3 mt-md-auto">
-                                            <div class="d-flex align-items-center">
-                                                <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
-                                                    <li class="nav-item text-primary">
-                                                        <i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name }}</span>
-                                                    </li>
-
-                                                    <li class="nav-item" v-if="federal_tender.place_of_performance"><i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{ federal_tender.place_of_performance }}</span></li>
-                                                </ul>
                                             </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <form class="position-relative w-100 me-4 mb-2">
+                                                <input class="form-control form-control-sm bg-light pe-5" type="search" @keyup="searchStates()" v-model="state_keyword" placeholder="Search State" aria-label="Search" />
+                                                <button class="bg-transparent px-2 py-0 border-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 text-primary"></i></button>
+                                            </form>
+                                        </div>
 
-                                            <div class="mt-3">
-                                                <ul class="list-inline mb-0 z-index-2 small">
-                                                    <li class="list-inline-item" v-if="$store.getters.user !== null">
-                                                        <a href="javascript:void(0)" @click.prevent="shareFederalTender(federal_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
-                                                    </li>
-
-                                                    <!-- <li class="list-inline-item" v-if="federal_tender.cart_icon">
-                                                        <div>
-                                                            <a href="javascript:void(0)" @click="addToCart(federal_tender)" class="p-2">
-                                                                <img src="assets/images/addcart.svg" width="19" />
-                                                            </a>
-                                                        </div>
-                                                    </li>
-                                                    <li class="list-inline-item" v-else>
-                                                        <img src="assets/images/icons/cart-24.svg" width="19" />
-                                                    </li> -->
-                                                </ul>
+                                        <div class="scroll1">
+                                            <div class="d-flex justify-content-between align-items-center" v-for="state in sorted_states" :key="state.state_id">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" :value="state.state_id" v-model="meta.states" />
+                                                    <label class="form-check-label"> {{ state.state_name }}</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div v-else>
-                                <div class="card shadow mb-3" v-if="federal_tenders?.length !== 0">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
-                                                <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th class="border-0"></th>
-                                                        <th scope="col" class="border-0">Bid number & notice type</th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">
-                                                            Place of <br />
-                                                            performance
-                                                        </th>
-                                                        <th scope="col" class="border-0">Due date</th>
-                                                        <th scope="col" class="border-0"></th>
-                                                    </tr>
-                                                </thead>
 
-                                                <tbody class="border-top-0">
-                                                    <tr v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
-                                                        <td class="">
-                                                            <div class="form-check my-auto" v-if="$store.getters.user !== null">
-                                                                <input class="form-check-input me-3" type="checkbox" :value="federal_tender.federal_tender_id" v-model="sendMails.bids" />
-                                                            </div>
-                                                        </td>
-                                                        <td class="">
-                                                            <div class="row">
-                                                                <div class="column">
-                                                                    <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
-                                                                </div>
-                                                                <div class="column">
-                                                                    <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
-                                                                        {{ federal_tender?.federal_notice?.notice_name }}
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="">
-                                                            <div v-html="highlight(federal_tender.title)"></div>
-                                                        </td>
-                                                        <td class="">{{ federal_tender.federal_agency?.agency_name }}</td>
-                                                        <td class="">{{ federal_tender.place_of_performance }}</td>
-                                                        <td class="" style="width: 110px;">{{ federal_tender.expiry_date }}</td>
-                                                        <td>
-                                                            <!-- <span v-if="federal_tender.cart_icon">
-                                                                <div>
-                                                                    <a href="javascript:void(0)" @click="addToCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
-                                                                </div>
-                                                            </span>
-                                                            <span v-else>
-                                                                <img src="assets/images/icons/cart-24.svg" width="19" />
-                                                            </span> -->
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                <hr class="my-0" />
+
+                                <div class="card card-body card1 rounded-0 p-3">
+                                    <div class="ml2 d-flex btn-more collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#federalagency" role="button" aria-expanded="false" aria-controls="notice">
+                                        <h6 style="font-size: 15px; font-weight: 500;" class="mb-2" :class="{ 'bluetextclass': meta.federal_agencies?.length !== 0 }">Federal Agency</h6>
+
+                                        <a class="p-0 mb-0">
+                                            <i class="fa-solid fa-angle-down ms-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-12 ml2 multi-collapse collapse show" id="federalagency">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="mb-1">
+                                                <a class="btn btn-link p-0 mb-0 me-2">({{ meta.federal_agencies?.length }} of {{ federal_agencies?.length }})</a>
+                                                <span v-if="meta.federal_agencies?.length !== sorted_federal_agencies?.length">
+                                                    <a href="" @click.prevent="selectAllFederalAgencies()" class="form-check-label text-primary me-2">| Select All</a>
+                                                </span>
+                                                <span v-if="meta.federal_agencies?.length">
+                                                    <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllFederalAgencies()" v-if="meta.federal_agencies?.length !== 0">| Reset</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <form class="position-relative w-100 me-4 mb-2">
+                                                <input class="form-control form-control-sm bg-light pe-5" type="search" @keyup="searchFederalAgencies()" v-model="federal_agency_keword" placeholder="Search Agency" aria-label="Search" />
+                                                <button class="bg-transparent px-2 py-0 border-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 text-primary"></i></button>
+                                            </form>
+                                        </div>
+
+                                        <div class="scroll3">
+                                            <div class="d-flex justify-content-between align-items-center" v-for="federal in sorted_federal_agencies" :key="federal.agency_id">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" :value="federal.federal_agency_id" v-model="meta.federal_agencies" />
+                                                    <label class="form-check-label"> {{ federal.agency_name }}</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-if="federal_tenders?.length !== 0">
-                            <div style="float: left;">
-                                <input type="text" class="form-control" v-model="meta.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
-                            </div>
-                            <div style="float: right;">
-                                <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page" @pagechanged="onPageChange" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="flightdetail" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header" style="border-bottom: none;">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNaicsModal()"></button>
-                </div>
-                <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
-                    <div class="d-flex align-items-center mb-2 mb-sm-0">
-                        <h6 class="fw-normal mb-0">NAICS CODES</h6>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-primary px-2" style="padding: 5px; font-weight: 400;" href="javascript:void(0)" data-bs-dismiss="modal" @click="applyFilterNaics()">Apply Filter</a>
-                    </div>
-                </div>
-                <div class="modal-body p-3">
-                    <div class="tab-content mb-0" id="flight-pills-tabContent ">
-                        <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
-                            <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                <div class="col-md-8 small">
-                                    <form class="position-relative">
-                                        <input class="form-control form-control-sm pe-5 myinput" type="search" placeholder="Search in Naics Codes" aria-label="Search" v-model="naics_code.search" @keypress.enter="getNaicsesBackend()" />
-                                        <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getNaicsesBackend()"><i class="fas fa-search fs-6"></i></button>
-                                    </form>
-                                </div>
-                                <div class="col-md-4 small d-flex">
-                                    <div><a class="my-auto dotted" style="color: #40a4f1;" href="javascript:void(0)" @click="deselectNaics()">Deselect All</a></div>
-                                </div>
-                            </div>
-                            <div class="vl-parent">
-                                <div class="card" style="overflow: scroll; height: 300px;">
-                                    <div class="card-body p-0">
-                                        <ul class="list-style-none pl-8">
-                                            <li>
-                                                <ul id="demo" style="padding: 0px;">
-                                                    <TreeItem class="item" :item="treeData" :tdr_naics="meta.naics" :search="naics_code.search" :clear_all_naics="clear_all_naics"> </TreeItem>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="detailModal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header" style="border-bottom: none;">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closePscModal"></button>
-                </div>
-                <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
-                    <div class="d-flex align-items-center mb-2 mb-sm-0">
-                        <h6 class="fw-normal mb-0">SERVICE CODES</h6>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-sm btn-primary px-2" style="padding: 5px; font-weight: 400;" href="javascript:void(0)" data-bs-dismiss="modal" @click="applyFilterPsc()">Apply Filter</a>
-                    </div>
-                </div>
-                <div class="modal-body p-3">
-                    <div class="tab-content mb-0" id="flight-pills-tabContent">
-                        <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
-                            <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                <div class="col-md-8 small">
-                                    <form class="position-relative">
-                                        <input class="form-control form-control-sm pe-5 myinput" type="search" placeholder="Search in Serive Codes" aria-label="Search" v-model="service_code.search" @keypress.enter="getPscesBackend()" />
-                                        <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getPscesBackend()"><i class="fas fa-search fs-6"></i></button>
-                                    </form>
-                                </div>
-                                <div class="col-md-4 small d-flex">
-                                    <div><a class="my-auto dotted" href="javascript:void(0)" @click="deselectPsc()">Deselect All</a></div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="vl-parent">
-                                    <div class="card-body p-0" style="overflow: scroll; height: 300px;">
-                                        <ul class="list-style-none pl-8">
-                                            <li>
-                                                <ul id="demo" style="padding: 0px;">
-                                                    <PscTree class="item" :item="service_codes" :tdr_psc="meta.pscs" :search="service_code.search" :clear_all_psc="clear_all_psc"> </PscTree>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <teleport to="#modals" v-if="modal.save_search">
-        <div class="modal-overlay">
-            <div class="" style="width: 500px;">
-                <div class="">
-                    <div class=""></div>
-                    <div class="">
-                        <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addFederalFilter" :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search" />
-                    </div>
-                </div>
-                <div class="modal-footer m-foot"></div>
-            </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="modal.subscribe">
-        <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Please SUBSCRIBE !</p>
-                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
-                </div>
-            </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="modal.share_tender">
-        <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Please select bid !</p>
-                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
-                </div>
-            </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="modal.login">
-        <div class="modal-overlay">
-            <div class="modal-dialog" style="width: 500px;">
-                <div class="modal-content">
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <LoginModal @closeModal="closeModal" ref="login_modal" />
-                    </div>
-                </div>
-                <div class="modal-footer m-foot"></div>
-            </div>
-        </div>
-    </teleport>
-    <teleport to="#modals" v-if="modal.set_alert">
-        <div class="modal-overlay">
-            <div class="modal-dialog" style="width: 500px;">
-                <div class="modal-content">
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <SetAlertModal @closeModal="closeModal" :alert="savealert" @updateAlert="updateAlert" @setAlert="addAlert" ref="alert_search" />
-                    </div>
-                </div>
-                <div class="modal-footer m-foot"></div>
-            </div>
-        </div>
-    </teleport>
-
-    <teleport to="#modals" v-if="share_tender">
-        <div class="modal-overlay">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div v-if="isLoading" class="global-loader">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="modal-header m-header"></div>
-                    <div class="modal-body">
-                        <!-- <div class="card border">
-                            <div class="card-body vstack gap-4"> -->
-                        <div class="card border">
-                            <div class="card-header d-flex justify-content-between align-items-center p-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-xs">
-                                        <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                    </div>
-                                    <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
-                                    </div>
-                                </div>
-
-                                <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
-                            </div>
-
-                            <form class="card-body" style="min-width: 350px;">
-                                <div class="mb-3">
-                                    <input
-                                        class="form-control"
-                                        :class="{ 'is-invalid': errors.recipient_email }"
-                                        placeholder="Employee/Colleague Email Address"
-                                        autocomplet="off"
-                                        type="text"
-                                        id="recipient-name"
-                                        v-model="share_federal_tender.recipient_email"
-                                        ref="recipient_email"
-                                    />
-                                    <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
-                                </div>
-                                <div class="mb-3">
-                                    <input
-                                        class="form-control"
-                                        type="text"
-                                        name="email_subject"
-                                        :class="{ 'is-invalid': errors.subject }"
-                                        placeholder="Subject of Email"
-                                        autocomplet="off"
-                                        id="email_subject"
-                                        v-model="share_federal_tender.subject"
-                                        ref="subject"
-                                    />
-                                    <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <textarea
-                                        class="form-control"
-                                        rows="3"
-                                        name="email_message"
-                                        :class="{ 'is-invalid': errors.message }"
-                                        placeholder="Brief Messsage/Note"
-                                        autocomplet="off"
-                                        id="email_message"
-                                        v-model="share_federal_tender.message"
-                                    ></textarea>
-                                    <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
-                                </div>
-
-                                <div class="text-end">
-                                    <!-- <a href="javascript:void(0)" @click="sendFederalTenderMail()"
-                                                class="mybutton-secondary2">Send</a> -->
-                                    <button class="mb-0 btn btn-sm btn-success fw-400" @click="sendFederalTenderMail()">Send</button>
                                 </div>
                             </form>
                         </div>
-                        <!-- </div>
-                        </div> -->
+                    </div>
+
+                    <div class="col-lg-8 col-xl-9">
+                        <div class="vl-parent">
+                            <Skeleton v-if="isLoading" />
+                            <div class="scroll-div" ref="myscroll" v-if="!isLoading">
+                                <div class="hstack flex-wrap gap-2">
+                                    <div class="alert border shadow fade show small px-1 py-0 mb-0 filtertagcss" v-for="(filter, index) in filters" :key="index">
+                                        <span class="me-1" style="color: white;">{{ filter.name }}</span>
+                                        <button type="button" class="btn btn-xs mb-0 text-white p-0" style="font-size: 13px !important;" @click="removeFilter(filter)" aria-label="Close">
+                                            <i class="fa fa-light fa-xmark text-white"></i>
+                                        </button>
+                                    </div>
+                                    <div v-for="(messages, field) in alert_errors" :key="field">
+                                        <ul v-if="!meta[field]?.length">
+                                            <li v-for="(message, index) in messages" :key="index" style="color: red;">
+                                                {{ message }}
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div v-if="filters?.length != 0">
+                                        <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <section v-if="!federal_tenders?.length && !isLoading">
+                                <div class="container">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-10 text-center mx-auto">
+                                            <img src="assets/images/no-search-results.svg" class="mb-4" width="230px" alt="" />
+
+                                            <h3>No results found</h3>
+
+                                            <p class="mb-4">Try adjusting your serarch or filter to find what you're looking for.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="text-end pb-2" v-if="federal_tenders?.length">
+                                <ul class="list-inline mb-0 z-index-2 small">
+                                    <li class="list-inline-item">
+                                        <a href="javascript:void(0)" style="text-decoration: none; pointer-events: none; cursor: default;" class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of '+meta.totalRows+' bids' }}</a>
+                                    </li>
+
+                                    <li class="list-inline-item" v-if="$store.getters.user !== null">
+                                        <a href="javascript:void(0)" @click.prevent="shareFederalTenders()" class="p-2 text-secondary"><i class="fa-solid fa-fw text-primary fa-share-alt"></i>SHARE</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div v-if="listview">
+                                    <div class="card shadow mb-3" v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
+                                        <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong class="card-title mb-1">
+                                                    <a href="javascript:void(0)" @click="tenderDetails(federal_tender)" style="text-transform: uppercase;">
+                                                        <div v-html="highlight(federal_tender.title)"></div>
+                                                    </a>
+                                                </strong>
+                                                <ul class="list-inline mb-0 z-index-2">
+                                                    <li class="list-inline-item">
+                                                        <div class="form-check-inline mb-0" v-if="$store.getters.user !== null">
+                                                            <small class="form-check-label mb-0 me-2"><a href="javascript:void(0)" class="">SELECT</a></small>
+                                                            <input class="form-check-input" type="checkbox" :value="federal_tender.federal_tender_id" id="flexCheckChecked" v-model="share_federal_tender.federal_tenders" />
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <ul class="nav nav-divider mt-3" style="color: #646c9a;">
+                                                <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
+                                                <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />{{ federal_tender.tender_no }}</li>
+                                                <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{ federal_tender.time_ago }} </span></li>
+                                                <li class="nav-item">
+                                                    <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" />
+                                                    {{ dateFormat(federal_tender.expiry_date) }}
+                                                    <span class="col-green" v-if="federal_tender.days_difference">
+                                                        &nbsp; {{ federal_tender.days_difference }} Days to Go
+                                                    </span>
+                                                    <span class="col-red" v-else>&nbsp; Expired </span>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="list-group list-group-borderless small mb-0 mt-2">
+                                                <li class="list-group-item d-flex text-success p-0">
+                                                    <p class="limited-text" style="color: #595d6e; text-align: justify;" v-html="federal_tender.description" v-if="federal_tender.description != '0' && federal_tender.description != '-'"></p>
+                                                </li>
+                                            </ul>
+
+                                            <div class="border-top d-sm-flex justify-content-sm-between align-items-center mt-3 mt-md-auto">
+                                                <div class="d-flex align-items-center">
+                                                    <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
+                                                        <li class="nav-item text-primary">
+                                                            <i class="bi bi-patch-check-fill text-primary me-2"></i><span style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                        </li>
+
+                                                        <li class="nav-item" v-if="federal_tender.place_of_performance"><i class="bi bi-geo-alt-fill text-primary me-2"></i><span>{{ federal_tender.place_of_performance }}</span></li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <ul class="list-inline mb-0 z-index-2 small">
+                                                        <li class="list-inline-item" v-if="$store.getters.user !== null">
+                                                            <a href="javascript:void(0)" @click.prevent="shareFederalTender(federal_tender)" class="p-2"><i class="fa-solid fa-fw fa-share-alt"></i>SHARE </a>
+                                                        </li>
+
+                                                        <!-- <li class="list-inline-item" v-if="federal_tender.cart_icon">
+                                                            <div>
+                                                                <a href="javascript:void(0)" @click="addToCart(federal_tender)" class="p-2">
+                                                                    <img src="assets/images/addcart.svg" width="19" />
+                                                                </a>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-inline-item" v-else>
+                                                            <img src="assets/images/icons/cart-24.svg" width="19" />
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div class="card shadow mb-3" v-if="federal_tenders?.length !== 0">
+                                        <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
+                                            <div class="table-responsive table-responsive-sm border-0">
+                                                <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                                    <thead class="table-light">
+                                                        <tr class="vertical-align-top1">
+                                                            <th class="border-0"></th>
+                                                            <th scope="col" class="border-0">Bid number & notice type</th>
+                                                            <th scope="col" class="border-0">Title</th>
+                                                            <th scope="col" class="border-0">Agency</th>
+                                                            <th scope="col" class="border-0">
+                                                                Place of <br />
+                                                                performance
+                                                            </th>
+                                                            <th scope="col" class="border-0">Due date</th>
+                                                            <th scope="col" class="border-0"></th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody class="border-top-0">
+                                                        <tr v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
+                                                            <td class="">
+                                                                <div class="form-check my-auto" v-if="$store.getters.user !== null">
+                                                                    <input class="form-check-input me-3" type="checkbox" :value="federal_tender.federal_tender_id" v-model="sendMails.bids" />
+                                                                </div>
+                                                            </td>
+                                                            <td class="">
+                                                                <div class="row">
+                                                                    <div class="column">
+                                                                        <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                    </div>
+                                                                    <div class="column">
+                                                                        <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
+                                                                            {{ federal_tender?.federal_notice?.notice_name }}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="">
+                                                                <div v-html="highlight(federal_tender.title)"></div>
+                                                            </td>
+                                                            <td class="">{{ federal_tender.federal_agency?.agency_name }}</td>
+                                                            <td class="">{{ federal_tender.place_of_performance }}</td>
+                                                            <td class="" style="width: 110px;">{{ federal_tender.expiry_date }}</td>
+                                                            <td>
+                                                                <!-- <span v-if="federal_tender.cart_icon">
+                                                                    <div>
+                                                                        <a href="javascript:void(0)" @click="addToCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
+                                                                    </div>
+                                                                </span>
+                                                                <span v-else>
+                                                                    <img src="assets/images/icons/cart-24.svg" width="19" />
+                                                                </span> -->
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="federal_tenders?.length !== 0">
+                                <div style="float: left;">
+                                    <input type="text" class="form-control" v-model="meta.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                </div>
+                                <div style="float: right;">
+                                    <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page" @pagechanged="onPageChange" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="flightdetail" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="border-bottom: none;">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeNaicsModal()"></button>
+                    </div>
+                    <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
+                        <div class="d-flex align-items-center mb-2 mb-sm-0">
+                            <h6 class="fw-normal mb-0">NAICS CODES</h6>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <a class="btn btn-sm btn-primary px-2" style="padding: 5px; font-weight: 400;" href="javascript:void(0)" data-bs-dismiss="modal" @click="applyFilterNaics()">Apply Filter</a>
+                        </div>
+                    </div>
+                    <div class="modal-body p-3">
+                        <div class="tab-content mb-0" id="flight-pills-tabContent ">
+                            <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
+                                <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
+                                    <div class="col-md-8 small">
+                                        <form class="position-relative">
+                                            <input class="form-control form-control-sm pe-5 myinput" type="search" placeholder="Search in Naics Codes" aria-label="Search" v-model="naics_code.search" @keypress.enter="getNaicsesBackend()" />
+                                            <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getNaicsesBackend()"><i class="fas fa-search fs-6"></i></button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-4 small d-flex">
+                                        <div><a class="my-auto dotted" style="color: #40a4f1;" href="javascript:void(0)" @click="deselectNaics()">Deselect All</a></div>
+                                    </div>
+                                </div>
+                                <div class="vl-parent">
+                                    <div class="card" style="overflow: scroll; height: 300px;">
+                                        <div class="card-body p-0">
+                                            <ul class="list-style-none pl-8">
+                                                <li>
+                                                    <ul id="demo" style="padding: 0px;">
+                                                        <TreeItem class="item" :item="treeData" :tdr_naics="meta.naics" :search="naics_code.search" :clear_all_naics="clear_all_naics"> </TreeItem>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="detailModal" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="border-bottom: none;">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closePscModal"></button>
+                    </div>
+                    <div class="modal-header pt-0 d-sm-flex justify-content-sm-between align-items-center">
+                        <div class="d-flex align-items-center mb-2 mb-sm-0">
+                            <h6 class="fw-normal mb-0">SERVICE CODES</h6>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <a class="btn btn-sm btn-primary px-2" style="padding: 5px; font-weight: 400;" href="javascript:void(0)" data-bs-dismiss="modal" @click="applyFilterPsc()">Apply Filter</a>
+                        </div>
+                    </div>
+                    <div class="modal-body p-3">
+                        <div class="tab-content mb-0" id="flight-pills-tabContent">
+                            <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
+                                <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
+                                    <div class="col-md-8 small">
+                                        <form class="position-relative">
+                                            <input class="form-control form-control-sm pe-5 myinput" type="search" placeholder="Search in Serive Codes" aria-label="Search" v-model="service_code.search" @keypress.enter="getPscesBackend()" />
+                                            <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getPscesBackend()"><i class="fas fa-search fs-6"></i></button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-4 small d-flex">
+                                        <div><a class="my-auto dotted" href="javascript:void(0)" @click="deselectPsc()">Deselect All</a></div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="vl-parent">
+                                        <div class="card-body p-0" style="overflow: scroll; height: 300px;">
+                                            <ul class="list-style-none pl-8">
+                                                <li>
+                                                    <ul id="demo" style="padding: 0px;">
+                                                        <PscTree class="item" :item="service_codes" :tdr_psc="meta.pscs" :search="service_code.search" :clear_all_psc="clear_all_psc"> </PscTree>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <teleport to="#modals" v-if="modal.save_search">
+            <div class="modal-overlay">
+                <div class="" style="width: 500px;">
+                    <div class="">
+                        <div class=""></div>
+                        <div class="">
+                            <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addFederalFilter" :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search" />
+                        </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
                 </div>
             </div>
-        </div>
-    </teleport>
+        </teleport>
+        <teleport to="#modals" v-if="modal.subscribe">
+            <div class="modal-overlay">
+                <div id="popup1" class="confirm1" style="background-color: white !important;">
+                    <div class="">
+                        <h1>Alert</h1>
+                        <p>Please SUBSCRIBE !</p>
+                        <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </teleport>
+        <teleport to="#modals" v-if="modal.share_tender">
+            <div class="modal-overlay">
+                <div id="popup1" class="confirm1" style="background-color: white !important;">
+                    <div class="">
+                        <h1>Alert</h1>
+                        <p>Please select bid !</p>
+                        <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </teleport>
+        <teleport to="#modals" v-if="modal.login">
+            <div class="modal-overlay">
+                <div class="modal-dialog" style="width: 500px;">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <LoginModal @closeModal="closeModal" ref="login_modal" />
+                        </div>
+                    </div>
+                    <div class="modal-footer m-foot"></div>
+                </div>
+            </div>
+        </teleport>
+        <teleport to="#modals" v-if="modal.set_alert">
+            <div class="modal-overlay">
+                <div class="modal-dialog" style="width: 500px;">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <SetAlertModal @closeModal="closeModal" :alert="savealert" @updateAlert="updateAlert" @setAlert="addAlert" ref="alert_search" />
+                        </div>
+                    </div>
+                    <div class="modal-footer m-foot"></div>
+                </div>
+            </div>
+        </teleport>
+
+        <teleport to="#modals" v-if="share_tender">
+            <div class="modal-overlay">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div v-if="isLoading" class="global-loader">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <!-- <div class="card border">
+                                <div class="card-body vstack gap-4"> -->
+                            <div class="card border">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-xs">
+                                            <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
+                                        </div>
+                                        <div class="ms-2">
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
+                                        </div>
+                                    </div>
+
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
+                                </div>
+
+                                <form class="card-body" style="min-width: 350px;">
+                                    <div class="mb-3">
+                                        <input
+                                            class="form-control"
+                                            :class="{ 'is-invalid': errors.recipient_email }"
+                                            placeholder="Employee/Colleague Email Address"
+                                            autocomplet="off"
+                                            type="text"
+                                            id="recipient-name"
+                                            v-model="share_federal_tender.recipient_email"
+                                            ref="recipient_email"
+                                        />
+                                        <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0] }}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input
+                                            class="form-control"
+                                            type="text"
+                                            name="email_subject"
+                                            :class="{ 'is-invalid': errors.subject }"
+                                            placeholder="Subject of Email"
+                                            autocomplet="off"
+                                            id="email_subject"
+                                            v-model="share_federal_tender.subject"
+                                            ref="subject"
+                                        />
+                                        <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0] }}</span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <textarea
+                                            class="form-control"
+                                            rows="3"
+                                            name="email_message"
+                                            :class="{ 'is-invalid': errors.message }"
+                                            placeholder="Brief Messsage/Note"
+                                            autocomplet="off"
+                                            id="email_message"
+                                            v-model="share_federal_tender.message"
+                                        ></textarea>
+                                        <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0] }}</span>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <!-- <a href="javascript:void(0)" @click="sendFederalTenderMail()"
+                                                    class="mybutton-secondary2">Send</a> -->
+                                        <button class="mb-0 btn btn-sm btn-success fw-400" @click="sendFederalTenderMail()">Send</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- </div>
+                            </div> -->
+                        </div>
+                        <div class="modal-footer m-foot"></div>
+                    </div>
+                </div>
+            </div>
+        </teleport>
+    </div>
 </template>
 
 <script>
@@ -1039,7 +1040,8 @@
         // },
 
         mounted() {
-            this.meta.time_zone = moment.tz.guess();
+            this.meta.time_zone = moment.tz.guess()
+            console.log('login_date_time', this.isMoreThan24Hours(this.$store.getters.user.login_date_time))
             this.$store.commit("setSelectedNaics", null);
             this.$store.commit("setFederalTender", null);
             this.$store.commit("setStateTender", null);
@@ -1058,6 +1060,7 @@
         },
 
         methods: {
+        
             updateStatus(event) {
                 if (event.target.checked) {
                     this.meta.active = true;
@@ -1581,44 +1584,65 @@
                 });
                 return title;
             },
+            isMoreThan24Hours() {
+                const now = moment(); 
+                const login_date_time = localStorage.getItem("login_date_time")
+                const login_time = moment(login_date_time); 
+                return now.diff(login_time, 'hours') > 24; 
+            },
             getPscs() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getPscs", data: vm.service_code })
-                    .then(function (response) {
-                        vm.service_codes.children = response.data.data;
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                let vm = this
+                if(vm.$store.getters.pscs?.length && !this.isMoreThan24Hours()){
+                    vm.service_codes.children = vm.$store.getters.pscs
+                }else{  
+                    vm.$store
+                        .dispatch("post", { uri: "getPscs", data: vm.service_code })
+                        .then(function (response) {
+                            vm.service_codes.children = response.data.data
+                            vm.$store.dispatch('setPscs',response.data.data)
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             getNaics() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getNaics", data: vm.meta })
-                    .then(function (response) {
-                        vm.treeData.children = response.data.data;
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                let vm = this
+                if(vm.$store.getters.naics?.length && !this.isMoreThan24Hours()){
+                    vm.treeData.children = vm.$store.getters.naics
+                } else{
+                    vm.$store
+                        .dispatch("post", { uri: "getNaics", data: vm.meta })
+                        .then(function (response) {
+                            vm.treeData.children = response.data.data
+                            vm.$store.dispatch('setNaics',response.data.data)
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
             },
 
             getFederalNotices() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getFederalNotices" })
-                    .then(function (response) {
-                        vm.federal_notices = response.data;
-                        vm.getSetAsides();
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
+                let vm = this
+                if(vm.$store.getters.federal_notices?.length && !this.isMoreThan24Hours()){
+                    vm.federal_notices = vm.$store.getters.federal_notices
+                } else{
+                    vm.$store
+                        .dispatch("post", { uri: "getFederalNotices" })
+                        .then(function (response) {
+                            vm.federal_notices = response.data
+                            vm.$store.dispatch('setFederalNotices',response.data.data)
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+                vm.getSetAsides()
             },
 
             getSetAsides() {
@@ -1666,6 +1690,7 @@
                                 vm.$store.commit("setAlert", null);
                             }
                             if (vm.from_name == "federal_tender_details" && vm.$store.getters.filters) {
+                                console.log(vm.user)
                                 vm.meta = vm.$store.getters.filters;
                                 vm.tags = vm.meta.keywords;
                             }
@@ -1719,7 +1744,7 @@
                 vm.applyFilters();
                 window.scrollTo({ top: 0, behavior: "smooth" });
                 vm.meta.user_id = this.$store.getters.user?.user_id;
-                if (vm.meta) {
+                // if ('order_by' in vm.meta && 'per_page' in vm.meta) {
                     vm.$store
                         .dispatch("post", { uri: "paginateFederalTenders", data: vm.meta, cancel_token })
                         .then(function (response) {
@@ -1732,7 +1757,6 @@
                             vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
                             vm.meta.to = response.data.meta.to;
                             vm.meta.page = response.data.meta.current_page;
-                            vm.getCartItemsCount();
                         })
                         .catch(function (error) {
                             if (axios.isCancel(error)) {
@@ -1742,7 +1766,9 @@
                                 vm.$store.dispatch("error", error.response.data.message);
                             }
                         });
-                }
+                // }else{
+                    // vm.$router.go(0);
+                // }
             },
             onPageChange(page) {
                 this.is_updating_meta = true;
