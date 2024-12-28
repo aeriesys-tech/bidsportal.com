@@ -7,10 +7,10 @@ export default createStore({
 	state: {
 		// baseUrl: 'http://192.168.0.213/bidsportal.com/laravel/public/',
 		// appUrl: 'http://192.168.0.213:8080/#/',
-		// baseUrl: 'http://192.168.0.174/bidsportal_new/laravel/public/',
-		// appUrl: 'http://192.168.0.174/#/',
-		baseUrl:"http://64.227.157.66/",
-		appUrl:'http://64.227.157.66/#/',
+		baseUrl: 'http://192.168.0.174/bidsportal_new/laravel/public/',
+		appUrl: 'http://192.168.0.174/#/',
+		// baseUrl:"http://64.227.157.66/",
+		// appUrl:'http://64.227.157.66/#/',
 		token: null,
 		user: null,
 		cart: [],
@@ -21,7 +21,9 @@ export default createStore({
 		private_tender: null,
 		international_tender: null,
 		naics: null,
+		naics_time:null,
 		pscs: null,
+		pscs_time:null,
 		selected_naics: [],
 		selected_pscs: [],
 		page: '',
@@ -37,6 +39,7 @@ export default createStore({
 		categories: [],
 		state_agencies: [],
 		private_agencies: [],
+		set_asides: [],
 		international_agencies: [],
 		page_redirect: null,
 		user_plan: {},
@@ -139,6 +142,9 @@ export default createStore({
 		},
 		setPscs(state, pscs) {
 			state.pscs = pscs
+		},
+		setPscsTime(state, pscs_time) {
+			state.pscs_time = pscs_time
 		},
 		setSelectedNaics(state, selected_naics) {
 			state.selected_naics = selected_naics
@@ -243,6 +249,9 @@ export default createStore({
 		},
 		pscs(state) {
 			return state.pscs
+		},
+		pscs_time(state) {
+			return state.pscs_time
 		},
 		appUrl(state) {
 			return state.appUrl;
@@ -367,6 +376,9 @@ export default createStore({
 		},
 		async setPscs(context, payload) {
 			await context.commit('setPscs', payload);
+		},
+		async setPscsTime(context, payload) {
+			await context.commit('setPscsTime', payload);
 		},
 		async setPage(context, payload) {
 			await context.commit('setPage', payload);

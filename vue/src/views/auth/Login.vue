@@ -1,6 +1,6 @@
 <template>
-
- <loading v-model:active="isLoading"
+<div>
+    <loading v-model="isLoading"
                  :can-cancel="false"
                  :is-full-page="fullPage"/>
     <section>
@@ -63,6 +63,7 @@
             </div>
         </div>
     </section>
+</div>
 </template>
 
 <script>
@@ -111,6 +112,7 @@ export default {
                 vm.$store.dispatch('success','Successfully logged in');
                 vm.$store.commit("setUser", response.data.user);
                 vm.$store.commit("setToken", response.data.access_token);
+                localStorage.setItem("login_date_time", moment());
                 vm.$router.push("/bids/state-opportunities")
             })
             .catch(function (error) {

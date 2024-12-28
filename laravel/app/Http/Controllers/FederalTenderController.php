@@ -135,12 +135,42 @@ class FederalTenderController extends Controller
                 $keywords = array_map('trim', $request->keywords);
             }
 
-            $searchQuery = implode(' ', $keywords); // Join keywords for full-text search
+            $searchQuery = implode(' ', $keywords);
 
-            // Search for matches
-            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+            // Start building the query
+            $query->where(function ($subQuery) use ($searchQuery) {
+                // Check for exact match in title or tender_no
+                $subQuery->where('title', '=', $searchQuery)
+                         ->orWhere('tender_no', '=', $searchQuery);
+            });
 
-            $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC", [$searchQuery]);
+            // Use relevant matches only if there are no exact matches
+            $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
+                $subQuery->whereRaw("NOT EXISTS (
+                    SELECT 1 FROM federal_tenders 
+                    WHERE title = ? OR tender_no = ?
+                )", [$searchQuery, $searchQuery])
+                ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+                // Fallback to LIKE for short keywords
+                foreach ($keywords as $keyword) {
+                    if (strlen($keyword) < 4) {
+                        $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+                                 ->orWhere('title', 'LIKE', "%{$keyword}%");
+                    }
+                }
+            });
+
+            // Order the results to prioritize exact matches
+            $query->orderByRaw("
+                CASE 
+                    WHEN title = ? THEN 1
+                    WHEN tender_no = ? THEN 1
+                    ELSE 2
+                END, 
+                MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+                federal_tender_id DESC
+            ", [$searchQuery, $searchQuery, $searchQuery]);
         }
 
 	    $query->orderBy('federal_tender_id', 'DESC');
