@@ -112,12 +112,12 @@ class AuthController extends Controller
 
     public function sendEmailToRegisterUser($data)
     {
-        $html = view('emails.RegisteredUser', $data)->render();
+        $html = view('emails.RegisteredUser', compact('data'))->render();
 
         Mail::send([], [], function ($message) use ($data, $html) {
             $message->to($data['email'], $data['name'])
-                ->subject('Confirm Your Email Address - BidsPortal')
-                ->setBody($html, 'text/html');
+            ->subject('Confirm Your Email Address - BidsPortal')
+            ->html($html);
         });
         return "SUCCESS";
     }
