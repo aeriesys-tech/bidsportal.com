@@ -64,7 +64,7 @@ class PaypalController extends Controller
         	$valid_upto = $valid_to->format('M d - Y');
         	return Redirect::to(config('app.base_url').'/#/subscription-payment'.'/'.$item_number.'/'.$request->query('amt').'/'.$request->query('tx').'/'.$valid_upto);
         }
-        $user = User::where('user_id', 33)->first();
+        $user = User::where('user_id', $user_id)->first();
         if($user && $subscription_plan){
         	$amount = $subscription_plan->price;
         	$discount = $subscription_plan->discount;
