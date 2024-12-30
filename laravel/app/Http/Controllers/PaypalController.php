@@ -61,28 +61,28 @@ class PaypalController extends Controller
         ]); 
 
         if($update_user_subscription){
+        	$user = User::where('user_id', $user_id)->first();
+	        if($user && $subscription_plan){
+	        	$amount = $subscription_plan->price;
+	        	$discount = $subscription_plan->discount;
+	        	$subtotal = $amount - $discount;
+	        	$data = ([
+	        		'amt' => $amount,
+	        		'plan' => $subscription_plan->plan,
+	        		'order_id' => $order_id,
+	        		'txn_id' => $request->query('tx'),
+	        		'payment_type' => 'Online',
+	        		'tran_date' => date('Y-m-d'),
+	        		'tran_time' => date('H:i'),
+	        		'subtotal' => $subtotal,
+	        		'coupon_discout' => $discount,
+	        		'total' => $subtotal
+	        	]);
+		        Mail::to($user->email)->send(new SubscriptionMail($user, $data));
+		    }
         	$valid_upto = $valid_to->format('M d - Y');
         	return Redirect::to(config('app.base_url').'/#/subscription-payment'.'/'.$item_number.'/'.$request->query('amt').'/'.$request->query('tx').'/'.$valid_upto);
         }
-        $user = User::where('user_id', $user_id)->first();
-        if($user && $subscription_plan){
-        	$amount = $subscription_plan->price;
-        	$discount = $subscription_plan->discount;
-        	$subtotal = $amount - $discount;
-        	$data = ([
-        		'amt' => $amount,
-        		'plan' => $subscription_plan->plan,
-        		'order_id' => $order_id,
-        		'txn_id' => $request->query('tx'),
-        		'payment_type' => 'Online',
-        		'tran_date' => date('Y-m-d'),
-        		'tran_time' => date('H:i'),
-        		'subtotal' => $subtotal,
-        		'coupon_discout' => $discount,
-        		'total' => $subtotal
-        	]);
-	        Mail::to($user->email)->send(new SubscriptionMail($user, $data));
-	    }
 	}
 
     public function paypal_success_common_func()
@@ -232,29 +232,29 @@ class PaypalController extends Controller
 	            Log::info(" userPayments inserted  : ".$userPayments); 
 	            Log::info("Data inserted in UserPayments : ".print_r($data,true));
 	            Log::info("success_page_for_payment_custom will open here");
+	            $subscription_plan = SubscriptionPlan::where('price', $payment_gross)->first();
+	       		$user = User::where('user_id', $user_id)->first();
+
+		       	if($user && $subscription_plan){
+		        	$amount = $subscription_plan->price;
+		        	$discount = $subscription_plan->discount;
+		        	$subtotal = $amount - $discount;
+		        	$subscription = ([
+		        		'amt' => $amount,
+		        		'plan' => $subscription_plan->plan,
+		        		'order_id' => $order_id,
+		        		'txn_id' => $request->query('tx'),
+		        		'payment_type' => 'Online',
+		        		'tran_date' => date('Y-m-d'),
+		        		'tran_time' => date('H:i'),
+		        		'subtotal' => $subtotal,
+		        		'coupon_discout' => $discount,
+		        		'total' => $subtotal
+		        	]);
+			        Mail::to($user->email)->send(new SubscriptionMail($user, $subscription));
+			    }
 	            return Redirect::to(config('app.base_url').'/#/normal-payment/'.$data['txn_id'].'/'.$data['order_id'].'/'.$data['payment_date'].'/'.$data['first_name'].'/'.$data['item_number'].'/'.$data['payment_amount']);
 	       }
-	       	$subscription_plan = SubscriptionPlan::where('price', $payment_gross)->first();
-	       	$user = User::where('user_id', $user_id)->first();
-
-	       	if($user && $subscription_plan){
-	        	$amount = $subscription_plan->price;
-	        	$discount = $subscription_plan->discount;
-	        	$subtotal = $amount - $discount;
-	        	$subscription = ([
-	        		'amt' => $amount,
-	        		'plan' => $subscription_plan->plan,
-	        		'order_id' => $order_id,
-	        		'txn_id' => $request->query('tx'),
-	        		'payment_type' => 'Online',
-	        		'tran_date' => date('Y-m-d'),
-	        		'tran_time' => date('H:i'),
-	        		'subtotal' => $subtotal,
-	        		'coupon_discout' => $discount,
-	        		'total' => $subtotal
-	        	]);
-		        Mail::to($user->email)->send(new SubscriptionMail($user, $subscription));
-		    }
 	    }   
 	}
 
