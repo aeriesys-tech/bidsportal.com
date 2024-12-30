@@ -240,7 +240,7 @@
                                                                     <a href="https://facebook.com/bidsportal" target="_blank"><img src="https://bidsportal.com/storage/images/facebook.png" class="imgcol" style="width: 25px; height: 25px;"></a>
                                                                     <a href="https://twitter.com/BidsPortal" target="_blank"><img src="https://bidsportal.com/storage/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
                                                                     <a href="https://linkedin.com/company/bidsportal" target="_blank"><img src="https://bidsportal.com/storage/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
-                                                                    <a href="mailto:support@bidsportal.com" target="_blank"><img src="https://bidsportal.com/storage/images/mail.png" class="imgcol" style="width: 25px; height: 25px;"></a>
+                                                                    <a href="mailto:support@bidsportal.com" target="_blank"><img src="https://bidsportal.com/storage/images/mail.jpg" class="imgcol" style="width: 25px; height: 25px;"></a>
                                                                 </span>
                                                                 <br />
                                                                 <br />
