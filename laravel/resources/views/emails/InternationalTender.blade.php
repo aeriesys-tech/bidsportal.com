@@ -137,9 +137,9 @@
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
                                                                                     <img src="https://bidsportal.com/storage/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
-                                                                                        <a style="color: #626262;"> Posted : </a>
+                                                                                        <a style="color: #626262;"> Opening Date : </a>
                                                                                     </b>
-                                                                                    {{ date('d M, Y', strtotime($bid->posted_date)) }}
+                                                                                    {{ date('d M, Y', strtotime($bid->opening_date)) }}
                                                                                 </span>
                                                                             </td>
                                                                             <td style="width: 42%;">
