@@ -100,7 +100,7 @@
                                 </span>
                             </div>
                         </div>
-                        
+
                     </div>
                     <p class="text-end text-secondary">Save 15% by paying yearly</p>
                 </div>  -->
