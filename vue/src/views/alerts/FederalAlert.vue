@@ -326,14 +326,20 @@
                                                                 :z-index="10001" :is-full-page="fullPage1" />
                                                             <div class="card-body p-0 scroll1 treehght">
                                                                 <ul class="list-style-none" style="padding-left: 0px;">
-                                                                    <li>
-                                                                        <ul id="demo">
-                                                                            <TreeItem class="item" :item="treeData"
-                                                                                :tdr_naics="alert.naics"
-                                                                                :clear_all_naics="clear_all_naics">
-                                                                            </TreeItem>
-                                                                        </ul>
-                                                                    </li>
+                                                                <li>
+                                                                    <ul id="demo">
+                                                                     <Skeleton2 v-if="loading" />
+                                                                    <template v-else>
+                                                                        <TreeItem
+                                                                        class="item"
+                                                                        :item="treeData"
+                                                                        :tdr_naics="alert.naics"
+                                                                        :clear_all_naics="clear_all_naics"
+                                                                        >
+                                                                        </TreeItem>
+                                                                    </template>
+                                                                    </ul>
+                                                                </li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -392,9 +398,12 @@
                                                                 <ul class="list-style-none" style="padding-left: 0px;">
                                                                     <li>
                                                                         <ul id="demo">
+                                                                             <Skeleton2 v-if="loading_psc" />
+                                                                             <template v-else>
                                                                             <PscTree class="item" :item="service_codes"
                                                                                 :clear_all_psc="clear_all_psc">
                                                                             </PscTree>
+                                                                            </template>
                                                                         </ul>
                                                                     </li>
                                                                 </ul>
@@ -442,9 +451,10 @@ import TreeItem from "@/components/TreeItem.vue";
 import PscTree from "@/components/PscTree.vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import Skeleton2 from "@/components/Skeleton2.vue";
 // import Vue3TagsInput from "vue3-tags-input";
 export default {
-    components: { TreeItem, PscTree, Loading },
+    components: { TreeItem, PscTree, Loading,Skeleton2 },
     data() {
         return {
             state_border_red: '',
@@ -575,7 +585,9 @@ export default {
             },
             clear_all_naics: false,
             clear_all_psc: false,
-            federal_agency_keyword: null
+            federal_agency_keyword: null,
+            loading: true, // Initial loading state
+            loading_psc:true,
         };
     },
 
@@ -693,7 +705,6 @@ export default {
         },
     },
     methods: {
-
         getAlert() {
             let vm = this;
             if (vm.$store.getters.user) {
@@ -936,27 +947,33 @@ export default {
         },
         getNaics() {
             let vm = this;
+            vm.loading=true
             let uri = "getNaics";
             vm.$store
                 .dispatch("post", { uri: uri })
                 .then(function (response) {
                     vm.treeData.children = response.data.data
                     vm.getPscs()
+                    vm.loading = false;
                 })
                 .catch(function (error) {
+                    vm.loading = false;
                     vm.errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         },
         getPscs() {
             let vm = this;
+            vm.loading_psc=true
             let uri = "getPscs";
             vm.$store
                 .dispatch("post", { uri: uri })
                 .then(function (response) {
                     vm.service_codes.children = response.data.data
+                    vm.loading_psc=false
                 })
                 .catch(function (error) {
+                    vm.loading_psc=false
                     vm.errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
@@ -1718,4 +1735,28 @@ export default {
     text-align: justify;
 } */
 
+
+
+
+.skeleton-loader {
+  height: 20px;
+  background: #e0e0e0;
+  margin: 10px 0;
+  border-radius: 4px;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.skeleton-loader {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f2f2f2 50%, #e0e0e0 75%);
+  background-size: 400px 100%;
+}
 </style>
