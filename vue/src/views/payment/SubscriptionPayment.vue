@@ -67,6 +67,7 @@
                     vm.subscription_payment.item_number = "Semi-Annual";
                 }
                 vm.getUser()
+                vm.sendSubscriptionMail()
             });
         },
         mounted() {
@@ -78,6 +79,21 @@
             let url = this.$store.getters.baseUrl+'api/generateSubscriptionPdf/'+this.$store.getters.user.user_id
             return url
             },
+            sendSubscriptionMail() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", {
+                        uri: "getUser", data: vm.user,
+                    })
+                    .then(function (response) {
+                        vm.user = response.data.data
+                        vm.$store.dispatch('setUser', vm.user)
+                    })
+                    .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
             getUser() {
                 let vm = this;
                 vm.$store
@@ -87,7 +103,6 @@
                     .then(function (response) {
                         vm.user = response.data.data
                         vm.$store.dispatch('setUser', vm.user)
-                        vm.getUserSubscriptions();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
