@@ -23,7 +23,11 @@ class UserSubscriptionController extends Controller
     public function getActiveSubscription(Request $request)
     {
     	$user_subscription = UserSubscription::where('user_id', $request->user_id)->orderBy('created_at', 'desc')->first();
-    	return new UserSubscriptionResource($user_subscription);
+        if($user_subscription){
+        	return new UserSubscriptionResource($user_subscription);
+        }else{
+            return $user_subscription = null;
+        }
     }
 
     public function addTrialSubscription(Request $request){

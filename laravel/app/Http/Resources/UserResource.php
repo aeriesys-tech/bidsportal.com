@@ -19,7 +19,9 @@ class UserResource extends JsonResource
     {
         if($this->created_at){
             $date = Carbon::parse($this->created_at); 
-            $formatted_date = $date->format('M d, Y'); // 
+            $formatted_date = $date->format('M d, Y'); 
+        }else{
+            $formatted_date = null;
         }
 
         $user_subscription = UserSubscription::where('user_id', $this->user_id)->where('active_status', 'like', 'active')->first();
@@ -38,8 +40,10 @@ class UserResource extends JsonResource
         $set_asides = UserSetAside::where('user_id', $this->user_id)->pluck('set_aside_id')->implode(',');
         if($set_asides){
             $set_asides_arr = explode(",", $set_asides);
+            $user_set_asides = UserSetAsideResource::collection($this->UserSetAsides);
         }else{
             $set_asides_arr = [];
+            $user_set_asides = [];
         }
 
         return [
@@ -58,7 +62,7 @@ class UserResource extends JsonResource
             'created_at' => $formatted_date,
             'subscription' => $subscription,
             'set_asides' => $set_asides_arr,
-            'user_set_asides' => UserSetAsideResource::collection($this->UserSetAsides)
+            'user_set_asides' => $user_set_asides;
        ];
     }
 }
