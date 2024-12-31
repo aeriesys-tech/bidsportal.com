@@ -10,13 +10,17 @@
                             selected</div>
                     </div>
 
-                    <div class="col-md-4 my-auto">
+                    <div class="col-md-5 my-auto">
                         <form class="bg-body shadow rounded-2">
                             <div class="input-group input-group-sm">
                                 <vue3-tags-input class="form-control form-control-sm p-0 tag-center scrollinput"
                                     @on-tags-changed="handleChangeTag" placeholder="Input keywords separated by comma"
                                     v-model:tags="tags" :add-tag-on-keys="[13, 188]" v-model="tag" @allow-duplicates="false"
-                                    style="text-wrap: nowrap;" />
+                                    style="text-wrap: nowrap;" >
+                                    <template #tag="{ tag }">
+                                        <span :class="['tag', getTagClass(tag)]">{{ tag }}</span>
+                                    </template>
+                                </vue3-tags-input>
                                 <span class="input-group-text p-0 bg-transparent"> <button class="btn btn-sm"
                                         @click.prevent="handleSelectedTag(tag)" type="button"
                                         id="button-addon2">Search</button> </span>
@@ -24,7 +28,7 @@
                         </form>
                     </div>
 
-                    <div class="col-md-5 my-auto">
+                    <div class="col-md-4 my-auto">
                         <ul class="list-inline hstack flex-wrap gap-4 mb-0 s-dropdown dropdown my-auto"
                             style="float: right;">
                             <li class="list-inline-item mb-0" v-if="tags?.length">
@@ -1651,17 +1655,17 @@ export default {
         },
 
         isMoreThan24Hours() {
-            const now = moment(); 
+            const now = moment();
             const login_date_time = localStorage.getItem("login_date_time")
-            const login_time = moment(login_date_time); 
-            return now.diff(login_time, 'hours') > 24; 
+            const login_time = moment(login_date_time);
+            return now.diff(login_time, 'hours') > 24;
         },
 
         getPscs() {
             let vm = this
             if(vm.$store.getters.pscs?.length && !this.isMoreThan24Hours()){
                 vm.service_codes.children = vm.$store.getters.pscs
-            }else{  
+            }else{
                 vm.$store
                     .dispatch("post", { uri: "getPscs", data: vm.service_code })
                     .then(function (response) {
@@ -1821,6 +1825,11 @@ export default {
             this.meta.page = 1;
             this.paginateFederalTenders();
         },
+        getTagClass(tag) {
+    if (tag.includes('red')) return 'tag-red';
+    if (tag.includes('green')) return 'tag-green';
+    return 'tag-yellow'; // Default tag color
+  },
     },
 };
 </script>
