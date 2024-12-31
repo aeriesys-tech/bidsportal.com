@@ -193,8 +193,14 @@ class StateTenderController extends Controller
             $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
         }
 
+        if (!empty($request->search)) 
+        {
+            $searchQuery = $request->search . '*';  
+            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
+        }
 
-        $query->orderBy('state_tender_id', 'DESC');
+        $query->orderBy($request->keyword,$request->order_by);
         $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
     }

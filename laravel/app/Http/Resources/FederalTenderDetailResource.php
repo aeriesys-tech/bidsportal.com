@@ -59,7 +59,7 @@ class FederalTenderDetailResource extends JsonResource
             'description' => $this->description,
             'opening_date' => $this->opening_date,
             'posted_date' => $this->posted_date,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null,
             'country_id' => $this->country_id,
             'state_id' => $this->state_id,
             'state' => new StateResource($this->State),
