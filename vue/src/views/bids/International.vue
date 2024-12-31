@@ -9,7 +9,7 @@
                         selected</div>
                 </div>
 
-                <div class="col-md-4 my-auto">
+                <div class="col-md-5 my-auto">
                     <form class="bg-body shadow rounded-2">
                         <div class="input-group input-group-sm">
                             <vue3-tags-input class="form-control form-control-sm p-0 tag-center scrollinput"
@@ -23,7 +23,7 @@
                     </form>
                 </div>
 
-                <div class="col-md-5 my-auto">
+                <div class="col-md-4 my-auto">
                     <ul class="list-inline hstack flex-wrap gap-4 mb-0 s-dropdown dropdown my-auto"
                         style="float: right;">
                         <li class="list-inline-item mb-0" v-if="tags?.length">
