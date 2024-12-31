@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class StateTenderDetailResource extends JsonResource
 {
@@ -24,31 +25,31 @@ class StateTenderDetailResource extends JsonResource
             ];
         }
 
-        if(isset($this->FederalContactPrimary))
+        if(isset($this->StateContactPrimary))
         {
-            $primary_address = $this->FederalContactPrimary;
+            $primary_address = $this->StateContactPrimary;
         }
         else{
             $primary_address = [
-                'title' => $this->FederalContactPrimary->title ?? null,
-                'type' => $this->FederalContactPrimary->type ?? null,
-                'email' => $this->FederalContactPrimary->email ?? null,
-                'phone' => $this->FederalContactPrimary->phone ?? null,
-                'full_name' => $this->FederalContactPrimary->full_name ?? null,
+                'title' => $this->StateContactPrimary->title ?? null,
+                'type' => $this->StateContactPrimary->type ?? null,
+                'email' => $this->StateContactPrimary->email ?? null,
+                'phone' => $this->StateContactPrimary->phone ?? null,
+                'full_name' => $this->StateContactPrimary->full_name ?? null,
             ];
         }
 
-        if(isset($this->FederalContactSecondary))
+        if(isset($this->StateContactSecondary))
         {
-            $secondary_address = $this->FederalContactSecondary;
+            $secondary_address = $this->StateContactSecondary;
         }
         else{
             $secondary_address = [
-                'title' => $this->FederalContactSecondary->title ?? null,
-                'type' => $this->FederalContactSecondary->type ?? null,
-                'email' => $this->FederalContactSecondary->email ?? null,
-                'phone' => $this->FederalContactSecondary->phone ?? null,
-                'full_name' => $this->FederalContactSecondary->full_name ?? null,
+                'title' => $this->StateContactSecondary->title ?? null,
+                'type' => $this->StateContactSecondary->type ?? null,
+                'email' => $this->StateContactSecondary->email ?? null,
+                'phone' => $this->StateContactSecondary->phone ?? null,
+                'full_name' => $this->StateContactSecondary->full_name ?? null,
             ];
         }
         return [
@@ -58,7 +59,7 @@ class StateTenderDetailResource extends JsonResource
             'description' => $this->description,
             'opening_date' => $this->opening_date,
             'posted_date' => $this->posted_date,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null,
             'country_id' => $this->country_id,
             'state_id' => $this->state_id,
             'state' => new StateResource($this->State),

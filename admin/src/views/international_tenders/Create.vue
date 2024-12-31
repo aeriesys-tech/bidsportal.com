@@ -93,7 +93,7 @@
                                         v-model="tender.international_notice_id">
                                         <option value="null">Select Notice</option>
                                         <option v-for="notice, notice_key in notices" :key="notice_key"
-                                            :value="notice.international_notice_id">{{ notice.notice_name }}</option>
+                                            :value="notice.international_notice_id">{{ notice.international_notice_name }}</option>
                                     </select>
                                     <span class="invalid-feedback" v-if="errors?.international_notice_id?.length">{{
                                         errors?.international_notice_id[0] }}</span>
@@ -112,8 +112,8 @@
                                 <div class="form-group">
                                     <label>Due Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control form-control-sm" placeholder="Due Date"
-                                        :class="{ 'is-invalid': errors.expiry_date }" v-model="tender.expiry_date" />
-                                    <span v-if="errors.expiry_date" class="invalid-feedback">{{ errors.expiry_date[0]
+                                        :class="{ 'is-invalid': errors?.expiry_date }" v-model="tender.expiry_date" />
+                                    <span v-if="errors?.expiry_date" class="invalid-feedback">{{ errors?.expiry_date[0]
                                         }}</span>
                                 </div>
                             </div>
@@ -155,7 +155,7 @@
                                     <input type="text" class="form-control form-control-sm" placeholder="City"
                                         :class="{ 'is-invalid': errors?.international_office_address?.city }"
                                         v-model="tender.international_office_address.city" />
-                                    <span v-if="errors.international_office_address?.city" class="invalid-feedback">{{
+                                    <span v-if="errors?.international_office_address?.city" class="invalid-feedback">{{
                                         errors?.international_office_address?.city[0] }}</span>
                                 </div>
                             </div>
@@ -163,21 +163,21 @@
                                 <div class="form-group">
                                     <label>State </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.international_office_address?.state }"
+                                        :class="{ 'is-invalid': errors?.international_office_address?.state }"
                                         placeholder="State" v-model="tender.international_office_address.state" />
-                                    <span v-if="errors.international_office_address?.state" class="invalid-feedback">{{
-                                        errors.international_office_address?.state[0] }}</span>
+                                    <span v-if="errors?.international_office_address?.state" class="invalid-feedback">{{
+                                        errors?.international_office_address?.state[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Country </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.international_office_address?.country }"
+                                        :class="{ 'is-invalid': errors?.international_office_address?.country }"
                                         placeholder="Country" v-model="tender.international_office_address.country" />
-                                    <span v-if="errors.international_office_address?.country"
+                                    <span v-if="errors?.international_office_address?.country"
                                         class="invalid-feedback">{{
-                                            errors.international_office_address?.country[0] }}</span>
+                                            errors?.international_office_address?.country[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4 margin_top">
@@ -392,9 +392,10 @@ export default {
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             vm.getCountries();
-            if (vm.tender.country_id) {
-                vm.getInternationals();
+             if (vm.tender.country_id) {
+                vm.getStates();
             }
+            
             // vm.getRoles();
             if (to.name == "AddInternationalTender") {
                 // vm.$refs.name.focus();
@@ -404,12 +405,12 @@ export default {
                 vm.$store
                     .dispatch("post", uri)
                     .then(function (response) {
-                        console.log("response-----", response.data.data);
+                        console.log("response-----", response.data.data.international_contacts);
                         vm.tender = response.data.data;
                     })
                     .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
+                        vm.errors = error.response?.data.data.errors;
+                        vm.$store.dispatch("error", error.response?.data.data.message);
                     });
             }
         });
@@ -437,16 +438,16 @@ export default {
             formData.append("international_id", vm.tender.international_id);
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("international_agency_id", vm.tender.international_agency_id);
-            formData.append("international_notice_id", vm.tender.international_notice_id);
+            formData.append("international_agency_id", vm.tender.international_agency_id || '');
+            formData.append("international_notice_id", vm.tender.international_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("international_office_address", JSON.stringify(vm.tender.international_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("international_office_address", JSON.stringify(vm.tender.international_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
             formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
-            formData.append("description", vm.tender.description);
+            formData.append("category_id", vm.tender.category_id || '');
+            formData.append("description", vm.tender.description || '');
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));
 
@@ -472,19 +473,19 @@ export default {
             }
             formData.append("international_tender_id", vm.tender.international_tender_id);
             formData.append("country_id", vm.tender.country_id);
-            formData.append("state_id", vm.tender.state_id);
+            formData.append("state_id", vm.tender.state_id || '');
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("international_agency_id", vm.tender.international_agency_id);
-            formData.append("international_notice_id", vm.tender.international_notice_id);
+            formData.append("international_agency_id", vm.tender.international_agency_id || '');
+            formData.append("international_notice_id", vm.tender.international_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("international_office_address", JSON.stringify(vm.tender.international_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("international_office_address", JSON.stringify(vm.tender.international_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
             formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
-            formData.append("description", vm.tender.description);
+            formData.append("category_id", vm.tender.category_id || '');
+            formData.append("description", vm.tender.description || '');
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));
             vm.$store
@@ -570,6 +571,7 @@ export default {
                 .then((response) => {
                     loader.hide();
                     vm.states = response.data;
+                    vm.getInternationalNotices();
                 })
                 .catch(function (error) {
                     loader.hide();
@@ -585,8 +587,8 @@ export default {
                 .dispatch("post", { uri: "getInternationalNotices", data: { meta: { region_id: 1 } } })
                 .then((response) => {
                     loader.hide();
-                    vm.notices = response.data;
-                    vm.getCategories();
+                    vm.notices = response.data.data;
+                    vm.getInternationalAgencies();
                 })
                 .catch(function (error) {
                     loader.hide();
@@ -603,7 +605,6 @@ export default {
                 .then((response) => {
                     loader.hide();
                     vm.categories = response.data;
-                    vm.getInternationalAgencies();
                 })
                 .catch(function (error) {
                     loader.hide();
@@ -617,7 +618,8 @@ export default {
             vm.$store
                 .dispatch("post", { uri: "getInternationalAgencies" })
                 .then((response) => {
-                    vm.agencies = response.data;
+                    vm.agencies = response.data.data;
+                    vm.getCategories();
                 })
                 .catch(function (error) {
                     console.log(error);
