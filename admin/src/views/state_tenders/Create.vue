@@ -112,8 +112,8 @@
                                 <div class="form-group">
                                     <label>Due Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control form-control-sm" placeholder="Due Date"
-                                        :class="{ 'is-invalid': errors.expiry_date }" v-model="tender.expiry_date" />
-                                    <span v-if="errors.expiry_date" class="invalid-feedback">{{ errors.expiry_date[0]
+                                        :class="{ 'is-invalid': errors?.expiry_date }" v-model="tender.expiry_date" />
+                                    <span v-if="errors?.expiry_date" class="invalid-feedback">{{ errors?.expiry_date[0]
                                         }}</span>
                                 </div>
                             </div>
@@ -122,30 +122,30 @@
                                 <div class="form-group">
                                     <label>City </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.place_of_performance?.city_name }"
+                                        :class="{ 'is-invalid': errors?.place_of_performance?.city_name }"
                                         v-model="tender.place_of_performance.city_name" />
                                     <span v-if="errors.place_of_performance?.city_name" class="invalid-feedback">{{
-                                        errors.place_of_performance?.city_name[0] }}</span>
+                                        errors?.place_of_performance?.city_name[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>State </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.place_of_performance?.state_name }"
+                                        :class="{ 'is-invalid': errors?.place_of_performance?.state_name }"
                                         v-model="tender.place_of_performance.state_name" />
-                                    <span v-if="errors.place_of_performance?.state_name" class="invalid-feedback">{{
-                                        errors.place_of_performance?.state_name[0] }}</span>
+                                    <span v-if="errors?.place_of_performance?.state_name" class="invalid-feedback">{{
+                                        errors?.place_of_performance?.state_name[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Country </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.place_of_performance?.country_name }"
+                                        :class="{ 'is-invalid': errors?.place_of_performance?.country_name }"
                                         v-model="tender.place_of_performance.country_name" />
-                                    <span v-if="errors.place_of_performance?.country_name" class="invalid-feedback">{{
-                                        errors.place_of_performance?.country_name[0] }}</span>
+                                    <span v-if="errors?.place_of_performance?.country_name" class="invalid-feedback">{{
+                                        errors?.place_of_performance?.country_name[0] }}</span>
                                 </div>
                             </div> -->
                             <div class="col-sm-12 margin_top">Contracting Office Address</div>
@@ -163,29 +163,29 @@
                                 <div class="form-group">
                                     <label>State </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.state_office_address?.state }"
+                                        :class="{ 'is-invalid': errors?.state_office_address?.state }"
                                         placeholder="State" v-model="tender.state_office_address.state" />
-                                    <span v-if="errors.state_office_address?.state" class="invalid-feedback">{{
-                                        errors.state_office_address?.state[0] }}</span>
+                                    <span v-if="errors?.state_office_address?.state" class="invalid-feedback">{{
+                                        errors?.state_office_address?.state[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Country </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.state_office_address?.country }"
+                                        :class="{ 'is-invalid': errors?.state_office_address?.country }"
                                         placeholder="Country" v-model="tender.state_office_address.country" />
-                                    <span v-if="errors.state_office_address?.country" class="invalid-feedback">{{
-                                        errors.state_office_address?.country[0] }}</span>
+                                    <span v-if="errors?.state_office_address?.country" class="invalid-feedback">{{
+                                        errors?.state_office_address?.country[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
                                     <label>Bid Posting Link </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        placeholder="Bid Posting Link" :class="{ 'is-invalid': errors.tender_url }"
+                                        placeholder="Bid Posting Link" :class="{ 'is-invalid': errors?.tender_url }"
                                         v-model="tender.tender_url" />
-                                    <span v-if="errors.tender_url" class="invalid-feedback">{{ errors.tender_url[0]
+                                    <span v-if="errors?.tender_url" class="invalid-feedback">{{ errors?.tender_url[0]
                                         }}</span>
                                 </div>
                             </div>
@@ -193,9 +193,9 @@
                                 <div class="form-group">
                                     <label>Single Download Fee </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        placeholder="Single Download Fee" :class="{ 'is-invalid': errors.fees }"
+                                        placeholder="Single Download Fee" :class="{ 'is-invalid': errors?.fees }"
                                         v-model="tender.fees" />
-                                    <span v-if="errors.fees" class="invalid-feedback">{{ errors.fees[0] }}</span>
+                                    <span v-if="errors?.fees" class="invalid-feedback">{{ errors?.fees[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4 margin_top">
@@ -437,18 +437,18 @@ export default {
                 formData.append("attachments[" + i + "]", vm.tender.attachments[i]);
             }
             formData.append("country_id", vm.tender.country_id);
-            formData.append("state_id", vm.tender.state_id);
+            formData.append("state_id", vm.tender.state_id || '');
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("state_agency_id", vm.tender.state_agency_id);
-            formData.append("state_notice_id", vm.tender.state_notice_id);
+            formData.append("state_agency_id", vm.tender.state_agency_id || '');
+            formData.append("state_notice_id", vm.tender.state_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("state_office_address", JSON.stringify(vm.tender.state_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("state_office_address", JSON.stringify(vm.tender.state_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
             formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
+            formData.append("category_id", vm.tender.category_id || '');
             formData.append("description", vm.tender.description);
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));
@@ -475,18 +475,18 @@ export default {
             }
             formData.append("state_tender_id", vm.tender.state_tender_id);
             formData.append("country_id", vm.tender.country_id);
-            formData.append("state_id", vm.tender.state_id);
+            formData.append("state_id", vm.tender.state_id || '');
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("state_agency_id", vm.tender.state_agency_id);
-            formData.append("state_notice_id", vm.tender.state_notice_id);
+            formData.append("state_agency_id", vm.tender.state_agency_id || '');
+            formData.append("state_notice_id", vm.tender.state_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("state_office_address", JSON.stringify(vm.tender.state_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("state_office_address", JSON.stringify(vm.tender.state_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
             formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
+            formData.append("category_id", vm.tender.category_id || '');
             formData.append("description", vm.tender.description);
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));

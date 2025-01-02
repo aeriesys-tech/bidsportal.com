@@ -7,7 +7,11 @@ export default createStore({
     state: {
         // apiUrl: "https://bidsportal.com/api/",
         // apiUrl: "http://64.227.157.66/",
+<<<<<<< HEAD
         apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
+=======
+        apiUrl: "http://192.168.0.213/bidsportal.com/laravel/public/",
+>>>>>>> 64109c14457294aa184e6449be27c7cfff9468d0
         user: null,
         token: "",
         // permissions: [],

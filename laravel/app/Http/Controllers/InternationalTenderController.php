@@ -118,6 +118,7 @@ class InternationalTenderController extends Controller
         $international_tenders = $query->paginate($request->per_page); 
         return InternationalTenderResource::collection($international_tenders);
     }
+    
     public function updateInternationalBids(Request $request)
     {     
         //Ensure the folder path ends with a '/'
@@ -228,8 +229,14 @@ class InternationalTenderController extends Controller
             $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, international_tender_id DESC", [$searchQuery]);
         }
 
-
-        $query->orderBy('international_tender_id', 'DESC');
+        if (!empty($request->search)) 
+        {
+            $searchQuery = $request->search . '*';  
+            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, international_tender_id DESC", [$searchQuery]);
+        }
+       
+        $query->orderBy($request->keyword, $request->order_by);
         $international_tenders = $query->paginate($request->per_page); 
         return InternationalTenderResource::collection($international_tenders);
     }
@@ -344,7 +351,6 @@ class InternationalTenderController extends Controller
             'message' => 'State Tender added successfully',
         ]);
     }
-
 
     public function updateInternationalTender(Request $request)
     {

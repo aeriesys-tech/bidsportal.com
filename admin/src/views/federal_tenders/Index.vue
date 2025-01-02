@@ -43,52 +43,52 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center" width="1%">#</th>
-                                        <th @click="sort('tdr_no')" width="5%">
+                                        <th @click="sort('tender_no')" width="5%">
                                             Tender No
                                             <span>
-                                                <i v-if="meta.keyword == 'tdr_no' && meta.order_by == 'asc'"
+                                                <i v-if="meta.keyword == 'tender_no' && meta.order_by == 'asc'"
                                                     class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'tdr_no' && meta.order_by == 'desc'"
+                                                <i v-else-if="meta.keyword == 'tender_no' && meta.order_by == 'desc'"
                                                     class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('tdr_opening_date')" width="5%">
+                                        <th @click="sort('posted_date')" width="5%">
                                             Publish Date
                                             <span>
-                                                <i v-if="meta.keyword == 'tdr_opening_date' && meta.order_by == 'asc'"
+                                                <i v-if="meta.keyword == 'posted_date' && meta.order_by == 'asc'"
                                                     class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'tdr_opening_date' && meta.order_by == 'desc'"
+                                                <i v-else-if="meta.keyword == 'posted_date' && meta.order_by == 'desc'"
                                                     class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('tdr_title')" width="10%">
+                                        <th @click="sort('title')" width="10%">
                                             Tender Title
                                             <span>
-                                                <i v-if="meta.keyword == 'tdr_title' && meta.order_by == 'asc'"
+                                                <i v-if="meta.keyword == 'title' && meta.order_by == 'asc'"
                                                     class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'tdr_title' && meta.order_by == 'desc'"
+                                                <i v-else-if="meta.keyword == 'title' && meta.order_by == 'desc'"
                                                     class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('tender_type')" width="7%">
+                                        <th @click="sort('notice_name')" width="7%">
                                             Notice
                                             <span>
-                                                <i v-if="meta.keyword == 'tender_type' && meta.order_by == 'asc'"
+                                                <i v-if="meta.keyword == 'notice_name' && meta.order_by == 'asc'"
                                                     class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'tender_type' && meta.order_by == 'desc'"
+                                                <i v-else-if="meta.keyword == 'notice_name' && meta.order_by == 'desc'"
                                                     class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('category')" width="7%">
+                                        <th @click="sort('agency_name')" width="7%">
                                             Issuing Agency
                                             <span>
-                                                <i v-if="meta.keyword == 'issuing_agency' && meta.order_by == 'asc'"
+                                                <i v-if="meta.keyword == 'agency_name' && meta.order_by == 'asc'"
                                                     class="ri-arrow-up-line"></i>
-                                                <i v-else-if="meta.keyword == 'issuing_agency' && meta.order_by == 'desc'"
+                                                <i v-else-if="meta.keyword == 'agency_name' && meta.order_by == 'desc'"
                                                     class="ri-arrow-down-line"></i>
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
@@ -170,7 +170,7 @@ export default {
             meta: {
                 search: "",
                 order_by: "desc",
-                keyword: "tdr_id",
+                keyword: "federal_tender_id",
                 keywords:[],
                 per_page: 10,
                 totalRows: 0,
