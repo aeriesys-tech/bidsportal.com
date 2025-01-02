@@ -156,4 +156,27 @@ import 'vue-loading-overlay/dist/css/index.css';
     .title-green{
     color: #16a34a!important;
     }
+
+
+    /* Add different background colors for each tag based on nth-child */
+.v3ti .v3ti-tag:nth-child(1) {
+    background: #007bff;
+    color: white;
+}
+
+.v3ti .v3ti-tag:nth-child(2) {
+    background: #28a745;
+    color: white;
+}
+
+.v3ti .v3ti-tag:nth-child(3) {
+    background: #dc3545;
+    color: white;
+}
+
+.v3ti .v3ti-tag:nth-child(4) {
+    background: #ffc107;
+    color: black;
+}
+
 </style>

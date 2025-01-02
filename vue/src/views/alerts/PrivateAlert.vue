@@ -1023,7 +1023,7 @@ export default {
 .btnwht10 {
     background-color: white !important;
     border: 1px solid #ced4da;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
 }
 
 .btnwht10:hover {
