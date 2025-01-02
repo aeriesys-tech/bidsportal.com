@@ -19,8 +19,8 @@
             </div>
             <div class="row justify-content-center my-5">
                 <div class="col-sm-4" data-v-157df1e0="">
-                    <div class="card h-100" data-v-157df1e0="">
-                        <div class="card-header pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Trial</h5></div>
+                    <div class="card border h-100" data-v-157df1e0="">
+                        <div class="card-header bg-transparent pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Trial</h5></div>
                         <div class="card-body p-4" data-v-157df1e0="">
                             <p data-v-157df1e0="">
                                 Access our extensive contract database, receive daily email notifications of RFPs, and get direct customer support. Maximize opportunities with tools for finding, viewing, and qualifying bids.
@@ -35,8 +35,8 @@
                     </div>
                 </div>
                 <div class="col-sm-4" data-v-157df1e0="">
-                    <div class="card h-100" data-v-157df1e0="">
-                        <div class="card-header pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Semi-Annual Subscription</h5></div>
+                    <div class="card border h-100" data-v-157df1e0="">
+                        <div class="card-header bg-transparent pb-0" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Semi-Annual Subscription</h5></div>
                         <div class="card-body p-4" data-v-157df1e0="">
                             <p data-v-157df1e0="">
                                 Access our extensive contract database, receive daily email notifications of RFPs, and get direct customer support. Maximize opportunities with tools for finding, viewing, and qualifying bids.
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="col-sm-4" data-v-157df1e0="">
-                    <div class="card h-100 bg-light" data-v-157df1e0="">
+                    <div class="card border h-100 bg-light" data-v-157df1e0="">
                         <div class="card-header pb-0 bg-light" data-v-157df1e0=""><h5 class="mb-0 text-success" data-v-157df1e0="">Yearly Subscription</h5></div>
                         <div class="card-body p-4" data-v-157df1e0="">
                             <p data-v-157df1e0="">

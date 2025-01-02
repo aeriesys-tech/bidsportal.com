@@ -4,10 +4,10 @@
         <section class="pt-4 pt-lg-4 result pb-4">
             <div class="container position-relative">
                 <div class="row px-2">
-                    <div class="col-12 d-flex justify-content-md-between">
+                    <div class="col-12 d-flex justify-content-md-between align-items-center">
                         <ul class="list-inline text-end">
                             <li class="list-inline-item">
-                                <a href="javascript:void(0)" class="btn btn-sm btn-secondary" @click.prevent="previousPage()">Back</a>
+                                <a href="javascript:void(0)" @click.prevent="previousPage()" class="badge text-bg-secondary fs-6 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
                             </li>
                         </ul>
                         <ul class="list-inline text-end">
