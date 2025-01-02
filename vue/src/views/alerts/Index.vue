@@ -55,7 +55,7 @@
                                         </ul>
                                     </label>
 
-                                     <a href="javascript:void(0)" @click="backgoBidsPage()" type="button" class="mb-0 btn btn-sm btn-outline-secondary" style="border-radius: 4px;padding:5px; font-weight:400;">
+                                     <a href="javascript:void(0)" @click="backgoBidsPage()" type="button" class="mb-0 btn btn-sm btn-secondary" style="border-radius: 4px;padding:5px; font-weight:400;">
                                         Back To Bids
                                     </a>
                                 </div>
