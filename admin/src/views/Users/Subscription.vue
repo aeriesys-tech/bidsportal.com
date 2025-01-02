@@ -93,7 +93,7 @@
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ subscription.user?.name }}</td>
                                         <td>{{ subscription.user?.email }}</td>
-                                        <td>{{ subscription.payment_date }}</td>
+                                        <td>{{ subscription.valid_from }}</td>
                                         <td>{{ subscription.valid_to }}</td>
                                         <td>{{ subscription.subscription_plan?.plan }}</td>
                                         <td>{{ subscription.time_left }}</td>
