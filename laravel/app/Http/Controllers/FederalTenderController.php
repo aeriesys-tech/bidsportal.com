@@ -173,7 +173,26 @@ class FederalTenderController extends Controller
             ", [$searchQuery, $searchQuery, $searchQuery]);
         }
 
-	    $query->orderBy('federal_tender_id', 'DESC');
+        if (!empty($request->search)) 
+        {
+            $searchQuery = $request->search . '*';  
+            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC", [$searchQuery]);
+        }
+
+        if ($request->keyword == 'notice_name') {
+            $query->join('federal_notices', 'federal_tenders.federal_notice_id', '=', 'federal_notices.federal_notice_id')
+                    ->select('federal_tenders.*', 'federal_notices.notice_name') 
+                  ->orderBy('federal_notices.notice_name', $request->order_by);
+        } 
+        if ($request->keyword == 'agency_name') {
+            $query->join('federal_agencies', 'federal_tenders.federal_agency_id', '=', 'federal_agencies.federal_agency_id')
+                    ->select('federal_tenders.*', 'federal_agencies.agency_name') 
+                  ->orderBy('federal_agencies.agency_name', $request->order_by);
+        } else {
+            $query->orderBy($request->keyword, $request->order_by);
+        }
+        
     	$federal_tenders = $query->paginate($request->per_page); 
         return FederalTenderResource::collection($federal_tenders);
     }
@@ -414,6 +433,18 @@ class FederalTenderController extends Controller
             'posted_date' => 'nullable',
             'expiry_date' => 'nullable|date|after:opening_date'
         ]);
+
+        if ($data['federal_notice_id'] === '') {
+            $data['federal_notice_id'] = null;
+        }
+    
+        if ($data['category_id'] === '') {
+            $data['category_id'] = null; 
+        }
+    
+        if ($data['federal_agency_id'] === '') {
+            $data['federal_agency_id'] = null; 
+        }    
 
         $federal = FederalTender::where('federal_tender_id', $request->federal_tender_id)->first();
         $federal->update($data);

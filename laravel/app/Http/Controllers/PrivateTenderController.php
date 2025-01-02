@@ -214,8 +214,14 @@ class PrivateTenderController extends Controller
             $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, private_tender_id DESC", [$searchQuery]);
         }
 
+        if (!empty($request->search)) 
+        {
+            $searchQuery = $request->search . '*';  
+            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, private_tender_id DESC", [$searchQuery]);
+        }
 
-        $query->orderBy('private_tender_id', 'DESC');
+        $query->orderBy($request->keyword, $request->order_by);
         $private_tenders = $query->paginate($request->per_page); 
         return PrivateTenderResource::collection($private_tenders);
     }

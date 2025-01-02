@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\InternationalAttachmentResource;
+use Carbon\Carbon;
 
 class InternationalTenderDetailResource extends JsonResource
 {
@@ -25,31 +26,31 @@ class InternationalTenderDetailResource extends JsonResource
             ];
         }
 
-        if(isset($this->PrivateContactPrimary))
+        if(isset($this->InternationalContactPrimary))
         {
-            $primary_address = $this->PrivateContactPrimary;
+            $primary_address = $this->InternationalContactPrimary;
         }
         else{
             $primary_address = [
-                'title' => $this->PrivateContactPrimary->title ?? null,
-                'type' => $this->PrivateContactPrimary->type ?? null,
-                'email' => $this->PrivateContactPrimary->email ?? null,
-                'phone' => $this->PrivateContactPrimary->phone ?? null,
-                'full_name' => $this->PrivateContactPrimary->full_name ?? null,
+                'title' => $this->InternationalContactPrimary->title ?? null,
+                'type' => $this->InternationalContactPrimary->type ?? null,
+                'email' => $this->InternationalContactPrimary->email ?? null,
+                'phone' => $this->InternationalContactPrimary->phone ?? null,
+                'full_name' => $this->InternationalContactPrimary->full_name ?? null,
             ];
         }
 
-        if(isset($this->PrivateContactSecondary))
+        if(isset($this->InternationalContactSecondary))
         {
-            $secondary_address = $this->PrivateContactSecondary;
+            $secondary_address = $this->InternationalContactSecondary;
         }
         else{
             $secondary_address = [
-                'title' => $this->PrivateContactSecondary->title ?? null,
-                'type' => $this->PrivateContactSecondary->type ?? null,
-                'email' => $this->PrivateContactSecondary->email ?? null,
-                'phone' => $this->PrivateContactSecondary->phone ?? null,
-                'full_name' => $this->PrivateContactSecondary->full_name ?? null,
+                'title' => $this->InternationalContactSecondary->title ?? null,
+                'type' => $this->InternationalContactSecondary->type ?? null,
+                'email' => $this->InternationalContactSecondary->email ?? null,
+                'phone' => $this->InternationalContactSecondary->phone ?? null,
+                'full_name' => $this->InternationalContactSecondary->full_name ?? null,
             ];
         }
         return [
@@ -59,7 +60,7 @@ class InternationalTenderDetailResource extends JsonResource
             'description' => $this->description,
             'opening_date' => $this->opening_date,
             'posted_date' => $this->posted_date,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null,
             'country_id' => $this->country_id,
             'state_id' => $this->state_id,
             'state' => new StateResource($this->State),

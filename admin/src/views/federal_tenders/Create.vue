@@ -113,7 +113,7 @@
                                     <label>Due Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control form-control-sm" placeholder="Due Date"
                                         :class="{ 'is-invalid': errors.expiry_date }" v-model="tender.expiry_date" />
-                                    <span v-if="errors.expiry_date" class="invalid-feedback">{{ errors.expiry_date[0]
+                                    <span v-if="errors?.expiry_date" class="invalid-feedback">{{ errors?.expiry_date[0]
                                         }}</span>
                                 </div>
                             </div>
@@ -132,20 +132,20 @@
                                 <div class="form-group">
                                     <label>State </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.federal_office_address?.state }"
+                                        :class="{ 'is-invalid': errors?.federal_office_address?.state }"
                                         placeholder="State" v-model="tender.federal_office_address.state" />
-                                    <span v-if="errors.federal_office_address?.state" class="invalid-feedback">{{
-                                        errors.federal_office_address?.state[0] }}</span>
+                                    <span v-if="errors?.federal_office_address?.state" class="invalid-feedback">{{
+                                        errors?.federal_office_address?.state[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Country </label>
                                     <input type="text" class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors.federal_office_address?.country }"
+                                        :class="{ 'is-invalid': errors?.federal_office_address?.country }"
                                         placeholder="Country" v-model="tender.federal_office_address.country" />
-                                    <span v-if="errors.federal_office_address?.country" class="invalid-feedback">{{
-                                        errors.federal_office_address?.country[0] }}</span>
+                                    <span v-if="errors?.federal_office_address?.country" class="invalid-feedback">{{
+                                        errors?.federal_office_address?.country[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4 margin_top">
@@ -164,7 +164,7 @@
                                     <input type="text" class="form-control form-control-sm"
                                         placeholder="Single Download Fee" :class="{ 'is-invalid': errors.fees }"
                                         v-model="tender.fees" />
-                                    <span v-if="errors.fees" class="invalid-feedback">{{ errors.fees[0] }}</span>
+                                    <span v-if="errors?.fees" class="invalid-feedback">{{ errors?.fees[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-4 margin_top">
@@ -408,18 +408,18 @@ export default {
             formData.append("state_id", vm.tender.state_id);
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("federal_agency_id", vm.tender.federal_agency_id);
-            formData.append("federal_notice_id", vm.tender.federal_notice_id);
+            formData.append("federal_agency_id", vm.tender.federal_agency_id || '');
+            formData.append("federal_notice_id", vm.tender.federal_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("federal_office_address", JSON.stringify(vm.tender.federal_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("federal_office_address", JSON.stringify(vm.tender.federal_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
-            formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
-            formData.append("description", vm.tender.description);
-            formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
-            formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));
+            formData.append("fees", vm.tender.fees || '');
+            formData.append("category_id", vm.tender.category_id || '');
+            formData.append("description", vm.tender.description || '');
+            formData.append("primary_address", JSON.stringify(vm.tender.primary_address || ''));
+            formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address || ''));
 
             vm.$store
                 .dispatch("multipart_formdata", { uri: "addFederalTender", data: formData })
@@ -446,18 +446,18 @@ export default {
             formData.append("state_id", vm.tender.state_id);
             formData.append("tender_no", vm.tender.tender_no);
             formData.append("title", vm.tender.title);
-            formData.append("federal_agency_id", vm.tender.federal_agency_id);
-            formData.append("federal_notice_id", vm.tender.federal_notice_id);
+            formData.append("federal_agency_id", vm.tender.federal_agency_id || '');
+            formData.append("federal_notice_id", vm.tender.federal_notice_id || '');
             formData.append("opening_date", vm.tender.opening_date);
-            formData.append("expiry_date", vm.tender.expiry_date);
-            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance));
-            formData.append("federal_office_address", JSON.stringify(vm.tender.federal_office_address));
+            formData.append("expiry_date", vm.tender.expiry_date || '');
+            formData.append("place_of_performance", JSON.stringify(vm.tender.place_of_performance || ''));
+            formData.append("federal_office_address", JSON.stringify(vm.tender.federal_office_address || ''));
             formData.append("tender_url", vm.tender.tender_url);
-            formData.append("fees", vm.tender.fees);
-            formData.append("category_id", vm.tender.category_id);
-            formData.append("description", vm.tender.description);
-            formData.append("primary_address", JSON.stringify(vm.tender.primary_address));
-            formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address));
+            formData.append("fees", vm.tender.fees || '');
+            formData.append("category_id", vm.tender.category_id || '');
+            formData.append("description", vm.tender.description || '');
+            formData.append("primary_address", JSON.stringify(vm.tender.primary_address || ''));
+            formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address || ''));
             vm.$store
                 .dispatch("multipart_formdata", { uri: "updateTenderFederal", data: formData })
                 .then(() => {
