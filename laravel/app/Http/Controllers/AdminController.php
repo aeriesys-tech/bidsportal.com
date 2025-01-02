@@ -350,10 +350,14 @@ class AdminController extends Controller
         
         //Counts
         $registered_users = User::count();
-        $confirm_user_emails = User::whereNotNull('email_verified_at')->count();
-        $notconfirm_user_emails = User::whereNull('email_verified_at')->count();
-        $actual_subscritions = UserSubscription::where('active_status', 'active')->where('valid_to', '>', Carbon::today())->count();
-        $expired_subscritions = UserSubscription::where('active_status', '!=', 'active')->where('valid_to', '<', Carbon::today())->count();
+        $confirm_user_emails = User::where('status', 1)->count();
+        $notconfirm_user_emails = User::whereNull('status')->orWhere('status', 0)->count();
+        $actual_subscritions = UserSubscription::where('active_status', 'active')->where('valid_to', '>', Carbon::today())->whereHas('SubscriptionPlan', function($que){
+            $que->whereIn('plan', ['Semi-Annual', 'Annual']);
+        })->count();
+        $expired_subscritions = UserSubscription::where('active_status', '!=', 'active')->where('valid_to', '<', Carbon::today())->whereHas('SubscriptionPlan', function($que){
+            $que->whereIn('plan', ['Semi-Annual', 'Annual']);
+        })->count();
         $total_trial_actives = UserSubscription::where('active_status', 'active')->whereHas('SubscriptionPlan', function($que) {
             $que->where('plan', "Trial");
         })->count();
