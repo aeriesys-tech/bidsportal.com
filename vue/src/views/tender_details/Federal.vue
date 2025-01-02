@@ -383,16 +383,16 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-xs">
+                                        <div class="avatar avatar-xxs">
                                             <img class="avatar-img" src="assets/images/emailicon1.png" alt="avatar" />
                                         </div>
                                         <div class="ms-2">
-                                            <h6 class="mb-0 title-green" style="font-weight: 500;">Share Bid Detail</h6>
+                                            <h6 class="mb-0 title-green fw-500">Share Bid Detail</h6>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
                                 </div>
-                                <form class="card-body" style="min-width: 350px;">
+                                <form class="card-body" style="min-width: 500px;">
                                     <div class="mb-3">
                                         <input
                                             class="form-control"
@@ -465,17 +465,17 @@
                                 </div>
                                 <form class="card-body">
                                     <div class="form-check form-check-md mb-2">
-                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-codepen"></i> </a>
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-codepen"></i> </a> -->
                                         <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Priming">Priming</label>
                                     </div>
                                     <div class="form-check form-check-md mb-2">
-                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-dribbble"></i></a>
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-dribbble"></i></a> -->
                                         <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Subbing">Subbing</label>
                                     </div>
                                     <div class="form-check form-check-md">
-                                        <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-behance"></i> </a>
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-behance"></i> </a> -->
                                         <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Any">Any</label>
                                     </div>
@@ -1331,5 +1331,9 @@
         align-items: center;
         justify-content: center;
         z-index: 2000; /* Higher than modal */
+    }
+    .avatar-xxs{
+        height: 1.5rem;
+        width: 1.5rem;
     }
 </style>
