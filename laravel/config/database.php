@@ -112,6 +112,13 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'target_db' => [
+            'driver' => 'mysql',
+            'host' => env('TARGET_DB_HOST', '127.0.0.1'),
+            'database' => env('TARGET_DB_DATABASE', 'target_db'),
+            'username' => env('TARGET_DB_USERNAME', 'root'),
+            'password' => env('TARGET_DB_PASSWORD', ''),
+        ],
     ],
 
     /*
