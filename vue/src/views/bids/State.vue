@@ -480,12 +480,11 @@
                             </section>
                             <div class="text-end pb-2" v-if="state_tenders.length">
                                 <ul class="list-inline mb-0 z-index-2 small">
-                                    <!-- <li class="list-inline-item">
+                                    <li class="list-inline-item">
                                         <a href="javascript:void(0)"
                                             style="text-decoration: none; pointer-events: none; cursor: default;"
-                                            class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of
-                                            '+meta.totalRows+' bids' }}</a>
-                                    </li> -->
+                                            class="p-2 text-dark">{{ 'Showing ' + meta.from + ' - ' + meta.to + ' of '+meta.totalRows+' bids' }}</a>
+                                    </li>
 
                                     <li class="list-inline-item" v-if="$store.getters.user">
                                         <a href="javascript:void(0)" @click.prevent="shareStateTenders()"
