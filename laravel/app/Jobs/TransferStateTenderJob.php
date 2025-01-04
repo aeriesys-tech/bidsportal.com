@@ -17,6 +17,8 @@ use App\Models\Naics;
 use App\Models\SetAside;
 use App\Models\State;
 use Carbon\Carbon;
+use Storage;
+use Illuminate\Support\Facades\Log;
 
 class TransferStateTenderJob implements ShouldQueue
 {
@@ -78,19 +80,38 @@ class TransferStateTenderJob implements ShouldQueue
             $state_id = $state->state_id ?? null;
 
             //Expire Date
+            // $expiryDate = Carbon::parse($data['tdr_expiry_date'] ?? null);
+            // if ($expiryDate && $expiryDate->year > 2026) {
+            //     $expiryDate = Carbon::create(2026, 12, 31)->format('Y-m-d');
+            // } elseif ($expiryDate) {
+            //     $expiryDate = $expiryDate->format('Y-m-d');
+            // } else {
+            //     $expiryDate = null;
+            // }
+
             $expiryDate = Carbon::parse($data['tdr_expiry_date'] ?? null);
-            if ($expiryDate && $expiryDate->year > 2026) {
-                $expiryDate = Carbon::create(2026, 12, 31)->format('Y-m-d');
-            } elseif ($expiryDate) {
-                $expiryDate = $expiryDate->format('Y-m-d');
+            if ($expiryDate && $expiryDate->toDateString() === '0000-00-00') {
+                $expiryDate = Carbon::now()->addYear()->format('Y-m-d');
+            } 
+            elseif ($expiryDate && $expiryDate->isValid()) {
+                $expiryDate = $expiryDate->toDateString();
             } else {
-                $expiryDate = null;
+                $expiryDate = Carbon::now()->addYear()->format('Y-m-d');
             }
+
+
+            if (strpos($data['tdr_documents_date'], '@') !== false) {
+                $documentDate = explode('@', $data['tdr_documents_date'])[0];
+            } else {
+                $documentDate = $data['tdr_documents_date'];
+            }
+
+            $attachmentDate = !empty($documentDate) ? Carbon::parse($documentDate)->format('Y-m-d') : null;
 
             $existingTender = DB::connection('mysql')->table('state_tenders')->where('tender_no', $data['tdr_no'])->first();
             if(!$existingTender)
             {
-                DB::connection('mysql')->table('state_tenders')->insert([
+                $tender = DB::connection('mysql')->table('state_tenders')->insertGetId([
                     'tender_no' => $data['tdr_no'],
                     'title' => $data['tdr_title'],
                     'description' => $data['tdr_desc'],
@@ -113,6 +134,82 @@ class TransferStateTenderJob implements ShouldQueue
                     'notice_id' => $data['noticeId'] ?? Null,
                     'description_link' => $data['description_link']
                 ]);
+
+                //StateAttachments
+                $documents = explode('@', $data['tdr_documents']);
+                $documentSizes = explode('@', $data['tdr_documents_size']); 
+        
+                foreach ($documents as $index => $document) 
+                {
+                    if (empty($document)) {
+                        continue;  
+                    }
+ 
+                    // $document = trim($document);
+                    // $documentUrl = urldecode($document);
+                    // $fileContents = file_get_contents($documentUrl);
+                    // $file_path = 'Federal/' . $document;
+                    
+                    // if (Storage::disk('s3')->exists($file_path)) {
+                    //     $attachment_s3_url = Storage::disk('s3')->url($file_path);
+                    // } else {
+                    //     $attachment_s3_url = null;
+                    // }
+
+                    DB::connection('mysql')->table('state_attachments')->insert([
+                        'state_tender_id' => $tender,
+                        'attachment_name' => $document,
+                        'attachment_date' => $attachmentDate,
+                        'attachment_size' => isset($documentSizes[$index]) ? $documentSizes[$index] : null,
+                        // 'attachment_s3_url' => $attachment_s3_url
+                    ]);
+                }
+
+                if (!empty($data['tdr_contracting_office_address'])) 
+                {
+                    $addressData = json_decode($data['tdr_contracting_office_address'], true);
+
+                    $officeAddress = DB::connection('mysql')->table('state_office_addresses')->insertGetId([
+                        'state_tender_id' => $tender,
+                        'zip_code' => $addressData['zipcode'] ?? null,
+                        'city' => $addressData['city'] ?? null,
+                        'country' => $addressData['countryCode'] ?? null,
+                        'state' => $addressData['state'] ?? null
+                    ]);
+                }
+
+                //State-Contacts
+                if (!empty($data['point_of_contact'])) 
+                {
+                    $contacts = json_decode($data['point_of_contact'], true);
+                 
+                    foreach ($contacts as $contact) 
+                    {
+                        if ($contact['type'] === 'primary') 
+                        {
+                            DB::connection('mysql')->table('state_contacts')->insert([
+                                'state_tender_id' => $tender,
+                                'full_name' => $contact['fullName'] ?? null,
+                                'title' => $contact['title'] ?? null,
+                                'email' => $contact['email'] ?? null,
+                                'phone' => $contact['phone'] ?? null,
+                                'type' => 0,
+                            ]);
+                        }
+                 
+                        if ($contact['type'] === 'secondary') 
+                        {
+                            DB::connection('mysql')->table('state_contacts')->insert([
+                                'state_tender_id' => $tender,
+                                'full_name' => $contact['fullName'] ?? null,
+                                'title' => $contact['title'] ?? null,
+                                'email' => $contact['email'] ?? null,
+                                'phone' => $contact['phone'] ?? null,
+                                'type' => 1,  
+                            ]);
+                        }
+                    }
+                }  
             }
         }
     }

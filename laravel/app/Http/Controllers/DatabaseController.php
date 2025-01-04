@@ -11,7 +11,7 @@ class DatabaseController extends Controller
     public function transferFederalTenders()
     {
         DB::connection('target_db')->table('tbl_tender')->where('tdr_region', 2)
-        ->orderBy('tdr_no')->chunk(250, function ($tenders) {
+        ->orderBy('tdr_no')->chunk(100, function ($tenders) {
             $jobData = $tenders->map(function ($tbl) {
                 return [
                     'tdr_no' => $tbl->tdr_no,
@@ -35,6 +35,11 @@ class DatabaseController extends Controller
                     'tdr_place_of_performance' => $tbl->tdr_place_of_performance,
                     'noticeId' => $tbl->noticeId,
                     'description_link' => $tbl->description_link,
+                    'tdr_documents' => $tbl->tdr_documents,
+                    'tdr_documents_date' => $tbl->tdr_documents_date,
+                    'tdr_documents_size' => $tbl->tdr_documents_size,
+                    'tdr_contracting_office_address' => $tbl->tdr_contracting_office_address,
+                    'point_of_contact' => $tbl->point_of_contact
                 ];
             })->toArray();
 
@@ -45,8 +50,8 @@ class DatabaseController extends Controller
 
     public function transferStateTenders()
     {
-        DB::connection('target_db')->table('tbl_tender')->where('tdr_region', 2)
-        ->orderBy('tdr_no')->chunk(250, function ($tenders) {
+        DB::connection('target_db')->table('tbl_tender')->where('tdr_region', 1)
+        ->orderBy('tdr_no')->chunk(100, function ($tenders) {
             $jobData = $tenders->map(function ($tbl) {
                 return [
                     'tdr_no' => $tbl->tdr_no,
@@ -70,6 +75,14 @@ class DatabaseController extends Controller
                     'tdr_place_of_performance' => $tbl->tdr_place_of_performance,
                     'noticeId' => $tbl->noticeId,
                     'description_link' => $tbl->description_link,
+                    'tdr_documents' => $tbl->tdr_documents,
+                    'tdr_documents_date' => $tbl->tdr_documents_date,
+                    'tdr_documents_size' => $tbl->tdr_documents_size,
+                    'tdr_documents' => $tbl->tdr_documents,
+                    'tdr_documents_date' => $tbl->tdr_documents_date,
+                    'tdr_documents_size' => $tbl->tdr_documents_size,
+                    'tdr_contracting_office_address' => $tbl->tdr_contracting_office_address,
+                    'point_of_contact' => $tbl->point_of_contact
                 ];
             })->toArray();
 
