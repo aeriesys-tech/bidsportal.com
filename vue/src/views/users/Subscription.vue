@@ -90,7 +90,7 @@
                                                                 </thead>
                                                                 <tbody class="border-top-0">
                                                                     <tr v-if="subscriptions.length===0">
-                                                                        <td colspan="7" class="text-center">No records found</td>
+                                                                        <td colspan="7" class="text-center">You have no subscription history</td>
                                                                     </tr>
                                                                     <tr v-for="subscription in subscriptions" :key="subscription.id">
                                                                         <td>

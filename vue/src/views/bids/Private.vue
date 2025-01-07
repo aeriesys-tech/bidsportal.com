@@ -507,8 +507,7 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)"
-                                                        style="text-transform: uppercase;">
+                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
                                                         <div v-html="highlight(private_tender.title)"></div>
                                                     </a>
                                             </strong>
@@ -531,8 +530,10 @@
                                                     src="../../assets/icons/posteddate.svg" />{{
                                                         private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
-                                                    src="../../assets/icons/bidnumber.svg" />{{ private_tender.tender_no
-                                                }}</li>
+                                                    src="../../assets/icons/bidnumber.svg" />
+                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ private_tender.tender_no}}</span>
+                                                   <span v-else>{{ private_tender.tender_no }}</span>
+                                            </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/posteddate.svg" />{{
                                                         dateFormat(private_tender.opening_date) }} &nbsp;<span>{{
@@ -549,10 +550,18 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
-                                                <p class="limited-text" style="color: #595d6e; text-align: justify;"
+                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                     <p class="limited-text" style="color: #c1c1c1; text-align: justify;"
                                                     v-html="private_tender.description"
                                                     v-if="private_tender.description != '0' && private_tender.description != '-'">
                                                 </p>
+                                                </span>
+                                                <span v-else>
+                                                    <p class="limited-text" style="color: #595d6e; text-align: justify;"
+                                                        v-html="private_tender.description"
+                                                        v-if="private_tender.description != '0' && private_tender.description != '-'">
+                                                    </p>
+                                                </span>
                                             </li>
                                         </ul>
 
@@ -561,9 +570,9 @@
                                             <div class="d-flex align-items-center">
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
-                                                        <i class="bi bi-patch-check-fill text-primary me-2"></i><span
-                                                            style="color: rgb(86, 84, 109);">{{
-                                                                private_tender.private_agency?.private_agency_name }}</span>
+                                                        <i class="bi bi-patch-check-fill text-primary me-2"></i>
+                                                        <span style="color: #c1c1c1" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+                                                        <span v-else style="color: rgb(86, 84, 109);">{{private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
@@ -647,7 +656,10 @@
                                                             </div>
                                                         </td>
                                                         <td class="">
+                                                             <a style="color: #353535;" href="javascript:void(0)"
+                                                                        @click="tenderDetails(private_tender)">
                                                             <div v-html="highlight(private_tender.title)"></div>
+                                                            </a>
                                                         </td>
                                                         <td class="">{{
                                                             private_tender.private_agency?.agency_name
@@ -813,13 +825,28 @@
     </teleport>
     <teleport to="#modals" v-if="modal.subscribe">
         <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Please SUBSCRIBE !</p>
-                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+             <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <div class="card border">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="ms-2">
+                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                    </div>
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
+                                        <buttont ype="button" @click.prevent="closeModal()" class="btn-close"></buttont></a>
+                                </div>
+
+                                <div class="card-body text-center" style="min-width: 350px;">
+                                    <strong class="text-danger">Please SUBSCRIBE !</strong>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer m-foot"></div>
+                    </div>
                 </div>
-            </div>
         </div>
     </teleport>
     <teleport to="#modals" v-if="modal.share_tender">

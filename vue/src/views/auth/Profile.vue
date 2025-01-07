@@ -40,8 +40,8 @@
                                 </div>
                                   <div class="col-md-12">
                                     <label class="form-label">Company Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" :class="{ 'is-invalid': errors.company }" ref="webaddress" v-model="user.company" placeholder="Enter your Company Name" />
-                                    <span v-if="errors.company" class="invalid-feedback">{{ errors.company[0] }}</span>
+                                    <input type="text" class="form-control" :class="{ 'is-invalid': errors.company_name }" ref="webaddress" v-model="user.company_name" placeholder="Enter your Company Name" />
+                                    <span v-if="errors.company_name" class="invalid-feedback">{{ errors.company_name[0] }}</span>
                                 </div>
                                 <!-- Website Address -->
                                 <div class="col-md-12">
@@ -195,7 +195,7 @@
                     mobile_number: "",
                     avatar: "",
                     phone: "",
-                    company: "",
+                    company_name: "",
                     web_address: "",
                     mail_address: "",
                     city: "",
