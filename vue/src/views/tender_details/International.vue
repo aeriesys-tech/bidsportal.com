@@ -88,7 +88,7 @@
                                         <div class="card-body p-0">
                                             <ul class="list-group list-group-borderless mb-3">
                                                 <li class="list-group-item">
-                                                    <h6 class="mb-0 fw-normal">Department/Ind. Agency :</h6>
+                                                    <h6 class="mb-0 fw-normal">Department / Agency :</h6>
                                                     <span class="fw-light mb-0">{{ international_tender.international_agency?.agency_name }}</span>
                                                 </li>
                                             </ul>
@@ -165,7 +165,7 @@
                                                     </thead>
                                                     <tbody class="border-top-0">
                                                         <tr v-if="!international_tender?.international_attachments?.length">
-                                                            <td class="text-center" colspan="5">No Attachments Available</td>
+                                                            <td class="text-center" colspan="5">No attachments are available</td>
                                                         </tr>
                                                         <tr v-for="international_attachment, att_key in international_tender.international_attachments" :key="att_key">
                                                             <td class="text-center">
