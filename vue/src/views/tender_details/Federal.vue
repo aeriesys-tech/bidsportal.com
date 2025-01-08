@@ -93,8 +93,7 @@
                                             <div class="card-body p-0">
                                                 <ul class="list-group list-group-borderless mb-3">
                                                     <li class="list-group-item">
-                                                        <h6 class="mb-0 fw-normal">Department / Agency :</h6>
-                                                        <span class="fw-light mb-0">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                        <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light ">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
                                                     </li>
                                                 </ul>
                                                 <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
