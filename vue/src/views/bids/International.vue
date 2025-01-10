@@ -1550,9 +1550,10 @@ export default {
         },
 
         handleChangeTag(tags) {
-            let vm = this;
-            vm.tags = tags;
-            vm.meta.keywords = vm.tags;
+            let vm = this
+            vm.tags = tags
+            vm.meta.page = 1
+            vm.meta.keywords = vm.tags
         },
 
         searchStates() {
@@ -1652,12 +1653,21 @@ export default {
         applyFilters() {
             let vm = this;
             vm.filters = [];
-            const meta_fields = [
-                { meta_field: "international_notices", data_field: "international_notices", id_field: "international_notice_id", name_field: "international_notice_name" },
-                { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
-                { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
-                { meta_field: "international_agencies", data_field: "international_agencies", id_field: "international_agency_id", name_field: "international_agency_name" },
-            ];
+            let meta_fields = []
+            if(vm.international_agencies.length == vm.meta.international_agencies.length){
+                meta_fields = [
+                    { meta_field: "international_notices", data_field: "international_notices", id_field: "international_notice_id", name_field: "international_notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" }
+                ];
+            }else{
+                meta_fields = [
+                    { meta_field: "international_notices", data_field: "international_notices", id_field: "international_notice_id", name_field: "international_notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
+                    { meta_field: "international_agencies", data_field: "international_agencies", id_field: "international_agency_id", name_field: "international_agency_name" },
+                ];
+            }
 
             if (vm.meta.active) {
                 vm.filters.push({
@@ -1685,6 +1695,14 @@ export default {
                     name: "keywords",
                     id: "keywords",
                     module: "keywords",
+                });
+            }
+
+            if(vm.meta.international_agencies.length && vm.international_agencies.length == vm.meta.international_agencies.length){
+                vm.filters.push({
+                    name: "Agencies : "+vm.meta.international_agencies.length,
+                    id: "international_agencies",
+                    module: "international_agencies",
                 });
             }
 

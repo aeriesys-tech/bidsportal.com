@@ -21,6 +21,6 @@ class RegistrationEmail extends Mailable
     {
         return $this->subject('Confirm Your Email Address - BidsPortal')
                     ->view('emails.RegisteredUser')
-                    ->with('data', $this->emailData)->cc('notificatios@bidsportal.com');
+                    ->with('data', $this->emailData)->cc('support@bidsportal.com');
     }
 }

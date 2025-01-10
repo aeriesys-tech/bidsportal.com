@@ -1574,9 +1574,10 @@ export default {
         },
 
         handleChangeTag(tags) {
-            let vm = this;
-            vm.tags = tags;
-            vm.meta.keywords = vm.tags;
+            let vm = this
+            vm.tags = tags
+            vm.meta.page = 1
+            vm.meta.keywords = vm.tags
         },
 
         searchStates() {
@@ -1678,12 +1679,21 @@ export default {
         applyFilters() {
             let vm = this;
             vm.filters = [];
-            const meta_fields = [
-                { meta_field: "state_notices", data_field: "state_notices", id_field: "state_notice_id", name_field: "notice_name" },
-                { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
-                { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
-                { meta_field: "state_agencies", data_field: "state_agencies", id_field: "state_agency_id", name_field: "state_agency_name" },
-            ];
+            let meta_fields = []
+            if(vm.state_agencies.length == vm.meta.state_agencies.length){
+                meta_fields = [
+                    { meta_field: "state_notices", data_field: "state_notices", id_field: "state_notice_id", name_field: "notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" }
+                ];
+            }else{
+                meta_fields = [
+                    { meta_field: "state_notices", data_field: "state_notices", id_field: "state_notice_id", name_field: "notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
+                    { meta_field: "state_agencies", data_field: "state_agencies", id_field: "state_agency_id", name_field: "state_agency_name" },
+                ];
+            }
 
             if (vm.meta.active) {
                 vm.filters.push({
@@ -1711,6 +1721,14 @@ export default {
                     name: "keywords",
                     id: "keywords",
                     module: "keywords",
+                });
+            }
+
+            if(vm.meta.state_agencies.length && vm.state_agencies.length == vm.meta.state_agencies.length){
+                vm.filters.push({
+                    name: "Agencies : "+vm.meta.state_agencies.length,
+                    id: "state_agencies",
+                    module: "state_agencies",
                 });
             }
 
