@@ -1883,7 +1883,7 @@
 
             handleChangeTag(tags) {
                 let vm = this;
-                vm.tags = tags;
+                vm.tags = tags
                 if (this.region == "State") {
                     vm.state_filter.keywords = vm.tags;
                     this.getStateTenders();

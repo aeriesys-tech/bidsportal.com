@@ -1105,6 +1105,20 @@ export default {
     },
 
     methods: {
+        selectAllFederalAgencies() {
+            let vm = this;
+            vm.meta.federal_agencies = [];
+            vm.sorted_federal_agencies.map(function (element) {
+                vm.meta.federal_agencies.push(element.federal_agency_id);
+            });
+        },
+        deselectAllFederalAgencies() {
+            let vm = this;
+            vm.meta.federal_agencies = [];
+            vm.sorted_federal_agencies = vm.federal_agencies;
+            vm.federal_agency_keword = null;
+        },
+
         searchFederalAgencies() {
             let vm = this;
             vm.sorted_federal_agencies = vm.federal_agencies.filter(function (element) {
@@ -1421,9 +1435,10 @@ export default {
         },
 
         handleChangeTag(tags) {
-            let vm = this;
-            vm.tags = tags;
-            vm.meta.keywords = vm.tags;
+            let vm = this
+            vm.tags = tags
+            vm.meta.page = 1
+            vm.meta.keywords = vm.tags
         },
 
         searchStates() {
@@ -1529,12 +1544,21 @@ export default {
         applyFilters() {
             let vm = this;
             vm.filters = [];
-            const meta_fields = [
-                { meta_field: "federal_notices", data_field: "federal_notices", id_field: "federal_notice_id", name_field: "notice_name" },
-                { meta_field: "set_asides", data_field: "set_asides", id_field: "set_aside_id", name_field: "set_aside_name" },
-                { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
-                { meta_field: "federal_agencies", data_field: "federal_agencies", id_field: "federal_agency_id", name_field: "federal_agency_name" },
-            ];
+            let meta_fields = []
+            if(vm.federal_agencies.length == vm.meta.federal_agencies.length){
+                meta_fields = [
+                    { meta_field: "federal_notices", data_field: "federal_notices", id_field: "federal_notice_id", name_field: "notice_name" },
+                    { meta_field: "set_asides", data_field: "set_asides", id_field: "set_aside_id", name_field: "set_aside_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" }
+                ];
+            }else{
+                meta_fields = [
+                    { meta_field: "federal_notices", data_field: "federal_notices", id_field: "federal_notice_id", name_field: "notice_name" },
+                    { meta_field: "set_asides", data_field: "set_asides", id_field: "set_aside_id", name_field: "set_aside_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
+                    { meta_field: "federal_agencies", data_field: "federal_agencies", id_field: "federal_agency_id", name_field: "agency_name" },
+                ];
+            }
 
             if (vm.meta.active) {
                 vm.filters.push({
@@ -1562,6 +1586,14 @@ export default {
                     name: "keywords",
                     id: "keywords",
                     module: "keywords",
+                });
+            }
+            
+            if(vm.meta.federal_agencies.length && vm.federal_agencies.length == vm.meta.federal_agencies.length){
+                vm.filters.push({
+                    name: "Agencies : "+vm.meta.federal_agencies.length,
+                    id: "federal_agencies",
+                    module: "federal_agencies",
                 });
             }
 

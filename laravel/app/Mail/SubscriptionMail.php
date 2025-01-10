@@ -59,7 +59,7 @@ class SubscriptionMail extends Mailable
 
 
         return $this->view('emails.SubscriptionMail', compact('name', 'amt', 'plan', 'order_id', 'txn_id', 'payment_type', 'tran_date',  'tran_time', 'subtotal', 'discount', 'total', 'BASE_URL', 'images'))
-        ->cc('notificatios@bidsportal.com')
+        ->cc('support@bidsportal.com')
         ->subject('BidsPortal::Payment Successful');
     }
 }
