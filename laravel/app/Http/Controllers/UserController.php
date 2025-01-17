@@ -28,7 +28,9 @@ class UserController extends Controller
 	        'new_password' => 'required|min:8|confirmed', // 'confirmed' ensures new_password == confirm_password
 	    ]);
 
-	    $user = User::where('user_id', $request->user_id)->where('password', $request->current_password)->first();
+        $user = User::where('email', $request->email)->where('pw', $request->current_password)->first();
+
+	    // $user = User::where('user_id', $request->user_id)->where('password', $request->current_password)->first();
 	    if (!$user) {
 	        return response()->json([
 	            'errors' => [
@@ -46,7 +48,8 @@ class UserController extends Controller
 	    }
 	    
 	    User::where('email', $user->email)->update([
-	    	'password' => Hash::make($request->new_password)
+	    	'password' => Hash::make($request->new_password),
+            'pw' => $request->new_password
 	    ]);
 
 	    return response()->json([
@@ -59,7 +62,7 @@ class UserController extends Controller
         $data = $request->validate([
             'user_id' => 'required',
             'name' => 'required|string|max:255',
-            'mailing_address' => 'required|string|email|max:255',
+            'mailing_address' => 'required',
             'company_name' => 'required',
             'phone' => 'required',
             'web_address' => 'required',

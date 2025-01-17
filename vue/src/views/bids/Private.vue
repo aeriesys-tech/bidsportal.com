@@ -1164,7 +1164,10 @@ export default {
             if(vm.from_name == 'Alert' || vm.from_name == 'private_tender_details'){
                 vm.isLoading = true;
                 vm.getPrivateNotices();
-            }else{
+            } else if(localStorage.getItem('meta_private')){
+                vm.isLoading = true
+                vm.getPrivateNotices()
+            } else{
                 vm.getPrivateNotices();
                 vm.paginatePrivateTenders();
             }
@@ -1717,6 +1720,7 @@ export default {
                     module: "response_date",
                 });
             }
+            localStorage.setItem('meta_private', JSON.stringify(vm.meta))
         },
 
         getPrivateTenders() {
@@ -1822,6 +1826,8 @@ export default {
                     if (vm.from_name == 'private_tender_details' && vm.$store.getters.filters) {
                         vm.meta = vm.$store.getters.filters
                         vm.tags = vm.meta.keywords;
+                    } else if(localStorage.getItem('meta_private')){
+                        vm.meta = JSON.parse(localStorage.getItem('meta_private'))
                     }
                 })
                 .catch(function (error) {
