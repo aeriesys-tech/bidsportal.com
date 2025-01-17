@@ -52,6 +52,7 @@ Route::post("register",[AuthController::class,'register']);
 
 //Federal Tender
 Route::post('paginateFederalTenders', [FederalTenderController::class,'paginateFederalTenders']);
+Route::post('paginateFederalTendersAdmin', [FederalTenderController::class,'paginateFederalTendersAdmin']);
 
 //State Tender
 Route::post('paginateStateTenders', [StateTenderController::class,'paginateStateTenders']);

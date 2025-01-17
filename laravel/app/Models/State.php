@@ -17,4 +17,6 @@ class State extends Model
     ];
 
     protected $primaryKey = 'state_id';
+
+    
 }

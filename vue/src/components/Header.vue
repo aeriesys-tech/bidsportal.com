@@ -40,7 +40,7 @@
                      <div><a href="javascript:void(0)" @click="checkurlprice()"  class="nav-link" > Bid Search</a></div>
                     </li>
                     <li class="nav-item ms-0 ms-md-3">
-                        
+
                         <span class="text-dark  mb-0"><i class="fa-solid fa fa-globe me-1"></i> Call Us: &nbsp;(913) 232-2255</span>
                     </li>
                     <li class="nav-item ms-3 dropdown" v-if="$store.getters.user">
@@ -48,9 +48,9 @@
                             <i   class="bi bi-bell fa-fw fs-5"></i>
                         </a>
                         <span class="notif-badge animation-blink"></span>
-                     
+
                     </li>
-                   
+
                     <li class="nav-item ms-3 dropdown" v-if="$store.getters.user">
                         <a class="avatar avatar-xs p-0" href="javascript:void(0)" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
                             <h3 class="avatar-img rounded-circle" style="color:#23cf6b">{{$store.getters.user?.name?.substring(0,1)}}</h3>
@@ -68,17 +68,17 @@
                                 </div>
                             </li>
                             <li><hr class="dropdown-divider" /></li>
-                           
+
                             <li>
                                 <router-link  class="dropdown-item" to="/user/profile"><i class="bi bi-gear fa-fw me-2"></i>Settings</router-link>
                             </li>
-                           
+
                             <li>
                                 <a class="dropdown-item bg-danger-soft-hover" href="javascript:void(0)" @click.prevent="logout()"><i class="bi bi-power fa-fw me-2"></i>Sign Out</a>
                             </li>
                         </ul>
                     </li>
-                   
+
                     <li class="nav-item ms-3 d-none d-sm-block" v-if="!$store.getters.user" >
                         <router-link  class="btn btn-sm btn-primary-soft mb-0" to="/login">Login</router-link>
                     </li>
@@ -119,12 +119,37 @@
             </div>
         </div>
     </teleport>
+     <teleport to="#modals" v-if="unsubscribe_user_modal">
+        <div class="modal-overlay">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <div class="card border">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="ms-2">
+                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                    </div>
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
+                                        <buttont ype="button" @click.prevent="closemodal()" class="btn-close"></buttont></a>
+                                </div>
+                                <div class="card-body text-center" style="min-width: 350px;">
+                                    <strong class="text-danger">Please SUBSCRIBE !</strong>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer m-foot"></div>
+                    </div>
+                </div>
+            </div>
+     </teleport>
 </template>
 <script>
     import moment from 'moment';
 export default {
     name:"",
- 
+
     data() {
         return{
             login_url:false,
@@ -140,7 +165,8 @@ export default {
             show_upgrade: false,
             show_bidsearch: false,
             current_page: null,
-            tender_pages : ['state_opportunities', 'federal_opportunities', 'private_opportunities', 'international_opportunities']      
+            tender_pages : ['state_opportunities', 'federal_opportunities', 'private_opportunities', 'international_opportunities'],
+            unsubscribe_user_modal: false
         }
     },
     watch: {
@@ -153,7 +179,7 @@ export default {
                     this.show_bidsearch = true
                 }else if (this.tender_pages.includes(to.name)){
                     if(!this.$store.getters.user.subscription){
-                        this.show_pricing = true           
+                        this.show_pricing = true
                     }else{
                         if(this.$store.getters.user.subscription && this.$store.getters.subscription == 'expired'){
                             this.show_upgrade = true
@@ -204,7 +230,7 @@ export default {
                 this.hidepricestatue=false;
             }
         },
-   
+
         checklinks(){
             let vm = this;
             if(vm.$store.getters.user === null  ){
@@ -215,27 +241,34 @@ export default {
                 vm.hidecartstatue = false;
                 vm.hidepricestatue = true;
             }
-            
+
         },
 
         showAlerts(){
-            this.$router.push("/bids/alerts")
-            // if(vm.$store.getters.user?.subscription_id ==0){           
+            // this.$router.push("/bids/alerts")
+            if(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid'){
+                 this.unsubscribe_user_modal = true;
+            }
+            else{
+                this.$router.push("/bids/alerts")
+            }
+            // if(vm.$store.getters.user?.subscription_id ==0){
             //         vm.alertSubscribe= true;
             //             setTimeout(() => vm.alertSubscribe = false, 5000)
             //         }else{
             //             vm.$router.push("/bids/save-alert")
-            // }       
+            // }
         },
         closemodal() {
             let vm = this;
             vm.alertSubscribe=false;
             vm.resendemail= false;
+            vm.unsubscribe_user_modal=false;
             vm.errors = [];
         },
         resendEmail(){
                 let vm = this;
-                vm.resendemail=true;  
+                vm.resendemail=true;
         },
         sendConfirmeMail(){
             let vm = this;
@@ -304,7 +337,7 @@ box-shadow: 0px 5px 8px -5px;
         line-height: 0.6em;
         font-weight: bold;
     }
-    
+
     @keyframes fade {
   from {
     opacity: 1;
