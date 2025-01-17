@@ -30,34 +30,56 @@ import 'vue-loading-overlay/dist/css/index.css';
         },
 
 
- 	created() {
-            let vm = this
-			let main = document.createElement("script");
-			main.setAttribute("src", "assets/js/functions.js");
-			document.head.appendChild(main);
-            //Read the status information in sessionStorage when the page is loaded
+        created() {
+            let vm = this;
+            let main = document.createElement("script");
+            main.setAttribute("src", "assets/js/functions.js");
+            document.head.appendChild(main);
+
+            // Restore state from localStorage
+            const restoreState = (key, action) => {
+                try {
+                    const storedData = localStorage.getItem(key);
+                    console.log(`Stored data for key "${key}":`, storedData); // Debug log
+                    if (storedData) {
+                        const data = JSON.parse(storedData);
+                        this.$store.dispatch(action, data);
+                        localStorage.removeItem(key);
+                    }
+                } catch (e) {
+                    console.error(`Error restoring ${key} from localStorage:`, e);
+                }
+            };
+
             if (localStorage.getItem("user")) {
-                this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
-                this.$store.dispatch("setAlert", JSON.parse(localStorage.getItem("alert")));
-                this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
-                this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
-                this.$store.dispatch("setPrivateTender", JSON.parse(localStorage.getItem("private_tender")));
-                this.$store.dispatch("setInternationalTender", JSON.parse(localStorage.getItem("international_tender")));
-                this.$store.dispatch("setToken", localStorage.getItem("token"));
+                restoreState("user", "setUser");
+                if (this.$store.getters.user) {
+                    restoreState("token", "setToken");
+                    restoreState("alert", "setAlert");
+                    restoreState("federal_tender", "setFederalTender");
+                    restoreState("state_tender", "setStateTender");
+                    restoreState("private_tender", "setPrivateTender");
+                    restoreState("international_tender", "setInternationalTender");
+                }
             }
 
-            //Save the information in vuex to localStorage when the page is refreshed
+            // Save state to localStorage on page refresh
             window.addEventListener("beforeunload", () => {
-                localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
-                localStorage.setItem("token", this.$store?.getters?.token);
-                localStorage.setItem("alert", JSON.stringify(this.$store?.getters?.alert))
-                localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender))
-                localStorage.setItem("state_tender", JSON.stringify(this.$store?.getters?.state_tender))
-                localStorage.setItem("private_tender", JSON.stringify(this.$store?.getters?.private_tender))
-                localStorage.setItem("international_tender", JSON.stringify(this.$store?.getters?.international_tender))
-            });
+                const saveState = (key, getter) => {
+                    const data = this.$store?.getters?.[getter];
+                    if (data) localStorage.setItem(key, JSON.stringify(data));
+                };
 
+                saveState("user", "user");
+                saveState("token", "token");
+                saveState("alert", "alert");
+                saveState("federal_tender", "federal_tender");
+                saveState("state_tender", "state_tender");
+                saveState("private_tender", "private_tender");
+                saveState("international_tender", "international_tender");
+            });
         },
+
 
 		 methods: {
             logout() {

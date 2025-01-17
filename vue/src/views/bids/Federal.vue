@@ -426,7 +426,7 @@
                                         <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">
+                                                    <a href="#" @click="tenderDetails(federal_tender)">
                                                         <div v-html="highlight(federal_tender.title)"></div>
                                                     </a>
                                                 </strong>
@@ -533,7 +533,7 @@
                                                             <td class="">
                                                                 <div class="row">
                                                                     <div class="column">
-                                                                        <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                        <a href="#" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
                                                                     </div>
                                                                     <div class="column">
                                                                         <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
@@ -1058,6 +1058,11 @@ export default {
         next((vm) => {
             vm.from_name = from.name
             if (vm.from_name == 'Alert' || vm.from_name == 'federal_tender_details') {
+                vm.isLoading = true
+                vm.getFederalNotices()
+                vm.getPscs()
+                vm.getNaics()
+            } else if(localStorage.getItem('meta_federal')){
                 vm.isLoading = true
                 vm.getFederalNotices()
                 vm.getPscs()
@@ -1653,6 +1658,7 @@ export default {
                     module: "pscs",
                 });
             }
+            localStorage.setItem('meta_federal', JSON.stringify(vm.meta))
         },
 
         getFederalTenders() {
@@ -1821,6 +1827,8 @@ export default {
                     if (vm.from_name == 'federal_tender_details' && vm.$store.getters.filters) {
                         vm.meta = vm.$store.getters.filters
                         vm.tags = vm.meta.keywords;
+                    } else if(localStorage.getItem('meta_federal')){
+                        vm.meta = JSON.parse(localStorage.getItem('meta_federal'))
                     }
                 })
                 .catch(function (error) {

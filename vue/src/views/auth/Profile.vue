@@ -30,8 +30,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Mailing Address<span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" :class="{ 'is-invalid': errors.email }" ref="email" v-model="user.email" placeholder="Enter your email id" />
-                                    <span v-if="errors.email" class="invalid-feedback">{{ errors.email[0] }}</span>
+                                    <input type="email" class="form-control" :class="{ 'is-invalid': errors.mailing_address }" ref="email" v-model="user.mailing_address" placeholder="Enter your email id" />
+                                    <span v-if="errors.mailing_address" class="invalid-feedback">{{ errors.mailing_address[0] }}</span>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Mobile number<span class="text-danger">*</span></label>
@@ -75,7 +75,7 @@
                                 <!-- try starts -->
                                    <div class="col-md-12">
                                         <label for="inputfrequen1" class="form-label head1">Set Aside <span
-                                                class="text-danger">*</span> </label> <label>{{ user.set_asides.length
+                                                class="text-danger">*</span> </label> <label>{{ user.set_asides?.length
                                             }} of {{ set_asides.length }} Selected</label>
                                         <div class="">
                                             <button type="button" style="border: 1px solid #3d85d8;"
@@ -88,7 +88,7 @@
                                             <ul class="dropdown-menu">
                                                 <li class="dropdown-item">
                                                     <div class="">
-                                                        {{ user.set_asides.length }} of {{ set_asides.length }}
+                                                        {{ user.set_asides?.length }} of {{ set_asides.length }}
                                                         <router-link to="" @click="selectAllSetAsides()"
                                                             class="" ref="selectState">
                                                             Select All /
@@ -189,19 +189,12 @@
                 user: {
                     title: "",
                     name: "",
-                    id: "",
-                    email: "",
-                    role: "",
                     mobile_number: "",
                     avatar: "",
                     phone: "",
                     company_name: "",
                     web_address: "",
-                    mail_address: "",
-                    city: "",
-                    state: "",
-                    pin_code: "",
-                    sub_details: {},
+                    mailing_address: "",
                     socioeconomic_status: "",
                     set_asides: []
                 },

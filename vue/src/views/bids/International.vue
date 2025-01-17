@@ -1169,7 +1169,10 @@ export default {
             if(vm.from_name == 'Alert' || vm.from_name == 'international_tender_details'){
                 vm.isLoading = true;
                 vm.getInternationalNotices();
-            }else{
+            } else if(localStorage.getItem('meta_international')){
+                vm.isLoading = true
+                vm.getInternationalNotices()
+            } else{
                 vm.getInternationalNotices();
                 vm.paginateInternationalTenders();
             }
@@ -1744,6 +1747,7 @@ export default {
                     module: "response_date",
                 });
             }
+            localStorage.setItem('meta_international', JSON.stringify(vm.meta))
         },
 
         getInternationalTenders() {
@@ -1850,6 +1854,8 @@ export default {
                     if (vm.from_name == 'international_tender_details' && vm.$store.getters.filters) {
                         vm.meta = vm.$store.getters.filters
                         vm.tags = vm.meta.keywords;
+                    } else if(localStorage.getItem('meta_international')){
+                        vm.meta = JSON.parse(localStorage.getItem('meta_international'))
                     }
                 })
                 .catch(function (error) {
