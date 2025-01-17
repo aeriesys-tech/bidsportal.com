@@ -44,6 +44,9 @@ use App\Http\Controllers\UserInternationalInterestController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
+Route::post("forgotPassword",[AuthController::class,'forgotPassword']);
+Route::post("resetPassword",[AuthController::class,'resetPassword']);
 
 Route::get('generateSubscriptionPdf/{user_id}', [UserPaymentController::class, 'generateSubscriptionPdf']);
 Route::post("login", [AuthController::class,'login']);
@@ -250,7 +253,7 @@ Route::middleware(['api'])->group(function ($router) {
 	//State Tender
 	Route::post("getStateTender", [StateTenderController::class,'getStateTender']);
 	Route::post("addStateTender", [StateTenderController::class,'addStateTender']);
-	Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
+	// Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
 	Route::post('sendStateTenderMail', [StateTenderController::class,'sendStateTenderMail']);
 
 	//State Filter

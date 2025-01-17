@@ -192,4 +192,168 @@ class AuthController extends Controller
         $user = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page); 
         return UserResource::collection($user);
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json([
+                'errors' => [
+                    'email' => ['Email address does not match our records.'],
+                ]
+            ], 422);
+        }
+
+        $uniqidStr = $this->randomPassword();
+
+        $resetPassLink = config('app.base_url') . "/#/reset-password/" . $uniqidStr . "/" . base64_encode($request->email);
+
+        User::where(['email' => $request->email, 'user_id' => $user->user_id])
+            ->update(['forgot_pass_identity' => $uniqidStr]);
+
+        $data['email'] = $request->email;
+        $data['name'] = $user->name;
+        $data['resetPassLink'] = $resetPassLink;
+
+        $mailSent = $this->sendEmailToResetPassword($data);
+
+        if ($mailSent === "SUCCESS") {
+            return response()->json([
+                'message' => 'Please check your inbox! We have sent an email with instructions to reset your password.'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Email sending failed. Please contact the administrator.'
+            ], 500);
+        }
+    }
+
+    // public function sendEmailToResetPassword($data)
+    // {
+    //     $email = $data['email'];
+    //     $name = $data['name'];
+    //     $resetPassLink = $data['resetPassLink'];
+
+    //     $emailData = [
+    //         'name' => $name,
+    //         'resetPassLink' => $resetPassLink
+    //     ];
+
+    //     try {
+    //         Mail::send('emails.reset_password', $emailData, function($message) use ($email, $name) {
+    //             $message->to($email, $name)
+    //                     ->subject('Reset Password Notification - BidsPortal')
+    //                     ->from('support@bidsportal.com', 'BidsPortal');
+    //         });
+
+    //         return "SUCCESS";
+    //     } catch (\Exception $e) {
+    //         return "Error: " . $e->getMessage();
+    //     }
+    // }
+
+    public function sendEmailToResetPassword($data)
+    {
+        $email = $data['email'];
+        $name = $data['name'];
+        $resetPassLink = $data['resetPassLink'];
+
+        $emailData = [
+            'name' => $name,
+            'resetPassLink' => $resetPassLink,
+        ];
+
+        $htmlPart = view('emails.reset_password', $emailData)->render();
+
+        $API_USER_ID = env('SENDPULSE_API_USER_ID');
+        $API_SECRET = env('SENDPULSE_API_SECRET');
+
+        $request = array(
+            'html' => $htmlPart,
+            'text' => '',
+            'subject' => 'Reset Password Notification - BidsPortal',
+            'from' => array(
+                'name' => 'BidsPortal',
+                'email' => 'support@bidsportal.com'
+            ),
+            'to' => array(
+                array(
+                    'name' => $name,
+                    'email' => $email
+                )
+            )
+        );
+
+        $msg = "";
+        try {
+            $retval = app('SendPulse')->smtpSendMail($request);
+            $retval = json_decode(json_encode($retval), true);
+
+            if ($retval['result'] == 1) {
+                $msg = "SUCCESS";
+            } else {
+                $msg = "Error: " . $retval['error'];
+            }
+        } catch (Exception $e) {
+            $msg = "Error: " . $e->getMessage();
+        }
+        return $msg;
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $this->validate($request, [
+            'email'=>'required ',
+            'fp_code' => 'required|min:8',
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|min:8',
+        ]);
+       
+       $data['email']=base64_decode($request->email);
+       
+        $user = User::where('email',$data['email'])->first();      
+        if (strcmp($request->fp_code, $user->forgot_pass_identity)!=0) 
+        {
+            return response()->json([
+                'errors' => [
+                   // 'code' => ['Entered code is not mtching. Please try again'],
+                    'code' => ['You have aleady reset your password '],
+                ]
+            ], 422);
+        }        
+        else if(strcmp($request->password, $request->confirm_password) != 0)
+        {
+            return response()->json([
+                'errors' => [
+                    'confirm_password' => ['The password confirmation does not match'],
+                ]
+            ], 422);
+
+        }
+        else
+        {
+            User::where('email',$data['email'])->update([
+                    'password' => Hash::make($request->password),
+                    'pw' => $request->password
+                ]);
+            return response()->json([
+                'message' => ['Password is successfully updated']
+            ], 200);
+        }
+    }
+
+    function randomPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
+    }
 }

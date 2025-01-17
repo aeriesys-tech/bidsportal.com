@@ -461,53 +461,53 @@ class StateTenderController extends Controller
         ]);
     }
 
-    public function updateStateBids(Request $request)
-    {     
-        //Ensure the folder path ends with a '/'
-        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+    // public function updateStateBids(Request $request)
+    // {     
+    //     //Ensure the folder path ends with a '/'
+    //     $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
 
-        //Get files from S3
-        $files = Storage::disk('s3')->files($folderPath);
+    //     //Get files from S3
+    //     $files = Storage::disk('s3')->files($folderPath);
 
-        if (count($files) > 0) {
-            foreach ($files as $key => $file) {
-                // Check if the file has an .xlsx extension
-                if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
-                    // Proceed only if the file exists in S3
-                    if (Storage::disk('s3')->exists($file)) {
-                        try {
-                            // Import the file using Laravel Excel
-                            Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
-                        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                            // Log the exception or handle it accordingly
-                            return response()->json([
-                                'message' => 'Error importing file: ' . $file,
-                                'error' => $e->failures()
-                            ], 500);
-                        }
-                    } else {
-                        return response()->json([
-                            'message' => 'File does not exist: ' . $file
-                        ], 404);
-                    }
-                }
-            }
+    //     if (count($files) > 0) {
+    //         foreach ($files as $key => $file) {
+    //             // Check if the file has an .xlsx extension
+    //             if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+    //                 // Proceed only if the file exists in S3
+    //                 if (Storage::disk('s3')->exists($file)) {
+    //                     try {
+    //                         // Import the file using Laravel Excel
+    //                         Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+    //                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //                         // Log the exception or handle it accordingly
+    //                         return response()->json([
+    //                             'message' => 'Error importing file: ' . $file,
+    //                             'error' => $e->failures()
+    //                         ], 500);
+    //                     }
+    //                 } else {
+    //                     return response()->json([
+    //                         'message' => 'File does not exist: ' . $file
+    //                     ], 404);
+    //                 }
+    //             }
+    //         }
             
-            $today = Carbon::today();
-            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-            foreach ($state_attachments as $state_attachment) {
-                UpdateFileSize::dispatch($state_attachment);
-            }
+    //         $today = Carbon::today();
+    //         $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+    //         foreach ($state_attachments as $state_attachment) {
+    //             UpdateFileSize::dispatch($state_attachment);
+    //         }
 
-            return response()->json([
-                'message' => 'Data imported successfully'
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'No records found'
-            ], 422);
-        }
-    }
+    //         return response()->json([
+    //             'message' => 'Data imported successfully'
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'No records found'
+    //         ], 422);
+    //     }
+    // }
 
     public function updateStateTender(Request $request)
     {
@@ -722,4 +722,131 @@ class StateTenderController extends Controller
             "message" => "State Tender Deleted Successfully"
         ]);
     }
+
+
+    public function importLoadingSlip1()
+    {
+        $file_name = public_path().'/attachments/CLIC-BGM-LOADINGSLIP-1200648525.xlsx';
+        $failures = false;
+        try {
+            Excel::import(new LogImport(), $file_name);
+            $log = Log::create([
+                    'plant_id' => 1,
+                    'file_path' => $file_name,
+                    'date_time' => date('Y-m-d'),
+                    'status' => 0,
+                    'message' => 'Success',
+            ]);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+        if (count($failures) > 0 ){
+            $log = Log::create([
+                    'plant_id' => 1,
+                    'file_path' => $file_name,
+                    'date_time' => date('Y-m-d H:i:s'),
+                    'status' => 0,
+                    'message' => 'error',
+            ]);
+            if($log){
+            foreach ($failures as $failure) {
+             $slip_date = date('Y-m-d H:m:s',strtotime($failure->values()['slip_date']));
+             $values = array(
+                'slip_no' => $failure->values()['slip_no'],
+                'slip_date' => Date::excelToDateTimeObject($failure->values()['slip_date'])->format('Y-m-d'),
+                'carrier_code' => $failure->values()['carrier_code'],
+                'carrier_name' => $failure->values()['carrier_name'],
+                'vehicle_no' => $failure->values()['vehicle_no'],
+                'customer_code' => $failure->values()['customer_code'],
+                'customer_name' => $failure->values()['customer_name'],
+                'destination' => $failure->values()['destination'],
+                'worksorder_no' => $failure->values()['worksorder_no'],
+                'product_code' => $failure->values()['product_code'],
+                'lot_no' => $failure->values()['lot_no'],
+                'no_of_bags' => $failure->values()['no_of_bags'],
+                'quantity' => $failure->values()['quantity'],
+                'location' => $failure->values()['location']
+            );
+                LogError::create([
+                    'log_id' => $log->log_id,
+                    'row' => $failure->row(),
+                    'attribute' => $failure->attribute(),
+                    'errors' => json_encode($failure->errors()),
+                    'values' => json_encode($values),
+                    'status' => 'success',
+                    'message' => 'Data inserted successfully',
+                ]);
+            }
+        }
+        }else{
+            Log::create([
+                    'plant_id' => 1,
+                    'file_path' => $file_name,
+                    'date_time' => date('Y-m-d H:i:s'),
+                    'status' => 'success',
+                    'message' => 'Data inserted successfully',
+                ]);
+            }
+        }catch (\Illuminate\Database\QueryException $ex) {
+                $log = Log::create([
+                    'plant_id' => 1,
+                    'file_path' => $file_name,
+                    'date_time' => date('Y-m-d H:i:s'),
+                    'status' => 0,
+                    'message' => $ex->getMessage(),
+                ]);
+            }
+    }
+
+    // public function updateStateBids(Request $request)
+    // {     
+    //     $folderPath = public_path().'/attachments/06_MyFloridaMarketPlace.xlsx';
+
+    //     if (count($files) > 0) 
+    //     {
+    //             if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+    //                     try {
+    //                         Excel::import(new StateTenderImport($folderPath, $request->folder), 's3');
+    //                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //                         return response()->json([
+    //                             'message' => 'Error importing file: ' . $file,
+    //                             'error' => $e->failures()
+    //                         ], 500);
+    //                     }
+    //             }
+    //         }
+            
+    //         $today = Carbon::today();
+    //         $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+    //         foreach ($state_attachments as $state_attachment) {
+    //             UpdateFileSize::dispatch($state_attachment);
+    //         }
+
+    //         return response()->json([
+    //             'message' => 'Data imported successfully'
+    //         ]);
+    // }
+
+    public function updateStateBids(Request $request)
+    {
+        $folderPath = public_path() . '/attachments/06_MyFloridaMarketPlace.xlsx';
+    
+        if (file_exists($folderPath)) {
+            try {
+                Excel::import(new StateTenderImport($folderPath, $request->folder), $folderPath);
+            } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                return response()->json([
+                    'message' => 'Error importing file: ' . $folderPath,
+                    'error' => $e->failures()
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'message' => 'File not found in the public directory.'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Data imported successfully'
+        ]);
+    }    
 }

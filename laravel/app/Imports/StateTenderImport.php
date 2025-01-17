@@ -19,6 +19,9 @@ use Illuminate\Contracts\Validation\Rule;
 use App\Rules\ValidDateRule; 
 use GuzzleHttp\Client;
 use Storage;
+use App\Models\StateNotice;
+use App\Models\StateAgency;
+use App\models\Category;
 
 class StateTenderImport implements ToCollection, WithValidation, WithStartRow
 {
@@ -55,6 +58,32 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 $tender_no = $row[4];
                 $title = $row[5] ?? 'No Title';
 
+                $stat_notice = StateNotice::where('notice_name', $row[4])->first();
+                if ($stat_notice) {
+                    $state_notice_id = $stat_notice->state_notice_id;
+                } else {
+                    $state_notice_id = null;
+                }
+                $stat_agency = StateAgency::where('state_agency_name', $row[8])->first();
+                if ($stat_agency) {
+                    $state_agency_id = $stat_agency->state_agency_id;
+                } else {
+                    $state_agency_id = null;
+                }
+                $category = Category::where('category_name', $row[11])->first();
+                if ($category) {
+                    $category_id = $category->category_id;
+                } else {
+                    $category_id = null;
+                }
+                $state = State::where('state_name', $row[18])->first();
+                if ($state) {
+                    $state_id = $state->state_id;
+                } else {
+                    $state_id = null;
+                }
+
+
                 if (in_array($tender_no, $this->existing_tender_nos)) {
                     DuplicateStateTender::updateOrCreate([
                         'tender_no' => $tender_no,
@@ -82,11 +111,11 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                             'posted_date' => $created_date,
                             'expiry_date' => $expiry_date,
                             'country_id' => $country->country_id,
-                            'state_id ' => null,
+                            'state_id ' => $state_id,
                             'tender_type_id' => null,
-                            'state_notice_id' => null,
-                            'category_id' => null,
-                            'state_agency_id' => null,
+                            'state_notice_id' => $state_notice_id,
+                            'category_id' => $category_id,
+                            'state_agency_id' => $state_agency_id,
                             'tender_url' => $tender_url,
                             'notice_id' => null,
                             'description_link' => null,
@@ -172,7 +201,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             '*.1' => ['required', new ValidDateRule], 
             '*.2' => ['required', new ValidDateRule], 
             '*.3' => 'nullable',
-            '*.4' => 'required',
+            '*.4' => 'nullable',
             '*.5' => 'nullable',
             '*.6' => 'nullable',
             '*.7' => 'nullable',
@@ -182,6 +211,11 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             '*.11' => 'nullable',
             '*.12' => 'required',
             '*.13' => 'nullable',
+            '*.14' => 'nullable',
+            '*.15' => 'nullable',
+            '*.16' => 'nullable',
+            '*.17' => 'nullable',
+            '*.18' => 'nullable',
         ];
     }
 }
