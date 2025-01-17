@@ -171,7 +171,6 @@ export default {
                 search: "",
                 order_by: "desc",
                 keyword: "federal_tender_id",
-                keywords:[],
                 per_page: 10,
                 totalRows: 0,
                 page: 1,
@@ -181,6 +180,7 @@ export default {
                 maxPage: 1,
                 trashed: false,
                 status: 'All',
+                role: 'admin'
             },
             role: {
                 role_id: "",
@@ -293,10 +293,6 @@ export default {
         },
         index() {
             let vm = this
-            vm.meta.keywords = []
-            if(vm.meta.search){
-                vm.meta.keywords.push(vm.meta.search)
-            }
             vm.$store
                 .dispatch("post", { uri: "paginateFederalTenders", data: vm.meta })
                 .then((response) => {

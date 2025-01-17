@@ -247,6 +247,7 @@ export default {
                 maxPage: 1,
                 trashed: false,
                 status: 'Inactive',
+                role: 'admin'
             },
             role: {
                 role_id: "",
@@ -293,6 +294,11 @@ export default {
     },
 
     methods: {
+        search() {
+            let vm = this
+            vm.meta.page = 1
+            vm.index()
+        },
         editState(tender) {
             this.$router.push("/state_tenders/" + tender.state_tender_id + "/edit");
         },
@@ -360,7 +366,7 @@ export default {
         index() {
             let vm = this;
             vm.$store
-                .dispatch("post", { uri: "paginateInactiveStateTenders", data: vm.meta })
+                .dispatch("post", { uri: "paginateStateTenders", data: vm.meta })
                 .then((response) => {
                     vm.tenders = response.data.data
                     vm.meta.totalRows = response.data.meta.total

@@ -86,9 +86,28 @@ class PrivateTenderController extends Controller
             } else {
                 $keywords = array_map('trim', $request->keywords);
             }
+
             $searchQuery = implode(' ', $keywords);
-            $query->where(function ($subQuery) use ($searchQuery, $keywords) {
-                $subQuery->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+            // Normalize the search query by removing hyphens
+            $normalizedSearchQuery = str_replace('-', '', $searchQuery);
+
+            // Start building the query
+            $query->where(function ($subQuery) use ($normalizedSearchQuery, $searchQuery) {
+                // Normalize the tender_no field in the database and compare
+                $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                         ->orWhere('title', '=', $searchQuery);
+            });
+
+            // Use relevant matches only if there are no exact matches
+            $query->orWhere(function ($subQuery) use ($normalizedSearchQuery, $keywords) {
+                $subQuery->whereRaw("NOT EXISTS (
+                        SELECT 1 FROM private_tenders 
+                        WHERE REPLACE(tender_no, '-', '') = ?
+                    )", [$normalizedSearchQuery])
+                    ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$normalizedSearchQuery]);
+
+                // Fallback to LIKE for short keywords
                 foreach ($keywords as $keyword) {
                     if (strlen($keyword) < 4) {
                         $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
@@ -96,7 +115,17 @@ class PrivateTenderController extends Controller
                     }
                 }
             });
-            $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, private_tender_id DESC", [$searchQuery]);
+
+            // Order the results to prioritize exact matches
+            $query->orderByRaw("
+                CASE 
+                    WHEN REPLACE(tender_no, '-', '') = ? THEN 1
+                    WHEN title = ? THEN 1
+                    ELSE 2
+                END, 
+                MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+                private_tender_id DESC
+            ", [$normalizedSearchQuery, $searchQuery, $normalizedSearchQuery]);
         }
 
         $query->orderBy('private_tender_id', 'DESC');

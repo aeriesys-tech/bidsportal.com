@@ -507,8 +507,7 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)"
-                                                        style="text-transform: uppercase;">
+                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
                                                         <div v-html="highlight(private_tender.title)"></div>
                                                     </a>
                                             </strong>
@@ -531,8 +530,10 @@
                                                     src="../../assets/icons/posteddate.svg" />{{
                                                         private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
-                                                    src="../../assets/icons/bidnumber.svg" />{{ private_tender.tender_no
-                                                }}</li>
+                                                    src="../../assets/icons/bidnumber.svg" />
+                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ private_tender.tender_no}}</span>
+                                                   <span v-else>{{ private_tender.tender_no }}</span>
+                                            </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/posteddate.svg" />{{
                                                         dateFormat(private_tender.opening_date) }} &nbsp;<span>{{
@@ -549,10 +550,18 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
-                                                <p class="limited-text" style="color: #595d6e; text-align: justify;"
+                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                     <p class="limited-text" style="color: #c1c1c1; text-align: justify;"
                                                     v-html="private_tender.description"
                                                     v-if="private_tender.description != '0' && private_tender.description != '-'">
                                                 </p>
+                                                </span>
+                                                <span v-else>
+                                                    <p class="limited-text" style="color: #595d6e; text-align: justify;"
+                                                        v-html="private_tender.description"
+                                                        v-if="private_tender.description != '0' && private_tender.description != '-'">
+                                                    </p>
+                                                </span>
                                             </li>
                                         </ul>
 
@@ -561,9 +570,9 @@
                                             <div class="d-flex align-items-center">
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
-                                                        <i class="bi bi-patch-check-fill text-primary me-2"></i><span
-                                                            style="color: rgb(86, 84, 109);">{{
-                                                                private_tender.private_agency?.private_agency_name }}</span>
+                                                        <i class="bi bi-patch-check-fill text-primary me-2"></i>
+                                                        <span style="color: #c1c1c1" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+                                                        <span v-else style="color: rgb(86, 84, 109);">{{private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
@@ -647,7 +656,10 @@
                                                             </div>
                                                         </td>
                                                         <td class="">
+                                                             <a style="color: #353535;" href="javascript:void(0)"
+                                                                        @click="tenderDetails(private_tender)">
                                                             <div v-html="highlight(private_tender.title)"></div>
+                                                            </a>
                                                         </td>
                                                         <td class="">{{
                                                             private_tender.private_agency?.agency_name
@@ -813,13 +825,28 @@
     </teleport>
     <teleport to="#modals" v-if="modal.subscribe">
         <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Please SUBSCRIBE !</p>
-                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+             <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header m-header"></div>
+                        <div class="modal-body">
+                            <div class="card border">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3">
+                                    <div class="ms-2">
+                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                    </div>
+                                    <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
+                                        <buttont ype="button" @click.prevent="closeModal()" class="btn-close"></buttont></a>
+                                </div>
+
+                                <div class="card-body text-center" style="min-width: 350px;">
+                                    <strong class="text-danger">Please SUBSCRIBE !</strong>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer m-foot"></div>
+                    </div>
                 </div>
-            </div>
         </div>
     </teleport>
     <teleport to="#modals" v-if="modal.share_tender">
@@ -1137,7 +1164,10 @@ export default {
             if(vm.from_name == 'Alert' || vm.from_name == 'private_tender_details'){
                 vm.isLoading = true;
                 vm.getPrivateNotices();
-            }else{
+            } else if(localStorage.getItem('meta_private')){
+                vm.isLoading = true
+                vm.getPrivateNotices()
+            } else{
                 vm.getPrivateNotices();
                 vm.paginatePrivateTenders();
             }
@@ -1496,9 +1526,10 @@ export default {
         },
 
         handleChangeTag(tags) {
-            let vm = this;
-            vm.tags = tags;
-            vm.meta.keywords = vm.tags;
+            let vm = this
+            vm.tags = tags
+            vm.meta.page = 1
+            vm.meta.keywords = vm.tags
         },
 
         searchStates() {
@@ -1598,12 +1629,21 @@ export default {
         applyFilters() {
             let vm = this;
             vm.filters = [];
-            const meta_fields = [
-                { meta_field: "private_notices", data_field: "private_notices", id_field: "private_notice_id", name_field: "private_notice_name" },
-                { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
-                { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
-                { meta_field: "private_agencies", data_field: "private_agencies", id_field: "private_agency_id", name_field: "private_agency_name" },
-            ];
+            let meta_fields = []
+            if(vm.private_agencies.length == vm.meta.private_agencies.length){
+                meta_fields = [
+                    { meta_field: "private_notices", data_field: "private_notices", id_field: "private_notice_id", name_field: "private_notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" }
+                ];
+            }else{
+                meta_fields = [
+                    { meta_field: "private_notices", data_field: "private_notices", id_field: "private_notice_id", name_field: "private_notice_name" },
+                    { meta_field: "categories", data_field: "categories", id_field: "category_id", name_field: "category_name" },
+                    { meta_field: "states", data_field: "states", id_field: "state_id", name_field: "state_name" },
+                    { meta_field: "private_agencies", data_field: "private_agencies", id_field: "private_agency_id", name_field: "private_agency_name" },
+                ];
+            }
 
             if (vm.meta.active) {
                 vm.filters.push({
@@ -1631,6 +1671,14 @@ export default {
                     name: "keywords",
                     id: "keywords",
                     module: "keywords",
+                });
+            }
+
+            if(vm.meta.private_agencies.length && vm.private_agencies.length == vm.meta.private_agencies.length){
+                vm.filters.push({
+                    name: "Agencies : "+vm.meta.private_agencies.length,
+                    id: "private_agencies",
+                    module: "private_agencies",
                 });
             }
 
@@ -1672,6 +1720,7 @@ export default {
                     module: "response_date",
                 });
             }
+            localStorage.setItem('meta_private', JSON.stringify(vm.meta))
         },
 
         getPrivateTenders() {
@@ -1777,6 +1826,8 @@ export default {
                     if (vm.from_name == 'private_tender_details' && vm.$store.getters.filters) {
                         vm.meta = vm.$store.getters.filters
                         vm.tags = vm.meta.keywords;
+                    } else if(localStorage.getItem('meta_private')){
+                        vm.meta = JSON.parse(localStorage.getItem('meta_private'))
                     }
                 })
                 .catch(function (error) {

@@ -105,9 +105,7 @@
                                             <div class="card-body p-0">
                                                 <ul class="list-group list-group-borderless mb-3">
                                                     <li class="list-group-item">
-                                                        <h6 class="mb-0 fw-normal">Department/Ind. Agency :</h6>
-                                                        <span class="fw-light mb-0">{{
-                                                            state_tender.state_agency?.agency_name }}</span>
+                                                        <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light ">{{state_tender.state_agency?.state_agency_name }}</span></h6>
                                                     </li>
                                                 </ul>
                                                 <p class="mb-4 text-align-justify" v-html="state_tender.description"></p>
@@ -171,7 +169,7 @@
                                                         </thead>
                                                         <tbody class="border-top-0">
                                                             <tr v-if="!state_tender?.state_attachments?.length">
-                                                                <td class="text-center" colspan="5">No Attachments Available
+                                                                <td class="text-center" colspan="5">No attachments are available
                                                                 </td>
                                                             </tr>
                                                             <tr v-for="state_attachment, att_key in state_tender.state_attachments"

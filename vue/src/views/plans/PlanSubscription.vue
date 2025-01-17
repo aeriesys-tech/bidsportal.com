@@ -328,7 +328,7 @@ export default {
                             .dispatch("post", { uri: 'addTrialSubscription', data: vm.$store.getters.user })
                             .then(function (response) {
                                 vm.isLoading = false
-                                vm.$store.dispatch("success", "Trial subscription added successfully")
+                                vm.$store.dispatch("success", "Trial Subscription Successfully Activated")
                                 vm.$router.push('user/subscription')
                             })
                             .catch(function (error) {

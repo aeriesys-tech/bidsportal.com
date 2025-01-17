@@ -71,128 +71,142 @@ class FederalTenderController extends Controller
 
     public function paginateFederalTenders(Request $request)
     {
-    	$request->validate([
+        $request->validate([
             'order_by' => 'required',
             'per_page' => 'required|numeric'
         ]);
-    	$query = FederalTender::query();
-
-        if ($request->active && $request->expired) {
-            $query->whereDate('expiry_date', '>=', now()->toDateString())
-              ->orWhereDate('expiry_date', '<', now()->toDateString());
-        } elseif ($request->active) {
-            $query->whereDate('expiry_date', '>=', now()->toDateString());
-        } elseif ($request->expired) {
-            $query->whereDate('expiry_date', '<', now()->toDateString());
-        }
-
-    	if($request->posted_date && $request->posted_date != 'custom'){
-            $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
-    		$query->whereDate('posted_date', '>=', $previous_date);
-    	}
-
-        if($request->posted_from_date && $request->posted_to_date){
-            $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
-        }
-
-        if($request->response_date && $request->response_date != 'custom'){
-            $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
-            $query->whereDate('expiry_date', '<=', $next_date);
-        }
-
-        if($request->response_from_date && $request->response_to_date){
-            $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
-        }
-
-    	if(!empty($request->federal_notices)){
-    		$query->whereIn('federal_notice_id', $request->federal_notices);
-    	}
-
-    	if(!empty($request->naics)){
-    		$query->whereIn('naics_id', $request->naics);
-    	}
-
-    	if(!empty($request->pscs)){
-    		$query->whereIn('psc_id', $request->pscs);
-    	}
-
-        if(!empty($request->set_asides)){
-            $query->whereIn('set_aside_id', $request->set_asides);
-        }
-
-        if(!empty($request->states)){
-            $query->whereIn('state_id', $request->states);
-        }
-
-        if(!empty($request->federal_agencies)){
-            $query->whereIn('federal_agency_id', $request->federal_agencies);
-        }
-
-    	if (!empty($request->keywords)) {
-            if (is_string($request->keywords)) {
-                $keywords = array_map('trim', explode(',', $request->keywords));
-            } else {
-                $keywords = array_map('trim', $request->keywords);
+        $query = FederalTender::query();
+        if($request->role == 'admin'){
+            if ($request->status == 'All') {
+                $query->whereDate('expiry_date', '>=', now()->toDateString())
+                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+            } elseif ($request->status == 'Inactive') {
+                $query->whereDate('expiry_date', '>=', now()->toDateString());
+            } elseif ($request->status == 'Active') {
+                $query->whereDate('expiry_date', '<', now()->toDateString());
             }
 
-            $searchQuery = implode(' ', $keywords);
+            if (!empty($request->search)) 
+            {
+                $searchQuery = $request->search . '*';  
+                $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                    ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC", [$searchQuery]);
+            }
 
-            // Start building the query
-            $query->where(function ($subQuery) use ($searchQuery) {
-                // Check for exact match in title or tender_no
-                $subQuery->where('title', '=', $searchQuery)
-                         ->orWhere('tender_no', '=', $searchQuery);
-            });
+            if ($request->keyword == 'notice_name') {
+                $query->join('federal_notices', 'federal_tenders.federal_notice_id', '=', 'federal_notices.federal_notice_id')
+                        ->select('federal_tenders.*', 'federal_notices.notice_name') 
+                      ->orderBy('federal_notices.notice_name', $request->order_by);
+            } 
+            if ($request->keyword == 'agency_name') {
+                $query->join('federal_agencies', 'federal_tenders.federal_agency_id', '=', 'federal_agencies.federal_agency_id')
+                        ->select('federal_tenders.*', 'federal_agencies.agency_name') 
+                      ->orderBy('federal_agencies.agency_name', $request->order_by);
+            } else {
+                $query->orderBy($request->keyword, $request->order_by);
+            }
+        }else{
+            if ($request->active && $request->expired) {
+                $query->whereDate('expiry_date', '>=', now()->toDateString())
+                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+            } elseif ($request->active) {
+                $query->whereDate('expiry_date', '>=', now()->toDateString());
+            } elseif ($request->expired) {
+                $query->whereDate('expiry_date', '<', now()->toDateString());
+            }
 
-            // Use relevant matches only if there are no exact matches
-            $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
-                $subQuery->whereRaw("NOT EXISTS (
-                    SELECT 1 FROM federal_tenders 
-                    WHERE title = ? OR tender_no = ?
-                )", [$searchQuery, $searchQuery])
-                ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+            if($request->posted_date && $request->posted_date != 'custom'){
+                $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
+                $query->whereDate('posted_date', '>=', $previous_date);
+            }
 
-                // Fallback to LIKE for short keywords
-                foreach ($keywords as $keyword) {
-                    if (strlen($keyword) < 4) {
-                        $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
-                                 ->orWhere('title', 'LIKE', "%{$keyword}%");
-                    }
+            if($request->posted_from_date && $request->posted_to_date){
+                $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
+            }
+
+            if($request->response_date && $request->response_date != 'custom'){
+                $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
+                $query->whereDate('expiry_date', '<=', $next_date);
+            }
+
+            if($request->response_from_date && $request->response_to_date){
+                $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
+            }
+
+            if(!empty($request->federal_notices)){
+                $query->whereIn('federal_notice_id', $request->federal_notices);
+            }
+
+            if(!empty($request->naics)){
+                $query->whereIn('naics_id', $request->naics);
+            }
+
+            if(!empty($request->pscs)){
+                $query->whereIn('psc_id', $request->pscs);
+            }
+
+            if(!empty($request->set_asides)){
+                $query->whereIn('set_aside_id', $request->set_asides);
+            }
+
+            if(!empty($request->states)){
+                $query->whereIn('state_id', $request->states);
+            }
+
+            if(!empty($request->federal_agencies)){
+                $query->whereIn('federal_agency_id', $request->federal_agencies);
+            }
+
+            if (!empty($request->keywords)) {
+                if (is_string($request->keywords)) {
+                    $keywords = array_map('trim', explode(',', $request->keywords));
+                } else {
+                    $keywords = array_map('trim', $request->keywords);
                 }
-            });
 
-            // Order the results to prioritize exact matches
-            $query->orderByRaw("
-                CASE 
-                    WHEN title = ? THEN 1
-                    WHEN tender_no = ? THEN 1
-                    ELSE 2
-                END, 
-                MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
-                federal_tender_id DESC
-            ", [$searchQuery, $searchQuery, $searchQuery]);
-        }
+                $searchQuery = implode(' ', $keywords);
 
-        if (!empty($request->search)) 
-        {
-            $searchQuery = $request->search . '*';  
-            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
-                ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, federal_tender_id DESC", [$searchQuery]);
-        }
+                // Normalize the search query by removing hyphens
+                $normalizedSearchQuery = str_replace('-', '', $searchQuery);
 
-        if ($request->keyword == 'notice_name') {
-            $query->join('federal_notices', 'federal_tenders.federal_notice_id', '=', 'federal_notices.federal_notice_id')
-                    ->select('federal_tenders.*', 'federal_notices.notice_name') 
-                  ->orderBy('federal_notices.notice_name', $request->order_by);
-        } 
-        if ($request->keyword == 'agency_name') {
-            $query->join('federal_agencies', 'federal_tenders.federal_agency_id', '=', 'federal_agencies.federal_agency_id')
-                    ->select('federal_tenders.*', 'federal_agencies.agency_name') 
-                  ->orderBy('federal_agencies.agency_name', $request->order_by);
-        } else {
-            $query->orderBy($request->keyword, $request->order_by);
+                // Start building the query
+                $query->where(function ($subQuery) use ($normalizedSearchQuery, $searchQuery) {
+                    // Normalize the tender_no field in the database and compare
+                    $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                             ->orWhere('title', '=', $searchQuery);
+                });
+
+                // Use relevant matches only if there are no exact matches
+                $query->orWhere(function ($subQuery) use ($normalizedSearchQuery, $keywords) {
+                    $subQuery->whereRaw("NOT EXISTS (
+                            SELECT 1 FROM federal_tenders 
+                            WHERE REPLACE(tender_no, '-', '') = ?
+                        )", [$normalizedSearchQuery])
+                        ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$normalizedSearchQuery]);
+
+                    // Fallback to LIKE for short keywords
+                    foreach ($keywords as $keyword) {
+                        if (strlen($keyword) < 4) {
+                            $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+                                     ->orWhere('title', 'LIKE', "%{$keyword}%");
+                        }
+                    }
+                });
+
+                // Order the results to prioritize exact matches
+                $query->orderByRaw("
+                    CASE 
+                        WHEN REPLACE(tender_no, '-', '') = ? THEN 1
+                        WHEN title = ? THEN 1
+                        ELSE 2
+                    END, 
+                    MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+                    federal_tender_id DESC
+                ", [$normalizedSearchQuery, $searchQuery, $normalizedSearchQuery]);
+            }
+            $query->orderBy('federal_tender_id', 'DESC');
         }
-        
+    	
     	$federal_tenders = $query->paginate($request->per_page); 
         return FederalTenderResource::collection($federal_tenders);
     }
@@ -540,14 +554,14 @@ class FederalTenderController extends Controller
         ]);
 
         try{
-            $update_state_tender = FederalTender::where('federal_tender_id', $request->federal_tender_id)->update([
+            $update_federal_tender = FederalTender::where('federal_tender_id', $request->federal_tender_id)->update([
                 'federal_notice_id' => $request->federal_notice_id,
                 'federal_agency_id' => $request->federal_agency_id,
                 'category_id' => $request->category_id,
                 'state_id' => $request->state_id,
                 'status' => true
             ]);
-            if($update_state_tender){
+            if($update_federal_tender){
                 return response()->json([
                     'message' => 'Tender updated successfully'
                 ]);
