@@ -64,6 +64,8 @@ Route::post("updateStateTender", [StateTenderController::class,'updateStateTende
 Route::post("deleteStateTenders", [StateTenderController::class,'deleteStateTenders']);
 Route::post("updateTenderState", [StateTenderController::class,'updateTenderState']);
 Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
+Route::post("getStateTendersRange", [StateTenderController::class,'getStateTendersRange']);
+Route::post("deleteStateTendersRange", [StateTenderController::class,'deleteStateTendersRange']);
 
 Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
 Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
@@ -249,6 +251,8 @@ Route::middleware(['api'])->group(function ($router) {
 	//Federal Tender
 	Route::post("getFederalTender", [FederalTenderController::class,'getFederalTender']);
 	Route::post("deleteFederalTenders", [FederalTenderController::class,'deleteFederalTenders']);
+	Route::post("getFederalTendersRange", [FederalTenderController::class,'getFederalTendersRange']);
+	Route::post("deleteFederalTendersRange", [FederalTenderController::class,'deleteFederalTendersRange']);
 
 	//State Tender
 	Route::post("getStateTender", [StateTenderController::class,'getStateTender']);

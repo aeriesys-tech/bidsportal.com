@@ -40,14 +40,21 @@ class StateTenderResource extends JsonResource
 
         $cart_icon = false;
 
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('d-m-Y') : null;
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('d-m-Y') : null;
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('d-m-Y') : null;
+
         return [
             'state_tender_id' => $this->state_tender_id,
             'tender_no' => $this->tender_no,
             'title' => $this->title,
             'description' => $this->description,
             'opening_date' => $this->opening_date,
+            'opening_date_parsed' => $opening_date_parsed, 
             'posted_date' => $this->posted_date,
+            'posted_date_parsed' => $posted_date_parsed,
             'expiry_date' => $this->expiry_date,
+            'expiry_date_parsed' => $expiry_date_parsed,
             'country_id' => $this->country_id,
             'country' => $this->Country,
             'state_id' => $this->state_id,

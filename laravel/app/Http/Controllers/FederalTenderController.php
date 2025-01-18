@@ -595,4 +595,53 @@ class FederalTenderController extends Controller
         FederalAttachment::whereIn('federal_tender_id', $request->delete_tenders)->delete();
         return FederalTender::whereIn('federal_tender_id', $request->delete_tenders)->delete();
     }
+
+    public function getFederalTendersRange(Request $request){
+        $data = $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+            'region' => 'required'
+        ]);
+
+        $federal_tenders = FederalTender::whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59'])->get();
+        return FederalTenderResource::collection($federal_tenders);
+    }
+
+    public function deleteFederalTendersRange(Request $request){
+        $data = $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+            'region' => 'required'
+        ]);
+
+        try {
+
+            FederalAttachment::whereHas('FederalTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            FederalContact::whereHas('StateTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            FederalOfficeAddress::whereHas('StateTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            $federal_tender = FederalTender::whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59'])->delete();
+            return $federal_tender;
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to delete state tenders due to existing references in other tables.',
+                'error' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 422);
+        }
+    }
 }
