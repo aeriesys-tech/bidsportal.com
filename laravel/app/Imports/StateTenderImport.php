@@ -50,17 +50,17 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $key => $row) {
-            
+            Log::info($row[18]);
             // try {
                 $created_date = $this->parseDate($row[1]);
                 $expiry_date = $this->parseDate($row[2]);
-                $tender_url = $row[12];
-                $tender_no = $row[4];
-                $title = $row[5] ?? 'No Title';
+                $tender_url = $row[16];
+                $tender_no = $row[5];
+                $title = $row[6] ?? 'No Title';
 
-                $stat_notice = StateNotice::where('notice_name', $row[4])->first();
-                if ($stat_notice) {
-                    $state_notice_id = $stat_notice->state_notice_id;
+                $state_notice = StateNotice::where('notice_name', $row[4])->first();
+                if ($state_notice) {
+                    $state_notice_id = $state_notice->state_notice_id;
                 } else {
                     $state_notice_id = null;
                 }
@@ -95,12 +95,24 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 }
 
                 $country = Country::where('country_code', 'US')->first();
-                $description = (!empty($row[8]) ? $row[8] : '') . (!empty($row[9]) ? ' ' . $row[9] : '');
+                $description = (!empty($row[12]) ? $row[12] : '') . (!empty($row[13]) ? ' ' . $row[13] : '');
                 $notice_name = $row[3]?$row[3]:null;
-                $category_name = $row[7]?$row[7]:null;
-                $agency_name = $row[6]?$row[6]:null;
-                $contracting_office_address = (!empty($row[10]) ? $row[10] : '') . (!empty($row[11]) ? ' ' . $row[11] : '');
+                $category_name = $row[9]?$row[9]:null;
+                $agency_name = $row[7]?$row[7]:null;
+                $contracting_office_address = (!empty($row[14]) ? $row[14] : '') . (!empty($row[15]) ? ' ' . $row[15] : '');
                 $tdr_fees = 0;
+
+                Log::info('state_notice_id:' .$state_notice_id);
+
+                Log::info('state_agency_id:' .$state_agency_id);
+
+                Log::info('state_id:' .$state_id);
+                
+                if($state_notice_id && $state_agency_id && $state_id){
+                    $status = true;
+                }else{
+                    $status = false;
+                }
                 try{
                     $state_tender = StateTender::updateOrCreate(
                         [   'tender_no' => $tender_no ],
@@ -130,7 +142,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                     Log::error("Error processing state tender: " . $e->getMessage());
                 }
 
-                $tender_attachments = $row[13]?$row[13]:null;
+                $tender_attachments = $row[17]?$row[17]:null;
                 $filenames = [];
                 if (str_contains($tender_attachments, ',')){
                     $filenames = explode(',', $tender_attachments);
