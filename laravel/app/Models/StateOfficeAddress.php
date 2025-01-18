@@ -18,4 +18,9 @@ class StateOfficeAddress extends Model
     ];
 
     protected $primaryKey = 'state_office_address_id';
+
+    public function StateTender()
+    {
+        return $this->hasOne('App\Models\StateTender','state_tender_id','state_tender_id');
+    }
 }

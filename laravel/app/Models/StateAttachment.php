@@ -17,4 +17,9 @@ class StateAttachment extends Model
     ];
 
     protected $primaryKey = 'state_attachment_id';
+
+    public function StateTender()
+    {
+        return $this->hasOne('App\Models\StateTender','state_tender_id','state_tender_id');
+    }
 }

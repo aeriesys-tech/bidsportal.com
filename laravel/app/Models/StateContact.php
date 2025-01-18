@@ -18,4 +18,9 @@ class StateContact extends Model
     ];
 
     protected $primaryKey = 'state_contact_id';
+
+    public function StateTender()
+    {
+        return $this->hasOne('App\Models\StateTender','state_tender_id','state_tender_id');
+    }
 }

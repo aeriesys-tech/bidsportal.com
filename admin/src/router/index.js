@@ -45,6 +45,8 @@ import DuplicateStateTenders from "@/views/duplicate_state_tenders/Index.vue";
 //Subscription
 import SubscriptionPlans from "@/views/SubscriptionPlans/SubscriptionPlan.vue";
 
+import DeleteTenders from "@/views/DeleteTenders.vue";
+
 const routes = [
 
     {
@@ -236,6 +238,12 @@ const routes = [
         path: "/subscription_plans",
         name: "SubscriptionPlans",
         component: SubscriptionPlans,
+    },
+
+    {
+        path: "/delete_tenders",
+        name: "DeleteTenders",
+        component: DeleteTenders,
     },
 
 

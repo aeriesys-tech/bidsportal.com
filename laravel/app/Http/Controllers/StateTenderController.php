@@ -724,6 +724,55 @@ class StateTenderController extends Controller
         ]);
     }
 
+    public function getStateTendersRange(Request $request){
+        $data = $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+            'region' => 'required'
+        ]);
+
+        $state_tenders = StateTender::whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59'])->get();
+        return StateTenderResource::collection($state_tenders);
+    }
+
+    public function deleteStateTendersRange(Request $request){
+        $data = $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+            'region' => 'required'
+        ]);
+
+        try {
+
+            StateAttachment::whereHas('StateTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            StateContact::whereHas('StateTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            StateOfficeAddress::whereHas('StateTender', function($que) use($request){
+                $que->whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59']);
+            })->delete();
+
+            $state_tender = StateTender::whereBetween('posted_date', [$request->from_date.' 00:00:00', $request->to_date,' 23:59:59'])->delete();
+            return $state_tender;
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to delete state tenders due to existing references in other tables.',
+                'error' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 422);
+        }
+    }
+
     // public function updateStateBids(Request $request)
     // {
     //     $folderPath = public_path() . '/attachments/06_MyFloridaMarketPlace.xlsx';
