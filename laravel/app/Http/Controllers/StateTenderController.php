@@ -24,7 +24,7 @@ use App\Models\StateContact;
 
 class StateTenderController extends Controller
 {
-    public function paginateStateTenders1(Request $request)
+    public function paginateStateTenders(Request $request)
     {
         $request->validate([
             'order_by' => 'required',
@@ -43,9 +43,10 @@ class StateTenderController extends Controller
 
             if (!empty($request->search)) 
             {
-                $searchQuery = $request->search . '*';  
-                $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
-                    ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
+                $query->where('tender_no', 'like', '%'.$request->search.'%');
+                // $searchQuery = $request->search . '*';  
+                // $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                //     ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
             }
 
             if ($request->keyword == 'notice_name') {
@@ -161,7 +162,7 @@ class StateTenderController extends Controller
         return StateTenderResource::collection($state_tenders);
     }
 
-    public function paginateStateTenders(Request $request)
+    public function paginateStateTenders1(Request $request)
     {
         $request->validate([
             'order_by' => 'required',
@@ -461,53 +462,53 @@ class StateTenderController extends Controller
         ]);
     }
 
-    // public function updateStateBids(Request $request)
-    // {     
-    //     //Ensure the folder path ends with a '/'
-    //     $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+    public function updateStateBids(Request $request)
+    {     
+        //Ensure the folder path ends with a '/'
+        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
 
-    //     //Get files from S3
-    //     $files = Storage::disk('s3')->files($folderPath);
+        //Get files from S3
+        $files = Storage::disk('s3')->files($folderPath);
 
-    //     if (count($files) > 0) {
-    //         foreach ($files as $key => $file) {
-    //             // Check if the file has an .xlsx extension
-    //             if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
-    //                 // Proceed only if the file exists in S3
-    //                 if (Storage::disk('s3')->exists($file)) {
-    //                     try {
-    //                         // Import the file using Laravel Excel
-    //                         Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
-    //                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-    //                         // Log the exception or handle it accordingly
-    //                         return response()->json([
-    //                             'message' => 'Error importing file: ' . $file,
-    //                             'error' => $e->failures()
-    //                         ], 500);
-    //                     }
-    //                 } else {
-    //                     return response()->json([
-    //                         'message' => 'File does not exist: ' . $file
-    //                     ], 404);
-    //                 }
-    //             }
-    //         }
+        if (count($files) > 0) {
+            foreach ($files as $key => $file) {
+                // Check if the file has an .xlsx extension
+                if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+                    // Proceed only if the file exists in S3
+                    if (Storage::disk('s3')->exists($file)) {
+                        try {
+                            // Import the file using Laravel Excel
+                            Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+                        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                            // Log the exception or handle it accordingly
+                            return response()->json([
+                                'message' => 'Error importing file: ' . $file,
+                                'error' => $e->failures()
+                            ], 500);
+                        }
+                    } else {
+                        return response()->json([
+                            'message' => 'File does not exist: ' . $file
+                        ], 404);
+                    }
+                }
+            }
             
-    //         $today = Carbon::today();
-    //         $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-    //         foreach ($state_attachments as $state_attachment) {
-    //             UpdateFileSize::dispatch($state_attachment);
-    //         }
+            $today = Carbon::today();
+            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+            foreach ($state_attachments as $state_attachment) {
+                UpdateFileSize::dispatch($state_attachment);
+            }
 
-    //         return response()->json([
-    //             'message' => 'Data imported successfully'
-    //         ]);
-    //     } else {
-    //         return response()->json([
-    //             'message' => 'No records found'
-    //         ], 422);
-    //     }
-    // }
+            return response()->json([
+                'message' => 'Data imported successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'No records found'
+            ], 422);
+        }
+    }
 
     public function updateStateTender(Request $request)
     {
@@ -723,27 +724,27 @@ class StateTenderController extends Controller
         ]);
     }
 
-    public function updateStateBids(Request $request)
-    {
-        $folderPath = public_path() . '/attachments/06_MyFloridaMarketPlace.xlsx';
+    // public function updateStateBids(Request $request)
+    // {
+    //     $folderPath = public_path() . '/attachments/06_MyFloridaMarketPlace.xlsx';
     
-        if (file_exists($folderPath)) {
-            try {
-                Excel::import(new StateTenderImport($folderPath, $request->folder), $folderPath);
-            } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                return response()->json([
-                    'message' => 'Error importing file: ' . $folderPath,
-                    'error' => $e->failures()
-                ], 500);
-            }
-        } else {
-            return response()->json([
-                'message' => 'File not found in the public directory.'
-            ], 404);
-        }
+    //     if (file_exists($folderPath)) {
+    //         try {
+    //             Excel::import(new StateTenderImport($folderPath, $request->folder), $folderPath);
+    //         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //             return response()->json([
+    //                 'message' => 'Error importing file: ' . $folderPath,
+    //                 'error' => $e->failures()
+    //             ], 500);
+    //         }
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'File not found in the public directory.'
+    //         ], 404);
+    //     }
 
-        return response()->json([
-            'message' => 'Data imported successfully'
-        ]);
-    }    
+    //     return response()->json([
+    //         'message' => 'Data imported successfully'
+    //     ]);
+    // }    
 }
