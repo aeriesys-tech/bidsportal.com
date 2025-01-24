@@ -49,6 +49,10 @@ import SubscriptionPlans from "@/views/SubscriptionPlans/SubscriptionPlan.vue";
 
 import DeleteTenders from "@/views/DeleteTenders.vue";
 
+// alerts
+import StateAlert from "@/views/Users/Alerts/StateAlert.vue";
+
+
 const routes = [
 
     {
@@ -152,6 +156,18 @@ const routes = [
         name: "Alerts.Index",
         component: Alerts,
     },
+
+    {
+        path: "/state_alerts",
+        name: "StateAlert.Create",
+        component: StateAlert,
+    },
+    {
+        path: '/state_alerts/:alert_id/edit',
+        name: 'StateAlert.Edit',
+        component: StateAlert,
+    },
+
     // admin users
     {
         path: "/admins",
