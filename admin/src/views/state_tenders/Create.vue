@@ -19,7 +19,7 @@
                                 <div class="form-group">
                                     <label>Region <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region">
+                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region" disabled="true">
                                         <option value="state">State</option>
                                         <option value="federal">Federal</option>
                                         <option value="private">Private/Commercial</option>
@@ -91,7 +91,7 @@
                                     <select class="form-control form-control-sm"
                                         :class="{ 'is-invalid': errors?.state_notice_id }"
                                         v-model="tender.state_notice_id">
-                                        <option value="null">Select Notice</option>
+                                        <option value="">Select Notice</option>
                                         <option v-for="notice, notice_key in notices" :key="notice_key"
                                             :value="notice.state_notice_id">{{ notice.notice_name }}</option>
                                     </select>

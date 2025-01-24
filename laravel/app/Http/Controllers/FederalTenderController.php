@@ -303,13 +303,15 @@ class FederalTenderController extends Controller
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
-            'federal_notice_id' => 'nullable',
+            'federal_notice_id' => 'required',
             'category_id' => 'nullable',
-            'federal_agency_id' => 'nullable',
-            'set_aside_id' => 'nullable',
-            'naics_id' => 'nullable',
-            'psc_id' => 'nullable',
-            'tender_url' => 'nullable',
+            'federal_agency_id' => 'required',
+            'set_aside_id' => 'required',
+            'naics_id' => 'required',
+            'psc_id' => 'required',
+            'contract_type_id' => 'nullable',
+            'award_type_id' => 'nullable',
+            'tender_url' => 'required',
             'fees' => 'nullable',
             'type_of_award' => 'nullable',
             'place_of_performance' => 'nullable',
@@ -327,9 +329,9 @@ class FederalTenderController extends Controller
             'secondary_address.phone' => 'nullable',
             'secondary_address.title' => 'nullable|string|max:255',
             'secondary_address.full_name' => 'nullable',
-            'opening_date' => 'nullable|date',
+            'opening_date' => 'required|date',
             'posted_date' => 'nullable',
-            'expiry_date' => 'nullable|date|after:opening_date'
+            'expiry_date' => 'required|date|after:opening_date'
         ]);
 
         $federal = FederalTender::create($data);
@@ -425,6 +427,8 @@ class FederalTenderController extends Controller
             'set_aside_id' => 'nullable',
             'naics_id' => 'nullable',
             'psc_id' => 'nullable',
+            'contract_type_id' => 'nullable',
+            'award_type_id' => 'nullable',
             'tender_url' => 'nullable',
             'fees' => 'nullable',
             'type_of_award' => 'nullable',

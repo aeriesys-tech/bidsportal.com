@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Psc;
 use App\Http\Resources\PscResource;
+use App\Http\Resources\PscPrimaryResource;
 use Illuminate\Support\Facades\Cache;
 
 class PscController extends Controller
@@ -18,5 +19,11 @@ class PscController extends Controller
 	                  ->get();
 	    });
 	    return PscResource::collection($psc);
+    }
+
+    public function getPrimaryPscs(Request $request)
+    {
+        $pscs = Psc::whereNull('psc_parent_id')->get();
+        return PscPrimaryResource::collection($pscs);
     }
 }

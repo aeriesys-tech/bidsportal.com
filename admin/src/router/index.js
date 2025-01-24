@@ -39,6 +39,8 @@ import InternationalNotices from "@/views/Notice/International.vue";
 
 // categories
 import Categories from "@/views/Categories.vue";
+import AwardTypes from "@/views/AwardTypes.vue";
+import ContractTypes from "@/views/ContractTypes.vue";
 
 import DuplicateStateTenders from "@/views/duplicate_state_tenders/Index.vue";
 
@@ -128,7 +130,7 @@ const routes = [
         component: FederalTenders,
     },
     {
-        path: "/federal_tenders/:federal_tender_id/edit", name: 'FederalTender.Edit',
+        path: "/federal_tenders/:federal_tender_id/edit", name: 'EditFederalTender',
         component: AddFederalTender,
     },
 
@@ -225,6 +227,16 @@ const routes = [
         path: "/categories",
         name: "Categories",
         component: Categories,
+    },
+    {
+        path: "/award_types",
+        name: "AwardTypes",
+        component: AwardTypes,
+    },
+    {
+        path: "/contract_types",
+        name: "ContractTypes",
+        component: ContractTypes,
     },
 
     {

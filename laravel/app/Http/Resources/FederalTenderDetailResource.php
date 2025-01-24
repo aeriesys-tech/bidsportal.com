@@ -53,10 +53,11 @@ class FederalTenderDetailResource extends JsonResource
             ];
         }
         return [
+            'region' => "federal",
             'federal_tender_id' => $this->federal_tender_id,
             'tender_no' => $this->tender_no,
             'title' => $this->title,
-            'description' => $this->description,
+            'description' => $this->description?$this->description:'-',
             'opening_date' => $this->opening_date,
             'posted_date' => $this->posted_date,
             'expiry_date' => $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null,
@@ -72,6 +73,8 @@ class FederalTenderDetailResource extends JsonResource
             'set_aside_id' => $this->set_aside_id,
             'naics_id' => $this->naics_id,
             'psc_id' => $this->psc_id,
+            'contract_type_id' => $this->contract_type_id,
+            'award_type_id' => $this->award_type_id,
             'tender_url' => $this->tender_url,
             'fees' => $this->fees,
             'type_of_award' => $this->type_of_award,
