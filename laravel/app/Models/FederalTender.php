@@ -25,6 +25,8 @@ class FederalTender extends Model
         'set_aside_id',
         'naics_id',
         'psc_id',
+        'contract_type_id',
+        'award_type_id',
         'tender_url',
         'fees',
         'type_of_award',

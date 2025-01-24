@@ -39,6 +39,8 @@ use App\Http\Controllers\UserStateInterestController;
 use App\Http\Controllers\UserFederalInterestController;
 use App\Http\Controllers\UserPrivateInterestController;
 use App\Http\Controllers\UserInternationalInterestController;
+use App\Http\Controllers\AwardTypeController;
+use App\Http\Controllers\ContractTypeController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -103,9 +105,11 @@ Route::get("downloadInternationalInterests",[UserInternationalInterestController
 
 //Pscs
 Route::post('getPscs', [PscController::class,'getPscs']);
+Route::post('getPrimaryPscs', [PscController::class,'getPrimaryPscs']);
 
 //Naics
 Route::post('getNaics', [NaicsController::class,'getNaics']);
+Route::post('getPrimaryNaics', [NaicsController::class,'getPrimaryNaics']);
 
 //Federal Notice
 Route::post('getFederalNotices', [FederalNoticeController::class,'getFederalNotices']);
@@ -321,6 +325,20 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getCategory",[CategoryController::class,'getCategory']);
 	Route::post("updateCategory",[CategoryController::class,'updateCategory']);
 	Route::post("deleteCategory",[CategoryController::class,'deleteCategory']);
+
+	//AwardTypes
+	Route::post("paginateAwardTypes",[AwardTypeController::class,'paginateAwardTypes']);
+	Route::post("addAwardType",[AwardTypeController::class,'addAwardType']);
+	Route::post("getAwardTypes",[AwardTypeController::class,'getAwardTypes']);
+	Route::post("updateAwardType",[AwardTypeController::class,'updateAwardType']);
+	Route::post("deleteAwardType",[AwardTypeController::class,'deleteAwardType']);
+
+	//ContractTypes
+	Route::post("paginateContractTypes",[ContractTypeController::class,'paginateContractTypes']);
+	Route::post("addContractType",[ContractTypeController::class,'addContractType']);
+	Route::post("getContractTypes",[ContractTypeController::class,'getContractTypes']);
+	Route::post("updateContractType",[ContractTypeController::class,'updateContractType']);
+	Route::post("deleteContractType",[ContractTypeController::class,'deleteContractType']);
 
 	//User State Interest
 	Route::post("addStateInterest",[UserStateInterestController::class,'addStateInterest']);

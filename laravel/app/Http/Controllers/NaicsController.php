@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Naics;
 use App\Http\Resources\NaicsResource;
+use App\Http\Resources\NaicsPrimaryResource;
 use Illuminate\Support\Facades\Cache;
 
 class NaicsController extends Controller
@@ -18,5 +19,11 @@ class NaicsController extends Controller
                       ->get();
         });
         return NaicsResource::collection($naics);
+    }
+
+    public function getPrimaryNaics(Request $request)
+    {
+        $naics = Naics::whereNull('naics_parent_id')->get();
+        return NaicsPrimaryResource::collection($naics);
     }
 }

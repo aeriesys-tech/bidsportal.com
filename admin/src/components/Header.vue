@@ -115,10 +115,25 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <router-link to="/categories" class="nav-link">Category</router-link>
-                </li>
-                <li class="nav-item">
                     <router-link to="/subscription_plans" class="nav-link">Subscription Plans</router-link>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Masters</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <router-link to="/categories" class="dropdown-item"><i class="ri-star-line"></i>
+                                Category</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/award_types" class="dropdown-item"><i class="ri-star-line"></i>
+                                Award Type</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/contract_types" class="dropdown-item"><i class="ri-government-line"></i>
+                                Contract Type</router-link>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <div class="dropdown dropdown-profile ms-3 ms-xl-4 mt-4" v-if="$store.getters.user">

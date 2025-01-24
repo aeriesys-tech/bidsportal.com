@@ -19,7 +19,7 @@
                                 <div class="form-group">
                                     <label>Region <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region">
+                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region" disabled="true">
                                         <option value="state">State</option>
                                         <option value="federal">Federal</option>
                                         <option value="private">Private/Commercial</option>

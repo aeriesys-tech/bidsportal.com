@@ -19,7 +19,7 @@
                                 <div class="form-group">
                                     <label>Region <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-sm"
-                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region">
+                                        :class="{ 'is-invalid': errors?.region }" v-model="tender.region" disabled="true">
                                         <option value="state">State</option>
                                         <option value="federal">Federal</option>
                                         <option value="private">Private/Commercial</option>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Issuing Agency </label>
+                                    <label>Issuing Agency <span class="text-danger">*</span></label>
                                     <search :class="{ 'is-invalid': errors?.federal_agency_id }"
                                         :customClass="{ 'is-invalid': errors?.federal_agency_id }"
                                         :initialize="tender.federal_agency_id" id="federal_agency_id"
@@ -87,11 +87,11 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Notice </label>
+                                    <label>Notice <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-sm"
                                         :class="{ 'is-invalid': errors?.federal_notice_id }"
                                         v-model="tender.federal_notice_id">
-                                        <option value="null">Select Notice</option>
+                                        <option value="">Select Notice</option>
                                         <option v-for="notice, notice_key in notices" :key="notice_key"
                                             :value="notice.federal_notice_id">{{ notice.notice_name }}</option>
                                     </select>
@@ -117,6 +117,69 @@
                                         }}</span>
                                 </div>
                             </div>
+                            <div class="col-sm-4 margin_top">
+                                <div class="form-group">
+                                    <label>Contract Type </label>
+                                    <search :class="{ 'is-invalid': errors?.contract_type_id }"
+                                        :customClass="{ 'is-invalid': errors?.contract_type_id }" :initialize="tender.contract_type_id"
+                                        id="contract_type_id" label="contract_type" placeholder="Select Contract Type" :data="contract_types"
+                                        @input="set_aside => tender.contract_type_id = set_aside">
+                                    </search>
+                                    <span v-if="errors?.contract_type_id" class="invalid-feedback">{{ errors?.contract_type_id[0]
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 margin_top">
+                                <div class="form-group">
+                                    <label>Naics <span class="text-danger">*</span></label>
+                                    <search :class="{ 'is-invalid': errors?.naics_id }"
+                                        :customClass="{ 'is-invalid': errors?.naics_id }" :initialize="tender.naics_id"
+                                        id="naics_id" label="name" placeholder="Select Naics" :data="naicses"
+                                        @input="naics => tender.naics_id = naics">
+                                    </search>
+                                    <span v-if="errors?.naics_id" class="invalid-feedback">{{ errors?.naics_id[0]
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 margin_top">
+                                <div class="form-group">
+                                    <label>Set Aside Status <span class="text-danger">*</span></label>
+                                    <search :class="{ 'is-invalid': errors?.set_aside_id }"
+                                        :customClass="{ 'is-invalid': errors?.set_aside_id }" :initialize="tender.set_aside_id"
+                                        id="set_aside_id" label="set_aside_name" placeholder="Select Set Aside Status" :data="set_asides"
+                                        @input="set_aside => tender.set_aside_id = set_aside">
+                                    </search>
+                                    <span v-if="errors?.set_aside_id" class="invalid-feedback">{{ errors?.set_aside_id[0]
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 margin_top">
+                                <div class="form-group">
+                                    <label>Award Types </label>
+                                    <select class="form-control form-control-sm"
+                                        :class="{ 'is-invalid': errors?.award_type_id }"
+                                        v-model="tender.award_type_id">
+                                        <option value="">Select Award Type</option>
+                                        <option v-for="award_type, award_type_key in award_types" :key="award_type_key"
+                                            :value="award_type.award_type_id">{{ award_type.award_type_name }}</option>
+                                    </select>
+                                    <span class="invalid-feedback" v-if="errors?.award_type_id?.length">{{
+                                        errors?.award_type_id[0] }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 margin_top">
+                                <div class="form-group">
+                                    <label>Pscs <span class="text-danger">*</span></label>
+                                    <search :class="{ 'is-invalid': errors?.psc_id }"
+                                        :customClass="{ 'is-invalid': errors?.psc_id }" :initialize="tender.psc_id"
+                                        id="psc_id" label="name" placeholder="Select Psc" :data="pscs"
+                                        @input="psc => tender.psc_id = psc">
+                                    </search>
+                                    <span v-if="errors?.psc_id" class="invalid-feedback">{{ errors?.psc_id[0]
+                                        }}</span>
+                                </div>
+                            </div>
+                            
                             <div class="col-sm-12 margin_top">Contracting Office Address</div>
                             <div class="col-sm-4">
                                 <div class="form-group">
@@ -317,6 +380,10 @@ export default {
                 federal_notice_id: "",
                 opening_date: "",
                 expiry_date: "",
+                award_type_id:'',
+                naics_id:'',
+                contract_type_id:'',
+                psc_id:'',
                 tender_url: "",
                 fees: "",
                 category_id: "",
@@ -349,7 +416,12 @@ export default {
             notices: [],
             categories: [],
             agencies: [],
+            award_types:[],
+            naicses:[],
+            set_asides:[],
+            contract_types:[],
             errors: [],
+            pscs:[],
             editor: ClassicEditor,
         };
     },
@@ -365,10 +437,8 @@ export default {
             if (vm.tender.country_id) {
                 vm.getStates();
             }
-            // vm.getRoles();
-            if (to.name == "AddFederalTender") {
-                // vm.$refs.name.focus();
-            } else {
+            if (to.name == "EditFederalTender") {
+                console.log(to.params)                    
                 vm.status = false;
                 let uri = { uri: "getFederalTender", data: { federal_tender_id: to.params.federal_tender_id } };
                 vm.$store
@@ -420,6 +490,11 @@ export default {
             formData.append("description", vm.tender.description || '');
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address || ''));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address || ''));
+            formData.append("naics_id", vm.tender.naics_id)
+            formData.append("psc_id", vm.tender.psc_id)
+            formData.append("contract_type_id", vm.tender.contract_type_id)
+            formData.append("set_aside_id", vm.tender.set_aside_id)
+            formData.append("award_type_id", vm.tender.award_type_id)
 
             vm.$store
                 .dispatch("multipart_formdata", { uri: "addFederalTender", data: formData })
@@ -458,6 +533,11 @@ export default {
             formData.append("description", vm.tender.description || '');
             formData.append("primary_address", JSON.stringify(vm.tender.primary_address || ''));
             formData.append("secondary_address", JSON.stringify(vm.tender.secondary_address || ''));
+            formData.append("naics_id", vm.tender.naics_id)
+            formData.append("psc_id", vm.tender.psc_id)
+            formData.append("contract_type_id", vm.tender.contract_type_id)
+            formData.append("set_aside_id", vm.tender.set_aside_id)
+            formData.append("award_type_id", vm.tender.award_type_id)
             vm.$store
                 .dispatch("multipart_formdata", { uri: "updateTenderFederal", data: formData })
                 .then(() => {
@@ -589,7 +669,71 @@ export default {
                 .dispatch("post", { uri: "getFederalAgencies" })
                 .then((response) => {
                     console.log("Agenciyy---",response.data)
-                    vm.agencies = response.data;
+                    vm.agencies = response.data
+                    vm.getAwardTypes()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+
+        getAwardTypes() {
+            let vm = this;
+            vm.$store
+                .dispatch("post", { uri: "getAwardTypes" })
+                .then((response) => {
+                    vm.award_types = response.data;
+                    vm.getPrimaryNaics()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+
+        getPrimaryNaics() {
+            let vm = this;
+            vm.$store
+                .dispatch("post", { uri: "getPrimaryNaics" })
+                .then((response) => {
+                    vm.naicses = response.data.data
+                    vm.getSetAsides()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+
+        getSetAsides() {
+            let vm = this;
+            vm.$store
+                .dispatch("post", { uri: "getSetAsides" })
+                .then((response) => {
+                    vm.set_asides = response.data
+                    vm.getContractTypes()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        getContractTypes() {
+            let vm = this;
+            vm.$store
+                .dispatch("post", { uri: "getContractTypes" })
+                .then((response) => {
+                    vm.contract_types = response.data
+                    vm.getPrimaryPscs()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        getPrimaryPscs() {
+            let vm = this;
+            vm.$store
+                .dispatch("post", { uri: "getPrimaryPscs" })
+                .then((response) => {
+                console.log("RE--",response.data.data)
+                    vm.pscs = response.data.data
                 })
                 .catch(function (error) {
                     console.log(error);
