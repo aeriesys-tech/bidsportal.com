@@ -7,7 +7,7 @@ export default createStore({
     state: {
         // apiUrl: "https://bidsportal.com/api/",
         // apiUrl: "http://64.227.157.66/",
-        apiUrl: "http://localhost/bidsportal_new/laravel/public/",
+        apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
         user: null,
         token: "",
         // permissions: [],
@@ -135,18 +135,18 @@ export default createStore({
             });
         },
 
-        async info(context,description) {
-			await createToast({
-				title: 'Info',
-				description: description || "The given data was invalid."
-			},
-			{
-				showIcon: true,
-				hideProgressBar: true,
-				type: 'info',
-				position: 'top-right'
-			})
-		},
+        async info(context, description) {
+            await createToast({
+                title: 'Info',
+                description: description || "The given data was invalid."
+            },
+                {
+                    showIcon: true,
+                    hideProgressBar: true,
+                    type: 'info',
+                    position: 'top-right'
+                })
+        },
 
         async error(context, description) {
             await createToast(
