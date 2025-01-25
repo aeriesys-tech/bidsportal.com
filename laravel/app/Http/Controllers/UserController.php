@@ -19,6 +19,10 @@ class UserController extends Controller
     	return new UserResource($user);
     }
 
+    public function getUsers(Request $request){
+        return User::get();
+    }
+
     public function changePassword(Request $request)
 	{
 	    // Validate the input

@@ -161,6 +161,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("toggleUser",[UserController::class,'toggleUser']);
 	Route::post("activateUser",[UserController::class,'activateUser']);
 	Route::post("getUser",[UserController::class,'getUser']);
+	Route::post("getUsers",[UserController::class,'getUsers']);
 	Route::post("updateUser",[UserController::class,'updateUser']);
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
