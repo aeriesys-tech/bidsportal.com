@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="main-title mb-2">State Alert</h2>
+            <h2 class="main-title mb-2">Private Alert</h2>
             <router-link to="/alerts" class="btn btn-primary mb-2">Back</router-link>
         </div>
         <div class="row g-3">
@@ -9,8 +9,8 @@
                 <form class="card" @submit.prevent="submitForm()">
                     <div class="card-header">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <h6 class="card-title mb-0" v-if="status"><strong>Add State Alert</strong></h6>
-                            <h6 class="card-title mb-0" v-else><strong>Update State Alert</strong></h6>
+                            <h6 class="card-title mb-0" v-if="status"><strong>Add Private Alert</strong></h6>
+                            <h6 class="card-title mb-0" v-else><strong>Update Private Alert</strong></h6>
                         </div>
                     </div>
                     <div class="card-body">
@@ -85,17 +85,18 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <strong>Notice type<span class="text-danger">*</span></strong><br />
-                                    <span v-if="errors.state_notices" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.state_notices[0] }}</span>
+                                    <span v-if="errors.private_notices" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.private_notices[0] }}</span>
                                     <div class="row">
-                                        <div class="col-sm-6 col-lg-3 col-xl-3" v-for="notice in state_notices" :key="notice.notice_id">
+                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in private_notices" :key="notice.notice_id">
                                             <ul class="list-group mb-0">
                                                 <li class="list-group-item list-group-item-borderless">
-                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.state_notice_id" v-model="alert.state_notices" @click="updateStateNotices(notice, $event)" />
+                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.private_notice_id" v-model="alert.private_notices" @click="updatePrivateNotices(notice, $event)" />
                                                     <label class="form-check-label" for="flexRadioDefault1">
-                                                        {{ notice.notice_name }}
+                                                        {{ notice.private_notice_name }}
                                                     </label>
                                                 </li>
                                             </ul>
@@ -155,13 +156,13 @@
                                     <div class="collapse show mt-2" id="collapseExample7">
                                         <div class="collapse show" id="collapseExample7">
                                             <div class="">
-                                                {{ alert.state_agencies?.length }} of {{ sorted_state_agencies?.length }}
-                                                <span v-if="alert.state_agencies?.length !== sorted_state_agencies?.length">
-                                                    <a href="javascript:void(0)" @click="selectAllStateAgencies()" class="" ref="selectState">
+                                                {{ alert.private_agencies?.length }} of {{ sorted_private_agencies?.length }}
+                                                <span v-if="alert.private_agencies?.length !== sorted_private_agencies?.length">
+                                                    <a href="javascript:void(0)" @click="selectAllPrivateAgencies()" class="" ref="selectState">
                                                         Select All /
                                                     </a>
                                                 </span>
-                                                <a href="javascript:void(0)" @click="deselectFederalAgencies()" class="" ref="selectState">
+                                                <a href="javascript:void(0)" @click="deselectPrivateAgencies()" class="" ref="selectState">
                                                     Reset all
                                                 </a>
                                                 <div class="col-md-6">
@@ -171,36 +172,35 @@
                                                             type="search"
                                                             placeholder="Search"
                                                             aria-label="Search"
-                                                            v-model="state_agency_keyword"
-                                                            @keyup="sortStateAgency()"
+                                                            v-model="private_agency_keyword"
+                                                            @keyup="sortPrivarteAgency()"
                                                             style="border-radius: 0.5rem 0.5rem 0px 0px;"
                                                         />
                                                         <div class="liststate scroll1 hgt" id="style-3" style="border: 1px solid #c5c5c7; border-top: 0px;">
-                                                            <ul class="list-group checkbox" v-for="state_agency in sorted_state_agencies" :key="state_agency.agency_id">
+                                                            <ul class="list-group checkbox" v-for="private_agency in sorted_private_agencies" :key="private_agency.agency_id">
                                                                 <li class="list-group-item d-flex border-0 border-bottom">
                                                                     &nbsp;
                                                                     <input
                                                                         class="form-check-input me-1"
                                                                         type="checkbox"
-                                                                        :value="state_agency.state_agency_id"
-                                                                        v-model="alert.state_agencies"
-                                                                        @click="updateStateAgencies(state_agency, $event)"
+                                                                        :value="private_agency.private_agency_id"
+                                                                        v-model="alert.private_agencies"
+                                                                        @click="updateStateAgencies(private_agency, $event)"
                                                                     />
-                                                                    &nbsp; {{ state_agency.state_agency_name }}
+                                                                    &nbsp; {{ private_agency.private_agency_name }}
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mt-4 scroll1" v-if="selected_state_agencies?.length">
-                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency, index in selected_state_agencies" :key="index">
+                                                <div class="row mt-4 scroll1" v-if="selected_private_agencies?.length">
+                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency, index in selected_private_agencies" :key="index">
                                                         <div class="bg-success bg-opacity-10 text-success d-flex justify-content-between p-2 align-items-center mb-3">
                                                             <div class="" style="padding-left: 10px;">
-                                                                <span>{{ agency.state_agency_name }}</span>
+                                                                <span>{{ agency.private_agency_name }}</span>
                                                             </div>
                                                             <a href="javascript:void(0)" class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0" @click="removeStateAgency(agency)">
                                                                 <i class="ri-close-line fs-18 lh-1"></i>
-                                                                <!-- <i class="bi bi-x fa-fw"></i> -->
                                                             </a>
                                                         </div>
                                                     </div>
@@ -236,19 +236,22 @@
     </div>
 </template>
 <script>
+    import Loading from "vue-loading-overlay";
+    import "vue-loading-overlay/dist/css/index.css";
     export default {
+        components: { Loading },
         data() {
             return {
                 state_border_red: "",
                 states: [],
                 sorted_states: [],
                 state_keyword: "",
-                state_notices: [],
-                state_agencies: [],
+                private_notices: [],
+                private_agencies: [],
                 sorted_categories: [],
                 category_keyword: null,
-                sorted_state_agencies: [],
-                selected_state_agencies: [],
+                sorted_private_agencies: [],
+                selected_private_agencies: [],
                 categories: [],
                 selected_categories: [],
                 naics: [],
@@ -258,12 +261,12 @@
                     alert_id: "",
                     titel: "",
                     frequency: "",
-                    region: "State",
+                    region: "Private",
                     keywords: [],
                     states: [],
                     categories: [],
-                    state_notices: [],
-                    state_agencies: [],
+                    private_notices: [],
+                    private_agencies: [],
                     categories: [],
                     naics: [],
                     pscs: [],
@@ -373,33 +376,32 @@
                 },
                 clear_all_naics: false,
                 clear_all_psc: false,
-                state_agency_keyword: null,
+                private_agency_keyword: null,
             };
         },
 
         watch: {},
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                // if (to.name == 'StateAlert.Edit') {
+                // if (to.name == 'EditPrivateAlert') {
                 //     vm.alert.alert_id = to.params.alert_id
                 //     vm.getAlert()
                 // }
-
-                if (to.name == "StateAlert.Create") {
+                if (to.name == "PrivateAlert.Create") {
                     // vm.$refs.name.focus();
                 } else {
-                    let loader = vm.$loading.show();
+                    vm.isLoading = true;
                     let uri = { uri: "getAlert", data: { alert_id: to.params.alert_id } };
                     vm.$store
                         .dispatch("post", uri)
                         .then(function (response) {
-                            loader.hide();
+                            vm.isLoading = false;
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
                         })
                         .catch(function (error) {
-                            loader.hide();
+                            vm.isLoading = false;
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
@@ -419,7 +421,7 @@
 
             filterSpecifyAgency() {
                 return this.agencySpecific.filter((statefederal) => {
-                    return statefederal.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
+                    return statefederal.private_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
                 });
             },
         },
@@ -450,16 +452,35 @@
                 this.alert.categories = [];
                 this.selected_categories = [];
             },
-            removeStateAgency(state_agency) {
+
+            // getAlert() {
+            //     let vm = this;
+            //     if (vm.$store.getters.user) {
+            //         vm.alert.user_id = vm.$store.getters.user.user_id
+            //         let uri = "getAlert";
+            //         vm.$store
+            //             .dispatch("post", { uri: uri, data: vm.alert })
+            //             .then(function (response) {
+            //                 vm.alert = response.data.data
+            //                 vm.tags = vm.alert.keywords
+            //                 vm.status = false
+            //             })
+            //             .catch(function (error) {
+            //                 vm.errors = error.response.data.errors;
+            //                 vm.$store.dispatch("error", error.response.data.message);
+            //             });
+            //     }
+            // },
+            removeStateAgency(private_agency) {
                 let vm = this;
-                // Remove the specific agency from `selected_state_agencies`
-                vm.selected_state_agencies = vm.selected_state_agencies.filter(function (element) {
-                    return element.state_agency_id !== state_agency.state_agency_id;
+                // Remove the specific agency from `selected_private_agencies`
+                vm.selected_private_agencies = vm.selected_private_agencies.filter(function (element) {
+                    return element.private_agency_id !== private_agency.private_agency_id;
                 });
 
-                // Remove the specific agency from `alert.state_agencies`
-                vm.alert.state_agencies = vm.alert.state_agencies.filter(function (agencyId) {
-                    return agencyId !== state_agency.state_agency_id;
+                // Remove the specific agency from `alert.private_agencies`
+                vm.alert.private_agencies = vm.alert.private_agencies.filter(function (agencyId) {
+                    return agencyId !== private_agency.private_agency_id;
                 });
             },
 
@@ -471,29 +492,29 @@
                     this.removeTag(this.alert.keywords.length - 1);
                 }
             },
-            updateStateAgencies(state_agency, event) {
+            updateStateAgencies(private_agency, event) {
                 let vm = this;
                 if (event.target.checked) {
-                    if (!vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                        vm.alert.state_agencies.push(state_agency.state_agency_id);
+                    if (!vm.alert.private_agencies.includes(private_agency.private_agency_id)) {
+                        vm.alert.private_agencies.push(private_agency.private_agency_id);
                     }
                 } else {
-                    if (vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                        let state_agencies = vm.alert.state_agencies.filter(function (element) {
-                            return element != state_agency.state_agency_id;
+                    if (vm.alert.private_agencies.includes(private_agency.private_agency_id)) {
+                        let private_agencies = vm.alert.private_agencies.filter(function (element) {
+                            return element != private_agency.private_agency_id;
                         });
-                        vm.alert.state_agencies = state_agencies;
+                        vm.alert.private_agencies = private_agencies;
                     }
                 }
-                vm.selected_state_agencies = [];
-                vm.alert.state_agencies.map(function (element) {
-                    let selected = vm.sorted_state_agencies.filter(function (ele) {
-                        return ele.state_agency_id == element;
+                vm.selected_private_agencies = [];
+                vm.alert.private_agencies.map(function (element) {
+                    let selected = vm.sorted_private_agencies.filter(function (ele) {
+                        return ele.private_agency_id == element;
                     });
                     if (selected.length) {
-                        vm.selected_state_agencies.push({
-                            state_agency_id: selected[0].state_agency_id,
-                            state_agency_name: selected[0].state_agency_name,
+                        vm.selected_private_agencies.push({
+                            private_agency_id: selected[0].private_agency_id,
+                            private_agency_name: selected[0].private_agency_name,
                         });
                     }
                 });
@@ -527,53 +548,53 @@
                 }
             },
 
-            updateStateNotices(notice, event) {
+            updatePrivateNotices(notice, event) {
                 if (event.target.checked) {
-                    if (!this.alert.state_notices.includes(notice.state_notice_id)) {
-                        this.alert.state_notices.push(notice.state_notice_id);
+                    if (!this.alert.private_notices.includes(notice.private_notice_id)) {
+                        this.alert.private_notices.push(notice.private_notice_id);
                     }
                 } else {
-                    if (this.alert.state_notices.includes(notice.state_notice_id)) {
-                        let state_notices = this.alert.state_notices.filter(function (element) {
-                            return element != notice.state_notice_id;
+                    if (this.alert.private_notices.includes(notice.private_notice_id)) {
+                        let private_notices = this.alert.private_notices.filter(function (element) {
+                            return element != notice.private_notice_id;
                         });
-                        this.alert.state_notices = state_notices;
+                        this.alert.private_notices = private_notices;
                     }
                 }
             },
 
-            sortStateAgency() {
+            sortPrivarteAgency() {
                 let vm = this;
-                vm.sorted_state_agencies = vm.state_agencies.filter(function (element) {
-                    return element.state_agency_name.toLowerCase().includes(vm.state_agency_keyword.toLowerCase());
+                vm.sorted_private_agencies = vm.private_agencies.filter(function (element) {
+                    return element.private_agency_name.toLowerCase().includes(vm.private_agency_keyword.toLowerCase());
                 });
             },
 
-            selectAllStateAgencies() {
+            selectAllPrivateAgencies() {
                 let vm = this;
-                vm.alert.state_agencies = [];
-                vm.sorted_state_agencies.map(function (element) {
-                    vm.alert.state_agencies.push(element.state_agency_id);
+                vm.alert.private_agencies = [];
+                vm.sorted_private_agencies.map(function (element) {
+                    vm.alert.private_agencies.push(element.private_agency_id);
                 });
-                vm.selected_state_agencies = [];
-                vm.alert.state_agencies.map(function (element) {
-                    let selected = vm.sorted_state_agencies.filter(function (ele) {
-                        return ele.state_agency_id == element;
+                vm.selected_private_agencies = [];
+                vm.alert.private_agencies.map(function (element) {
+                    let selected = vm.sorted_private_agencies.filter(function (ele) {
+                        return ele.private_agency_id == element;
                     });
                     if (selected.length) {
-                        vm.selected_state_agencies.push({
-                            state_agency_id: selected[0].state_agency_id,
-                            state_agency_name: selected[0].state_agency_name,
+                        vm.selected_private_agencies.push({
+                            private_agency_id: selected[0].private_agency_id,
+                            private_agency_name: selected[0].private_agency_name,
                         });
                     }
                 });
             },
 
-            deselectFederalAgencies() {
-                this.sorted_state_agencies = this.state_agencies;
-                this.state_agency_keyword = null;
-                this.alert.state_agencies = [];
-                this.selected_state_agencies = [];
+            deselectPrivateAgencies() {
+                this.sorted_private_agencies = this.private_agencies;
+                this.private_agency_keyword = null;
+                this.alert.private_agencies = [];
+                this.selected_private_agencies = [];
             },
 
             selectAllStates() {
@@ -609,7 +630,7 @@
                     .then(function (response) {
                         vm.states = response.data;
                         vm.sorted_states = vm.states;
-                        vm.getStateNotices();
+                        vm.getPrivateNotices();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -623,13 +644,13 @@
                 });
             },
 
-            getStateNotices() {
+            getPrivateNotices() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getStateNotices" })
+                    .dispatch("post", { uri: "getPrivateNotices" })
                     .then(function (response) {
-                        vm.state_notices = response.data;
-                        vm.getStateAgencies();
+                        vm.private_notices = response.data.data;
+                        vm.getPrivateAgencies();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -637,13 +658,13 @@
                     });
             },
 
-            getStateAgencies() {
+            getPrivateAgencies() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getStateAgencies" })
+                    .dispatch("post", { uri: "getPrivateAgencies" })
                     .then(function (response) {
-                        vm.state_agencies = response.data;
-                        vm.sorted_state_agencies = vm.state_agencies;
+                        vm.private_agencies = response.data.data;
+                        vm.sorted_private_agencies = vm.private_agencies;
                         vm.getCategories();
                     })
                     .catch(function (error) {
@@ -671,22 +692,21 @@
                 let loader = vm.$loading.show();
                 vm.alert.keywords = vm.tags;
                 vm.$store
-                    .dispatch("post", { uri: "addStateAlerts", data: vm.alert })
+                    .dispatch("post", { uri: "addPrivateAlerts", data: vm.alert })
                     .then(function (response) {
                         loader.hide();
                         vm.$store.dispatch("success", "Alert is added successfully");
                         vm.$router.push("/alerts");
                     })
                     .catch(function (error) {
-                        console.log(error);
                         loader.hide();
+                        console.log(error);
                         if (error.response.data.errors.states) {
                             vm.state_border_red = "border-color:red";
                         }
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-                // }
             },
 
             updateAlerts() {
@@ -696,45 +716,18 @@
                 vm.alert.pscs = vm.$store.getters.selected_pscs;
                 vm.alert.keywords = vm.tags;
                 vm.$store
-                    .dispatch("post", { uri: "updateStateAlerts", data: vm.alert })
+                    .dispatch("post", { uri: "updatePrivateAlerts", data: vm.alert })
                     .then(function (response) {
                         loader.hide();
                         vm.$store.dispatch("success", "Alert is updated successfully");
                         vm.$router.push("/alerts");
                     })
                     .catch(function (error) {
-                        loader.hide();
                         console.log(error);
+                        loader.hide();
                         if (error.response.data.errors.states) {
                             vm.state_border_red = "border-color:red";
                         }
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-
-            getNotice(region_id) {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getNotice?region_id=" + region_id })
-                    .then(function (response) {
-                        vm.notices = response.data.data;
-
-                        vm.getasideStatus();
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            getasideStatus() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getAllSetAsideStatus" })
-                    .then(function (response) {
-                        vm.sideStatus = response.data.data;
-                    })
-                    .catch(function (error) {
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
@@ -747,118 +740,12 @@
                 this.$router.push("/bids/alerts");
             },
 
-            clearAllNaics() {
-                this.isLoading1 = true;
-                setTimeout(() => {
-                    this.clear_all_naics = !this.clear_all_naics;
-                    this.isLoading1 = false;
-                }, 1000);
-            },
-
-            clearAllPsc() {
-                this.isLoading2 = true;
-                setTimeout(() => {
-                    this.clear_all_psc = !this.clear_all_psc;
-                    this.isLoading2 = false;
-                }, 1000);
-            },
-
             handleChangeTag(tags) {
                 let vm = this;
                 vm.tags = tags;
                 vm.keywords = vm.tags;
             },
-            getNaicsBackend() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getNaics", data: vm.naics_code })
-                    .then(function (response) {
-                        vm.isLoading1 = false;
-                        vm.treeData.children = response.data.data;
-                        vm.$store.dispatch("setNaics", vm.treeData.children);
-                        // vm.getServiceCodes();
-                    })
-                    .catch(function (error) {
-                        vm.isLoading1 = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            // getNaics() {
-            // this.getNaicsBackend()
-            // let vm = this;
-            // vm.fullPage = false;
-            // vm.isLoading2 = false;
-            // vm.isLoading1 = true;
-            // if(vm.naics_code.alert_id){
-            //     this.getNaicsBackend()
-            // }else{
-            //     if(vm.$store.getters.naicses.length){
-            //         vm.treeData.children = vm.$store?.getters?.naicses
-            //         vm.isLoading1 = false
-            //         vm.getServiceCodes();
-            //     }else{
-            //         this.getNaicsBackend()
-            //     }
-            // }
-            // },
 
-            getServiceCodes() {
-                let vm = this;
-                vm.fullPage = false;
-                vm.isLoading1 = false;
-                vm.isLoading2 = true;
-                vm.service_code.alert_id = vm.$store.getters.alert.id;
-                // if(vm.$store.getters.psces.length){
-                //     vm.service_codes.children = vm.$store.getters.psces
-                //     vm.isLoading2 = false
-                // }
-                vm.$store
-                    .dispatch("post", { uri: "getPsc", data: vm.service_code })
-                    .then(function (response) {
-                        vm.isLoading2 = false;
-                        vm.$store.dispatch("setPsces", response.data.data);
-                        vm.service_codes.children = vm.$store.getters.psces;
-                        if (response.data.data.length) {
-                            if (response.data.data[0].psces && response.data.data[0].psces[0] != "") {
-                                vm.$store.dispatch("setSelectedPsces", response.data.data[0].psces);
-                                vm.applyFilterPsc();
-                            }
-                        }
-                    })
-                    .catch(function (error) {
-                        //    loader.hide();
-                        //      vm.fullPage= false
-                        vm.isLoading2 = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-                // if(vm.service_code.alert_id){
-                //     vm.$store
-                //         .dispatch("post", { uri: "getPsc", data: vm.service_code })
-                //         .then(function (response) {
-                //             vm.isLoading2 = false
-                //             vm.$store.dispatch("setPsces", response.data.data)
-                //             vm.service_codes.children = vm.$store.getters.psces
-                //             if(response.data.data.length){
-                //                 if(response.data.data[0].psces && response.data.data[0].psces[0] != ""){
-                //                     vm.$store.dispatch("setSelectedPsces", response.data.data[0].psces);
-                //                     vm.applyFilterPsc()
-                //                 }
-                //             }
-                //         })
-                //         .catch(function (error) {
-                //             //    loader.hide();
-                //             //      vm.fullPage= false
-                //             vm.isLoading2 = false
-                //             vm.errors = error.response.data.errors;
-                //             vm.$store.dispatch("error", error.response.data.message);
-                //         });
-                // }else{
-                //     vm.isLoading2 = false
-                //     vm.service_codes.children = vm.$store.getters.psces
-                // }
-            },
             removeTag(index) {
                 this.agency_fedral.splice(index, 1);
             },
@@ -1022,66 +909,6 @@
                     });
             },
 
-            getFederal() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getAgencyFederal" })
-                    .then(function (response) {
-                        vm.federal = response.data.data;
-                        //console.log(vm.federal);
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            getAllAgency() {
-                let vm = this;
-                let loader = vm.$loading.show();
-                let uri = "getAgency";
-                vm.$store
-                    .dispatch("post", { uri: uri })
-                    .then(function (response) {
-                        loader.hide();
-                        vm.filterAgency = response.data.data;
-                        vm.allFilterAgency = vm.filterAgency;
-                        vm.agencycount = vm.filterAgency.length;
-                    })
-                    .catch(function (error) {
-                        loader.hide();
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-            getSpecificAgency() {
-                let vm = this;
-                let loader = vm.$loading.show();
-                let uri = "getAgencyFederal";
-                vm.$store
-                    .dispatch("post", { uri: uri })
-                    .then(function (response) {
-                        loader.hide();
-                        vm.federal = response.data.data;
-                        vm.filterAgency = response.data.data;
-                        vm.allFilterAgency = vm.filterAgency;
-                        vm.agencycount = vm.filterAgency.length;
-                        //vm.getSavedsearch();
-                    })
-                    .catch(function (error) {
-                        loader.hide();
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-
-            filter1Agency() {
-                if (this.searchagencyState == "") {
-                    this.filterAgency = this.allFilterAgency;
-                }
-                this.filterAgency = this.allFilterAgency.filter((entry) => {
-                    return entry.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
-                });
-            },
             select() {
                 this.selected = [];
                 if (!this.selectAll) {

@@ -10,6 +10,8 @@ export default createStore({
         apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
         user: null,
         token: "",
+        selected_naics: [],
+        selected_pscs: [],
         // permissions: [],
         authenticated: false,
     },
@@ -22,6 +24,12 @@ export default createStore({
         },
         setUrl(state, url) {
             state.apiUrl = url;
+        },
+        setSelectedNaics(state, selected_naics) {
+            state.selected_naics = selected_naics
+        },
+        setSelectedPscs(state, selected_pscs) {
+            state.selected_pscs = selected_pscs
         },
         // setPermissions(state, permissions) {
         //     state.permissions = permissions;
@@ -36,6 +44,12 @@ export default createStore({
         },
         apiUrl(state) {
             return state.apiUrl;
+        },
+        selected_naics(state) {
+            return state.selected_naics
+        },
+        selected_pscs(state) {
+            return state.selected_pscs
         },
         // permissions(state) {
         //     return state.permissions;
