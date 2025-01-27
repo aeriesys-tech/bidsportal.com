@@ -166,12 +166,30 @@ export default {
             if (alert.region == 'State') {
                 this.$router.push("/state_alerts/" + alert.alert_id + "/edit");
             }
+            if (alert.region == 'Private') {
+                this.$router.push("/private_alerts/" + alert.alert_id + "/edit");
+            }
+            if (alert.region == 'Federal') {
+                this.$router.push("/federal_alerts/" + alert.alert_id + "/edit");
+            }
+            if (alert.region == 'International') {
+                this.$router.push("/international_alerts/" + alert.alert_id + "/edit");
+            }
             // this.$router.push("/alerts/" + alert.alert_id + "/edit");
         },
         handleNavigation(event) {
             const selectedValue = event.target.value;
             if (selectedValue === "State") {
                 this.$router.push("/state_alerts");
+            }
+            if (selectedValue === "Private") {
+                this.$router.push("/private_alerts");
+            }
+            if (selectedValue === "Federal") {
+                this.$router.push("/federal_alerts");
+            }
+             if (selectedValue === "International") {
+                this.$router.push("/international_alerts");
             }
         },
         deleteAlert(alert) {

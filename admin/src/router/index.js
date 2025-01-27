@@ -51,6 +51,9 @@ import DeleteTenders from "@/views/DeleteTenders.vue";
 
 // alerts
 import StateAlert from "@/views/Users/Alerts/StateAlert.vue";
+import PrivateAlert from "@/views/Users/Alerts/PrivateAlert.vue";
+import FederalAlert from "@/views/Users/Alerts/FederalAlert.vue";
+import InternationalAlert from "@/views/Users/Alerts/InternationalAlert.vue";
 
 
 const routes = [
@@ -166,6 +169,36 @@ const routes = [
         path: '/state_alerts/:alert_id/edit',
         name: 'StateAlert.Edit',
         component: StateAlert,
+    },
+    {
+        path: "/private_alerts",
+        name: "PrivateAlert.Create",
+        component: PrivateAlert,
+    },
+    {
+        path: '/private_alerts/:alert_id/edit',
+        name: 'PrivateAlert.Edit',
+        component: PrivateAlert,
+    },
+    {
+        path: "/federal_alerts",
+        name: "FederalAlert.Create",
+        component: FederalAlert,
+    },
+    {
+        path: '/federal_alerts/:alert_id/edit',
+        name: 'FederalAlert.Edit',
+        component: FederalAlert,
+    },
+    {
+        path: "/international_alerts",
+        name: "InternationalAlert.Create",
+        component: InternationalAlert,
+    },
+    {
+        path: '/international_alerts/:alert_id/edit',
+        name: 'InternationalAlert.Edit',
+        component: InternationalAlert,
     },
 
     // admin users
