@@ -22,4 +22,14 @@ class Naics extends Model
     {
         return $this->hasMany('App\Models\Naics','naics_parent_id','naics_id');
     }
+
+    public function children()
+    {
+        return $this->hasMany(Naics::class, 'naics_parent_id', 'naics_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Naics::class, 'naics_parent_id', 'naics_id');
+    }
 }
