@@ -487,9 +487,11 @@
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
+
                             vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
                             vm.$store.dispatch("setSelectedPscs", vm.alert.pscs);
-
+                            // Load the federal agencies and filter selected ones
+                            vm.getFederalAgencies();
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -521,12 +523,12 @@
                  // Remove the specific agency from `selected_international_agencies`
                 vm.selected_federal_agencies = vm.selected_federal_agencies.filter(function (element) {
                     console.log("element--",element)
-                    return element.federeal_agency_id !== federal_agency.federeal_agency_id;
+                    return element.federal_agency_id !== federal_agency.federal_agency_id;
                 });
 
                 // Remove the specific agency from `alert.federal_agencies`
                 vm.alert.federal_agencies = vm.alert.federal_agencies.filter(function (agencyId) {
-                    return agencyId !== federal_agency.federeal_agency_id;
+                    return agencyId !== federal_agency.federal_agency_id;
                 });
 
 
@@ -713,6 +715,12 @@
                     .then(function (response) {
                         vm.federal_agencies = response.data;
                         vm.sorted_federal_agencies = vm.federal_agencies;
+
+                        // Map selected agency IDs to corresponding agency objects
+                        vm.selected_federal_agencies = vm.alert.federal_agencies
+                        .map(id => vm.federal_agencies.find(agency => agency.federal_agency_id === id))
+                            .filter(agency => agency !== undefined);
+
                         vm.getSetAsides();
                     })
                     .catch(function (error) {
@@ -779,6 +787,7 @@
                     .then(function (response) {
                         loader.hide();
                         vm.$store.dispatch("success", "Alert is added successfully");
+                        // vm.$store.dispatch("setUser", response.data.admin);
                         vm.$router.push("/alerts");
                     })
                     .catch(function (error) {
