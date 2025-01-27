@@ -74,7 +74,7 @@ export default {
 
         "naics_codes":{
             handler(){
-                if(this.naics_codes.length){
+                if(this.naics_codes?.length){
                     if(this.naics_codes.includes(this.item.naics_code)){
                         this.isOpen = true
                     }
