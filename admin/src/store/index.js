@@ -63,6 +63,12 @@ export default createStore({
         async setToken(context, payload) {
             await context.commit("setToken", payload);
         },
+        async setSelectedNaics(context, payload) {
+            await context.commit('setSelectedNaics', payload);
+        },
+        async setSelectedPscs(context, payload) {
+            await context.commit('setSelectedPscs', payload);
+        },
         // async setPermissions(context, payload) {
         //     await context.commit("setPermissions", payload);
         // },

@@ -399,6 +399,7 @@
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
+                            vm.getPrivateAgencies();
                         })
                         .catch(function (error) {
                             vm.isLoading = false;
@@ -665,6 +666,12 @@
                     .then(function (response) {
                         vm.private_agencies = response.data.data;
                         vm.sorted_private_agencies = vm.private_agencies;
+
+                         // Map selected agency IDs to corresponding agency objects
+                        vm.selected_private_agencies = vm.alert.private_agencies
+                        .map(id => vm.private_agencies.find(agency => agency.private_agency_id === id))
+                            .filter(agency => agency !== undefined);
+
                         vm.getCategories();
                     })
                     .catch(function (error) {

@@ -400,6 +400,7 @@
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
+                            vm.getInternationalAgencies();
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -673,6 +674,12 @@
                     .then(function (response) {
                         vm.international_agencies = response.data.data;
                         vm.sorted_international_agencies = vm.international_agencies;
+
+                         // Map selected agency IDs to corresponding agency objects
+                        vm.selected_international_agencies = vm.alert.international_agencies
+                        .map(id => vm.international_agencies.find(agency => agency.international_agency_id === id))
+                            .filter(agency => agency !== undefined);
+
                         vm.getCategories();
                     })
                     .catch(function (error) {
