@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="main-title mb-2">State Alert</h2>
+            <h2 class="main-title mb-2">Federale Alert</h2>
             <router-link to="/alerts" class="btn btn-primary mb-2">Back</router-link>
         </div>
         <div class="row g-3">
@@ -9,8 +9,8 @@
                 <form class="card" @submit.prevent="submitForm()">
                     <div class="card-header">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <h6 class="card-title mb-0" v-if="status"><strong>Add State Alert</strong></h6>
-                            <h6 class="card-title mb-0" v-else><strong>Update State Alert</strong></h6>
+                            <h6 class="card-title mb-0" v-if="status"><strong>Add Federal Alert</strong></h6>
+                            <h6 class="card-title mb-0" v-else><strong>Update Federal Alert</strong></h6>
                         </div>
                     </div>
                     <div class="card-body">
@@ -85,15 +85,16 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <strong>Notice type<span class="text-danger">*</span></strong><br />
-                                    <span v-if="errors.state_notices" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.state_notices[0] }}</span>
+                                    <span v-if="errors.federal_notices" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.federal_notices[0] }}</span>
                                     <div class="row">
-                                        <div class="col-sm-6 col-lg-3 col-xl-3" v-for="notice in state_notices" :key="notice.notice_id">
+                                        <div class="col-sm-6 col-lg-4 col-xl-4" v-for="notice in federal_notices" :key="notice.notice_id">
                                             <ul class="list-group mb-0">
                                                 <li class="list-group-item list-group-item-borderless">
-                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.state_notice_id" v-model="alert.state_notices" @click="updateStateNotices(notice, $event)" />
+                                                    <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="notice.federal_notice_id" v-model="alert.federal_notices" @click="updateFederalNotices(notice, $event)" />
                                                     <label class="form-check-label" for="flexRadioDefault1">
                                                         {{ notice.notice_name }}
                                                     </label>
@@ -105,41 +106,21 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <strong>Categories </strong>
-                                    <div class="collapse show mt-1" id="collapseExample7">
-                                        <div class="collapse show" id="collapseExample7">
-                                            <div class="">
-                                                {{ alert.categories?.length }} of {{ sorted_categories?.length }}
-                                                <span v-if="alert.categories?.length !== sorted_categories?.length">
-                                                    <a href="javascript:void(0)" @click="selectAllCategories()" class="" ref="selectState">
-                                                        Select All /
-                                                    </a>
-                                                </span>
-                                                <a href="javascript:void(0)" @click="deselectCategories()" class="" ref="selectState">
-                                                    Reset all
-                                                </a>
-                                                <div class="col-md-6">
-                                                    <div class="ss-filter-search">
-                                                        <input
-                                                            class="form-control pe-5"
-                                                            type="search"
-                                                            placeholder="Search"
-                                                            aria-label="Search"
-                                                            v-model="category_keyword"
-                                                            @keyup="sortCategory()"
-                                                            style="border-radius: 0.5rem 0.5rem 0px 0px;"
-                                                        />
-                                                        <div class="liststate scroll1 hgt" id="style-3" style="border: 1px solid #c5c5c7; border-top: 0px;">
-                                                            <ul class="list-group checkbox" v-for="category in sorted_categories" :key="category.agency_id">
-                                                                <li class="list-group-item d-flex border-0 border-bottom">
-                                                                    &nbsp; <input class="form-check-input me-1" type="checkbox" :value="category.category_id" v-model="alert.categories" @click="updateCategories(category, $event)" />
-                                                                    &nbsp; {{ category.category_name }}
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <strong>Set-Aside Code <span class="text-danger">*</span> </strong>
+                                    <div v-if="errors.set_asides" style="color: #dc3545; font-size: 0.875em;">{{ errors.set_asides[0] }}</div>
+                                    <a class="inf" href="javascript:void(0)"> More Information about Set-Aside Codes</a>
+                                    <div class="row g-2 text-align-justify">
+                                        <div class="col-sm-6 col-lg-6 col-xl-6" style="padding-right: 20px;" v-for="set_aside in set_asides" :key="set_aside.set_aside_id">
+                                            <ul class="list-group mb-0">
+                                                <li class="list-group-item list-group-item-borderless d-flex">
+                                                    <span>
+                                                        <input type="checkbox" class="form-check-input me-2" id="rememberCheck" :value="set_aside.set_aside_id" v-model="alert.set_asides" @click="updateSetAsides(set_aside, $event)" />
+                                                    </span>
+                                                    <label class="form-check-label" for="flexRadioDefault1">
+                                                        {{ set_aside.set_aside_name }}
+                                                    </label>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -147,17 +128,21 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <strong>State Agencies </strong>
-                                    <div class="mt-1">
-                                        Type in a partial agency name below and then choose a match to add it to your selection. <br />
-                                        To remove a choice from your selection press the [X] icon on the left.
+                                    <strong>Agency </strong>
+                                    <div>
+                                        <span class="greentitle mt-1"> About Scheduled Emails:</span>
+                                        <span class="text-center mt-2">
+                                            Type in a partial agency name below and then choose a match to add it to your selection.
+                                            <br />
+                                            To remove a choice from your selection press the [X] icon on the left.
+                                        </span>
                                     </div>
                                     <div class="collapse show mt-2" id="collapseExample7">
                                         <div class="collapse show" id="collapseExample7">
                                             <div class="">
-                                                {{ alert.state_agencies?.length }} of {{ sorted_state_agencies?.length }}
-                                                <span v-if="alert.state_agencies?.length !== sorted_state_agencies?.length">
-                                                    <a href="javascript:void(0)" @click="selectAllStateAgencies()" class="" ref="selectState">
+                                                {{ alert.federal_agencies.length }} of {{ sorted_federal_agencies.length }}
+                                                <span v-if="alert.federal_agencies.length !== sorted_federal_agencies.length">
+                                                    <a href="javascript:void(0)" @click="selectAllFederalAgencies()" class="" ref="selectState">
                                                         Select All /
                                                     </a>
                                                 </span>
@@ -171,37 +156,145 @@
                                                             type="search"
                                                             placeholder="Search"
                                                             aria-label="Search"
-                                                            v-model="state_agency_keyword"
-                                                            @keyup="sortStateAgency()"
+                                                            v-model="federal_agency_keyword"
+                                                            @keyup="sortFederalAgency()"
                                                             style="border-radius: 0.5rem 0.5rem 0px 0px;"
                                                         />
                                                         <div class="liststate scroll1 hgt" id="style-3" style="border: 1px solid #c5c5c7; border-top: 0px;">
-                                                            <ul class="list-group checkbox" v-for="state_agency in sorted_state_agencies" :key="state_agency.agency_id">
+                                                            <ul class="list-group checkbox" v-for="federal_agency in sorted_federal_agencies" :key="federal_agency.agency_id">
                                                                 <li class="list-group-item d-flex border-0 border-bottom">
                                                                     &nbsp;
                                                                     <input
                                                                         class="form-check-input me-1"
                                                                         type="checkbox"
-                                                                        :value="state_agency.state_agency_id"
-                                                                        v-model="alert.state_agencies"
-                                                                        @click="updateStateAgencies(state_agency, $event)"
+                                                                        :value="federal_agency.federal_agency_id"
+                                                                        v-model="alert.federal_agencies"
+                                                                        @click="updateFederalAgencies(federal_agency, $event)"
                                                                     />
-                                                                    &nbsp; {{ state_agency.state_agency_name }}
+                                                                    &nbsp; {{ federal_agency.agency_name }}
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mt-4 scroll1" v-if="selected_state_agencies?.length">
-                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency, index in selected_state_agencies" :key="index">
-                                                        <div class="bg-success bg-opacity-10 text-success d-flex justify-content-between p-2 align-items-center mb-3">
+                                                <div class="row mt-4 scroll1" v-if="selected_federal_agencies.length">
+                                                    <div class="col-sm-8 col-lg-4 col-xl-3" v-for="agency, index in selected_federal_agencies" :key="index">
+                                                        <div class="bg-success bg-opacity-10 text-success d-flex justify-content-between align-items-center p-2 mb-3">
                                                             <div class="" style="padding-left: 10px;">
-                                                                <span>{{ agency.state_agency_name }}</span>
+                                                                <span>{{ agency.agency_name }}</span>
                                                             </div>
-                                                            <a href="javascript:void(0)" class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0" @click="removeStateAgency(agency)">
+                                                            <a href="javascript:void(0)" class="icon-lg rounded-circle flex-shrink-0 bg-opacity-10 text-dark mb-0" @click="removeFederalAgency(agency)">
                                                                 <i class="ri-close-line fs-18 lh-1"></i>
-                                                                <!-- <i class="bi bi-x fa-fw"></i> -->
                                                             </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <strong>NAICS Code: <span class="text-danger">*</span></strong><br />
+                                            <span v-if="errors.naics" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.naics[0] }}<br /></span>
+                                            <div class="mt-1">
+                                                Use the search box to find NAICS Codes and mark one or more checkboxes to add to your selection. Note:Changing your search criteria does not remove items from your selection.
+                                            </div>
+
+                                            <div class="tab-content mt-2 mb-0" id="flight-pills-tabContent">
+                                                <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
+                                                    <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
+                                                        <div class="col-md-8 small">
+                                                            <form class="position-relative">
+                                                                <input
+                                                                    class="form-control form-control-sm pe-5 myinput"
+                                                                    type="search"
+                                                                    placeholder="Search in Naics Codes"
+                                                                    aria-label="Search"
+                                                                    v-model="naics_code.search"
+                                                                    @keypress.enter="getNaics()"
+                                                                />
+                                                                <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getNaics()"><i class="fas fa-search fs-6"></i></button>
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-md-4 small d-flex">
+                                                            <div>
+                                                                <a class="my-auto dotted" href="javascript:void(0)" @click="clearAllNaics()" style="color: rgb(64, 164, 241);">Deselect All</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card border-0">
+                                                        <div class="vl-parent">
+                                                            <loading v-model:active="isLoading1" :can-cancel="false" :z-index="10001" :is-full-page="fullPage1" />
+                                                            <div class="card-body p-0 scroll1 treehght">
+                                                                <ul class="list-style-none" style="padding-left: 0px;">
+                                                                    <li>
+                                                                        <ul id="demo">
+                                                                            <Skeleton2 v-if="loading" />
+                                                                            <template v-else>
+                                                                                <TreeItem class="item" :item="treeData" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics"> </TreeItem>
+                                                                            </template>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <strong>PSC Code: <span class="text-danger">*</span></strong><br />
+                                            <span v-if="errors.pscs" style="color: #dc3545; margin-top: -10px; font-size: 0.875em;">{{ errors.pscs[0] }}<br /></span>
+                                            <div class="mt-1">
+                                                Use the search box to find psc Codes and mark one or more checkboxes to add to your selection. Note:Changing your search criteria does not remove items from your selection.
+                                            </div>
+
+                                            <div class="tab-content mt-2 mb-0" id="flight-pills-tabContent">
+                                                <div class="tab-pane fade show active" id="flight-info-tab" role="tabpanel" aria-labelledby="flight-info">
+                                                    <div class="row g-3 d-sm-flex justify-content-sm-between align-items-center mb-3">
+                                                        <div class="col-md-8 small">
+                                                            <form class="position-relative">
+                                                                <input
+                                                                    class="form-control form-control-sm pe-5 myinput"
+                                                                    type="search"
+                                                                    placeholder="Search in PSC Codes"
+                                                                    aria-label="Search"
+                                                                    v-model="service_code.search"
+                                                                    @keypress.enter="getServiceCodes()"
+                                                                />
+                                                                <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getServiceCodes()"><i class="fas fa-search fs-6"></i></button>
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-md-4 small d-flex">
+                                                            <div><a class="my-auto dotted" href="javascript:void(0)" @click="clearAllPsc()" style="color: rgb(64, 164, 241);">Deselect All</a></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card border-0">
+                                                        <div class="vl-parent">
+                                                            <loading v-model:active="isLoading2" :can-cancel="false" :z-index="10001" :is-full-page="fullPage2" />
+                                                            <div class="card-body p-0 scroll1 treehght">
+                                                                <ul class="list-style-none" style="padding-left: 0px;">
+                                                                    <li>
+                                                                        <ul id="demo">
+                                                                            <Skeleton2 v-if="loading_psc" />
+                                                                            <template v-else>
+                                                                                <PscTree class="item" :item="service_codes" :clear_all_psc="clear_all_psc"> </PscTree>
+                                                                            </template>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -236,35 +329,36 @@
     </div>
 </template>
 <script>
+    import TreeItem from "@/components/TreeItem.vue";
+    import PscTree from "@/components/PscTree.vue";
+    import Loading from "vue-loading-overlay";
+    import Skeleton2 from "@/components/Skeleton2.vue";
     export default {
+        components: { TreeItem, Skeleton2, Loading, PscTree },
         data() {
             return {
                 state_border_red: "",
                 states: [],
                 sorted_states: [],
                 state_keyword: "",
-                state_notices: [],
-                state_agencies: [],
-                sorted_categories: [],
-                category_keyword: null,
-                sorted_state_agencies: [],
-                selected_state_agencies: [],
-                categories: [],
-                selected_categories: [],
+                federal_notices: [],
+                federal_agencies: [],
+                sorted_federal_agencies: [],
+                selected_federal_agencies: [],
+                set_asides: [],
                 naics: [],
                 users: [],
                 alert: {
                     user_id: "",
-                    alert_id: "",
+                    federal_alert_id: "",
                     titel: "",
                     frequency: "",
-                    region: "State",
+                    region: "Federal",
                     keywords: [],
                     states: [],
-                    categories: [],
-                    state_notices: [],
-                    state_agencies: [],
-                    categories: [],
+                    federal_notices: [],
+                    federal_agencies: [],
+                    set_asides: [],
                     naics: [],
                     pscs: [],
                 },
@@ -325,7 +419,7 @@
                 state_id: [],
                 naics_id: [],
                 psc: [],
-                category_status: [],
+                set_aside_status: [],
                 agency_fedral: [],
                 notice_type: [],
                 state_country: [],
@@ -352,7 +446,7 @@
                     naics_id: "",
                     notice_type: "",
                     psc: "",
-                    category_status: "",
+                    set_aside_status: "",
                     agency_fedral: "",
                     created_on: "",
                     updated_on: "",
@@ -373,19 +467,15 @@
                 },
                 clear_all_naics: false,
                 clear_all_psc: false,
-                state_agency_keyword: null,
+                federal_agency_keyword: null,
+                loading: true, // Initial loading state
+                loading_psc: true,
             };
         },
 
-        watch: {},
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-                // if (to.name == 'StateAlert.Edit') {
-                //     vm.alert.alert_id = to.params.alert_id
-                //     vm.getAlert()
-                // }
-
-                if (to.name == "StateAlert.Create") {
+                if (to.name == "FederalAlert.Create") {
                     // vm.$refs.name.focus();
                 } else {
                     let loader = vm.$loading.show();
@@ -397,6 +487,8 @@
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
+                            vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
+                            vm.$store.dispatch("setSelectedPscs", vm.alert.pscs);
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -406,7 +498,6 @@
                 }
             });
         },
-
         mounted() {
             this.getUsers();
         },
@@ -416,51 +507,22 @@
                     return state.state_name.toLowerCase().includes(this.searchstate.toLowerCase());
                 });
             },
-
             filterSpecifyAgency() {
                 return this.agencySpecific.filter((statefederal) => {
-                    return statefederal.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
+                    return statefederal.agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
                 });
             },
         },
         methods: {
-            selectAllCategories() {
+            removeFederalAgency(federal_agency) {
+                console.log(federal_agency);
                 let vm = this;
-                vm.alert.categories = [];
-                vm.sorted_categories.map(function (element) {
-                    vm.alert.categories.push(element.category_id);
+                let agency = vm.selected_federal_agencies.filter(function (element) {
+                    return element.federal_agency_id != federal_agency.federal_agency_id;
                 });
-                vm.selected_categories = [];
-                vm.alert.categories.map(function (element) {
-                    let selected = vm.sorted_categories.filter(function (ele) {
-                        return ele.category_id == element;
-                    });
-                    if (selected.length) {
-                        vm.selected_categories.push({
-                            category_id: selected[0].category_id,
-                            category_name: selected[0].category_name,
-                        });
-                    }
-                });
-            },
-
-            deselectCategories() {
-                this.sorted_categories = this.categories;
-                this.category_keyword = null;
-                this.alert.categories = [];
-                this.selected_categories = [];
-            },
-            removeStateAgency(state_agency) {
-                let vm = this;
-                // Remove the specific agency from `selected_state_agencies`
-                vm.selected_state_agencies = vm.selected_state_agencies.filter(function (element) {
-                    return element.state_agency_id !== state_agency.state_agency_id;
-                });
-
-                // Remove the specific agency from `alert.state_agencies`
-                vm.alert.state_agencies = vm.alert.state_agencies.filter(function (agencyId) {
-                    return agencyId !== state_agency.state_agency_id;
-                });
+                vm.selected_federal_agencies = agency;
+                vm.alert.federal_agencies = [];
+                vm.select;
             },
 
             removeTag(index) {
@@ -471,44 +533,44 @@
                     this.removeTag(this.alert.keywords.length - 1);
                 }
             },
-            updateStateAgencies(state_agency, event) {
+            updateFederalAgencies(federal_agency, event) {
                 let vm = this;
                 if (event.target.checked) {
-                    if (!vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                        vm.alert.state_agencies.push(state_agency.state_agency_id);
+                    if (!vm.alert.federal_agencies.includes(federal_agency.federal_agency_id)) {
+                        vm.alert.federal_agencies.push(federal_agency.federal_agency_id);
                     }
                 } else {
-                    if (vm.alert.state_agencies.includes(state_agency.state_agency_id)) {
-                        let state_agencies = vm.alert.state_agencies.filter(function (element) {
-                            return element != state_agency.state_agency_id;
+                    if (vm.alert.federal_agencies.includes(federal_agency.federal_agency_id)) {
+                        let federal_agencies = vm.alert.federal_agencies.filter(function (element) {
+                            return element != federal_agency.federal_agency_id;
                         });
-                        vm.alert.state_agencies = state_agencies;
+                        vm.alert.federal_agencies = federal_agencies;
                     }
                 }
-                vm.selected_state_agencies = [];
-                vm.alert.state_agencies.map(function (element) {
-                    let selected = vm.sorted_state_agencies.filter(function (ele) {
-                        return ele.state_agency_id == element;
+                vm.selected_federal_agencies = [];
+                vm.alert.federal_agencies.map(function (element) {
+                    let selected = vm.sorted_federal_agencies.filter(function (ele) {
+                        return ele.federal_agency_id == element;
                     });
                     if (selected.length) {
-                        vm.selected_state_agencies.push({
-                            state_agency_id: selected[0].state_agency_id,
-                            state_agency_name: selected[0].state_agency_name,
+                        vm.selected_federal_agencies.push({
+                            federeal_agency_id: selected[0].federal_agency_id,
+                            agency_name: selected[0].agency_name,
                         });
                     }
                 });
             },
-            updateCategories(category, event) {
+            updateSetAsides(set_aside, event) {
                 if (event.target.checked) {
-                    if (!this.alert.categories.includes(category.category_id)) {
-                        this.alert.categories.push(category.category_id);
+                    if (!this.alert.set_asides.includes(set_aside.set_aside_id)) {
+                        this.alert.set_asides.push(set_aside.set_aside_id);
                     }
                 } else {
-                    if (this.alert.categories.includes(category.category_id)) {
-                        let categories = this.alert.categories.filter(function (element) {
-                            return element != category.category_id;
+                    if (this.alert.set_asides.includes(set_aside.set_aside_id)) {
+                        let set_asides = this.alert.set_asides.filter(function (element) {
+                            return element != set_aside.set_aside_id;
                         });
-                        this.alert.categories = categories;
+                        this.alert.set_asides = set_asides;
                     }
                 }
             },
@@ -527,53 +589,53 @@
                 }
             },
 
-            updateStateNotices(notice, event) {
+            updateFederalNotices(notice, event) {
                 if (event.target.checked) {
-                    if (!this.alert.state_notices.includes(notice.state_notice_id)) {
-                        this.alert.state_notices.push(notice.state_notice_id);
+                    if (!this.alert.federal_notices.includes(notice.federal_notice_id)) {
+                        this.alert.federal_notices.push(notice.federal_notice_id);
                     }
                 } else {
-                    if (this.alert.state_notices.includes(notice.state_notice_id)) {
-                        let state_notices = this.alert.state_notices.filter(function (element) {
-                            return element != notice.state_notice_id;
+                    if (this.alert.federal_notices.includes(notice.federal_notice_id)) {
+                        let federal_notices = this.alert.federal_notices.filter(function (element) {
+                            return element != notice.federal_notice_id;
                         });
-                        this.alert.state_notices = state_notices;
+                        this.alert.federal_notices = federal_notices;
                     }
                 }
             },
 
-            sortStateAgency() {
+            sortFederalAgency() {
                 let vm = this;
-                vm.sorted_state_agencies = vm.state_agencies.filter(function (element) {
-                    return element.state_agency_name.toLowerCase().includes(vm.state_agency_keyword.toLowerCase());
+                vm.sorted_federal_agencies = vm.federal_agencies.filter(function (element) {
+                    return element.agency_name.toLowerCase().includes(vm.federal_agency_keyword.toLowerCase());
                 });
             },
 
-            selectAllStateAgencies() {
+            selectAllFederalAgencies() {
                 let vm = this;
-                vm.alert.state_agencies = [];
-                vm.sorted_state_agencies.map(function (element) {
-                    vm.alert.state_agencies.push(element.state_agency_id);
+                vm.alert.federal_agencies = [];
+                vm.sorted_federal_agencies.map(function (element) {
+                    vm.alert.federal_agencies.push(element.federal_agency_id);
                 });
-                vm.selected_state_agencies = [];
-                vm.alert.state_agencies.map(function (element) {
-                    let selected = vm.sorted_state_agencies.filter(function (ele) {
-                        return ele.state_agency_id == element;
+                vm.selected_federal_agencies = [];
+                vm.alert.federal_agencies.map(function (element) {
+                    let selected = vm.sorted_federal_agencies.filter(function (ele) {
+                        return ele.federal_agency_id == element;
                     });
                     if (selected.length) {
-                        vm.selected_state_agencies.push({
-                            state_agency_id: selected[0].state_agency_id,
-                            state_agency_name: selected[0].state_agency_name,
+                        vm.selected_federal_agencies.push({
+                            federeal_agency_id: selected[0].federal_agency_id,
+                            agency_name: selected[0].agency_name,
                         });
                     }
                 });
             },
 
             deselectFederalAgencies() {
-                this.sorted_state_agencies = this.state_agencies;
-                this.state_agency_keyword = null;
-                this.alert.state_agencies = [];
-                this.selected_state_agencies = [];
+                this.sorted_federal_agencies = this.federal_agencies;
+                this.federal_agency_keyword = null;
+                this.alert.federal_agencies = [];
+                this.selected_federal_agencies = [];
             },
 
             selectAllStates() {
@@ -609,7 +671,7 @@
                     .then(function (response) {
                         vm.states = response.data;
                         vm.sorted_states = vm.states;
-                        vm.getStateNotices();
+                        vm.getFederalNotices();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -623,13 +685,13 @@
                 });
             },
 
-            getStateNotices() {
+            getFederalNotices() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getStateNotices" })
+                    .dispatch("post", { uri: "getFederalNotices" })
                     .then(function (response) {
-                        vm.state_notices = response.data;
-                        vm.getStateAgencies();
+                        vm.federal_notices = response.data;
+                        vm.getFederalAgencies();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -637,30 +699,63 @@
                     });
             },
 
-            getStateAgencies() {
+            getFederalAgencies() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getStateAgencies" })
+                    .dispatch("post", { uri: "getFederalAgencies" })
                     .then(function (response) {
-                        vm.state_agencies = response.data;
-                        vm.sorted_state_agencies = vm.state_agencies;
-                        vm.getCategories();
+                        vm.federal_agencies = response.data;
+                        vm.sorted_federal_agencies = vm.federal_agencies;
+                        vm.getSetAsides();
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            getCategories() {
+            getSetAsides() {
                 let vm = this;
-                let uri = "getCategories";
+                let uri = "getSetAsides";
                 vm.$store
                     .dispatch("post", { uri: uri })
                     .then(function (response) {
-                        vm.categories = response.data;
-                        vm.sorted_categories = vm.categories;
+                        vm.set_asides = response.data;
+                        vm.getNaics();
                     })
                     .catch(function (error) {
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getNaics() {
+                let vm = this;
+                vm.loading = true;
+                let uri = "getNaics";
+                vm.$store
+                    .dispatch("post", { uri: uri })
+                    .then(function (response) {
+                        vm.treeData.children = response.data.naics;
+                        vm.getPscs();
+                        vm.loading = false;
+                    })
+                    .catch(function (error) {
+                        vm.loading = false;
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
+            getPscs() {
+                let vm = this;
+                vm.loading_psc = true;
+                let uri = "getPscs";
+                vm.$store
+                    .dispatch("post", { uri: uri })
+                    .then(function (response) {
+                        vm.service_codes.children = response.data.data;
+                        vm.loading_psc = false;
+                    })
+                    .catch(function (error) {
+                        vm.loading_psc = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
@@ -669,9 +764,11 @@
             createAlerts() {
                 let vm = this;
                 let loader = vm.$loading.show();
+                vm.alert.naics = vm.$store.getters.selected_naics;
+                vm.alert.pscs = vm.$store.getters.selected_pscs;
                 vm.alert.keywords = vm.tags;
                 vm.$store
-                    .dispatch("post", { uri: "addStateAlerts", data: vm.alert })
+                    .dispatch("post", { uri: "createAlerts", data: vm.alert })
                     .then(function (response) {
                         loader.hide();
                         vm.$store.dispatch("success", "Alert is added successfully");
@@ -686,7 +783,6 @@
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-                // }
             },
 
             updateAlerts() {
@@ -696,15 +792,17 @@
                 vm.alert.pscs = vm.$store.getters.selected_pscs;
                 vm.alert.keywords = vm.tags;
                 vm.$store
-                    .dispatch("post", { uri: "updateStateAlerts", data: vm.alert })
+                    .dispatch("post", { uri: "updateAlerts", data: vm.alert })
                     .then(function (response) {
                         loader.hide();
                         vm.$store.dispatch("success", "Alert is updated successfully");
+                        vm.$store.dispatch("setSelectedNaics", null);
+                        vm.$store.dispatch("setSelectedPscs", null);
                         vm.$router.push("/alerts");
                     })
                     .catch(function (error) {
-                        loader.hide();
                         console.log(error);
+                        loader.hide();
                         if (error.response.data.errors.states) {
                             vm.state_border_red = "border-color:red";
                         }
@@ -784,24 +882,6 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            // getNaics() {
-            // this.getNaicsBackend()
-            // let vm = this;
-            // vm.fullPage = false;
-            // vm.isLoading2 = false;
-            // vm.isLoading1 = true;
-            // if(vm.naics_code.alert_id){
-            //     this.getNaicsBackend()
-            // }else{
-            //     if(vm.$store.getters.naicses.length){
-            //         vm.treeData.children = vm.$store?.getters?.naicses
-            //         vm.isLoading1 = false
-            //         vm.getServiceCodes();
-            //     }else{
-            //         this.getNaicsBackend()
-            //     }
-            // }
-            // },
 
             getServiceCodes() {
                 let vm = this;
@@ -809,10 +889,6 @@
                 vm.isLoading1 = false;
                 vm.isLoading2 = true;
                 vm.service_code.alert_id = vm.$store.getters.alert.id;
-                // if(vm.$store.getters.psces.length){
-                //     vm.service_codes.children = vm.$store.getters.psces
-                //     vm.isLoading2 = false
-                // }
                 vm.$store
                     .dispatch("post", { uri: "getPsc", data: vm.service_code })
                     .then(function (response) {
@@ -827,37 +903,10 @@
                         }
                     })
                     .catch(function (error) {
-                        //    loader.hide();
-                        //      vm.fullPage= false
                         vm.isLoading2 = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-                // if(vm.service_code.alert_id){
-                //     vm.$store
-                //         .dispatch("post", { uri: "getPsc", data: vm.service_code })
-                //         .then(function (response) {
-                //             vm.isLoading2 = false
-                //             vm.$store.dispatch("setPsces", response.data.data)
-                //             vm.service_codes.children = vm.$store.getters.psces
-                //             if(response.data.data.length){
-                //                 if(response.data.data[0].psces && response.data.data[0].psces[0] != ""){
-                //                     vm.$store.dispatch("setSelectedPsces", response.data.data[0].psces);
-                //                     vm.applyFilterPsc()
-                //                 }
-                //             }
-                //         })
-                //         .catch(function (error) {
-                //             //    loader.hide();
-                //             //      vm.fullPage= false
-                //             vm.isLoading2 = false
-                //             vm.errors = error.response.data.errors;
-                //             vm.$store.dispatch("error", error.response.data.message);
-                //         });
-                // }else{
-                //     vm.isLoading2 = false
-                //     vm.service_codes.children = vm.$store.getters.psces
-                // }
             },
             removeTag(index) {
                 this.agency_fedral.splice(index, 1);
@@ -867,7 +916,7 @@
                 if (vm.status) {
                     vm.createAlerts();
                 } else {
-                    vm.updateAlert();
+                    vm.updateAlerts();
                 }
             },
             filterCategory() {
@@ -880,7 +929,6 @@
             },
             callFunction: function () {
                 var currentDateWithFormat = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
-                // console.log(currentDateWithFormat);
                 this.savealert.created_on = currentDateWithFormat;
                 this.savealert.updated_on = currentDateWithFormat;
             },
@@ -1028,7 +1076,6 @@
                     .dispatch("post", { uri: "getAgencyFederal" })
                     .then(function (response) {
                         vm.federal = response.data.data;
-                        //console.log(vm.federal);
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -1037,30 +1084,30 @@
             },
             getAllAgency() {
                 let vm = this;
-                let loader = vm.$loading.show();
+                vm.isLoading = true;
                 let uri = "getAgency";
                 vm.$store
                     .dispatch("post", { uri: uri })
                     .then(function (response) {
-                        loader.hide();
+                        vm.isLoading = false;
                         vm.filterAgency = response.data.data;
                         vm.allFilterAgency = vm.filterAgency;
                         vm.agencycount = vm.filterAgency.length;
                     })
                     .catch(function (error) {
-                        loader.hide();
+                        vm.isLoading = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
             getSpecificAgency() {
                 let vm = this;
-                let loader = vm.$loading.show();
+                vm.isLoading = true;
                 let uri = "getAgencyFederal";
                 vm.$store
                     .dispatch("post", { uri: uri })
                     .then(function (response) {
-                        loader.hide();
+                        vm.isLoading = false;
                         vm.federal = response.data.data;
                         vm.filterAgency = response.data.data;
                         vm.allFilterAgency = vm.filterAgency;
@@ -1068,7 +1115,7 @@
                         //vm.getSavedsearch();
                     })
                     .catch(function (error) {
-                        loader.hide();
+                        vm.isLoading = false;
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
@@ -1079,7 +1126,7 @@
                     this.filterAgency = this.allFilterAgency;
                 }
                 this.filterAgency = this.allFilterAgency.filter((entry) => {
-                    return entry.state_agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
+                    return entry.agency_name.toLowerCase().includes(this.searchagencyState.toLowerCase());
                 });
             },
             select() {
@@ -1118,7 +1165,7 @@
                 this.selectedState = [];
                 if (!this.selectAllState) {
                     for (let i in this.filterAgency) {
-                        this.selectedState.push(this.filterAgency[i].state_agency_name);
+                        this.selectedState.push(this.filterAgency[i].agency_name);
                     }
 
                     this.agency_fedral = this.selectedState;
@@ -1253,5 +1300,38 @@
 
     .bg-opacity-10 {
         --bs-bg-opacity: 0.1;
+    }
+
+    .treehght {
+        height: 287px !important;
+    }
+    .skeleton-loader {
+        height: 20px;
+        background: #e0e0e0;
+        margin: 10px 0;
+        border-radius: 4px;
+        animation: shimmer 1.5s infinite linear;
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -200px 0;
+        }
+        100% {
+            background-position: 200px 0;
+        }
+    }
+
+    .skeleton-loader {
+        background: linear-gradient(90deg, #e0e0e0 25%, #f2f2f2 50%, #e0e0e0 75%);
+        background-size: 400px 100%;
+    }
+
+    .dotted {
+        border-bottom: 1px dotted;
+    }
+
+    .dotted:hover {
+        border-bottom: 0px;
     }
 </style>
