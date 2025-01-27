@@ -1,6 +1,5 @@
 <template>
     <div class="catalog-list-wrap">
-        <!--  -->
         <div style="overflow: hidden; width: 100%; height: 100%;">
             <div style="">
                 <div class="catalog-list cv-catalog-list">
@@ -38,7 +37,7 @@
                         <ul v-show="isOpen" v-if="isFolder">
                             <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child"
                                 :tdr_naics="tdr_naics" @toggleParentItem="parentItemToggle" :search="search"
-                                :clear_all_naics="clear_all_naics"></TreeItem>
+                                :clear_all_naics="clear_all_naics" :naics_codes="naics_codes"></TreeItem>
                         </ul>
                     </div>
                 </div>
@@ -55,19 +54,44 @@
     </div>
 </template>
 <script>
+import { handleError } from 'vue';
 export default {
     name: "TreeItem",
     props: {
         item: Object,
         tdr_naics: Array,
         search: String,
-        clear_all_naics: Boolean
+        clear_all_naics: Boolean,
+        naics_codes: Array
     },
 
     watch: {
+
         "clear_all_naics": function () {
             this.item.selected = false
+            console.log(this.item)
         },
+
+        "naics_codes":{
+            handler(){
+                if(this.naics_codes.length){
+                    if(this.naics_codes.includes(this.item.naics_code)){
+                        this.isOpen = true
+                    }
+                    else if (!this.item.name){
+                        this.isOpen = true
+                    }
+                    else this.isOpen = this.item.isOpen
+                }
+                else if (!this.item.name){
+                    this.isOpen = true
+                }
+                else this.isOpen = this.item.isOpen
+            },
+            immediate: true,
+            deep: true,
+        },
+
         "$store.getters.selected_naics": {
             handler() {
                 this.isSeletedItem();
@@ -75,6 +99,17 @@ export default {
             immediate: true,
             deep: true,
         },
+
+        "$store.getters.is_all_naics":{
+            handler() {
+                if(!this.$store.getters.is_all_naics){
+                    this.item.selected = false
+                }
+            },
+            immediate: true,
+            deep: true,
+        },
+        
         "item": {
             handler() {
                 if (this.item.naics_code == 'Select All') {
@@ -105,11 +140,14 @@ export default {
         }
 
     },
+
     mounted() {
-        if (!this.item.name)
+        if (!this.item.name){
             this.isOpen = true
+        }
         else this.isOpen = this.item.isOpen
     },
+
     methods: {
         isSeletedItem() {
             const selected_naics = this.$store.getters.selected_naics

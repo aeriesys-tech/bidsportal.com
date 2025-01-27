@@ -606,10 +606,10 @@
                                         <form class="position-relative">
                                             <input class="form-control form-control-sm pe-5 myinput" type="search"
                                                 placeholder="Search in Naics Codes" aria-label="Search"
-                                                v-model="naics_code.search" @keypress.enter="getNaicsesBackend()" />
+                                                v-model="naics_code.search" @keypress.enter="getNaics()" />
                                             <button
                                                 class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y"
-                                                type="button" @click="getNaicsesBackend()"><i
+                                                type="button" @click="getNaics()"><i
                                                     class="fas fa-search fs-6"></i></button>
                                         </form>
                                     </div>
@@ -625,7 +625,7 @@
                                                 <li>
                                                     <ul id="demo" style="padding: 0px;">
                                                         <TreeItem class="item" :item="treeData" :tdr_naics="meta.naics"
-                                                            :search="naics_code.search" :clear_all_naics="clear_all_naics">
+                                                            :search="naics_code.search" :clear_all_naics="clear_all_naics" :naics_codes="naics_code.naics_codes">
                                                         </TreeItem>
                                                     </ul>
                                                 </li>
@@ -663,10 +663,10 @@
                                         <form class="position-relative">
                                             <input class="form-control form-control-sm pe-5 myinput" type="search"
                                                 placeholder="Search in Serive Codes" aria-label="Search"
-                                                v-model="service_code.search" @keypress.enter="getPscesBackend()" />
+                                                v-model="service_code.search" @keypress.enter="getNaics()" />
                                             <button
                                                 class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y"
-                                                type="button" @click="getPscesBackend()"><i
+                                                type="button" @click="getNaics()"><i
                                                     class="fas fa-search fs-6"></i></button>
                                         </form>
                                     </div>
@@ -722,7 +722,7 @@
                                         <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
                                     </div>
                                     <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
-                                        <buttont ype="button" @click.prevent="closeModal()" class="btn-close"></buttont></a>
+                                        <button ype="button" @click.prevent="closeModal()" class="btn-close"></button></a>
                                 </div>
 
                                 <div class="card-body text-center" style="min-width: 350px;">
@@ -863,16 +863,18 @@ import "@jobinsjp/vue3-datepicker/index.css";
 import { ref } from "vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import Skeleton2 from "@/components/Skeleton2.vue";
 export default {
     setup() {
         const isOpen = ref(false);
         const savebidopen = ref(false);
         return { isOpen, savebidopen };
     },
-    components: { Loading, DatePicker, Pagination, Vue3TagsInput, TreeItem, PscTree, LoginModal, SaveModal, SaveSearch, SetAlertModal, Skeleton, Region },
+    components: { Loading, Skeleton2, DatePicker, Pagination, Vue3TagsInput, TreeItem, PscTree, LoginModal, SaveModal, SaveSearch, SetAlertModal, Skeleton, Region },
 
     data() {
         return {
+            loading: false,
             add_federal_filters: false,
             federal_filters: [],
             federal_notices: [],
@@ -941,7 +943,7 @@ export default {
                 created_on: "",
                 updated_on: "",
             },
-            isLoading: false,
+            isLoading: true,
             is_updating_meta: false,
             user: {
                 email: "",
@@ -988,6 +990,7 @@ export default {
                 alert_id: "",
                 save_bid_id: "",
                 tdr_naics: [],
+                naics_codes: []
             },
             service_code: {
                 search: "",
@@ -1110,6 +1113,12 @@ export default {
     },
 
     methods: {
+        deselectNaics(){
+            let vm = this
+            vm.clear_all_naics = !vm.clear_all_naics
+            vm.$store.dispatch('setAllNaics', false)
+            vm.$store.dispatch('setSelectedNaics', [])
+        },
         selectAllFederalAgencies() {
             let vm = this;
             vm.meta.federal_agencies = [];
@@ -1704,20 +1713,32 @@ export default {
 
         getNaics() {
             let vm = this
-            if(vm.$store.getters.naics?.length && !this.isMoreThan24Hours()){
-                vm.treeData.children = vm.$store.getters.naics
-            } else{
-                vm.$store
-                    .dispatch("post", { uri: "getNaics", data: vm.meta })
-                    .then(function (response) {
-                        vm.treeData.children = response.data.data
-                        vm.$store.dispatch('setNaics',response.data.data)
-                    })
-                    .catch(function (error) {
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            }
+            // if(vm.$store.getters.naics?.length && !this.isMoreThan24Hours()){
+            //     vm.treeData.children = vm.$store.getters.naics
+            // } else{
+            //     vm.$store
+            //         .dispatch("post", { uri: "getNaics", data: vm.meta })
+            //         .then(function (response) {
+            //             vm.treeData.children = response.data.data
+            //             vm.$store.dispatch('setNaics',response.data.data)
+            //         })
+            //         .catch(function (error) {
+            //             vm.errors = error.response.data.errors;
+            //             vm.$store.dispatch("error", error.response.data.message);
+            //         });
+            // }
+            vm.naics_code.naics_codes = []
+            vm.$store
+                .dispatch("post", { uri: "getNaics", data: vm.naics_code })
+                .then(function (response) {
+                    vm.treeData.children = response.data.naics
+                    vm.naics_code.naics_codes = response.data.naics_codes
+                    vm.$store.dispatch('setNaics',response.data.naics)
+                })
+                .catch(function (error) {
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
         },
 
         isMoreThan24Hours() {

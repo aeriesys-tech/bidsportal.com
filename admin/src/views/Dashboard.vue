@@ -293,7 +293,7 @@
             next((vm) => {
                 vm.getApiKey()
                 vm.getDashboardCount()
-                vm.getAdminSetting()
+                // vm.getAdminSetting()
                 if (from.name == "login") {
                     vm.$router.go();
                 }
@@ -351,18 +351,18 @@
                     });
             },
 
-            getAdminSetting() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getAdminSetting" })
-                    .then((response) => {
-                        vm.dashboard = response.data.subscription
-                        vm.getAwsFolders()
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    });
-            },
+            // getAdminSetting() {
+            //     let vm = this;
+            //     vm.$store
+            //         .dispatch("post", { uri: "getAdminSetting" })
+            //         .then((response) => {
+            //             vm.dashboard = response.data.subscription
+            //             vm.getAwsFolders()
+            //         })
+            //         .catch(function (error) {
+            //             console.log(error)
+            //         });
+            // },
 
             showS3BucketFiles() {
                 let vm = this;
