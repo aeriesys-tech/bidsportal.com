@@ -235,7 +235,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading" />
                                                                             <template v-else>
-                                                                                <TreeItem class="item" :item="treeData" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics"> </TreeItem>
+                                                                                <TreeItem class="item" :item="treeData" :search="naics_code.search" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics"> </TreeItem>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -289,7 +289,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading_psc" />
                                                                             <template v-else>
-                                                                                <PscTree class="item" :item="service_codes" :clear_all_psc="clear_all_psc"> </PscTree>
+                                                                                <PscTree class="item" :item="service_codes" :search="service_code.search" :clear_all_psc="clear_all_psc"> </PscTree>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -489,6 +489,7 @@
                             vm.status = false;
                             vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
                             vm.$store.dispatch("setSelectedPscs", vm.alert.pscs);
+
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -517,12 +518,18 @@
             removeFederalAgency(federal_agency) {
                 console.log(federal_agency);
                 let vm = this;
-                let agency = vm.selected_federal_agencies.filter(function (element) {
-                    return element.federal_agency_id != federal_agency.federal_agency_id;
+                 // Remove the specific agency from `selected_international_agencies`
+                vm.selected_federal_agencies = vm.selected_federal_agencies.filter(function (element) {
+                    console.log("element--",element)
+                    return element.federeal_agency_id !== federal_agency.federeal_agency_id;
                 });
-                vm.selected_federal_agencies = agency;
-                vm.alert.federal_agencies = [];
-                vm.select;
+
+                // Remove the specific agency from `alert.federal_agencies`
+                vm.alert.federal_agencies = vm.alert.federal_agencies.filter(function (agencyId) {
+                    return agencyId !== federal_agency.federeal_agency_id;
+                });
+
+
             },
 
             removeTag(index) {
