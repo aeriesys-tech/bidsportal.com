@@ -14,6 +14,8 @@ export default createStore({
         selected_pscs: [],
         // permissions: [],
         authenticated: false,
+        is_all_naics: false,
+        is_all_pscs: false
     },
     mutations: {
         setUser(state, user) {
@@ -30,6 +32,12 @@ export default createStore({
         },
         setSelectedPscs(state, selected_pscs) {
             state.selected_pscs = selected_pscs
+        },
+        setAllNaics(state, is_all_naics) {
+            state.is_all_naics = is_all_naics
+        },
+        setAllPscs(state, is_all_pscs) {
+            state.is_all_pscs = is_all_pscs
         },
         // setPermissions(state, permissions) {
         //     state.permissions = permissions;
@@ -50,6 +58,12 @@ export default createStore({
         },
         selected_pscs(state) {
             return state.selected_pscs
+        },
+        is_all_naics(state) {
+            return state.is_all_naics
+        },
+        is_all_pscs(state) {
+            return state.is_all_pscs
         },
         // permissions(state) {
         //     return state.permissions;
@@ -72,6 +86,12 @@ export default createStore({
         // async setPermissions(context, payload) {
         //     await context.commit("setPermissions", payload);
         // },
+        async setAllNaics(context, payload) {
+            await context.commit('setAllNaics', payload);
+        },
+        async setAllPscs(context, payload) {
+            await context.commit('setAllPscs', payload);
+        },
 
         async logout(context) {
             await context.commit("setUser", null);
