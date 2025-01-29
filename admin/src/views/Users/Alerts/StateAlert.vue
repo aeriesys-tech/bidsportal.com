@@ -18,11 +18,11 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label class="form-label">User <span class="text-danger">*</span></label>
-                                    <select class="form-control" :class="{ 'is-invalid': errors.user_id }" v-model="alert.user_id">
+                                    <select class="form-control" :class="{ 'is-invalid': errors?.user_id }" v-model="alert.user_id">
                                         <option value="">Select User</option>
                                         <option v-for="(user, key) in users" :key="key" :value="user.user_id">{{ user.name }}</option>
                                     </select>
-                                    <span v-if="errors.user_id" class="invalid-feedback">{{ errors.user_id[0] }}</span>
+                                    <span v-if="errors?.user_id" class="invalid-feedback">{{ errors?.user_id[0] }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -397,6 +397,7 @@
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
+                            vm.getStateAgencies();
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -644,6 +645,12 @@
                     .then(function (response) {
                         vm.state_agencies = response.data;
                         vm.sorted_state_agencies = vm.state_agencies;
+
+                           // Map selected agency IDs to corresponding agency objects
+                        vm.selected_state_agencies = vm.alert.state_agencies
+                        .map(id => vm.state_agencies.find(agency => agency.state_agency_id === id))
+                            .filter(agency => agency !== undefined);
+
                         vm.getCategories();
                     })
                     .catch(function (error) {
