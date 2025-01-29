@@ -426,7 +426,7 @@
                                         <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
-                                                    <a href="#" @click="tenderDetails(federal_tender)">
+                                                    <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">
                                                         <div v-html="highlight(federal_tender.title)"></div>
                                                     </a>
                                                 </strong>
@@ -533,7 +533,7 @@
                                                             <td class="">
                                                                 <div class="row">
                                                                     <div class="column">
-                                                                        <a href="#" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                        <a href="javascript:void(0)" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
                                                                     </div>
                                                                     <div class="column">
                                                                         <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
@@ -1602,7 +1602,7 @@ export default {
                     module: "keywords",
                 });
             }
-            
+
             if(vm.meta.federal_agencies.length && vm.federal_agencies.length == vm.meta.federal_agencies.length){
                 vm.filters.push({
                     name: "Agencies : "+vm.meta.federal_agencies.length,
