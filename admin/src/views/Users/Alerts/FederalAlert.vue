@@ -484,6 +484,7 @@
                         .dispatch("post", uri)
                         .then(function (response) {
                             loader.hide();
+                            console.log("getALert---",response.data.data)
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
@@ -491,6 +492,9 @@
                             vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
                             vm.$store.dispatch("setSelectedPscs", vm.alert.pscs);
                             // Load the federal agencies and filter selected ones
+
+                            console.log("NAICS Before Setting:", vm.alert.naics);
+                            console.log("Vuex Selected NAICS:", vm.$store.state.selected_naics);
                             vm.getFederalAgencies();
                         })
                         .catch(function (error) {
