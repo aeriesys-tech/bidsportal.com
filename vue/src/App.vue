@@ -40,7 +40,6 @@ import 'vue-loading-overlay/dist/css/index.css';
             const restoreState = (key, action) => {
                 try {
                     const storedData = localStorage.getItem(key);
-                    console.log(`Stored data for key "${key}":`, storedData); // Debug log
                     if (storedData) {
                         const data = JSON.parse(storedData);
                         this.$store.dispatch(action, data);

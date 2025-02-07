@@ -1,13 +1,12 @@
 <template>
     <div class="catalog-list-wrap">
-        <!--  -->
         <div style="overflow: hidden; width: 100%; height: 100%;">
             <div style="">
                 <div class="catalog-list cv-catalog-list">
                     <div class="cc-catalog-list__item">
                         <div class="cv-catalog-list-item cv-catalog-list-item__level_1 has-checkboxes">
                             <label class="cv-catalog-list-item__label-checkbox">
-                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.psc_id"
+                                <input type="checkbox" class="cv-catalog-list-item__checkbox" :value="item.naics_id"
                                     v-model="item.selected" @click="toggleSelectedItem(item, $event)"
                                     style="font-size: 13px;" />
                                 <span style="font-size: 13px;" class="cv-catalog-list-item__fake-checkbox"></span>
@@ -25,7 +24,7 @@
                                 <div class="catalog-code">
                                     <div class="catalog-code__id is-disabled">
                                         <span class="catalog-code__number"
-                                            style="font-size: 12px; margin-left: 5px;">{{ item.psc_code }}</span>
+                                            style="font-size: 12px; margin-left: 5px;">{{ item.naics_code }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -37,8 +36,8 @@
                         </div>
                         <ul v-show="isOpen" v-if="isFolder">
                             <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child"
-                                :tdr_pscs="tdr_pscs" @toggleParentItem="parentItemToggle" :search="search"
-                                :clear_all_pscs="clear_all_pscs" :psc_codes="psc_codes"></TreeItem>
+                                :tdr_naics="tdr_naics" @toggleParentItem="parentItemToggle" :search="search"
+                                :clear_all_naics="clear_all_naics" :naics_codes="naics_codes"></TreeItem>
                         </ul>
                     </div>
                 </div>
@@ -55,55 +54,37 @@
     </div>
 </template>
 <script>
+import { handleError } from 'vue';
 export default {
     name: "TreeItem",
     props: {
         item: Object,
-        tdr_pscs: Array,
+        tdr_naics: Array,
         search: String,
-        clear_all_pscs: Boolean,
-        psc_codes: Array
+        clear_all_naics: Boolean,
+        naics_codes: Array
     },
 
     watch: {
-        "clear_all_pscs": function () {
+
+        "clear_all_naics": function () {
             this.item.selected = false
+            console.log(this.item)
         },
-        "$store.getters.selected_pscs": {
-            handler() {
-                this.isSeletedItem();
-            },
-            immediate: true,
-            deep: true,
-        },
-        "item": {
-            handler() {
-                if (this.item.psc_code == 'Select All') {
-                    if ('children' in this.item && this.item.children.length) {
-                        const all_selected = this.item.children.every(child => child.selected)
-                        this.item.selected = all_selected
-                    } else {
-                        this.item.selected = false
-                    }
-                    this.$store.dispatch('setAllPscs', this.item.selected)
-                }
-            },
-            immediate: true,
-            deep: true,
-        },
-        "psc_codes":{
+
+        "naics_codes":{
             handler(){
-                if(this.psc_codes?.length){
-                    console.log('codes',this.psc_codes)
-                    if(this.psc_codes.includes(this.item.psc_code)){
+                if(this.naics_codes?.length){
+                    if(this.naics_codes.includes(this.item.naics_code)){
+                        console.log('ncodes..', this.naics_codes)
                         this.isOpen = true
                     }
-                    else if (this.item.psc_code == 'Select All'){
+                    else if (!this.item.name){
                         this.isOpen = true
                     }
                     else this.isOpen = this.item.isOpen
                 }
-                else if (this.item.psc_code == 'Select All'){
+                else if (!this.item.name){
                     this.isOpen = true
                 }
                 else this.isOpen = this.item.isOpen
@@ -111,12 +92,46 @@ export default {
             immediate: true,
             deep: true,
         },
+
+        "$store.getters.selected_naics": {
+            handler() {
+                this.isSeletedItem();
+            },
+            immediate: true,
+            deep: true,
+        },
+
+        "$store.getters.is_all_naics":{
+            handler() {
+                if(!this.$store.getters.is_all_naics){
+                    this.item.selected = false
+                }
+            },
+            immediate: true,
+            deep: true,
+        },
+        
+        "item": {
+            handler() {
+                if (this.item.naics_code == 'Select All') {
+                    if ('children' in this.item && this.item.children.length) {
+                        const all_selected = this.item.children.every(child => child.selected)
+                        this.item.selected = all_selected
+                    } else {
+                        this.item.selected = false
+                    }
+                    this.$store.dispatch('setAllNaics', this.item.selected)
+                }
+            },
+            immediate: true,
+            deep: true,
+        }
     },
 
     data() {
         return {
             isOpen: false,
-            item_tdr_pscs: [],
+            item_tdr_naics: [],
         };
     },
 
@@ -126,19 +141,37 @@ export default {
         }
 
     },
+
     mounted() {
-        // if (!this.item.name)
-        //     this.isOpen = true
-        // else if(!this.search) this.isOpen = this.item.isOpen
+        if (!this.item.name){
+            this.isOpen = true
+        }
+        else if(!this.search) this.isOpen = this.item.isOpen
     },
+
     methods: {
         isSeletedItem() {
-            const selected_pscs = this.$store.getters.selected_pscs
-            if (selected_pscs?.length) {
-                this.item.selected = selected_pscs.includes(this.item.psc_id)
-            } else {
+            const selected_naics = this.$store.getters.selected_naics
+            console.log(selected_naics)
+            if (selected_naics?.length && selected_naics.includes(this.item.naics_id)) {
+                this.item.selected = true
+                // console.log(this.item)
+            }else{
                 this.item.selected = false
             }
+
+            // console.log(this.item.selected)
+            // console.log(this.item.naics_id)
+            // if (selected_naics?.length && selected_naics.includes(this.item.naics_id)) {
+            //     this.item.selected = true
+            //     this.isOpen = true
+            // } else {
+            //     this.item.selected = false
+            //     if (!this.item.name){
+            //         this.isOpen = true
+            //     }
+            //     else if(!this.search) this.isOpen = this.item.isOpen
+            // }
         },
 
         toggle: function () {
@@ -195,7 +228,7 @@ export default {
 
         parentItemToggle() {
             let vm = this
-            if (this.item.psc_code != 'Select All') {
+            if (this.item.naics_code != 'Select All') {
                 if ('children' in this.item && this.item.children.length) {
                     const all_selected = this.item.children.some(child => child.selected)
                     this.item.selected = all_selected;
@@ -207,27 +240,27 @@ export default {
         },
 
         pushSpliceItem(item) {
-            if ('psc_id' in item) {
-                let psc_id = item.psc_id
-                let selected_pscs = []
-                if (this.$store.getters.selected_pscs) {
-                    selected_pscs = this.$store.getters.selected_pscs
+            if ('naics_id' in item) {
+                let naics_id = item.naics_id
+                let selected_naics = []
+                if (this.$store.getters.selected_naics) {
+                    selected_naics = this.$store.getters.selected_naics
                     if (item.selected) {
-                        if (!selected_pscs.includes(psc_id)) {
-                            selected_pscs.push(psc_id)
+                        if (!selected_naics.includes(naics_id)) {
+                            selected_naics.push(naics_id)
                         }
                     } else {
-                        let pscs = selected_pscs.filter(function (element) {
-                            return element != psc_id
+                        let naics = selected_naics.filter(function (element) {
+                            return element != naics_id
                         })
-                        selected_pscs = pscs
+                        selected_naics = naics
                     }
                 } else {
-                    if (psc_id) {
-                        selected_pscs.push(psc_id)
+                    if (naics_id) {
+                        selected_naics.push(naics_id)
                     }
                 }
-                this.$store.dispatch("setSelectedPscs", selected_pscs)
+                this.$store.dispatch("setSelectedNaics", selected_naics)
             }
         }
     },
