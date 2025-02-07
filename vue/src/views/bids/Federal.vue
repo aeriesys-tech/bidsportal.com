@@ -426,7 +426,7 @@
                                         <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
-                                                    <a href="#" @click="tenderDetails(federal_tender)">
+                                                    <a href="#" @click.prevent="tenderDetails(federal_tender)">
                                                         <div v-html="highlight(federal_tender.title)"></div>
                                                     </a>
                                                 </strong>
@@ -533,7 +533,7 @@
                                                             <td class="">
                                                                 <div class="row">
                                                                     <div class="column">
-                                                                        <a href="#" @click="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                        <a href="#" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
                                                                     </div>
                                                                     <div class="column">
                                                                         <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
@@ -663,10 +663,10 @@
                                         <form class="position-relative">
                                             <input class="form-control form-control-sm pe-5 myinput" type="search"
                                                 placeholder="Search in Serive Codes" aria-label="Search"
-                                                v-model="service_code.search" @keypress.enter="getNaics()" />
+                                                v-model="service_code.search" @keypress.enter="getPscs()" />
                                             <button
                                                 class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y"
-                                                type="button" @click="getNaics()"><i
+                                                type="button" @click="getPscs()"><i
                                                     class="fas fa-search fs-6"></i></button>
                                         </form>
                                     </div>
@@ -682,7 +682,7 @@
                                                 <li>
                                                     <ul id="demo" style="padding: 0px;">
                                                         <PscTree class="item" :item="service_codes" :tdr_psc="meta.pscs"
-                                                            :search="service_code.search" :clear_all_psc="clear_all_psc">
+                                                            :search="service_code.search" :clear_all_psc="clear_all_psc" :psc_codes="psc_code.psc_codes">
                                                         </PscTree>
                                                     </ul>
                                                 </li>
@@ -961,6 +961,9 @@ export default {
                 psc_code: "Select All",
                 children: [],
             },
+            psc_code:{
+                psc_codes:[]
+            },
             errors: [],
             tags: [],
             limit: 3,
@@ -996,7 +999,7 @@ export default {
                 search: "",
                 alert_id: "",
                 save_bid_id: "",
-                tdr_psc: [],
+                tdr_psc: []
             },
             shareBid: {
                 bids: [],
@@ -1118,6 +1121,12 @@ export default {
             vm.clear_all_naics = !vm.clear_all_naics
             vm.$store.dispatch('setAllNaics', false)
             vm.$store.dispatch('setSelectedNaics', [])
+        },
+        deselectPsc(){
+            let vm = this
+            vm.clear_all_psc = !vm.clear_all_psc
+            vm.$store.dispatch('setAllPscs', false)
+            vm.$store.dispatch('setSelectedPscs', [])
         },
         selectAllFederalAgencies() {
             let vm = this;
@@ -1733,7 +1742,7 @@ export default {
                 .then(function (response) {
                     vm.treeData.children = response.data.naics
                     vm.naics_code.naics_codes = response.data.naics_codes
-                    vm.$store.dispatch('setNaics',response.data.naics)
+                    // vm.$store.dispatch('setNaics',response.data.naics)
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;
@@ -1756,8 +1765,9 @@ export default {
                 vm.$store
                     .dispatch("post", { uri: "getPscs", data: vm.service_code })
                     .then(function (response) {
-                        vm.service_codes.children = response.data.data
-                        vm.$store.dispatch('setPscs',response.data.data)
+                        vm.service_codes.children = response.data.pscs
+                        vm.psc_code.psc_codes = response.data.psc_codes
+                        // vm.$store.dispatch('setPscs',response.data.data)
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -1850,6 +1860,12 @@ export default {
                         vm.tags = vm.meta.keywords;
                     } else if(localStorage.getItem('meta_federal')){
                         vm.meta = JSON.parse(localStorage.getItem('meta_federal'))
+                        if(vm.meta.naics.length){
+                            vm.$store.dispatch('setSelectedNaics', vm.meta.naics)
+                        }
+                        if(vm.meta.pscs.length){
+                            vm.$store.dispatch('setSelectedPscs', vm.meta.pscs)
+                        }
                     }
                 })
                 .catch(function (error) {
