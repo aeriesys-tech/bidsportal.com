@@ -27,6 +27,8 @@ use App\Http\Controllers\UserSetAsideController;
 use App\Http\Controllers\UserSubscriptionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DuplicateStateTenderController;
+use App\Http\Controllers\DuplicatePrivateController;
+use App\Http\Controllers\DuplicateInternationalController;
 use App\Http\Controllers\PrivateAgencyController;
 use App\Http\Controllers\PrivateNoticeController;
 use App\Http\Controllers\InternationalNoticeController;
@@ -71,6 +73,12 @@ Route::post("deleteStateTendersRange", [StateTenderController::class,'deleteStat
 
 Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
 Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
+
+Route::post("paginateDuplicatePrivateTenders",[DuplicatePrivateController::class,'paginateDuplicatePrivateTenders']);
+Route::post("deleteDuplicatePrivateTenders",[DuplicatePrivateController::class,'deleteDuplicatePrivateTenders']);
+
+Route::post("paginateDuplicateInternationalTenders",[DuplicateInternationalController::class,'paginateDuplicateInternationalTenders']);
+Route::post("deleteDuplicateInternationalTenders",[DuplicateInternationalController::class,'deleteDuplicateInternationalTenders']);
 
 //Private Tender
 Route::post("paginatePrivateTenders", [PrivateTenderController::class,'paginatePrivateTenders']);

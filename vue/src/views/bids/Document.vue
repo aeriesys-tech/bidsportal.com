@@ -278,7 +278,10 @@
                         </div>
                         <div v-if="state_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getStateTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getStateTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ state_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="state_filter.maxPage" :totalPages="state_filter.lastPage" :currentPage="state_filter.page" @pagechanged="onPageChange" />
@@ -469,7 +472,10 @@
                         </div>
                         <div v-if="federal_tenders.length">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="federal_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="federal_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ federal_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="federal_filter.maxPage" :totalPages="federal_filter.lastPage" :currentPage="federal_filter.page" @pagechanged="onPageChange" />
@@ -660,7 +666,10 @@
                         </div>
                         <div v-if="private_tenders.length">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="private_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="private_filter.page" @keypress.enter="getPrivateTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ private_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="private_filter.maxPage" :totalPages="private_filter.lastPage" :currentPage="private_filter.page" @pagechanged="onPageChange" />
@@ -859,7 +868,10 @@
                         </div>
                         <div v-if="international_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="international_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="international_filter.page" @keypress.enter="getInternationalTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ international_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="international_filter.maxPage" :totalPages="international_filter.lastPage" :currentPage="international_filter.page" @pagechanged="onPageChange" />
@@ -2710,4 +2722,18 @@
     .confirm1 button:active {
         background: #d6d6d6;
     }
+    .input-with-icon {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+  }
+
+  .input-with-icon input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 5px;
+  }
 </style>
