@@ -531,7 +531,7 @@
                                                         international_tender.international_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/bidnumber.svg" />
-                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ international_tender.tender_no}}</span>
+                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ international_tender.tender_no}}</span>
                                                     <span v-else>{{ international_tender.tender_no}}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
@@ -551,7 +551,7 @@
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                    <p class="limited-text" style="color: #c1c1c1; text-align: justify;"
+                                                    <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify;"
                                                     v-html="international_tender.description"
                                                     v-if="international_tender.description != '0' && international_tender.description != '-'">
                                                     </p>
@@ -571,14 +571,14 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1">{{international_tender.international_agency?.international_agency_name }}</span>
+                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{international_tender.international_agency?.international_agency_name }}</span>
                                                          <span v-else style="color: rgb(86, 84, 109);">{{international_tender.international_agency?.international_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
                                                         <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{
-                                                            international_tender?.private?.international_name }}<span
-                                                            v-if="international_tender?.private?.international_name">,</span> {{
+                                                            international_tender?.state?.state_name }}<span
+                                                            v-if="international_tender?.state?.state_name">,</span> {{
                                                                 international_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
@@ -642,9 +642,12 @@
                                                         <td class="">
                                                             <div class="row">
                                                                 <div class="column">
-                                                                    <a href="javascript:void(0)"
+                                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{international_tender.tender_no }}</span>
+                                                                    <span v-else>
+                                                                        <a href="javascript:void(0)"
                                                                         @click="tenderDetails(international_tender)">{{
                                                                             international_tender.tender_no }}</a>
+                                                                    </span>
                                                                 </div>
 
                                                                 <div class="column">
@@ -662,10 +665,10 @@
                                                             <div v-html="highlight(international_tender.title)"></div>
                                                             </a>
                                                         </td>
-                                                        <td class="">{{
-                                                            international_tender.international_agency?.agency_name
-                                                        }}</td>
-                                                        <td class="">{{ international_tender.place_of_performance }}
+                                                        <td class="">
+                                                            <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{international_tender.international_agency?.international_agency_name }}</span>
+                                                            <span>{{ international_tender.international_agency?.agency_name }}</span></td>
+                                                        <td class="">{{ international_tender.state?.state_name }}
                                                         </td>
                                                         <td class="" style="width: 110px;">{{
                                                             international_tender.expiry_date }}</td>

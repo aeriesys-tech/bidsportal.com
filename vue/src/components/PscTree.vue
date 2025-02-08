@@ -36,9 +36,9 @@
                             </a>
                         </div>
                         <ul v-show="isOpen" v-if="isFolder">
-                            <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child"
+                            <PscTree class="item" v-for="(child, index) in item.children" :key="index" :item="child"
                                 :tdr_pscs="tdr_pscs" @toggleParentItem="parentItemToggle" :search="search"
-                                :clear_all_pscs="clear_all_pscs" :psc_codes="psc_codes"></TreeItem>
+                                :clear_all_pscs="clear_all_pscs" :psc_codes="psc_codes"></PscTree>
                         </ul>
                     </div>
                 </div>
@@ -79,8 +79,8 @@ export default {
         "item": {
             handler() {
                 if (this.item.psc_code == 'Select All') {
-                    if ('children' in this.item && this.item.children.length) {
-                        const all_selected = this.item.children.every(child => child.selected)
+                    if ('children' in this.item && this.item.children?.length) {
+                        const all_selected = this.item.children?.every(child => child.selected)
                         this.item.selected = all_selected
                     } else {
                         this.item.selected = false
@@ -146,9 +146,9 @@ export default {
             if (vm.isFolder) {
                 vm.isOpen = !vm.isOpen;
             }
-            if ('children' in vm.item && vm.item.children.length) {
+            if ('children' in vm.item && vm.item.children?.length) {
                 if (vm.item.selected) {
-                    vm.item.children.map(function (element) {
+                    vm.item.children?.map(function (element) {
                         element.selected = true
                         vm.pushSpliceItem(element)
                     })
@@ -172,15 +172,15 @@ export default {
             item.selected = !item.selected
             vm.pushSpliceItem(item)
             if (event.target.checked) {
-                if ('children' in item && item.children.length) {
-                    item.children.map(function (element) {
+                if ('children' in item && item.children?.length) {
+                    item.children?.map(function (element) {
                         element.selected = true
                         vm.pushSpliceItem(element)
                     })
                 }
             } else {
-                if ('children' in item && item.children.length) {
-                    item.children.map(function (element) {
+                if ('children' in item && item.children?.length) {
+                    item.children?.map(function (element) {
                         element.selected = false
                         vm.pushSpliceItem(element)
                     })
@@ -196,8 +196,8 @@ export default {
         parentItemToggle() {
             let vm = this
             if (this.item.psc_code != 'Select All') {
-                if ('children' in this.item && this.item.children.length) {
-                    const all_selected = this.item.children.some(child => child.selected)
+                if ('children' in this.item && this.item.children?.length) {
+                    const all_selected = this.item.children?.some(child => child.selected)
                     this.item.selected = all_selected;
                 } else {
                     this.item.selected = false
@@ -217,17 +217,17 @@ export default {
                             selected_pscs.push(psc_id)
                         }
                     } else {
-                        let pscs = selected_pscs.filter(function (element) {
+                        let naics = selected_pscs.filter(function (element) {
                             return element != psc_id
                         })
-                        selected_pscs = pscs
+                        selected_pscs = naics
                     }
                 } else {
                     if (psc_id) {
                         selected_pscs.push(psc_id)
                     }
                 }
-                this.$store.dispatch("setSelectedPscs", selected_pscs)
+                this.$store.dispatch("setSelectedNaics", selected_pscs)
             }
         }
     },
