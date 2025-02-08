@@ -235,7 +235,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading" />
                                                                             <template v-else>
-                                                                                <TreeItem class="item" :item="treeData" :search="naics_code.search" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics"> </TreeItem>
+                                                                                <TreeItem class="item" :item="treeData" :search="naics_code.search" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics" :naics_codes="naics_code.naics_codes"> </TreeItem>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -271,7 +271,7 @@
                                                                     placeholder="Search in PSC Codes"
                                                                     aria-label="Search"
                                                                     v-model="service_code.search"
-                                                                    @keypress.enter="getServiceCodes()"
+                                                                    @keypress.enter="getPscs()"
                                                                 />
                                                                 <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getServiceCodes()"><i class="fas fa-search fs-6"></i></button>
                                                             </form>
@@ -289,7 +289,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading_psc" />
                                                                             <template v-else>
-                                                                                <PscTree class="item" :item="service_codes" :search="service_code.search" :clear_all_psc="clear_all_psc"> </PscTree>
+                                                                                <PscTree class="item" :item="service_codes" :search="service_code.search" :clear_all_psc="clear_all_psc" :psc_codes="psc_code.psc_codes"> </PscTree>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -467,6 +467,9 @@
                 service_code: {
                     search: "",
                     alert_id: "",
+                },
+                psc_code:{
+                    psc_codes:[]
                 },
                 clear_all_naics: false,
                 clear_all_psc: false,
@@ -749,9 +752,10 @@
                 vm.loading = true;
                 let uri = "getNaics";
                 vm.$store
-                    .dispatch("post", { uri: uri })
+                    .dispatch("post", { uri: uri, data:vm.naics_code })
                     .then(function (response) {
                         vm.treeData.children = response.data.naics;
+                        vm.naics_code.naics_codes = response.data.naics_codes
                         if(vm.alert.naics.length){
                             vm.$store.dispatch("setSelectedNaics", vm.alert.naics)
                         }
@@ -769,10 +773,10 @@
                 vm.loading_psc = true;
                 let uri = "getPscs";
                 vm.$store
-                    .dispatch("post", { uri: uri })
+                    .dispatch("post", { uri: uri, data:vm.service_code })
                     .then(function (response) {
                         vm.service_codes.children = response.data.pscs;
-                        vm.psc_code.psc_codes = vm.alert.pscs
+                        vm.psc_code.psc_codes = response.data.psc_codes
                         
                         if(vm.alert.pscs.length){
                             console.log(vm.alert.pscs.length)

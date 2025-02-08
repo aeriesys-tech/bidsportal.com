@@ -40,6 +40,7 @@
                                 @toggleParentItem="parentItemToggle"
                                 :search="search"
                                 :clear_all_naics="clear_all_naics"
+                                :naics_codes="naics_codes"
                             ></TreeItem>
                         </ul>
                     </div>
@@ -62,6 +63,7 @@
             tdr_naics: Array,
             search: String,
             clear_all_naics: Boolean,
+            naics_codes: Array
         },
 
         watch: {
@@ -90,13 +92,33 @@
                 immediate: true,
                 deep: true,
             },
-            search: {
-                handler(newSearch) {
-                    if (newSearch) {
-                        this.checkForHighlight(this.item, newSearch);
+            // search: {
+            //     handler(newSearch) {
+            //         if (newSearch) {
+            //             this.checkForHighlight(this.item, newSearch);
+            //         }
+            //     },
+            //     immediate: true,
+            // },
+            "naics_codes":{
+                handler(){
+                    if(this.naics_codes?.length){
+                        console.log('codes',this.naics_codes)
+                        if(this.naics_codes.includes(this.item.naics_code)){
+                            this.isOpen = true
+                        }
+                        else if (this.item.naics_code == 'Select All'){
+                            this.isOpen = true
+                        }
+                        else this.isOpen = this.item.isOpen
                     }
+                    else if (this.item.naics_code == 'Select All'){
+                        this.isOpen = true
+                    }
+                    else this.isOpen = this.item.isOpen
                 },
                 immediate: true,
+                deep: true,
             },
         },
 
@@ -113,8 +135,8 @@
             },
         },
         mounted() {
-            if (!this.item.name) this.isOpen = true;
-            else this.isOpen = this.item.isOpen;
+            // if (!this.item.name) this.isOpen = true;
+            // else this.isOpen = this.item.isOpen;
         },
         methods: {
             checkForHighlight(item, search) {

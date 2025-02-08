@@ -682,8 +682,12 @@
                         </div>
                         <div v-if="private_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="meta.page"
-                                    @keypress.enter="getPrivateTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="meta.page" @keypress.enter="getPrivateTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ meta.lastPage }} pages</span>
+                                </span>
+                                <!-- <input type="text" class="form-control" v-model="meta.page"
+                                    @keypress.enter="getPrivateTenders()" style="width: 60px;" /> -->
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page"
@@ -2442,4 +2446,18 @@ export default {
     justify-content: center;
     z-index: 2000; /* Higher than modal */
 }
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+  }
+
+  .input-with-icon input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 5px;
+  }
 </style>
