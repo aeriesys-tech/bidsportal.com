@@ -6,14 +6,16 @@ import axios from "axios";
 export default createStore({
     state: {
         // apiUrl: "https://bidsportal.com/api/",
-        // apiUrl: "http://64.227.157.66/",
-        apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
+        apiUrl: "http://64.227.157.66/",
+        // apiUrl: "http://localhost/bidsportal_new/laravel/public/",
         user: null,
         token: "",
         selected_naics: [],
         selected_pscs: [],
         // permissions: [],
         authenticated: false,
+        is_all_naics: false,
+		is_all_pscs: false
     },
     mutations: {
         setUser(state, user) {
@@ -31,9 +33,12 @@ export default createStore({
         setSelectedPscs(state, selected_pscs) {
             state.selected_pscs = selected_pscs
         },
-        // setPermissions(state, permissions) {
-        //     state.permissions = permissions;
-        // },
+        setAllNaics(state, is_all_naics) {
+			state.is_all_naics = is_all_naics
+		},
+		setAllPscs(state, is_all_pscs) {
+			state.is_all_pscs = is_all_pscs
+		},
     },
     getters: {
         user(state) {
@@ -51,9 +56,12 @@ export default createStore({
         selected_pscs(state) {
             return state.selected_pscs
         },
-        // permissions(state) {
-        //     return state.permissions;
-        // },
+        is_all_naics(state) {
+			return state.is_all_naics
+		},
+		is_all_pscs(state) {
+			return state.is_all_pscs
+		},
     },
 
     actions: {
@@ -69,9 +77,12 @@ export default createStore({
         async setSelectedPscs(context, payload) {
             await context.commit('setSelectedPscs', payload);
         },
-        // async setPermissions(context, payload) {
-        //     await context.commit("setPermissions", payload);
-        // },
+        async setAllNaics(context, payload) {
+			await context.commit('setAllNaics', payload);
+		},
+		async setAllPscs(context, payload) {
+			await context.commit('setAllPscs', payload);
+		},
 
         async logout(context) {
             await context.commit("setUser", null);

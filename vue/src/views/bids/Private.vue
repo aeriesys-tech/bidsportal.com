@@ -531,7 +531,7 @@
                                                         private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/bidnumber.svg" />
-                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ private_tender.tender_no}}</span>
+                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ private_tender.tender_no}}</span>
                                                    <span v-else>{{ private_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
@@ -551,7 +551,7 @@
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
                                                  <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                     <p class="limited-text" style="color: #c1c1c1; text-align: justify;"
+                                                     <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify;"
                                                     v-html="private_tender.description"
                                                     v-if="private_tender.description != '0' && private_tender.description != '-'">
                                                 </p>
@@ -571,14 +571,14 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span style="color: #c1c1c1" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
                                                         <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{
-                                                            private_tender?.private?.private_name }}<span
-                                                            v-if="private_tender?.private?.private_name">,</span> {{
+                                                            private_tender?.state?.state_name }}<span
+                                                            v-if="private_tender?.state?.state_name">,</span> {{
                                                                 private_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
@@ -642,9 +642,10 @@
                                                         <td class="">
                                                             <div class="row">
                                                                 <div class="column">
-                                                                    <a href="javascript:void(0)"
-                                                                        @click="tenderDetails(private_tender)">{{
-                                                                            private_tender.tender_no }}</a>
+                                                                    <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.tender_no }}</span>
+                                                                    <span v-else>
+                                                                        <a href="javascript:void(0)" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+                                                                    </span>
                                                                 </div>
                                                                 <div class="column">
                                                                     <a :style="{ color: private_tender.private_notice?.backround_color }"
@@ -661,11 +662,11 @@
                                                             <div v-html="highlight(private_tender.title)"></div>
                                                             </a>
                                                         </td>
-                                                        <td class="">{{
-                                                            private_tender.private_agency?.agency_name
-                                                        }}</td>
-                                                        <td class="">{{ private_tender.place_of_performance }}
+                                                        <td class="">
+                                                            <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+                                                            <span v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
                                                         </td>
+                                                        <td class="">{{ private_tender?.state?.state_name }}</td>
                                                         <td class="" style="width: 110px;">{{
                                                             private_tender.expiry_date }}</td>
                                                         <td>

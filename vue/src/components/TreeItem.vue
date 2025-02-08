@@ -79,8 +79,8 @@ export default {
         "item": {
             handler() {
                 if (this.item.naics_code == 'Select All') {
-                    if ('children' in this.item && this.item.children.length) {
-                        const all_selected = this.item.children.every(child => child.selected)
+                    if ('children' in this.item && this.item.children?.length) {
+                        const all_selected = this.item.children?.every(child => child.selected)
                         this.item.selected = all_selected
                     } else {
                         this.item.selected = false
@@ -196,8 +196,8 @@ export default {
         parentItemToggle() {
             let vm = this
             if (this.item.naics_code != 'Select All') {
-                if ('children' in this.item && this.item.children.length) {
-                    const all_selected = this.item.children.some(child => child.selected)
+                if ('children' in this.item && this.item.children?.length) {
+                    const all_selected = this.item.children?.some(child => child.selected)
                     this.item.selected = all_selected;
                 } else {
                     this.item.selected = false
