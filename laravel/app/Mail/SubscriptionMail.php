@@ -40,7 +40,7 @@ class SubscriptionMail extends Mailable
         $tran_date = $subscription['tran_date'];
         $tran_time = $subscription['tran_time'];
         $subtotal = $subscription['subtotal'];
-        $discount = $subscription['discount'];
+        $discount = $subscription['discount'] ?? 0;
         $total = $subscription['total'];
         $BASE_URL = config('app.url');
 
