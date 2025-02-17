@@ -47,6 +47,23 @@ class StateTenderResource extends JsonResource
         $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('d-m-Y') : null;
         $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
 
+        $notice_colors = [
+            'Award Notice' => '#2569f9',
+            'Request for Proposal' => 'green',
+            'Request for Information' => 'yellow'
+        ];
+
+        if($this->StateNotice){
+            $state_notice_color = $this->StateNotice->notice_name ?? '';
+            $state_notice_color = $notice_colors[$state_notice_color] ?? 'gray';            
+        }else{
+            $state_notice_color = '';
+        }
+
+
+
+
+
         return [
             'state_tender_id' => $this->state_tender_id,
             'tender_no' => $this->tender_no,
@@ -80,7 +97,8 @@ class StateTenderResource extends JsonResource
             'days_difference' => $days_difference,
             'state_attachments' => $this->StateAttachments,
             'cart_icon' => $cart_icon,
-            'is_expired' => $is_expired
+            'is_expired' => $is_expired,
+            'state_notice_color' => $state_notice_color
         ];
     }
 }
