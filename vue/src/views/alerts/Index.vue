@@ -131,11 +131,12 @@
     </section>
      <teleport to="#modals" :disabled="!erroralertmodal" v-if="erroralertmodal">
         <div class="modal-overlay ">
-            <div class="confirm">
-                <h1>Are you sure?</h1>
+            <div class="confirm text-center" style="background-color: white !important;">
+             <a class="btn btn-outline-none float-end" @click.prevent="closemodal()"><i class="fa-solid fa-close"></i></a>
+                <h1 class="title-green">Are you sure?</h1>
                 <p>Do you really want to delete these records? This process cannot be undone.</p>
-                <button @click.prevent="closemodal()">Cancel</button>
-                <button style="color:red !important" @click.prevent="deleteAlert(delete_alert)">Confirm</button>
+                <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
+                <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteAlert(delete_alert)">Confirm</a>
             </div>
 
         </div>
@@ -764,7 +765,8 @@
 .confirm p {
   text-align: center;
   font-size: 1rem;
-  margin: 0 2rem 4.5rem;
+  /* margin: 0 2rem 4.5rem; */
+  margin: 0 2rem 1.2rem;
   color:black
 }
 .confirm button {
