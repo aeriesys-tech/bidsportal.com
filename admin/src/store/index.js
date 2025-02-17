@@ -15,7 +15,11 @@ export default createStore({
         // permissions: [],
         authenticated: false,
         is_all_naics: false,
+<<<<<<< HEAD
+        is_all_pscs: false
+=======
 		is_all_pscs: false
+>>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
     },
     mutations: {
         setUser(state, user) {
@@ -34,11 +38,22 @@ export default createStore({
             state.selected_pscs = selected_pscs
         },
         setAllNaics(state, is_all_naics) {
+<<<<<<< HEAD
+            state.is_all_naics = is_all_naics
+        },
+        setAllPscs(state, is_all_pscs) {
+            state.is_all_pscs = is_all_pscs
+        },
+        // setPermissions(state, permissions) {
+        //     state.permissions = permissions;
+        // },
+=======
 			state.is_all_naics = is_all_naics
 		},
 		setAllPscs(state, is_all_pscs) {
 			state.is_all_pscs = is_all_pscs
 		},
+>>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
     },
     getters: {
         user(state) {
@@ -57,11 +72,22 @@ export default createStore({
             return state.selected_pscs
         },
         is_all_naics(state) {
+<<<<<<< HEAD
+            return state.is_all_naics
+        },
+        is_all_pscs(state) {
+            return state.is_all_pscs
+        },
+        // permissions(state) {
+        //     return state.permissions;
+        // },
+=======
 			return state.is_all_naics
 		},
 		is_all_pscs(state) {
 			return state.is_all_pscs
 		},
+>>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
     },
 
     actions: {
@@ -77,12 +103,24 @@ export default createStore({
         async setSelectedPscs(context, payload) {
             await context.commit('setSelectedPscs', payload);
         },
+<<<<<<< HEAD
+        // async setPermissions(context, payload) {
+        //     await context.commit("setPermissions", payload);
+        // },
+        async setAllNaics(context, payload) {
+            await context.commit('setAllNaics', payload);
+        },
+        async setAllPscs(context, payload) {
+            await context.commit('setAllPscs', payload);
+        },
+=======
         async setAllNaics(context, payload) {
 			await context.commit('setAllNaics', payload);
 		},
 		async setAllPscs(context, payload) {
 			await context.commit('setAllPscs', payload);
 		},
+>>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
 
         async logout(context) {
             await context.commit("setUser", null);
