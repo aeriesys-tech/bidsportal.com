@@ -38,7 +38,7 @@
                         <ul v-show="isOpen" v-if="isFolder">
                             <TreeItem class="item" v-for="(child, index) in item.children" :key="index" :item="child"
                                 :tdr_pscs="tdr_pscs" @toggleParentItem="parentItemToggle" :search="search"
-                                :clear_all_pscs="clear_all_pscs"></TreeItem>
+                                :clear_all_pscs="clear_all_pscs" :psc_codes="psc_codes"></TreeItem>
                         </ul>
                     </div>
                 </div>
@@ -61,7 +61,8 @@ export default {
         item: Object,
         tdr_pscs: Array,
         search: String,
-        clear_all_pscs: Boolean
+        clear_all_pscs: Boolean,
+        psc_codes: Array
     },
 
     watch: {
@@ -89,7 +90,27 @@ export default {
             },
             immediate: true,
             deep: true,
-        }
+        },
+        "psc_codes":{
+            handler(){
+                if(this.psc_codes?.length){
+                    console.log('codes',this.psc_codes)
+                    if(this.psc_codes.includes(this.item.psc_code)){
+                        this.isOpen = true
+                    }
+                    else if (this.item.psc_code == 'Select All'){
+                        this.isOpen = true
+                    }
+                    else this.isOpen = this.item.isOpen
+                }
+                else if (this.item.psc_code == 'Select All'){
+                    this.isOpen = true
+                }
+                else this.isOpen = this.item.isOpen
+            },
+            immediate: true,
+            deep: true,
+        },
     },
 
     data() {
@@ -106,9 +127,9 @@ export default {
 
     },
     mounted() {
-        if (!this.item.name)
-            this.isOpen = true
-        else this.isOpen = this.item.isOpen
+        // if (!this.item.name)
+        //     this.isOpen = true
+        // else this.isOpen = this.item.isOpen
     },
     methods: {
         isSeletedItem() {

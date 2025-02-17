@@ -34,29 +34,6 @@ class NaicsResource extends JsonResource
                 $is_naics = true;
             }
         }
-        // if($request->search){
-        //     $parent_results = Naics::whereNull('naics_parent_id')
-        //         ->where(function ($query) use ($request) {
-        //             $query->where('naics_code', 'like', '%' . $request->search . '%')
-        //                   ->orWhere('naics_description', 'like', '%' . $request->search . '%');
-        //         })
-        //         ->pluck('naics_id');
-        //         $child_results = Naics::where(function ($query) use ($request) {
-        //             $query->where('naics_code', 'like', '%' . $request->search . '%')
-        //                   ->orWhere('naics_description', 'like', '%' . $request->search . '%');
-        //         })
-        //         ->select('naics_parent_id')
-        //         ->whereNotNull('naics_parent_id')
-        //         ->distinct()
-        //         ->pluck('naics_parent_id');
-
-        //     $all_parents = $parent_results->merge($child_results)->unique('naics_id')->values();
-
-        //     $naics = Naics::select('naics_id', 'naics_code', 'naics_description')
-        //                 ->whereIn('naics_id', $all_parents)->whereNull('naics_parent_id')->get();
-        // }else{
-        //     $naics = Naics::select('naics_id', 'naics_code', 'naics_description')->get();
-        // }
 
         return [
             "naics_id"=>$this->naics_id,

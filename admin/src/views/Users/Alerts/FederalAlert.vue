@@ -235,7 +235,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading" />
                                                                             <template v-else>
-                                                                                <TreeItem class="item" :item="treeData" :search="naics_code.search" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics"> </TreeItem>
+                                                                                <TreeItem class="item" :item="treeData" :search="naics_code.search" :tdr_naics="alert.naics" :clear_all_naics="clear_all_naics" :naics_codes="naics_code.naics_codes"> </TreeItem>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -271,7 +271,7 @@
                                                                     placeholder="Search in PSC Codes"
                                                                     aria-label="Search"
                                                                     v-model="service_code.search"
-                                                                    @keypress.enter="getServiceCodes()"
+                                                                    @keypress.enter="getPscs()"
                                                                 />
                                                                 <button class="btn border-0 px-3 py-0 position-absolute top-50 end-0 translate-middle-y" type="button" @click="getServiceCodes()"><i class="fas fa-search fs-6"></i></button>
                                                             </form>
@@ -289,7 +289,7 @@
                                                                         <ul id="demo">
                                                                             <Skeleton2 v-if="loading_psc" />
                                                                             <template v-else>
-                                                                                <PscTree class="item" :item="service_codes" :search="service_code.search" :clear_all_psc="clear_all_psc"> </PscTree>
+                                                                                <PscTree class="item" :item="service_codes" :search="service_code.search" :clear_all_psc="clear_all_psc" :psc_codes="psc_code.psc_codes"> </PscTree>
                                                                             </template>
                                                                         </ul>
                                                                     </li>
@@ -372,6 +372,9 @@
                     name: "",
                     psc_code: "Select All",
                     children: [],
+                },
+                psc_code:{
+                    psc_codes:[]
                 },
                 tag: "",
                 // tags:[],
@@ -465,6 +468,9 @@
                     search: "",
                     alert_id: "",
                 },
+                psc_code:{
+                    psc_codes:[]
+                },
                 clear_all_naics: false,
                 clear_all_psc: false,
                 federal_agency_keyword: null,
@@ -489,13 +495,16 @@
                             vm.tags = vm.alert.keywords;
                             vm.status = false;
 
-                            vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
-                            vm.$store.dispatch("setSelectedPscs", vm.alert.pscs);
+                            // vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
                             // Load the federal agencies and filter selected ones
+<<<<<<< HEAD
 
                             console.log("NAICS Before Setting:", vm.alert.naics);
                             console.log("Vuex Selected NAICS:", vm.$store.state.selected_naics);
                             vm.getFederalAgencies();
+=======
+                            // vm.getFederalAgencies();
+>>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
                         })
                         .catch(function (error) {
                             loader.hide();
@@ -751,9 +760,13 @@
                 vm.loading = true;
                 let uri = "getNaics";
                 vm.$store
-                    .dispatch("post", { uri: uri })
+                    .dispatch("post", { uri: uri, data:vm.naics_code })
                     .then(function (response) {
                         vm.treeData.children = response.data.naics;
+                        vm.naics_code.naics_codes = response.data.naics_codes
+                        if(vm.alert.naics.length){
+                            vm.$store.dispatch("setSelectedNaics", vm.alert.naics)
+                        }
                         vm.getPscs();
                         vm.loading = false;
                     })
@@ -768,9 +781,15 @@
                 vm.loading_psc = true;
                 let uri = "getPscs";
                 vm.$store
-                    .dispatch("post", { uri: uri })
+                    .dispatch("post", { uri: uri, data:vm.service_code })
                     .then(function (response) {
-                        vm.service_codes.children = response.data.data;
+                        vm.service_codes.children = response.data.pscs;
+                        vm.psc_code.psc_codes = response.data.psc_codes
+                        
+                        if(vm.alert.pscs.length){
+                            console.log(vm.alert.pscs.length)
+                            vm.$store.dispatch("setSelectedPscs", vm.alert.pscs)
+                        }
                         vm.loading_psc = false;
                     })
                     .catch(function (error) {
@@ -885,48 +904,6 @@
                 let vm = this;
                 vm.tags = tags;
                 vm.keywords = vm.tags;
-            },
-            getNaicsBackend() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "getNaics", data: vm.naics_code })
-                    .then(function (response) {
-                        vm.isLoading1 = false;
-                        vm.treeData.children = response.data.data;
-                        vm.$store.dispatch("setNaics", vm.treeData.children);
-                        // vm.getServiceCodes();
-                    })
-                    .catch(function (error) {
-                        vm.isLoading1 = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-
-            getServiceCodes() {
-                let vm = this;
-                vm.fullPage = false;
-                vm.isLoading1 = false;
-                vm.isLoading2 = true;
-                vm.service_code.alert_id = vm.$store.getters.alert.id;
-                vm.$store
-                    .dispatch("post", { uri: "getPsc", data: vm.service_code })
-                    .then(function (response) {
-                        vm.isLoading2 = false;
-                        vm.$store.dispatch("setPsces", response.data.data);
-                        vm.service_codes.children = vm.$store.getters.psces;
-                        if (response.data.data.length) {
-                            if (response.data.data[0].psces && response.data.data[0].psces[0] != "") {
-                                vm.$store.dispatch("setSelectedPsces", response.data.data[0].psces);
-                                vm.applyFilterPsc();
-                            }
-                        }
-                    })
-                    .catch(function (error) {
-                        vm.isLoading2 = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
             },
             removeTag(index) {
                 this.agency_fedral.splice(index, 1);

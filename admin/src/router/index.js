@@ -44,6 +44,10 @@ import ContractTypes from "@/views/ContractTypes.vue";
 
 import DuplicateStateTenders from "@/views/duplicate_state_tenders/Index.vue";
 
+import DuplicatePrivateTenders from "@/views/duplicate_private_tenders/Index.vue";
+
+import DuplicateInternationalTenders from "@/views/duplicate_international_tenders/Index.vue";
+
 //Subscription
 import SubscriptionPlans from "@/views/SubscriptionPlans/SubscriptionPlan.vue";
 
@@ -292,6 +296,18 @@ const routes = [
         path: "/duplicate_state_tenders",
         name: "DuplicateStateTenders",
         component: DuplicateStateTenders,
+    },
+
+    {
+        path: "/duplicate_private_tenders",
+        name: "DuplicatePrivateTenders",
+        component: DuplicatePrivateTenders,
+    },
+
+    {
+        path: "/duplicate_international_tenders",
+        name: "DuplicateInternationalTenders",
+        component: DuplicateInternationalTenders,
     },
 
     //Subscription plans

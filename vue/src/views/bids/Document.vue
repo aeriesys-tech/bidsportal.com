@@ -161,7 +161,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                               <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ state_tender.tender_no}}</span>
+                                               <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ state_tender.tender_no}}</span>
                                                <span v-else>{{ state_tender.tender_no }}</span>
 
                                             </li>
@@ -178,7 +178,8 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="state_tender.state_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in state_tender.state_attachments" :key="key">
-                                                <a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a>
+                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ attachment.attachment_name }}</span>
+                                                <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
@@ -192,7 +193,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1">{{ state_tender.state_agency?.state_agency_name }}</span>
+                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ state_tender.state_agency?.state_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ state_tender.state_agency?.state_agency_name }}</span>
                                                     </li>
 
@@ -215,53 +216,64 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="state_tenders.length">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th class="border-0"></th>
-                                                        <th scope="col" class="border-0">
-                                                            Bid number &<br />
-                                                            notice type
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="text-center border-0" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Location</th>
+                                                        <th scope="col" class="border-0 border-right w-250">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="state_tender in state_tenders" :key="state_tender.state_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto" v-if="$store.getters.user">
-                                                                <input class="form-check-input me-3" type="checkbox" :value="state_tender.state_tender_id" v-model="share_state_tender.state_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="state_tender in state_tenders" :key="state_tender.state_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="state_tender.state_tender_id" v-model="share_state_tender.state_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <div class="row">
-                                                                <div class="column">
-                                                                    <a href="javascript:void(0)" @click="varifySubscription('state', state_tender)" >
+                                                            <div class="row m-0">
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
                                                                         {{ state_tender.tender_no }}
-                                                                    </a>
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        <a style="color: rgb(57, 112, 228);" href="javascript:void(0)" @click="varifySubscription('state', state_tender)">
+                                                                            {{ state_tender.tender_no }}
+                                                                        </a>
+                                                                    </span>
                                                                 </div>
 
-                                                                <div class="column">
-                                                                    <a :style="{ color: state_tender.state_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(state_tender.state_notice?.notice_name) }"> </span>
+
+                                                                    <a :style="{ color: state_tender.state_notice?.backround_color }" class="txt-gray">
                                                                         {{ state_tender.state_notice?.notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <a style="color: #353535;" href="javascript:void(0)" @click="varifySubscription('state', state_tender)" >
-                                                            <div v-html="highlight(state_tender.title)"></div>
+                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="varifySubscription('state', state_tender)">
+                                                                <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
                                                             </a>
+
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ state_tender.state_agency?.state_agency_name }}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ state_tender.state_agency?.agency_name }}</span>
                                                         </td>
-                                                        <td class="">{{ state_tender.state_agency?.agency_name }}</td>
-                                                        <td class="">{{ state_tender.place_of_performance }}</td>
-                                                        <td class="" style="width: 110px;">{{ state_tender.expiry_date }}</td>
+                                                        <td class="txt-gray">{{ state_tender.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(state_tender.expiry_date) }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -272,7 +284,10 @@
                         </div>
                         <div v-if="state_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getStateTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="state_filter.page" @keypress.enter="getStateTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ state_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="state_filter.maxPage" :totalPages="state_filter.lastPage" :currentPage="state_filter.page" @pagechanged="onPageChange" />
@@ -347,7 +362,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ federal_tender.tender_no}}</span>
+                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ federal_tender.tender_no}}</span>
                                                 <span v-else>{{ federal_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{ federal_tender.time_ago }} </span></li>
@@ -363,7 +378,8 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="federal_tender.federal_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in federal_tender.federal_attachments" :key="key">
-                                                <a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a>
+                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ attachment.attachment_name }}</span>
+                                                <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
@@ -377,12 +393,12 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                         <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1">{{ federal_tender.federal_agency?.federal_agency_name }}</span>
-                                                        <span v-else style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.federal_agency_name }}</span>
+                                                         <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                        <span v-else style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
-                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ federal_tender?.federal?.federal_name }}<span v-if="federal_tender?.federal?.federal_name">,</span> {{
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ federal_tender?.state?.state_name }}<span v-if="federal_tender?.federal?.federal_name">,</span> {{
                                                         federal_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
@@ -401,52 +417,64 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="federal_tenders.length">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th scope="col" colspan="2" class="border-0">
-                                                            Bid number &<br />
-                                                            notice type
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="border-0 text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Location</th>
+                                                        <th scope="col" class="border-0 border-right w-250">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto" v-if="$store.getters.user">
-                                                                <input class="form-check-input me-3" type="checkbox" :value="federal_tender.federal_tender_id" v-model="share_federal_tender.federal_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="federal_tender in federal_tenders" :key="federal_tender.federal_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="federal_tender.federal_tender_id" v-model="share_federal_tender.federal_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <div class="row">
-                                                                <div class="column">
-                                                                    <a href="javascript:void(0)" @click="varifySubscription('federal', federal_tender)">
+                                                            <div class="row m-0">
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ federal_tender.tender_no }}
-                                                                    </a>
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        <a style="color: rgb(57, 112, 228);" href="javascript:void(0)" @click="varifySubscription('federal', federal_tender)">
+                                                                            {{ federal_tender.tender_no }}
+                                                                        </a>
+                                                                    </span>
                                                                 </div>
 
-                                                                <div class="column">
-                                                                    <a :style="{ color: federal_tender.federal_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(federal_tender?.federal_notice?.notice_name) }"> </span>
+
+                                                                    <a :style="{ color: federal_tender.federal_notice?.backround_color }" class="txt-gray">
                                                                         {{ federal_tender.federal_notice?.notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <a style="color: #353535;" href="javascript:void(0)" @click="varifySubscription('federal', federal_tender)">
-                                                                <div v-html="highlight(federal_tender.title)"></div>
+                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="varifySubscription('federal', federal_tender)">
+                                                                <div class="truncate-text" v-html="highlight(federal_tender.title)"></div>
                                                             </a>
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ federal_tender.federal_agency?.agency_name }}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ federal_tender.federal_agency?.agency_name }}</span>
                                                         </td>
-                                                        <td class="">{{ federal_tender.federal_agency?.agency_name }}</td>
-                                                        <td class="">{{ federal_tender.place_of_performance }}</td>
-                                                        <td class="" style="width: 110px;">{{ federal_tender.expiry_date }}</td>
+
+                                                        <td class="txt-gray">{{ federal_tender.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(federal_tender.expiry_date) }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -457,7 +485,10 @@
                         </div>
                         <div v-if="federal_tenders.length">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="federal_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="federal_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ federal_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="federal_filter.maxPage" :totalPages="federal_filter.lastPage" :currentPage="federal_filter.page" @pagechanged="onPageChange" />
@@ -532,7 +563,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ private_tender.tender_no}}</span>
+                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ private_tender.tender_no}}</span>
                                                 <span v-else>{{ private_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(private_tender.opening_date) }} &nbsp;<span>{{ private_tender.time_ago }} </span></li>
@@ -548,7 +579,8 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="private_tender.private_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in private_tender.private_attachments" :key="key">
-                                                <a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a>
+                                                <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
+                                                <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
@@ -562,12 +594,12 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span style="color:#c1c1c1" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name }}</span>
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
-                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ private_tender?.private?.private_name }}<span v-if="private_tender?.private?.private_name">,</span> {{
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ private_tender?.state?.state_name }}<span v-if="private_tender?.state?.state_name">,</span> {{
                                                         private_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
@@ -586,52 +618,64 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th scope="col" colspan="2" class="border-0">
-                                                            Bid number &<br />
-                                                            notice type
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="border-0 text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Location</th>
+                                                        <th scope="col" class="border-0 border-right w-250">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto" v-if="$store.getters.user">
-                                                                <input class="form-check-input me-3" type="checkbox" :value="private_tender.private_tender_id" v-model="share_private_tender.private_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="private_tender.private_tender_id" v-model="share_private_tender.private_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="">
                                                             <div class="row">
-                                                                <div class="column">
-                                                                    <a href="javascript:void(0)" @click="varifySubscription('private', private_tender)" >
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ private_tender.tender_no }}
-                                                                    </a>
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        <a style="color: rgb(57, 112, 228);" href="javascript:void(0)" @click="varifySubscription('private', private_tender)">
+                                                                            {{ private_tender.tender_no }}
+                                                                        </a>
+                                                                    </span>
                                                                 </div>
 
-                                                                <div class="column">
-                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(private_tender.private_notice?.notice_name) }"> </span>
+
+                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }" class="txt-gray">
                                                                         {{ private_tender.private_notice?.notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <a style="color: #353535;" href="javascript:void(0)" @click="varifySubscription('private', private_tender)" >
-                                                                <div v-html="highlight(private_tender.title)"></div>
+                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="varifySubscription('private', private_tender)">
+                                                                <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
                                                             </a>
+
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ private_tender.private_agency?.private_agency_name }}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name }}</span>
                                                         </td>
-                                                        <td class="">{{ private_tender.private_agency?.agency_name }}</td>
-                                                        <td class="">{{ private_tender.place_of_performance }}</td>
-                                                        <td class="" style="width: 110px;">{{ private_tender.expiry_date }}</td>
+                                                        <td class="txt-gray">{{ private_tender.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(private_tender.expiry_date) }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -642,7 +686,10 @@
                         </div>
                         <div v-if="private_tenders.length">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="private_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="private_filter.page" @keypress.enter="getPrivateTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ private_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="private_filter.maxPage" :totalPages="private_filter.lastPage" :currentPage="private_filter.page" @pagechanged="onPageChange" />
@@ -723,7 +770,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ international_tender.international_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="color: #c1c1c1;"> {{ international_tender.tender_no }}</span>
+                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ international_tender.tender_no }}</span>
                                                 <span v-else>{{ international_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item">
@@ -741,7 +788,8 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="international_tender.international_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in international_tender.international_attachments" :key="key">
-                                                <a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a>
+                                                <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
+                                                <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-else>
@@ -755,13 +803,13 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span style="color:#c1c1c1" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ international_tender.international_agency?.international_agency_name }}</span>
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ international_tender.international_agency?.international_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ international_tender.international_agency?.international_agency_name }}</span>
                                                     </li>
 
                                                     <li class="nav-item">
-                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ international_tender?.international?.international_name }}
-                                                        <span v-if="international_tender?.international?.international_name">,</span> {{ international_tender?.country?.country_name }}
+                                                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ international_tender?.state?.state_name }}
+                                                        <span v-if="international_tender?.state?.state_name">,</span> {{ international_tender?.country?.country_name }}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -779,52 +827,64 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow" v-if="international_tenders.length !== 0">
-                                    <div class="card-body py-md-3 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th scope="col" colspan="2" class="border-0">
-                                                            Bid number &<br />
-                                                            notice type
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="border-0 text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Location</th>
+                                                        <th scope="col" class="border-0 border-right w-250">Bid number & notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="international_tender in international_tenders" :key="international_tender.international_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto" v-if="$store.getters.user">
-                                                                <input class="form-check-input me-3" type="checkbox" :value="international_tender.international_tender_id" v-model="share_international_tender.international_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="international_tender in international_tenders" :key="international_tender.international_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="international_tender.international_tender_id" v-model="share_international_tender.international_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <div class="row">
-                                                                <div class="column">
-                                                                    <a href="javascript:void(0)" @click="varifySubscription('international',international_tender)">
+                                                            <div class="row m-0">
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ international_tender.tender_no }}
-                                                                    </a>
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        <a style="color: rgb(57, 112, 228);" href="javascript:void(0)" @click="varifySubscription('international',international_tender)">
+                                                                            {{ international_tender.tender_no }}
+                                                                        </a>
+                                                                    </span>
                                                                 </div>
 
-                                                                <div class="column">
-                                                                    <a :style="{ color: international_tender.international_notice?.backround_color }" style="color: black;" class="badge bg-success bg-opacity-10">
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(international_tender.international_notice?.notice_name) }"> </span>
+
+                                                                    <a :style="{ color: international_tender.international_notice?.backround_color }" class="txt-gray">
                                                                         {{ international_tender.international_notice?.notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <a style="color: #353535;" href="javascript:void(0)" @click="varifySubscription('international',international_tender)">
-                                                                <div v-html="highlight(international_tender.title)"></div>
+                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="varifySubscription('international',international_tender)">
+                                                                <div class="truncate-text" v-html="highlight(international_tender.title)"></div>
                                                             </a>
+
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ international_tender.international_agency?.international_agency_name }}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ international_tender.international_agency?.international_agency_name }}</span>
                                                         </td>
-                                                        <td class="">{{ international_tender.international_agency?.agency_name }}</td>
-                                                        <td class="">{{ international_tender.place_of_performance }}</td>
-                                                        <td class="" style="width: 110px;">{{ international_tender.expiry_date }}</td>
+                                                        <td class="txt-gray">{{ international_tender.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{formatDate(international_tender.expiry_date)}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -835,7 +895,10 @@
                         </div>
                         <div v-if="international_tenders.length !== 0">
                             <div style="float: left;">
-                                <input type="text" class="form-control" v-model="international_filter.page" @keypress.enter="getFederalTenders()" style="width: 60px;" />
+                                <span class="input-with-icon">
+                                    <input type="text" class="form-control" v-model="international_filter.page" @keypress.enter="getInternationalTenders()" style="width: 60px;" />
+                                    <span style="margin-left: 10px;">of {{ international_filter.lastPage }} pages</span>
+                                </span>
                             </div>
                             <div style="float: right;">
                                 <Pagination :maxPage="international_filter.maxPage" :totalPages="international_filter.lastPage" :currentPage="international_filter.page" @pagechanged="onPageChange" />
@@ -857,7 +920,7 @@
                                 <div class="ms-2">
                                     <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">Alert</h5>
                                 </div>
-                                <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"> <buttont ype="button" @click.prevent="closeModal()" class="btn-close"></buttont></a>
+                                <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"> <button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
                             </div>
 
                             <div class="card-body text-center" style="min-width: 350px;">
@@ -1526,6 +1589,15 @@
         },
 
         methods: {
+            getNoticeColor(noticeName) {
+                if (noticeName === "Award Notice") return "#2569f9";
+                if (noticeName === "Request for Proposal") return "green";
+                if (noticeName === "Request for Information") return "yellow";
+                return "gray"; // Default color
+            },
+            formatDate(date) {
+                return date ? moment(date).format("MMM DD, YYYY") : "";
+            },
             sendStateTenderMail() {
                 let vm = this;
                 vm.fullPage = true;
@@ -2685,5 +2757,74 @@
     }
     .confirm1 button:active {
         background: #d6d6d6;
+    }
+    .input-with-icon {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+  }
+
+  .input-with-icon input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 5px;
+  }
+  .vertical-align-middle {
+        vertical-align: middle;
+    }
+    .border-radius-10 {
+        border-radius: 10px;
+    }
+    .truncate-text {
+        white-space: nowrap; /* Prevents text from wrapping */
+        overflow: hidden; /* Hides overflowing text */
+        text-overflow: ellipsis; /* Shows "..." for overflow text */
+        max-width: 450px; /* Adjust the width as needed */
+        display: block;
+    }
+    .color-box {
+        width: 12px;
+        height: 12px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    th {
+        position: relative;
+        color: rgba(45, 59, 84, 1);
+        font-weight: 600;
+        text-align: start;
+        /* background: #fafbfb; */
+        border-bottom: 1px solid #ebecf0;
+        padding: 16px 16px;
+    }
+
+    .border-right::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        inset-inline-end: 0;
+        width: 1px;
+        height: 1.6em;
+        background-color: #ebecf0;
+        transform: translateY(-50%);
+        transition: background-color 0.2s;
+    }
+
+    .border-right:last-child::after {
+        display: none; /* Remove border from the last column */
+    }
+    .w-250 {
+        width: 250px;
+    }
+    .txt-gray {
+        color: rgba(45, 59, 84, 1);
+    }
+    .fs-24 {
+        font-size: 24px;
     }
 </style>

@@ -1,5 +1,6 @@
 <template>
     <div class="catalog-list-wrap">
+        <!--  -->
         <div style="overflow: hidden; width: 100%; height: 100%;">
             <div style="">
                 <div class="catalog-list cv-catalog-list">
@@ -54,7 +55,6 @@
     </div>
 </template>
 <script>
-import { handleError } from 'vue';
 export default {
     name: "TreeItem",
     props: {
@@ -66,32 +66,9 @@ export default {
     },
 
     watch: {
-
         "clear_all_naics": function () {
             this.item.selected = false
-            console.log(this.item)
         },
-
-        "naics_codes":{
-            handler(){
-                if(this.naics_codes?.length){
-                    if(this.naics_codes.includes(this.item.naics_code)){
-                        this.isOpen = true
-                    }
-                    else if (!this.item.name){
-                        this.isOpen = true
-                    }
-                    else this.isOpen = this.item.isOpen
-                }
-                else if (!this.item.name){
-                    this.isOpen = true
-                }
-                else this.isOpen = this.item.isOpen
-            },
-            immediate: true,
-            deep: true,
-        },
-
         "$store.getters.selected_naics": {
             handler() {
                 this.isSeletedItem();
@@ -99,22 +76,11 @@ export default {
             immediate: true,
             deep: true,
         },
-
-        "$store.getters.is_all_naics":{
-            handler() {
-                if(!this.$store.getters.is_all_naics){
-                    this.item.selected = false
-                }
-            },
-            immediate: true,
-            deep: true,
-        },
-        
         "item": {
             handler() {
                 if (this.item.naics_code == 'Select All') {
-                    if ('children' in this.item && this.item.children.length) {
-                        const all_selected = this.item.children.every(child => child.selected)
+                    if ('children' in this.item && this.item.children?.length) {
+                        const all_selected = this.item.children?.every(child => child.selected)
                         this.item.selected = all_selected
                     } else {
                         this.item.selected = false
@@ -124,7 +90,27 @@ export default {
             },
             immediate: true,
             deep: true,
-        }
+        },
+        "naics_codes":{
+            handler(){
+                if(this.naics_codes?.length){
+                    console.log('codes',this.naics_codes)
+                    if(this.naics_codes.includes(this.item.naics_code)){
+                        this.isOpen = true
+                    }
+                    else if (this.item.naics_code == 'Select All'){
+                        this.isOpen = true
+                    }
+                    else this.isOpen = this.item.isOpen
+                }
+                else if (this.item.naics_code == 'Select All'){
+                    this.isOpen = true
+                }
+                else this.isOpen = this.item.isOpen
+            },
+            immediate: true,
+            deep: true,
+        },
     },
 
     data() {
@@ -140,14 +126,11 @@ export default {
         }
 
     },
-
     mounted() {
-        if (!this.item.name){
-            this.isOpen = true
-        }
-        else this.isOpen = this.item.isOpen
+        // if (!this.item.name)
+        //     this.isOpen = true
+        // else if(!this.search) this.isOpen = this.item.isOpen
     },
-
     methods: {
         isSeletedItem() {
             const selected_naics = this.$store.getters.selected_naics
@@ -213,8 +196,8 @@ export default {
         parentItemToggle() {
             let vm = this
             if (this.item.naics_code != 'Select All') {
-                if ('children' in this.item && this.item.children.length) {
-                    const all_selected = this.item.children.some(child => child.selected)
+                if ('children' in this.item && this.item.children?.length) {
+                    const all_selected = this.item.children?.some(child => child.selected)
                     this.item.selected = all_selected;
                 } else {
                     this.item.selected = false

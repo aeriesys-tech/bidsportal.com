@@ -63,6 +63,16 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th @click="sort('expiry_date')" width="5%">
+                                            Expiry Date
+                                            <span>
+                                                <i v-if="meta.keyword == 'expiry_date' && meta.order_by == 'asc'"
+                                                    class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'expiry_date' && meta.order_by == 'desc'"
+                                                    class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
                                         <th @click="sort('title')" width="10%">
                                             Tender Title
                                             <span>
@@ -124,7 +134,14 @@
                                     <tr v-for="tender, key in tenders" :key="key">
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ tender.tender_no }}</td>
-                                        <td>{{ tender.opening_date }}</td>
+                                        <td>
+                                            <input type="date" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.opening_date }" v-model="tender.opening_date">
+                                            <span class="invalid-feedback" v-if="tender.errors?.opening_date">{{ tender.errors?.opening_date[0] }}</span>
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.expiry_date }" v-model="tender.expiry_date">
+                                            <span class="invalid-feedback" v-if="tender.errors?.expiry_date">{{ tender.errors?.expiry_date[0] }}</span>
+                                        </td>    
                                         <td class="wrap-text ">{{ tender.title }}</td>
                                         <td>{{ tender.notice_name }}</td>
                                         <td>
