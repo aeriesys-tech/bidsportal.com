@@ -48,7 +48,7 @@
                                     <a class="dropdown-item dropitem2" href="javascript:void(0)"
                                         @click="showInternationalFilter(international_filter)">{{ international_filter.international_filter_name
                                         }}</a>
-                                    <a href="javascript:void(0)" class="icon red my-auto">
+                                    <a href="javascript:void(0)" class="icon red my-auto" @click="deleteView(international_filter)">
                                         <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
                                     </a>
                                 </li>
@@ -621,7 +621,7 @@
                                                                 <input class="form-check-input" type="checkbox" />
                                                             </div>
                                                         </th>
-                                                        <th scope="col" class="border-0 border-right w-250">Bid number & notice type</th>
+                                                        <th scope="col" class="border-0 border-right ">Bid number & notice type</th>
                                                         <th scope="col" class="border-0 border-right">Title & Agency</th>
                                                         <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
@@ -635,7 +635,7 @@
                                                                 <input class="form-check-input" type="checkbox" :value="international_tender.international_tender_id" v-model="share_international_tender.international_tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="">
+                                                        <td class="w-250">
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
@@ -901,12 +901,9 @@
                         <div class="card border">
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-xs">
-                                        <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                    </div>
-
+                                    <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                     <div class="ms-2">
-                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
+                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                     </div>
                                 </div>
 
@@ -917,7 +914,7 @@
                             <form class="card-body" style="min-width: 350px;">
                                 <div class="mb-3">
                                     <input class="form-control" :class="{ 'is-invalid': errors.recipient_email }"
-                                        placeholder="Employee/Colleague Email Address" autocomplet="off"
+                                        placeholder="Email" autocomplet="off"
                                         type="text" id="recipient-name"
                                         v-model="share_international_tender.recipient_email" ref="recipient_email" />
                                     <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0]
@@ -925,7 +922,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <input class="form-control" type="text" name="email_subject"
-                                        :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
+                                        :class="{ 'is-invalid': errors.subject }" placeholder="Subject"
                                         autocomplet="off" id="email_subject"
                                         v-model="share_international_tender.subject" ref="subject" />
                                     <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
@@ -935,7 +932,7 @@
                                 <div class="mb-3">
                                     <textarea class="form-control" rows="3" name="email_message"
                                         :class="{ 'is-invalid': errors.message }"
-                                        placeholder="Brief Messsage/Note" autocomplet="off" id="email_message"
+                                        placeholder="Messsage" autocomplet="off" id="email_message"
                                         v-model="share_international_tender.message"></textarea>
                                     <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
                                         }}</span>
@@ -1927,6 +1924,22 @@ export default {
         },
         formatDate(date) {
             return date ? moment(date).format("MMM DD, YYYY") : "";
+        },
+        deleteView(international_filter) {
+            let vm = this;
+            let international_filter_id = international_filter.international_filter_id;
+            vm.$store
+                .dispatch("post", {
+                    uri: "deleteInternationalFilter",
+                    data: { international_filter_id: international_filter_id } ,
+                })
+                .then((response) => {
+                    vm.$store.dispatch("success", response.data.message);
+                })
+                .catch(function (error) {
+                    vm.errors = error.response.data.errors;
+                    vm.$store.dispatch("error", error.response.data.message);
+                });
         },
     },
 };

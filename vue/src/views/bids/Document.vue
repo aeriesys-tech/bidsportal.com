@@ -226,7 +226,7 @@
                                                                 <input class="form-check-input" type="checkbox" />
                                                             </div>
                                                         </th>
-                                                        <th scope="col" class="border-0 border-right w-250">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right ">Bid Number & Notice type</th>
                                                         <th scope="col" class="border-0 border-right">Title & Agency</th>
                                                         <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
@@ -240,7 +240,7 @@
                                                                 <input class="form-check-input" type="checkbox" :value="state_tender.state_tender_id" v-model="share_state_tender.state_tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="">
+                                                        <td class="w-250">
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
@@ -969,12 +969,9 @@
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center p-0">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
-                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                            </div>
-
+                                            <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                                <h6 class="mb-0">Share Bid Details</h6>
                                             </div>
                                         </div>
 
@@ -986,7 +983,7 @@
                                             <input
                                                 class="form-control"
                                                 :class="{ 'is-invalid': errors.recipient_email }"
-                                                placeholder="Employee/Colleague Email Address1"
+                                                placeholder="Email"
                                                 autocomplet="off"
                                                 type="text"
                                                 id="recipient-name"
@@ -1001,7 +998,7 @@
                                                 type="text"
                                                 name="email_subject"
                                                 :class="{ 'is-invalid': errors.subject }"
-                                                placeholder="Subject of Email"
+                                                placeholder="Subject"
                                                 autocomplet="off"
                                                 id="email_subject"
                                                 v-model="share_state_tender.subject"
@@ -1016,7 +1013,7 @@
                                                 rows="3"
                                                 name="email_message"
                                                 :class="{ 'is-invalid': errors.message }"
-                                                placeholder="Brief Messsage/Note"
+                                                placeholder="Messsage"
                                                 autocomplet="off"
                                                 id="email_message"
                                                 v-model="share_state_tender.message"
@@ -1048,12 +1045,9 @@
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center p-0">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
-                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                            </div>
-
+                                            <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                                <h6 class="mb-0">Share Bid Details</h6>
                                             </div>
                                         </div>
 
@@ -1065,7 +1059,7 @@
                                             <input
                                                 class="form-control"
                                                 :class="{ 'is-invalid': errors.recipient_email }"
-                                                placeholder="Employee/Colleague Email Address1"
+                                                placeholder="Email"
                                                 autocomplet="off"
                                                 type="text"
                                                 id="recipient-name"
@@ -1080,7 +1074,7 @@
                                                 type="text"
                                                 name="email_subject"
                                                 :class="{ 'is-invalid': errors.subject }"
-                                                placeholder="Subject of Email"
+                                                placeholder="Subject"
                                                 autocomplet="off"
                                                 id="email_subject"
                                                 v-model="share_federal_tender.subject"
@@ -1095,7 +1089,7 @@
                                                 rows="3"
                                                 name="email_message"
                                                 :class="{ 'is-invalid': errors.message }"
-                                                placeholder="Brief Messsage/Note"
+                                                placeholder="Messsage"
                                                 autocomplet="off"
                                                 id="email_message"
                                                 v-model="share_federal_tender.message"
@@ -1127,12 +1121,9 @@
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center p-0">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
-                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                            </div>
-
+                                            <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                                <h6 class="mb-0">Share Bid Details</h6>
                                             </div>
                                         </div>
 
@@ -1144,7 +1135,7 @@
                                             <input
                                                 class="form-control"
                                                 :class="{ 'is-invalid': errors.recipient_email }"
-                                                placeholder="Employee/Colleague Email Address1"
+                                                placeholder="Email"
                                                 autocomplet="off"
                                                 type="text"
                                                 id="recipient-name"
@@ -1159,7 +1150,7 @@
                                                 type="text"
                                                 name="email_subject"
                                                 :class="{ 'is-invalid': errors.subject }"
-                                                placeholder="Subject of Email"
+                                                placeholder="Subject"
                                                 autocomplet="off"
                                                 id="email_subject"
                                                 v-model="share_private_tender.subject"
@@ -1174,7 +1165,7 @@
                                                 rows="3"
                                                 name="email_message"
                                                 :class="{ 'is-invalid': errors.message }"
-                                                placeholder="Brief Messsage/Note"
+                                                placeholder="Messsage"
                                                 autocomplet="off"
                                                 id="email_message"
                                                 v-model="share_private_tender.message"
@@ -1206,12 +1197,9 @@
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center p-0">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm">
-                                                <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                            </div>
-
+                                            <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Detail</h6>
+                                                <h6 class="mb-0">Share Bid Details</h6>
                                             </div>
                                         </div>
 
@@ -1223,7 +1211,7 @@
                                             <input
                                                 class="form-control"
                                                 :class="{ 'is-invalid': errors.recipient_email }"
-                                                placeholder="Employee/Colleague Email Address1"
+                                                placeholder="Email"
                                                 autocomplet="off"
                                                 type="text"
                                                 id="recipient-name"
@@ -1238,7 +1226,7 @@
                                                 type="text"
                                                 name="email_subject"
                                                 :class="{ 'is-invalid': errors.subject }"
-                                                placeholder="Subject of Email"
+                                                placeholder="Subject"
                                                 autocomplet="off"
                                                 id="email_subject"
                                                 v-model="share_international_tender.subject"
@@ -1253,7 +1241,7 @@
                                                 rows="3"
                                                 name="email_message"
                                                 :class="{ 'is-invalid': errors.message }"
-                                                placeholder="Brief Messsage/Note"
+                                                placeholder="Messsage"
                                                 autocomplet="off"
                                                 id="email_message"
                                                 v-model="share_international_tender.message"
