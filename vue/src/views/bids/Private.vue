@@ -611,67 +611,61 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="private_tenders.length !== 0">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th class="border-0"></th>
-                                                        <th scope="col" class="border-0">Bid number & notice
-                                                            type</th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Place of <br>performance
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="border-0 text-center" v-if="$store.getters.user !== null">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
+                                                        <th scope="col" class="border-0 border-right w-250">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
-                                                        <th scope="col" class="border-0"></th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="private_tender in private_tenders"
-                                                    :key="private_tender.private_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto"
-                                                                v-if="$store.getters.user !== null">
-                                                                <input class="form-check-input me-3" type="checkbox"
-                                                                    :value="private_tender.private_tender_id"
-                                                                    v-model="share_private_tender.private_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user !== null">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="private_tender.private_tender_id" v-model="share_private_tender.private_tenders" />
                                                             </div>
                                                         </td>
                                                         <td class="">
                                                             <div class="row">
-                                                                <div class="column">
-                                                                    <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.tender_no }}</span>
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                        {{ private_tender.tender_no }}
+                                                                    </span>
                                                                     <span v-else>
-                                                                        <a href="javascript:void(0)" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+                                                                        <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
                                                                     </span>
                                                                 </div>
-                                                                <div class="column">
-                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }"
-                                                                        style="color: black;"
-                                                                        class="badge bg-success bg-opacity-10">
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(private_tender.private_notice?.notice_name) }"> </span>
+
+                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }" class="txt-gray">
                                                                         {{ private_tender.private_notice?.notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                             <a style="color: #353535;" href="javascript:void(0)"
-                                                                        @click="tenderDetails(private_tender)">
-                                                            <div v-html="highlight(private_tender.title)"></div>
+                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(private_tender)">
+                                                                <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
                                                             </a>
-                                                        </td>
-                                                        <td class="">
-                                                            <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
-                                                            <span v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
-                                                        </td>
-                                                        <td class="">{{ private_tender?.state?.state_name }}</td>
-                                                        <td class="" style="width: 110px;">{{
-                                                            private_tender.expiry_date }}</td>
-                                                        <td>
 
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ private_tender.private_agency?.private_agency_name}}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
                                                         </td>
+                                                        <td class="txt-gray">{{ private_tender?.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(private_tender.expiry_date) }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1896,6 +1890,18 @@ export default {
             this.meta.page = 1;
             this.paginatePrivateTenders();
         },
+
+        getNoticeColor(noticeName) {
+            if(noticeName){
+                if (noticeName === "Award Notice") return "#2569f9";
+                if (noticeName === "Request for Proposal") return "green";
+                if (noticeName === "Request for Information") return "yellow";
+                return "gray"; // Default color
+            }
+        },
+        formatDate(date) {
+            return date ? moment(date).format("MMM DD, YYYY") : "";
+        },
     },
 };
 </script>
@@ -2460,4 +2466,59 @@ export default {
     flex: 1;
     padding: 5px;
   }
+  .vertical-align-middle {
+        vertical-align: middle;
+    }
+    .border-radius-10 {
+        border-radius: 10px;
+    }
+    .truncate-text {
+        white-space: nowrap; /* Prevents text from wrapping */
+        overflow: hidden; /* Hides overflowing text */
+        text-overflow: ellipsis; /* Shows "..." for overflow text */
+        max-width: 450px; /* Adjust the width as needed */
+        display: block;
+    }
+    .color-box {
+        width: 12px;
+        height: 12px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    th {
+        position: relative;
+        color: rgba(45, 59, 84, 1);
+        font-weight: 600;
+        text-align: start;
+        /* background: #fafbfb; */
+        border-bottom: 1px solid #ebecf0;
+        padding: 16px 16px;
+    }
+
+    .border-right::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        inset-inline-end: 0;
+        width: 1px;
+        height: 1.6em;
+        background-color: #ebecf0;
+        transform: translateY(-50%);
+        transition: background-color 0.2s;
+    }
+
+    .border-right:last-child::after {
+        display: none; /* Remove border from the last column */
+    }
+    .w-250 {
+        width: 250px;
+    }
+    .txt-gray {
+        color: rgba(45, 59, 84, 1);
+    }
+    .fs-24 {
+        font-size: 24px;
+    }
 </style>

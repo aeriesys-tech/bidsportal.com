@@ -26,6 +26,8 @@ class StateTenderResource extends JsonResource
             }
 
             $time_ago  = $difference->diffForHumans();
+        }else{
+            $time_ago = null;
         }
 
         if($this->expiry_date && now()->lte($this->expiry_date)){
@@ -43,6 +45,7 @@ class StateTenderResource extends JsonResource
         $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('d-m-Y') : null;
         $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('d-m-Y') : null;
         $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('d-m-Y') : null;
+        $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
 
         return [
             'state_tender_id' => $this->state_tender_id,
@@ -53,7 +56,7 @@ class StateTenderResource extends JsonResource
             'opening_date_parsed' => $opening_date_parsed, 
             'posted_date' => $this->posted_date,
             'posted_date_parsed' => $posted_date_parsed,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $expiry_date,
             'expiry_date_parsed' => $expiry_date_parsed,
             'country_id' => $this->country_id,
             'country' => $this->Country,

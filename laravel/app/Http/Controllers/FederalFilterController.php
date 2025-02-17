@@ -154,4 +154,13 @@ class FederalFilterController extends Controller
         }
 	}
 
+	public function deleteFederalFilter(Request $request){
+		$request->validate([
+			'federal_filter_id' => 'required'
+		]);
+		$federal_filter = FederalFilter::where('federal_filter_id', $request->federal_filter_id)->first();
+		$this->deleteAssociations($federal_filter);
+		$federal_filter->delete();
+	}
+
 }

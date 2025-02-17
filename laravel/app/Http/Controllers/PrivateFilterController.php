@@ -123,4 +123,13 @@ class PrivateFilterController extends Controller
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
 	}
+
+	public function deletePrivateFilter(Request $request){
+		$request->validate([
+			'private_filter_id' => 'required'
+		]);
+		$private_filter = PrivateFilter::where('private_filter_id', $request->private_filter_id)->first();
+		$this->deleteAssociations($private_filter);
+		$private_filter->delete();
+	}
 }
