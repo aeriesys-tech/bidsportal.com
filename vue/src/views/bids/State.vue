@@ -647,7 +647,7 @@
                                                                         </span>
                                                                     </div>
                                                                     <div class="column d-flex align-items-center">
-                                                                        <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(state_tender.state_notice?.notice_name) }"> </span>
+                                                                        <span class="color-box me-2" :style="{ backgroundColor: state_tender.state_notice_color }"> </span>
 
                                                                         <a :style="{ color: state_tender.state_notice?.backround_color }" class="txt-gray">
                                                                             {{ state_tender.state_notice?.notice_name }}
