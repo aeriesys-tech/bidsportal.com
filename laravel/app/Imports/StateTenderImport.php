@@ -210,7 +210,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
     {
         return [
             '*.0' => 'required',                  
-            '*.1' => ['required', new ValidDateRule], 
+            '*.1' => ['nullable', new ValidDateRule], 
             '*.2' => ['required', new ValidDateRule], 
             '*.3' => 'nullable',
             '*.4' => 'nullable',

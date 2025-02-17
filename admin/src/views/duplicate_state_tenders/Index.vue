@@ -217,7 +217,6 @@ export default {
                     vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage
                     if (vm.tenders.length) {
                         vm.country.country_id = vm.tenders[0].tdr_country_id
-                        vm.getStates()
                     }
                     // vm.stateTenders()
                 })

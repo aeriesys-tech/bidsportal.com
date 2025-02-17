@@ -21,30 +21,51 @@
                             <router-link to="/add_state_tender" class="dropdown-item"><i class="ri-donut-chart-fill"></i> Add State Bid</router-link>
                         </li> -->
                         <li>
-                            <router-link to="/state_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                            <router-link to="/state_tenders" class="dropdown-item"><i class="ri-government-line"></i>
                                 State Bids</router-link>
                         </li>
                         <li>
-                            <router-link to="/duplicate_state_tenders" class="dropdown-item"><i
-                                    class="ri-donut-chart-fill"></i>
-                                Duplicate State Bids</router-link>
-                        </li>
-                        <li>
-                            <router-link to="/federal_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                            <router-link to="/federal_tenders" class="dropdown-item"><i class="ri-star-line"></i>
                                 Federal Bids</router-link>
                         </li>
                         <li>
-                            <router-link to="/private_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                            <router-link to="/private_tenders" class="dropdown-item"><i class="ri-building-line"></i>
                                 Private Bids</router-link>
                         </li>
                         <li>
-                            <router-link to="/international_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                            <router-link to="/international_tenders" class="dropdown-item"><i class="ri-global-line"></i>
                                 International Bids</router-link>
                         </li>
                         <li>
-                            <router-link to="/delete_tenders" class="dropdown-item"><i class="ri-donut-chart-fill"></i>
+                            <router-link to="/delete_tenders" class="dropdown-item"><i class="ri-close-circle-fill"></i>
                                 Delete Bids</router-link>
                         </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
+                        role="button" aria-expanded="false">Duplicate Bids</a>
+                    <ul class="dropdown-menu">
+                        <!-- <li>
+                            <router-link to="/add_state_tender" class="dropdown-item"><i class="ri-donut-chart-fill"></i> Add State Bid</router-link>
+                        </li> -->
+                        
+                        <li>
+                            <router-link to="/duplicate_state_tenders" class="dropdown-item"><i
+                                    class="ri-government-line"></i>
+                                Duplicate State Bids</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/duplicate_private_tenders" class="dropdown-item"><i
+                                    class="ri-building-line"></i>
+                                Duplicate Private Bids</router-link>
+                        </li>
+                        <li>
+                            <router-link to="/duplicate_international_tenders" class="dropdown-item"><i
+                                    class="ri-global-line"></i>
+                                Duplicate International Bids</router-link>
+                        </li>
+                        
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -122,15 +143,15 @@
                         role="button" aria-expanded="false">Masters</a>
                     <ul class="dropdown-menu">
                         <li>
-                            <router-link to="/categories" class="dropdown-item"><i class="ri-star-line"></i>
+                            <router-link to="/categories" class="dropdown-item"><i class="ri-stack-line"></i>
                                 Category</router-link>
                         </li>
                         <li>
-                            <router-link to="/award_types" class="dropdown-item"><i class="ri-star-line"></i>
+                            <router-link to="/award_types" class="dropdown-item"><i class="ri-file-text-line"></i>
                                 Award Type</router-link>
                         </li>
                         <li>
-                            <router-link to="/contract_types" class="dropdown-item"><i class="ri-government-line"></i>
+                            <router-link to="/contract_types" class="dropdown-item"><i class="ri-file-list-line"></i>
                                 Contract Type</router-link>
                         </li>
                     </ul>

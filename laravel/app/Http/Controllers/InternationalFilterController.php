@@ -121,4 +121,13 @@ class InternationalFilterController extends Controller
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
 	}
+
+	public function deleteInternationalFilter(Request $request){
+		$request->validate([
+			'international_filter_id' => 'required'
+		]);
+		$international_filter = InternationalFilter::where('international_filter_id', $request->international_filter_id)->first();
+		$this->deleteAssociations($international_filter);
+		$international_filter->delete();
+	}
 }

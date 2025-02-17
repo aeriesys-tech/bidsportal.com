@@ -136,7 +136,7 @@
 
             <a class="p-0 mb-0">
                 <a class="gryy1" data-bs-toggle="modal" data-bs-target="#flightdetail" role="button" aria-expanded="true" aria-controls="collapseExample5">
-                    <i class="fa fa-filter" aria-hidden="true"></i>
+                    <i class="fa fa-filter"></i>
                 </a>
             </a>
         </div>
@@ -149,7 +149,7 @@
 
             <a class="p-0 mb-0">
                 <a href="#" class="" data-bs-toggle="modal" data-bs-target="#detailModal">
-                    <i class="fa fa-filter" aria-hidden="true"></i>
+                    <i class="fa fa-filter"></i>
                 </a>
             </a>
         </div>
@@ -251,7 +251,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="flightdetail" aria-hidden="true">
+    <div class="modal fade" id="flightdetail">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="border-bottom: none;">
@@ -298,7 +298,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="detailModal" aria-hidden="true">
+    <div class="modal fade" id="detailModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="border-bottom: none;">

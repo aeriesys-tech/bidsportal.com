@@ -21,6 +21,7 @@ use App\Jobs\UpdateFileSize;
 use ZipArchive;
 use Auth;
 use App\Models\StateContact;
+use Illuminate\Support\Facades\DB;
 
 class StateTenderController extends Controller
 {
@@ -510,9 +511,49 @@ class StateTenderController extends Controller
         }
     }
 
+    public function updateStateBidsManual(Request $request)
+    {     
+        //Ensure the folder path ends with a '/'
+        $file_name = public_path().'/attachments/06_MyFloridaMarketPlace.xlsx';
+        $files = [$file_name];
+
+        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+        $folder = '';
+
+        if (count($files) > 0) {
+            foreach ($files as $key => $file) {
+                // Check if the file has an .xlsx extension
+                if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+                     Excel::import(new StateTenderImport($folderPath, $folder), $file);
+                }
+            }
+            
+            $today = Carbon::today();
+            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+            foreach ($state_attachments as $state_attachment) {
+                UpdateFileSize::dispatch($state_attachment);
+            }
+
+            return response()->json([
+                'message' => 'Data imported successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'No records found'
+            ], 422);
+        }
+    }
+
+    public function updateQuery(){
+        DB::statement('ALTER TABLE `state_tenders` CHANGE `description` `description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL');
+        DB::statement('ALTER TABLE `state_tenders` CHANGE `opening_date` `opening_date` DATE NULL');
+    }
+
     public function updateStateTender(Request $request)
     {
         $request->validate([
+            'opening_date' => 'required',
+            'expiry_date' => 'required',
             'state_tender_id' => 'required',
             'state_notice_id' => 'required',
             'category_id' => 'required',

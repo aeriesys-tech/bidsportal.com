@@ -123,4 +123,13 @@ class StateFilterController extends Controller
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
 	}
+
+	public function deleteStateFilter(Request $request){
+		$request->validate([
+			'state_filter_id' => 'required'
+		]);
+		$state_filter = StateFilter::where('state_filter_id', $request->state_filter_id)->first();
+		$this->deleteAssociations($state_filter);
+		$state_filter->delete();
+	}
 }

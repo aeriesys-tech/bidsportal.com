@@ -131,7 +131,7 @@
                                         <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
                                     </div>
                                     <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
-                                        <buttont ype="button" @click.prevent="closemodal()" class="btn-close"></buttont></a>
+                                        <button @click.prevent="closemodal()" class="btn-close"></button></a>
                                 </div>
                                 <div class="card-body text-center" style="min-width: 350px;">
                                     <strong class="text-danger">Please SUBSCRIBE !</strong>
@@ -181,7 +181,8 @@ export default {
                     if(!this.$store.getters.user.subscription){
                         this.show_pricing = true
                     }else{
-                        if(this.$store.getters.user.subscription && this.$store.getters.subscription == 'expired'){
+                        console.log(this.$store.getters.user.subscription)
+                        if(this.$store.getters.user.subscription && this.$store.getters.user.subscription === 'expired'){
                             this.show_upgrade = true
                         }
                     }
