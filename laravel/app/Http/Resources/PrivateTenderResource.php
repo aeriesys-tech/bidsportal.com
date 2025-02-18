@@ -39,6 +39,25 @@ class PrivateTenderResource extends JsonResource
         }
 
         $cart_icon = false;
+
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('M d, Y') : '-';
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('M d, Y') : '-';
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('M d, Y') : '-';
+        $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
+
+        $notice_colors = [
+            'Award Notice' => '#2569f9',
+            'Request for Proposal' => 'green',
+            'Request for Information' => 'yellow'
+        ];
+
+        if($this->PrivateNotice){
+            $private_notice_color = $this->PrivateNotice->private_notice_name ?? '';
+            $private_notice_color = $notice_colors[$private_notice_color] ?? 'gray';            
+        }else{
+            $private_notice_color = '';
+        }
+
         
 
         return [
@@ -70,7 +89,11 @@ class PrivateTenderResource extends JsonResource
             'time_ago'  => $time_ago,
             'days_difference' => $days_difference,
             'state_attachments' => $this->StateAttachments,
-            'cart_icon' => $cart_icon
+            'cart_icon' => $cart_icon,
+            'opening_date_parsed' => $opening_date_parsed,
+            'posted_date_parsed' => $posted_date_parsed,
+            'expiry_date_parsed' => $expiry_date_parsed,
+            'private_notice_color' => $private_notice_color
         ];
     }
 }

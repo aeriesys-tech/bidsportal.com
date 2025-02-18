@@ -109,13 +109,10 @@ class InternationalFilterController extends Controller
 
 	private function deleteAssociations($international_filter)
 	{
-	    // Delete all existing associated records for this state_filter
 	    try{
 		    InternationalFilterKeyword::where('international_filter_id', $international_filter->international_filter_id)->delete();
-		    InternationalFilterStatus::where('international_filter_id', $international_filter->international_filter_id)->delete();
 		    InternationalFilterNotice::where('international_filter_id', $international_filter->international_filter_id)->delete();
 		    InternationalFilterState::where('international_filter_id', $international_filter->international_filter_id)->delete();
-		    InternationalFilterCategory::where('international_filter_id', $international_filter->international_filter_id)->delete();
 		    InternationalFilterAgency::where('international_filter_id', $international_filter->international_filter_id)->delete();
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);

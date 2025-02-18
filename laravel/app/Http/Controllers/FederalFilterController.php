@@ -13,6 +13,7 @@ use App\Models\FederalFilterAgency;
 use App\Http\Resources\FederalFilterResource;
 use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class FederalFilterController extends Controller
 {
@@ -141,6 +142,7 @@ class FederalFilterController extends Controller
 	{
 	    // Delete all existing associated records for this federal_filter
 	    try{
+
 		    FederalFilterKeyword::where('federal_filter_id', $federal_filter->federal_filter_id)->delete();
 		    FederalFilterStatus::where('federal_filter_id', $federal_filter->federal_filter_id)->delete();
 		    FederalFilterNotice::where('federal_filter_id', $federal_filter->federal_filter_id)->delete();
@@ -159,8 +161,10 @@ class FederalFilterController extends Controller
 			'federal_filter_id' => 'required'
 		]);
 		$federal_filter = FederalFilter::where('federal_filter_id', $request->federal_filter_id)->first();
+		DB::statement('SET FOREIGN_KEY_CHECKS=0;'); 
 		$this->deleteAssociations($federal_filter);
 		$federal_filter->delete();
+		DB::statement('SET FOREIGN_KEY_CHECKS=1;'); 
 	}
 
 }
