@@ -294,33 +294,6 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-6 col-xl-12" v-if="private_tender.private_contacts?.length">
-                                    <div class="card border card-body border bg-light p-4">
-                                        <h6 class="text-success fw-500" style="font-size: 18px;">Contact Information</h6>
-                                        <div v-for="private_contact, key in private_tender.private_contacts" :key="key">
-                                            <strong class="mb-1 text-primary" v-if="private_contact.type == 'Primary'">Primary Contact:</strong>
-                                            <strong class="mb-1 text-primary" v-if="private_contact.type == 'Secondary'">Secondary Contact:</strong>
-                                            <ul lass="list-group list-group-borderless" style="border-top: none;">
-                                                <li class="list-group-item py-1" v-if="private_contact.fullName">
-                                                    <span class="text-info fw-light me -1 mb-0">{{ private_contact.full_name }}</span>
-                                                </li>
-                                                <li class="list-group-item py-1" v-if="private_contact.phone">
-                                                    <span href="#" class="mb-0">
-                                                        <i class="fa-solid fa-fw fa-phone text-warning fs-6"></i>
-                                                        {{ private_contact.phone }}
-                                                    </span>
-                                                </li>
-                                                <li class="list-group-item py-1" v-if="private_contact.email">
-                                                    <span href="#" class="mb-0">
-                                                        <i class="fa-solid fa-fw fa-envelope text-warning fs-6"></i>
-                                                        {{ private_contact.email }}
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div> -->
-
                                 <div
                                     class="col-md-6 col-xl-12"
                                     v-if="(private_tender?.primary_address?.full_name && private_tender.primary_address.full_name !== '-') ||
