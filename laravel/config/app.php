@@ -56,6 +56,8 @@ return [
 
     'base_url' => env('BASE_URL'),
 
+    'AWS_BUCKET' => env('AWS_BUCKET'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

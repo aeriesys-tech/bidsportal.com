@@ -111,13 +111,10 @@ class PrivateFilterController extends Controller
 
 	private function deleteAssociations($private_filter)
 	{
-	    // Delete all existing associated records for this state_filter
 	    try{
 		    PrivateFilterKeyword::where('private_filter_id', $private_filter->private_filter_id)->delete();
-		    PrivateFilterStatus::where('private_filter_id', $private_filter->private_filter_id)->delete();
 		    PrivateFilterNotice::where('private_filter_id', $private_filter->private_filter_id)->delete();
 		    PrivateFilterState::where('private_filter_id', $private_filter->private_filter_id)->delete();
-		    PrivateFilterCategory::where('private_filter_id', $private_filter->private_filter_id)->delete();
 		    PrivateFilterAgency::where('private_filter_id', $private_filter->private_filter_id)->delete();
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);

@@ -40,6 +40,8 @@ class StateTenderController extends Controller
                 $query->where('status', 0);
             } elseif ($request->status == 'Active') {
                 $query->where('status', 1);
+            } elseif ($request->status == 'Today') {
+                $query->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')]);
             }
 
             if (!empty($request->search)) 

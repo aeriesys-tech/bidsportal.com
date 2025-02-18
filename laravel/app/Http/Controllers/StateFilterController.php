@@ -114,10 +114,8 @@ class StateFilterController extends Controller
 	    // Delete all existing associated records for this state_filter
 	    try{
 		    StateFilterKeyword::where('state_filter_id', $state_filter->state_filter_id)->delete();
-		    StateFilterStatus::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		    StateFilterNotice::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		    StateFilterState::where('state_filter_id', $state_filter->state_filter_id)->delete();
-		    StateFilterCategory::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		    StateFilterAgency::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);

@@ -39,6 +39,24 @@ class InternationalTenderResource extends JsonResource
 
         $cart_icon = false;
 
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('M d, Y') : '-';
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('M d, Y') : '-';
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('M d, Y') : '-';
+        $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
+
+        $notice_colors = [
+            'Award Notice' => '#2569f9',
+            'Request for Proposal' => 'green',
+            'Request for Information' => 'yellow'
+        ];
+
+        if($this->InternationalNotice){
+            $international_notice_color = $this->InternationalNotice->international_notice_name ?? '';
+            $international_notice_color = $notice_colors[$international_notice_color] ?? 'gray';            
+        }else{
+            $international_notice_color = '';
+        }
+
         return [
             'international_tender_id' => $this->international_tender_id,
             'tender_no' => $this->tender_no,
@@ -68,7 +86,11 @@ class InternationalTenderResource extends JsonResource
             'time_ago'  => $time_ago,
             'days_difference' => $days_difference,
             'state_attachments' => $this->StateAttachments,
-            'cart_icon' => $cart_icon
+            'cart_icon' => $cart_icon,
+            'opening_date_parsed' => $opening_date_parsed,
+            'posted_date_parsed' => $posted_date_parsed,
+            'expiry_date_parsed' => $expiry_date_parsed,
+            'international_notice_color' => $international_notice_color
         ];
     }
 }

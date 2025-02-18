@@ -49,10 +49,13 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
 
     public function collection(Collection $rows)
     {
+        $s3 = Storage::disk('s3')->getClient();
+        $bucket = config('app.AWS_BUCKET');
         foreach ($rows as $key => $row) {
             Log::info($row[18]);
             // try {
-                $created_date = $this->parseDate($row[1]);
+                $posted_date = date('Y-m-d H:i:s');
+                $opening_date = $this->parseDate($row[1]);
                 $expiry_date = $this->parseDate($row[2]);
                 $tender_url = $row[16];
                 $tender_no = $row[5];
@@ -87,7 +90,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 if (in_array($tender_no, $this->existing_tender_nos)) {
                     DuplicateStateTender::updateOrCreate([
                         'tender_no' => $tender_no,
-                        'posted_date' => $created_date,
+                        'posted_date' => $posted_date,
                         'title' => $title,
                         'tender_url' => $tender_url
                     ]);
@@ -99,7 +102,8 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 $notice_name = $row[3]?$row[3]:null;
                 $category_name = $row[9]?$row[9]:null;
                 $agency_name = $row[7]?$row[7]:null;
-                $contracting_office_address = (!empty($row[14]) ? $row[14] : '') . (!empty($row[15]) ? ' ' . $row[15] : '');
+                $contracting_office_address = !empty($row[14]) ? $row[14] : '';
+                $contract_information = !empty($row[15]) ? explode("|", $row[15]) : [];
                 $tdr_fees = 0;
 
                 Log::info('state_notice_id:' .$state_notice_id);
@@ -119,11 +123,11 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                         [
                             'title' => $title,
                             'description' => $description,
-                            'opening_date' => $created_date,
-                            'posted_date' => $created_date,
+                            'opening_date' => $opening_date,
+                            'posted_date' => $posted_date,
                             'expiry_date' => $expiry_date,
                             'country_id' => $country->country_id,
-                            'state_id ' => $state_id,
+                            'state_id' => $state_id,
                             'tender_type_id' => null,
                             'state_notice_id' => $state_notice_id,
                             'category_id' => $category_id,
@@ -138,6 +142,17 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                             'status' => false,
                             'contracting_office_address' => $contracting_office_address
                         ]);
+                    if ($state_tender && is_array($contract_information) && count($contract_information) >= 4){
+                        $state_office_address = StateOfficeAddres::create([
+                            'state_tender_id' => $state_tender->state_tender_id,
+                            'type' => 'Primary',
+                            'full_name' => $contract_information[0],
+                            'title' => $contract_information[1],
+                            'phone' => $contract_information[2],
+                            'email' => $contract_information[3]
+                        ]);
+
+                    }
                 } catch (\Exception $e){
                     Log::error("Error processing state tender: " . $e->getMessage());
                 }
@@ -150,31 +165,61 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                     $filenames = [$tender_attachments];
                 }
                 foreach ($filenames as $filename) {
-                    if($filename){
-                        try{
-                            $file_path = 'State/attachments/'.$this->s3_folder.'/'.$tender_no.'/'. trim($filename);
-                            Log::info("file_path: " . $file_path);
-                            if (Storage::disk('s3')->exists($file_path)) {
-                                Log::info("file_path: " . $file_path);
-                                $attachment_url = Storage::disk('s3')->url($file_path);
-                            }else{
-                                $attachment_url = null;
-                            }
-                            Log::info("attachment_url: " . $attachment_url);
-                            StateAttachment::updateOrCreate(
+                    if ($filename) {
+                        $file_path = "State/attachments/{$this->s3_folder}/{$tender_no}/" . trim($filename);
+
+                        try {
+                            $result = $s3->headObject([
+                                'Bucket' => $bucket,
+                                'Key' => $file_path
+                            ]);
+
+                            $attachment_url = Storage::disk('s3')->url($file_path);
+                            $attachment_size = $result['ContentLength'] ?? null;
+                        } catch (\Exception $e) {
+                            $attachment_url = null;
+                            $attachment_size = null;
+                        }
+
+                        StateAttachment::updateOrCreate(
                             [
                                 'state_tender_id' => $state_tender->state_tender_id,
                                 'attachment_name' => $filename,
-                            ],[
-                                'attachment_size' => null,
+                            ],
+                            [
+                                'attachment_size' => $attachment_size,
                                 'attachment_date' => $this->s3_folder,
                                 'attachment_url' => $attachment_url
-                            ]);
-                        } catch (\Exception $e){
-                            Log::error("Error processing attachement State tender id $state_tender->state_tender_id: " . $e->getMessage());
-                        }
+                            ]
+                        );
                     }
                 }
+                // foreach ($filenames as $filename) {
+                //     if($filename){
+                //         try{
+                //             $file_path = 'State/attachments/'.$this->s3_folder.'/'.$tender_no.'/'. trim($filename);
+                //             // Log::info("file_path: " . $file_path);
+                //             if (Storage::disk('s3')->exists($file_path)) {
+                //                 Log::info("file_path: " . $file_path);
+                //                 $attachment_url = Storage::disk('s3')->url($file_path);
+                //             }else{
+                //                 $attachment_url = null;
+                //             }
+                //             Log::info("attachment_url: " . $attachment_url);
+                //             StateAttachment::updateOrCreate(
+                //             [
+                //                 'state_tender_id' => $state_tender->state_tender_id,
+                //                 'attachment_name' => $filename,
+                //             ],[
+                //                 'attachment_size' => null,
+                //                 'attachment_date' => $this->s3_folder,
+                //                 'attachment_url' => $attachment_url
+                //             ]);
+                //         } catch (\Exception $e){
+                //             Log::error("Error processing attachement State tender id $state_tender->state_tender_id: " . $e->getMessage());
+                //         }
+                //     }
+                // }
             // }catch (\Exception $e) {
             //     Log::error("Error processing row $key: " . $e->getMessage());
             // }
@@ -214,7 +259,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             '*.2' => ['required', new ValidDateRule], 
             '*.3' => 'nullable',
             '*.4' => 'nullable',
-            '*.5' => 'nullable',
+            '*.5' => 'required',
             '*.6' => 'nullable',
             '*.7' => 'nullable',
             '*.8' => 'nullable',
