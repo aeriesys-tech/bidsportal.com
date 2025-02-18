@@ -646,10 +646,10 @@
                                                                     </span>
                                                                 </div>
                                                                 <div class="column d-flex align-items-center">
-                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(private_tender.private_notice?.notice_name) }"> </span>
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: private_tender.private_notice_color}"> </span>
 
                                                                     <a :style="{ color: private_tender.private_notice?.backround_color }" class="txt-gray">
-                                                                        {{ private_tender.private_notice?.notice_name }}
+                                                                        {{ private_tender.private_notice?.private_notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -665,7 +665,7 @@
                                                             <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
                                                         </td>
                                                         <td class="txt-gray">{{ private_tender?.state?.state_name }}</td>
-                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(private_tender.expiry_date) }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ private_tender.expiry_date_parsed }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1888,18 +1888,6 @@ export default {
             this.meta.page = 1;
             this.paginatePrivateTenders();
         },
-
-        getNoticeColor(noticeName) {
-            if(noticeName){
-                if (noticeName === "Award Notice") return "#2569f9";
-                if (noticeName === "Request for Proposal") return "green";
-                if (noticeName === "Request for Information") return "yellow";
-                return "gray"; // Default color
-            }
-        },
-        formatDate(date) {
-            return date ? moment(date).format("MMM DD, YYYY") : "";
-        },
          deleteView(private_filter) {
             let vm = this;
             let private_filter_id = private_filter.private_filter_id;
@@ -1910,6 +1898,7 @@ export default {
                 })
                 .then((response) => {
                     vm.$store.dispatch("success", response.data.message);
+                     vm.getPrivateFilters()
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;

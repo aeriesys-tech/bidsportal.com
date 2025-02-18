@@ -294,11 +294,9 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-12" v-if="private_tender.private_contacts?.length">
+                                <!-- <div class="col-md-6 col-xl-12" v-if="private_tender.private_contacts?.length">
                                     <div class="card border card-body border bg-light p-4">
-                                        <!-- <div class="hstack gap-2 mb-1"> -->
                                         <h6 class="text-success fw-500" style="font-size: 18px;">Contact Information</h6>
-                                        <!-- </div> -->
                                         <div v-for="private_contact, key in private_tender.private_contacts" :key="key">
                                             <strong class="mb-1 text-primary" v-if="private_contact.type == 'Primary'">Primary Contact:</strong>
                                             <strong class="mb-1 text-primary" v-if="private_contact.type == 'Secondary'">Secondary Contact:</strong>
@@ -316,6 +314,40 @@
                                                     <span href="#" class="mb-0">
                                                         <i class="fa-solid fa-fw fa-envelope text-warning fs-6"></i>
                                                         {{ private_contact.email }}
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <div
+                                    class="col-md-6 col-xl-12"
+                                    v-if="(private_tender?.primary_address?.full_name && private_tender.primary_address.full_name !== '-') ||
+                                                        (private_tender?.primary_address?.email && private_tender.primary_address.email !== '-') ||
+                                                        (private_tender?.primary_address?.phone && private_tender.primary_address.phone !== '-')"
+                                >
+                                    <div class="card card-body border bg-light p-4">
+                                        <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
+                                        <div>
+                                            <strong class="mb-1">Primary Contact:</strong>
+                                            <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
+                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.full_name && private_tender.primary_address.full_name !== '-'">
+                                                    <span class="mb-0">
+                                                        <i class="fa-solid fa-fw fa-user text-primary fs-6"></i>
+                                                        {{private_tender?.primary_address?.full_name }}
+                                                    </span>
+                                                </li>
+                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.email && private_tender?.primary_address?.email !== '-'">
+                                                    <span href="javscript:vioid(0)" class="mb-0">
+                                                        <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
+                                                        {{ private_tender?.primary_address?.email}}
+                                                    </span>
+                                                </li>
+                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.phone && private_tender?.primary_address?.phone !== '-'">
+                                                    <span href="javscript:vioid(0)" class="mb-0">
+                                                        <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
+                                                        {{ private_tender?.primary_address?.phone }}
                                                     </span>
                                                 </li>
                                             </ul>
@@ -546,7 +578,7 @@
                     private_tenders: [],
                 },
                 delete_private_interest: null,
-                download_private_interests: null
+                download_private_interests: null,
             };
         },
 
@@ -556,8 +588,8 @@
                 if (vm.$store.getters.private_tender) {
                     vm.private_tender = vm.$store.getters.private_tender;
                     vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-                    vm.private_interest.user_id = vm.$store.getters.user?.user_id
-                    vm.download_private_interests = vm.$store.getters.baseUrl+'api/downloadPrivateInterests?private_tender_id='+vm.private_tender.private_tender_id
+                    vm.private_interest.user_id = vm.$store.getters.user?.user_id;
+                    vm.download_private_interests = vm.$store.getters.baseUrl + "api/downloadPrivateInterests?private_tender_id=" + vm.private_tender.private_tender_id;
                     vm.getPrivateTender();
                 }
             });
@@ -1215,7 +1247,7 @@
         justify-content: center;
         z-index: 2000; /* Higher than modal */
     }
-    .avatar-xxs{
+    .avatar-xxs {
         height: 1.5rem;
         width: 1.5rem;
     }

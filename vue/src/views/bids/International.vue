@@ -647,10 +647,10 @@
                                                                 </div>
 
                                                                 <div class="column d-flex align-items-center">
-                                                                    <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(international_tender.international_notice?.notice_name) }"> </span>
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: international_tender.international_notice_color}"> </span>
 
                                                                     <a :style="{ color: international_tender.international_notice?.backround_color }" class="txt-gray">
-                                                                        {{ international_tender.international_notice?.notice_name }}
+                                                                        {{ international_tender.international_notice?.international_notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -665,7 +665,7 @@
                                                             <span class="txt-gray" v-else>{{ international_tender.international_agency?.agency_name }}</span>
                                                         </td>
                                                         <td class="txt-gray">{{ international_tender.state?.state_name }}</td>
-                                                        <td class="txt-gray" style="width: 110px;">{{ formatDate(international_tender.expiry_date) }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{international_tender.expiry_date_parsed }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1914,17 +1914,6 @@ export default {
             this.meta.page = 1;
             this.paginateInternationalTenders();
         },
-        getNoticeColor(noticeName) {
-            if(noticeName){
-                if (noticeName === "Award Notice") return "#2569f9";
-                if (noticeName === "Request for Proposal") return "green";
-                if (noticeName === "Request for Information") return "yellow";
-                return "gray"; // Default color
-            }
-        },
-        formatDate(date) {
-            return date ? moment(date).format("MMM DD, YYYY") : "";
-        },
         deleteView(international_filter) {
             let vm = this;
             let international_filter_id = international_filter.international_filter_id;
@@ -1935,6 +1924,7 @@ export default {
                 })
                 .then((response) => {
                     vm.$store.dispatch("success", response.data.message);
+                    vm.getInternationalFilters()
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;
