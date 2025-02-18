@@ -221,7 +221,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             '*.9' => 'nullable',
             '*.10' => 'nullable',
             '*.11' => 'nullable',
-            '*.12' => 'required',
+            '*.12' => 'nullable',
             '*.13' => 'nullable',
             '*.14' => 'nullable',
             '*.15' => 'nullable',
