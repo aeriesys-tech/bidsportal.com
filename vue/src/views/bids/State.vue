@@ -531,11 +531,11 @@
                                                        </li>
                                                 <li class="nav-item"><img class="small w-15px me-1"
                                                         src="../../assets/icons/posteddate.svg" />{{
-                                                            dateFormat(state_tender.opening_date) }} &nbsp;<span>{{
+                                                            state_tender.opening_date_parsed }} &nbsp;<span>{{
                                                         state_tender.time_ago }} </span></li>
                                                 <li class="nav-item">
                                                     <img class="small w-15px me-1" src="../../assets/icons/duedate.svg" />
-                                                    {{ dateFormat(state_tender.expiry_date) }}
+                                                    {{ state_tender.expiry_date_parsed }}
                                                     <span class="col-green" v-if="state_tender.days_difference">
                                                         &nbsp; {{ state_tender.days_difference }} Days to Go
                                                     </span>
@@ -670,7 +670,7 @@
 
                                                             </td> -->
                                                             <td class="txt-gray">{{ state_tender?.state?.state_name }}</td>
-                                                            <td class="txt-gray" style="width: 110px;">{{ formatDate(state_tender.expiry_date) }}</td>
+                                                            <td class="txt-gray" style="width: 110px;">{{ state_tender.expiry_date_parsed }}</td>
                                                             <!-- <td>
 
                                                             </td> -->
