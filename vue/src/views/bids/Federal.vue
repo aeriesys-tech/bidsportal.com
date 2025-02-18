@@ -541,7 +541,7 @@
                                                                         </span>
                                                                     </div>
                                                                     <div class="column d-flex align-items-center">
-                                                                        <span class="color-box me-2" :style="{ backgroundColor: getNoticeColor(federal_tender?.federal_notice?.notice_name) }"> </span>
+                                                                        <span class="color-box me-2" :style="{ background: federal_tender?.federal_notice_color}"> </span>
 
                                                                         <a :style="{ color: federal_tender.federal_notice?.backround_color }" class="txt-gray">
                                                                             {{ federal_tender?.federal_notice?.notice_name }}
@@ -564,7 +564,7 @@
                                                                 <span class="txt-gray" v-else>{{ federal_tender.federal_agency?.agency_name }}</span>
                                                             </td> -->
                                                             <td class="txt-gray">{{ federal_tender.place_of_performance }}</td>
-                                                            <td class="txt-gray" style="width: 110px;">{{ formatDate(federal_tender.expiry_date) }}</td>
+                                                            <td class="txt-gray" style="width: 110px;">{{ federal_tender.expiry_date_parsed}}</td>
                                                             <!-- <td> -->
                                                             <!-- <span v-if="federal_tender.cart_icon">
                                                                     <div>
@@ -1946,17 +1946,6 @@ export default {
             this.meta.page = 1;
             this.paginateFederalTenders();
         },
-        getNoticeColor(noticeName) {
-            if(noticeName){
-                if (noticeName === "Award Notice") return "#2569f9";
-                if (noticeName === "Request for Proposal") return "green";
-                if (noticeName === "Request for Information") return "yellow";
-                return "gray"; // Default color
-            }
-        },
-        formatDate(date) {
-            return date ? moment(date).format("MMM DD, YYYY") : "";
-        },
         deleteView(state_filter) {
             let vm = this;
             let federal_filter_id = state_filter.federal_filter_id;
@@ -1967,6 +1956,7 @@ export default {
                 })
                 .then((response) => {
                     vm.$store.dispatch("success", response.data.message);
+                    vm.getFederalFilters()
                 })
                 .catch(function (error) {
                     vm.errors = error.response.data.errors;
