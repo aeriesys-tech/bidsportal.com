@@ -42,9 +42,9 @@ class StateTenderResource extends JsonResource
 
         $cart_icon = false;
 
-        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('d-m-Y') : null;
-        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('d-m-Y') : null;
-        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('d-m-Y') : null;
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('M d, Y') : '-';
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('M d, Y') : '-';
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('M d, Y') : '-';
         $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
 
         $notice_colors = [
