@@ -93,7 +93,7 @@
                                             <div class="card-body p-0">
                                                 <ul class="list-group list-group-borderless mb-3">
                                                     <li class="list-group-item">
-                                                        <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light ">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
+                                                        <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
                                                     </li>
                                                 </ul>
                                                 <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
@@ -330,11 +330,9 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
+                                    <!-- <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
                                         <div class="card card-body border bg-light p-4">
-                                            <!-- <div class="hstack gap-2 mb-1"> -->
                                             <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
-                                            <!-- </div> -->
                                             <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
                                                 <strong class="mb-1" v-if="federal_contact.type == 0">Primary Contact:</strong>
                                                 <strong class="mb-1" v-if="federal_contact.type == 1">Secondary Contact:</strong>
@@ -352,6 +350,39 @@
                                                         <span href="#" class="mb-0">
                                                             <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
                                                             {{ federal_contact.email }}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div
+                                        class="col-md-6 col-xl-12"
+                                        v-if="(federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-') ||
+                                                        (federal_tender?.primary_address?.email && federal_tender.primary_address.email !== '-') ||
+                                                        (federal_tender?.primary_address?.phone && federal_tender.primary_address.phone !== '-')"
+                                    >
+                                        <div class="card card-body border bg-light p-4">
+                                            <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
+                                            <div>
+                                                <strong class="mb-1">Primary Contact:</strong>
+                                                <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-'">
+                                                        <span class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-user text-primary fs-6"></i>
+                                                            {{federal_tender?.primary_address?.full_name }}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.email && federal_tender?.primary_address?.email !== '-'">
+                                                        <span href="javscript:vioid(0)" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
+                                                            {{ federal_tender?.primary_address?.email}}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.phone && federal_tender?.primary_address?.phone !== '-'">
+                                                        <span href="javscript:vioid(0)" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
+                                                            {{ federal_tender?.primary_address?.phone }}
                                                         </span>
                                                     </li>
                                                 </ul>
@@ -510,8 +541,8 @@
                     <a class="btn btn-outline-none float-end" @click.prevent="closemodal()"><i class="fa-solid fa-close"></i></a>
                     <h1 class="title-green">Are you sure?</h1>
                     <p>Do you really want to delete these records? This process cannot be undone.</p>
-                        <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
-                        <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</a>
+                    <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
+                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</a>
                 </div>
             </div>
         </teleport>
@@ -591,7 +622,7 @@
                     federal_tenders: [],
                 },
                 delete_federal_interest: null,
-                download_federal_interests: null
+                download_federal_interests: null,
             };
         },
 
@@ -602,7 +633,7 @@
                     vm.federal_tender = vm.$store.getters.federal_tender;
                     vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
                     vm.federal_interest.user_id = vm.$store.getters.user?.user_id;
-                    vm.download_federal_interests = vm.$store.getters.baseUrl+'api/downloadFederalInterests?federal_tender_id='+vm.federal_tender.federal_tender_id
+                    vm.download_federal_interests = vm.$store.getters.baseUrl + "api/downloadFederalInterests?federal_tender_id=" + vm.federal_tender.federal_tender_id;
                     vm.getFederalTender();
                 }
             });
@@ -1333,7 +1364,7 @@
         justify-content: center;
         z-index: 2000; /* Higher than modal */
     }
-    .avatar-xxs{
+    .avatar-xxs {
         height: 1.5rem;
         width: 1.5rem;
     }
