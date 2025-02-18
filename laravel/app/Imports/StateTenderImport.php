@@ -21,7 +21,7 @@ use GuzzleHttp\Client;
 use Storage;
 use App\Models\StateNotice;
 use App\Models\StateAgency;
-use App\models\Category;
+use App\Models\Category;
 
 class StateTenderImport implements ToCollection, WithValidation, WithStartRow
 {
