@@ -497,14 +497,7 @@
 
                             // vm.$store.dispatch("setSelectedNaics", vm.alert.naics);
                             // Load the federal agencies and filter selected ones
-<<<<<<< HEAD
-
-                            console.log("NAICS Before Setting:", vm.alert.naics);
-                            console.log("Vuex Selected NAICS:", vm.$store.state.selected_naics);
-                            vm.getFederalAgencies();
-=======
                             // vm.getFederalAgencies();
->>>>>>> 8ca964062ec0cd3e65d5251ef1bce050c66c8953
                         })
                         .catch(function (error) {
                             loader.hide();
