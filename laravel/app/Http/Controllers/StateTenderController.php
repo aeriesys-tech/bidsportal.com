@@ -165,6 +165,25 @@ class StateTenderController extends Controller
         return StateTenderResource::collection($state_tenders);
     }
 
+    public function getTotalCount(){
+        $counts = StateTender::selectRaw("
+            COUNT(*) as total_bids,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_bids,
+            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_bids
+        ")->first();
+
+        $approved_today = StateTender::where('status', 1)
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        return response()->json([
+            'total_bids' => $counts->total_bids,
+            'active' => $counts->active_bids,
+            'pending' => $counts->inactive_bids,
+            'approved_today' => $approved_today
+        ]);
+    }
+
     public function paginateStateTenders1(Request $request)
     {
         $request->validate([
