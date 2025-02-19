@@ -736,8 +736,11 @@
                         <div class="modal-body">
                             <div class="card border">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
-                                    <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-bell fs-24 fa-fw text-success"></i>
+                                        <div class="ms-2">
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                        </div>
                                     </div>
                                     <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
                                         <button ype="button" @click.prevent="closeModal()" class="btn-close"></button></a>
@@ -756,11 +759,22 @@
         </teleport>
         <teleport to="#modals" v-if="modal.federal_tender">
             <div class="modal-overlay">
-                <div id="popup1" class="confirm1" style="background-color: white !important;">
-                    <div class="">
-                        <h1>Alert</h1>
-                        <p>Please select bid !</p>
-                        <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+                <div class="modal-body">
+                    <div class="card border">
+                        <div class="card-header d-flex justify-content-between align-items-center p-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-bell fs-24 fa-fw text-success"></i>
+                                <div class="ms-2">
+                                <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
+                                    type="button" @click.prevent="closeModal()"
+                                    class="btn-close"></button></a>
+                        </div>
+                        <div class="card-body text-center" style="min-width: 350px;">
+                            <h6 class="text-danger">Please select bid !</h6>
+                        </div>
                     </div>
                 </div>
             </div>
