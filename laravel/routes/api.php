@@ -71,6 +71,7 @@ Route::post("updateTenderState", [StateTenderController::class,'updateTenderStat
 Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
 Route::post("getStateTendersRange", [StateTenderController::class,'getStateTendersRange']);
 Route::post("deleteStateTendersRange", [StateTenderController::class,'deleteStateTendersRange']);
+Route::post("getTotalCount", [StateTenderController::class,'getTotalCount']);
 
 Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
 Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
