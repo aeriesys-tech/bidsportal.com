@@ -112,7 +112,7 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
 
                 Log::info('state_id:' .$state_id);
                 
-                if($state_notice_id && $state_agency_id && $state_id){
+                if($opening_date && $expiry_date && $state_notice_id && $state_agency_id && $state_id){
                     $status = true;
                 }else{
                     $status = false;
