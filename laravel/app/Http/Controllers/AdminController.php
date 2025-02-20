@@ -196,21 +196,53 @@ class AdminController extends Controller
         return $files;
     }
 
+    // public function showS3BucketFiles(Request $request)
+    // {
+    //     $data = $request->validate([
+    //         'folder'=> 'required'
+    //     ]);
+
+    //     $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+    //     $files = Storage::disk('s3')->files($folderPath);
+    //     $excel_files = array_map(function ($file) 
+    //     {
+    //         return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx' ? basename($file) : null;
+    //     }, $files);
+
+    //     return array_values(array_filter($excel_files));
+    // }
     public function showS3BucketFiles(Request $request)
     {
         $data = $request->validate([
-            'folder'=> 'required'
+            'folder' => 'required|string'
         ]);
 
-        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
-        $files = Storage::disk('s3')->files($folderPath);
-        $excel_files = array_map(function ($file) 
-        {
-            return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx' ? basename($file) : null;
-        }, $files);
+        $folderPath = rtrim('State/attachments/' . $data['folder'], '/') . '/';
 
-        return array_values(array_filter($excel_files));
+        // Check if folder exists in S3
+        if (!Storage::disk('s3')->exists($folderPath)) {
+            return response()->json(['message' => 'Folder not found'], 404);
+        }
+
+        // Get all files in the folder
+        $files = Storage::disk('s3')->files($folderPath);
+
+        // Filter only .xlsx files and generate download URLs
+        $excelFiles = array_values(array_filter($files, function ($file) {
+            return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx';
+        }));
+
+        // Map files with their download URL
+        $fileData = array_map(function ($file) {
+            return [
+                'filename' => basename($file),
+                'download_url' => Storage::disk('s3')->url($file), // Use temporaryUrl() for private files
+            ];
+        }, $excelFiles);
+
+        return response()->json($fileData);
     }
+
 
     public function deleteS3BucketFiles(Request $request)
     {
