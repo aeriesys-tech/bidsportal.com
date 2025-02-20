@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\StateTenderMail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StateTenderImport;
+use App\Imports\demoimport;
 use App\Jobs\UpdateFileSize;
 use ZipArchive;
 use Auth;
@@ -384,9 +385,9 @@ class StateTenderController extends Controller
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
-            'state_notice_id' => 'nullable',
-            'category_id' => 'nullable',
-            'state_agency_id' => 'nullable',
+            'state_notice_id' => 'required',
+            'category_id' => 'required',
+            'state_agency_id' => 'required',
             'tender_url' => 'nullable',
             'fees' => 'nullable',
             'state_address_office.city' => 'nullable',
@@ -515,28 +516,76 @@ class StateTenderController extends Controller
                     }
                 }
             }
-            
-            $today = Carbon::today();
-            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-            foreach ($state_attachments as $state_attachment) {
-                UpdateFileSize::dispatch($state_attachment);
-            }
 
             return response()->json([
                 'message' => 'Data imported successfully'
             ]);
         } else {
             return response()->json([
-                'message' => 'No records found'
+                'message' => 'Folder does not exist or is empty',
+                'error' => []
             ], 422);
         }
     }
 
+    // public function updateStateBids(Request $request)
+    // {     
+    //     $data = $request->validate([
+    //         'folder' => 'required|string'
+    //     ]);
+
+    //     // Ensure the folder path ends with a '/'
+    //     $folderPath = rtrim('State/attachments/' . $data['folder'], '/') . '/';
+
+    //     // Get files from S3
+    //     $files = Storage::disk('s3')->files($folderPath);
+
+    //     // If the folder has no files, assume it does not exist
+    //     if (empty($files)) {
+    //         return response()->json([
+    //             'message' => 'Folder does not exist or is empty: ' . $data['folder'],
+    //             'error' => 'Folder does not exist or is empty: ' . $data['folder']
+    //         ], 404);
+    //     }
+
+    //     $importedFiles = [];
+
+    //     foreach ($files as $file) {
+    //         // Check if the file has an .xlsx extension
+    //         if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+    //             // Proceed only if the file exists in S3
+    //             if (Storage::disk('s3')->exists($file)) {
+    //                 try {
+    //                     // Import the file using Laravel Excel
+    //                     Excel::import(new StateTenderImport($folderPath, $data['folder']), $file, 's3');
+    //                     $importedFiles[] = basename($file);
+    //                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //                     return response()->json([
+    //                         'message' => 'Error importing file: ' . basename($file),
+    //                         'error' => $e->failures()
+    //                     ], 500);
+    //                 }
+    //             } else {
+    //                 return response()->json([
+    //                     'message' => 'File does not exist: ' . basename($file)
+    //                 ], 404);
+    //             }
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'message' => count($importedFiles) > 0 ? 'Data imported successfully' : 'No valid .xlsx files found',
+    //         'imported_files' => $importedFiles
+    //     ]);
+    // }
+
+
     public function updateStateBidsManual(Request $request)
     {     
         //Ensure the folder path ends with a '/'
-        $file_name = public_path().'/attachments/06_MyFloridaMarketPlace.xlsx';
+        $file_name = public_path().'/attachments/20_County_of_San_Diego.xlsx';
         $files = [$file_name];
+        // dd($files);
 
         $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
         $folder = '';
@@ -549,11 +598,11 @@ class StateTenderController extends Controller
                 }
             }
             
-            $today = Carbon::today();
-            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-            foreach ($state_attachments as $state_attachment) {
-                UpdateFileSize::dispatch($state_attachment);
-            }
+            // $today = Carbon::today();
+            // $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+            // foreach ($state_attachments as $state_attachment) {
+            //     UpdateFileSize::dispatch($state_attachment);
+            // }
 
             return response()->json([
                 'message' => 'Data imported successfully'
@@ -578,6 +627,7 @@ class StateTenderController extends Controller
             'state_tender_id' => 'required',
             'state_notice_id' => 'required',
             'category_id' => 'required',
+            'state_agency_id' => 'required',
             'state_id' => 'required'
         ]);
 
@@ -670,9 +720,9 @@ class StateTenderController extends Controller
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
-            'state_notice_id' => 'nullable',
-            'category_id' => 'nullable',
-            'state_agency_id' => 'nullable',
+            'state_notice_id' => 'required',
+            'category_id' => 'required',
+            'state_agency_id' => 'required',
             'tender_url' => 'nullable',
             'primary_address.title' => 'nullable|string|max:255',
             'primary_address.email' => 'nullable',
