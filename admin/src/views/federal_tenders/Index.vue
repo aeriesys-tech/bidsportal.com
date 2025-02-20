@@ -2,7 +2,11 @@
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="main-title mb-2">Federal Tender</h2>
-            <router-link to="/add_federal_tender" class="btn btn-primary mb-2">Add Federal Bid</router-link>
+            <div>
+                <button class="btn btn-danger mb-2 me-2" v-if="tender_delete.delete_tenders.length" @click="deleteTenders()">Delete Bid</button>
+                <router-link to="/add_federal_tender" class="btn btn-primary mb-2">Add Federal Bid</router-link>
+            </div>
+
         </div>
         <div class="row g-3">
             <div class="col-md-12">
@@ -11,17 +15,6 @@
                         <div class="d-sm-flex align-items-center justify-content-between">
                             <h6 class="card-title mb-0"><strong>Federal Tenders</strong></h6>
                             <div class="d-flex">
-                                <button class="btn btn-danger btn-sm" v-if="tender_delete.delete_tenders.length"
-                                    style="margin-right:10px" @click="deleteTenders()">Delete</button>
-                                <span class="badge bg-primary rounded-pill" v-if="federal_tenders_count.total_bids"
-                                    style="font-size: 10pt;">Total Bids: {{ federal_tenders_count?.total_bids }}</span>
-                                <span class="badge bg-success rounded-pill" v-if="federal_tenders_count.active"
-                                    style="font-size: 10pt;margin-left: 10px;">Active: {{ federal_tenders_count?.active
-                                    }}</span>
-                                <span class="badge bg-danger rounded-pill" v-if="federal_tenders_count.inactive"
-                                    style="margin-left: 10px;font-size: 10pt;">Pending: {{ federal_tenders_count?.inactive
-                                    }}</span>
-
                                 <select class="form-control" v-model="meta.status" @change="search">
                                     <option value="">Select Status</option>
                                     <option value="All">All</option>
@@ -469,5 +462,12 @@ export default {
 .no-wrap {
     white-space: nowrap;
     /* Disable text wrapping */
+}
+.table thead {
+    position: sticky;
+    top: -1px;
+    background: white; /* Ensure visibility */
+    z-index: 10;
+     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 </style>

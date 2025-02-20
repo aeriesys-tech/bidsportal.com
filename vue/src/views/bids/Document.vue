@@ -978,14 +978,14 @@
                 <div class="modal-content">
                     <div class="modal-header m-header"></div>
                     <div class="modal-body">
-                        <div class="card border">
-                            <div class="card-body vstack gap-4">
+                        <!-- <div class="card border">
+                            <div class="card-body vstack gap-4"> -->
                                 <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center p-0">
+                                    <div class="card-header d-flex justify-content-between align-items-center p-3">
                                         <div class="d-flex align-items-center">
                                             <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                             <div class="ms-2">
-                                                <h6 class="mb-0">Share Bid Details</h6>
+                                                <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                             </div>
                                         </div>
 
@@ -1036,12 +1036,13 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <a href="javascript:void(0)" @click="sendStateTenderMail()" class="mybutton-secondary2">Send</a>
+                                            <!-- <a href="javascript:void(0)" @click="sendStateTenderMail()" class="mybutton-secondary2">Send</a> -->
+                                            <button type="button" class="mb-0 btn btn-sm btn-success fw-400" @click="sendStateTenderMail()">Send</button>
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
+                            <!-- </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer m-foot"></div>
                 </div>
@@ -1900,16 +1901,16 @@
                 this.listview = false;
                 this.gridview = true;
                 if (this.region == "State") {
-                    this.state_filter.per_page = 28;
+                    this.state_filter.per_page = 30;
                     this.getStateTenders();
                 } else if (this.region == "Federal") {
-                    this.federal_filter.per_page = 28;
+                    this.federal_filter.per_page = 30;
                     this.getFederalTenders();
                 } else if (this.region == "Private") {
-                    this.private_filter.per_page = 28;
+                    this.private_filter.per_page = 30;
                     this.getPrivateTenders();
                 } else if (this.region == "International") {
-                    this.international_filter.per_page = 28;
+                    this.international_filter.per_page = 30;
                     this.getInternationalTenders();
                 }
             },
@@ -1917,16 +1918,16 @@
                 this.listview = true;
                 this.gridview = false;
                 if (this.region == "State") {
-                    this.state_filter.per_page = 10;
+                    this.state_filter.per_page = 15;
                     this.getStateTenders();
                 } else if (this.region == "Federal") {
-                    this.federal_filter.per_page = 10;
+                    this.federal_filter.per_page = 15;
                     this.getFederalTenders();
                 } else if (this.region == "Private") {
-                    this.private_filter.per_page = 10;
+                    this.private_filter.per_page = 15;
                     this.getPrivateTenders();
                 } else if (this.region == "International") {
-                    this.international_filter.per_page = 10;
+                    this.international_filter.per_page = 15;
                     this.getInternationalTenders();
                 }
             },

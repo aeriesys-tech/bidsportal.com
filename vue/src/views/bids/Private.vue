@@ -1348,13 +1348,13 @@ export default {
         listviewgrid() {
             this.listview = false;
             this.gridview = true;
-            this.meta.per_page = 38;
+            this.meta.per_page = 30;
             this.getPrivateTenders();
         },
         gridviewgrid() {
             this.listview = true;
             this.gridview = false;
-            this.meta.per_page = 10;
+            this.meta.per_page = 15;
             this.getPrivateTenders();
         },
 

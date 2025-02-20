@@ -546,4 +546,12 @@
         white-space: nowrap;
         /* Disable text wrapping */
     }
+
+    .table thead {
+    position: sticky;
+    top: -1px;
+    background: white; /* Ensure visibility */
+    z-index: 10;
+     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+}
 </style>

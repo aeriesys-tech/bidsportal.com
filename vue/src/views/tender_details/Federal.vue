@@ -413,11 +413,9 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-xxs">
-                                            <img class="avatar-img" src="assets/images/emailicon1.png" alt="avatar" />
-                                        </div>
+                                        <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                         <div class="ms-2">
-                                            <h6 class="mb-0 title-green fw-500">Share Bid Detail</h6>
+                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -426,7 +424,7 @@
                                     <div class="mb-3">
                                         <input
                                             class="form-control"
-                                            placeholder="Employee/Colleague Email Address"
+                                            placeholder="Email"
                                             :class="{ 'is-invalid': errors.recipient_email }"
                                             autocomplet="off"
                                             type="text"
@@ -442,7 +440,7 @@
                                             type="text"
                                             name="email_subject"
                                             :class="{ 'is-invalid': errors.subject }"
-                                            placeholder="Subject of Email"
+                                            placeholder="Subject"
                                             autocomplet="off"
                                             id="email_subject"
                                             v-model="share_tender.subject"
@@ -456,7 +454,7 @@
                                             rows="3"
                                             name="email_message"
                                             :class="{ 'is-invalid': errors.message }"
-                                            placeholder="Brief Messsage/Note"
+                                            placeholder="Messsage"
                                             autocomplet="off"
                                             id="email_message"
                                             v-model="share_tender.message"
@@ -485,10 +483,10 @@
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
-                                            <h6 class="mb-0 title-green fw-500">
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
                                                 <span v-if="federal_interest.status">Add Interest</span>
                                                 <span v-else>Update Interest</span>
-                                            </h6>
+                                            </h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -1367,5 +1365,8 @@
     .avatar-xxs {
         height: 1.5rem;
         width: 1.5rem;
+    }
+    .fs-24 {
+        font-size: 24px;
     }
 </style>
