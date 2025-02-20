@@ -2,7 +2,11 @@
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="main-title mb-2">International Tender</h2>
-            <router-link to="/add_international_tender" class="btn btn-primary mb-2">Add International Bid</router-link>
+            <div>
+                <button class="btn btn-danger mb-2 me-2" v-if="tender_delete.delete_tenders.length" @click="deleteTenders()">Delete</button>
+                <router-link to="/add_international_tender" class="btn btn-primary mb-2">Add International Bid</router-link>
+            </div>
+
         </div>
         <div class="row g-3">
             <div class="col-md-12">
@@ -10,18 +14,14 @@
                     <div class="card-header">
                         <div class="d-sm-flex align-items-center justify-content-between">
                             <h6 class="card-title mb-0"><strong>International Tenders</strong></h6>
-                            <div class="d-flex">
-                                <button class="btn btn-danger btn-sm" v-if="tender_delete.delete_tenders.length"
-                                    style="margin-right:10px" @click="deleteTenders()">Delete</button>
-                                <span class="badge bg-primary rounded-pill"
-                                    v-if="international_tenders_count.total_bids" style="font-size: 10pt;">Total Bids:
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary rounded-pill" style="font-size: 10pt;">Total Bids:
                                     {{ international_tenders_count?.total_bids }}</span>
-                                <span class="badge bg-success rounded-pill" v-if="international_tenders_count.active"
-                                    style="font-size: 10pt;margin-left: 10px;">Active: {{
+                                <span class="badge bg-success rounded-pill"style="font-size: 10pt;margin-left: 10px;">Active: {{
                                         international_tenders_count?.active
                                     }}</span>
-                                <span class="badge bg-danger rounded-pill" v-if="international_tenders_count.inactive"
-                                    style="margin-left: 10px;font-size: 10pt;">Pending: {{
+                                <span class="badge bg-danger rounded-pill"
+                                    style="margin-left: 10px;margin-right: 10px;font-size: 10pt;">Pending: {{
                                         international_tenders_count?.inactive
                                     }}</span>
 
@@ -543,5 +543,12 @@ export default {
 .no-wrap {
     white-space: nowrap;
     /* Disable text wrapping */
+}
+.table thead {
+    position: sticky;
+    top: -1px;
+    background: white; /* Ensure visibility */
+    z-index: 10;
+     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 </style>
