@@ -187,7 +187,8 @@
                                 <div class="form-group">
                                     <label style="font-weight: bold;">S3 Bucket Folders</label>
                                     <input type="date" id="calendar" v-model="upload_excel.folder" class="form-control" :min="min_date" :max="max_date" @change="validateDate()" />
-                                    <span v-if="upload_excel.errors.folder" class="invalid-feedback">{{ upload_excel.errors.folder[0] }}</span>
+                                    <span v-if="upload_excel?.errors.folder" class="invalid-feedback">{{ upload_excel?.errors.folder[0] }}</span>
+                                    <span v-if="errors.folder" class="invalid-feedback">{{ errors.folder[0] }}eee</span>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -195,30 +196,31 @@
                                 <button class="btn btn-primary btn-sm" @click="showS3BucketFiles()">Show Files</button>
                                 <button class="btn btn-danger btn-sm" @click="deleteS3BucketFiles()" v-if="upload_excel.delete_files?.length" style="margin-left: 10px;">Delete</button>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 mt-2">
                                 <div class="form-group">
                                     <label style="font-weight: bold;">Upload Excel File</label>
                                     <input type="file" class="form-control form-control-sm" :class="{'is-invalid': upload_excel.errors.file}" @change="getExcelFile($event)" ref="excel_file">
                                     <span v-if="upload_excel.errors.file" class="invalid-feedback">{{ upload_excel.errors.file[0] }}</span>
                                 </div>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-1 mt-2">
                                 <div class="form-group">
                                     <br/>
                                     <button class="btn btn-primary btn-sm" @click="uploadS3BucketFile()">Upload</button>
                                 </div>
                             </div>
-                            <div class="col-md-12" style="margin-top: 10px;" v-if="upload_excel.errors.duplicate">
+                            <div class="col-md-12 mt-3" v-if="upload_excel.errors.duplicate">
                                 <span style="color:red">{{ upload_excel.errors.duplicate }}</span>
                             </div>
-                            <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="col-md-12 mt-3">
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm">
                                         <thead>
                                             <tr>
                                                 <th class="text-center" width="20%">Sl.No.</th>
-                                                <th class="text-center" width="60%">File Name</th>
+                                                <th width="60%">File Name</th>
                                                 <th class="text-center" width="20%">Action</th>
+                                                <th class="text-center" width="20%">Download</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -227,9 +229,12 @@
                                             </tr>
                                             <tr v-for="file, file_key in excel_files" :key="file_key">
                                                 <td class="text-center">{{ parseInt(file_key)+1 }}</td>
-                                                <td class="text-center">{{ file }}</td>
+                                                <td>{{ file.filename }}</td>
                                                 <td class="text-center">
                                                     <input type="checkbox" v-model="upload_excel.delete_files" :value="file">
+                                                </td>
+                                                 <td class="text-center">
+                                                    <a v-if="file.download_url" :href="file.download_url"><i class="ri-download-line"></i></a>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -240,7 +245,7 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 </template>
 <script>
@@ -248,7 +253,7 @@
         name: "Dashboard",
         data() {
             return {
-                min_date: '2024-09-01', 
+                min_date: '2024-09-01',
                 max_date : '2024-12-05',
                 selected_date: null,
                 allowed_dates:[],
@@ -316,7 +321,7 @@
                     this.$store.dispatch("info", "Folder doesn't exist in S3 for the selected date")
                     return false
                 }
-            }, 
+            },
             updateSubscriptionSetting() {
                 let vm = this;
                 const payload = {
@@ -375,6 +380,7 @@
                         vm.excel_files = response.data
                     })
                     .catch(function (error) {
+                        // console.log("e11",error)
                         loader.hide()
                         vm.upload_excel.errors = error.response.data.errors
                     });
@@ -494,8 +500,9 @@
                         vm.$router.push('/state_tenders')
                     })
                     .catch(function (error) {
+                        console.log("err--",error)
                         loader.hide();
-                        vm.errors = error?.response.data?.error
+                        vm.errors = error?.response?.data?.error
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
@@ -537,7 +544,7 @@
                         // vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-            
+
         },
     };
 </script>

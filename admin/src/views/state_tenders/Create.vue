@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Issuing Agency </label>
+                                    <label>Issuing Agency <span class="text-danger">*</span> </label>
                                     <search :class="{ 'is-invalid': errors?.state_agency_id }"
                                         :customClass="{ 'is-invalid': errors?.state_agency_id }"
                                         :initialize="tender.state_agency_id" id="state_agency_id"
