@@ -84,11 +84,11 @@
                         <div class="col-xl-8">
                             <div class="tab-content mb-0" id="tour-pills-tabContent">
                                 <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
-                                    <div class="card bg-transparent py-0 p-4">
+                                    <div class="card bg-transparent">
                                         <div class="card-body p-0">
                                             <ul class="list-group list-group-borderless mb-3">
                                                 <li class="list-group-item">
-                                                    <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light mb-0">{{ international_tender.international_agency?.international_agency_name}}</span></h6>
+                                                    <h6 class="mb-0 fw-normal">Agency : <span class="fw-light mb-0">{{ international_tender.international_agency?.international_agency_name}}</span></h6>
                                                 </li>
                                             </ul>
                                             <p class="mb-4 text-align-justify" v-html="international_tender.description"></p>
@@ -135,7 +135,7 @@
                                         </div>
                                     </div>
                                     <div class="card">
-                                        <div class="card-body py-0 p-4">
+                                        <div class="card-body p-0">
                                             <div class="row g-3 align-items-center justify-content-between mb-3">
                                                 <div class="col-md-6" v-if="international_tender?.international_attachments?.length">
                                                     <strong class="text-primary">Downloads ({{ international_tender?.international_attachments?.length }})</strong>
@@ -224,7 +224,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
-                                    <div class="card bg-transparent p-4 pt-0">
+                                    <div class="card bg-transparent ">
                                         <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
                                             <div class="rounded">
                                                 <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">

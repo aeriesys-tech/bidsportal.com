@@ -315,7 +315,7 @@
                                         </form>
                                     </div>
 
-                                    <div class="scroll1">
+                                    <div class="scroll1 hgt-300">
                                         <div class="d-flex justify-content-between align-items-center"
                                             v-for="category in sorted_categories" :key="category.category_id">
                                             <div class="form-check">
@@ -2563,5 +2563,8 @@ export default {
     }
     .fs-24 {
         font-size: 24px;
+    }
+    .hgt-300{
+        height: 300px;
     }
 </style>
