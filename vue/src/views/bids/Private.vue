@@ -48,8 +48,8 @@
                                     <a class="dropdown-item dropitem2" href="javascript:void(0)"
                                         @click="showPrivateFilter(private_filter)">{{ private_filter.private_filter_name
                                         }}</a>
-                                    <a href="javascript:void(0)" class="icon red my-auto" @click="deleteView(private_filter)">
-                                        <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
+                                   <a href="javascript:void(0)" class="icon red my-auto" @click="confirmDelete(private_filter)">
+                                            <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             </ul>
@@ -960,6 +960,20 @@
             </div>
         </div>
     </teleport>
+    <!-- Confirmation Modal -->
+    <teleport to="#modals" v-if="erroralertmodal">
+        <div class="modal-overlay">
+            <div class="confirm text-center" style="background-color: white !important;">
+                <a class="btn btn-outline-none float-end" @click.prevent="closeModal()">
+                    <i class="fa-solid fa-close"></i>
+                </a>
+                <h1 class="title-green">Are you sure?</h1>
+                <p>Do you really want to delete these records? This process cannot be undone.</p>
+                <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closeModal()">Cancel</a>
+                <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteAlert()">Confirm</a>
+            </div>
+        </div>
+    </teleport>
 </template>
 
 <script>
@@ -1143,7 +1157,9 @@ export default {
                 save_search: null,
                 set_alert: null,
                 share_tender: null
-            }
+            },
+            erroralertmodal: false,
+            delete_alert: null,
         };
     },
 
@@ -1480,6 +1496,8 @@ export default {
             this.modal.save_search = false
             this.share_tender = false
             this.modal.share_tender = false
+            this.erroralertmodal = false; // Hide modal
+            this.delete_alert = null;
             this.share_private_tender.private_tenders = []
         },
 
@@ -1902,23 +1920,31 @@ export default {
             this.meta.page = 1;
             this.paginatePrivateTenders();
         },
-         deleteView(private_filter) {
-            let vm = this;
-            let private_filter_id = private_filter.private_filter_id;
-            vm.$store
-                .dispatch("post", {
-                    uri: "deletePrivateFilter",
-                    data: { private_filter_id: private_filter_id } ,
-                })
-                .then((response) => {
-                    vm.$store.dispatch("success", response.data.message);
-                     vm.getPrivateFilters()
-                })
-                .catch(function (error) {
-                    vm.errors = error.response.data.errors;
-                    vm.$store.dispatch("error", error.response.data.message);
-                });
-        },
+         deleteAlert() {
+                let vm = this;
+                if (vm.delete_alert) {
+                    let private_filter_id = vm.delete_alert.private_filter_id;
+                    vm.$store
+                        .dispatch("post", {
+                            uri: "deletePrivateFilter",
+                            data: { private_filter_id: private_filter_id },
+                        })
+                        .then((response) => {
+                            vm.$store.dispatch("success", response.data.message);
+                           vm.getPrivateFilters()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+                this.closeModal();
+            },
+          confirmDelete(private_filter) {
+                console.log("private_filter file", private_filter);
+                this.delete_alert = private_filter;
+                this.erroralertmodal = true;
+            },
     },
 };
 </script>
@@ -2274,7 +2300,8 @@ export default {
 .confirm p {
     text-align: center;
     font-size: 1rem;
-    margin: 0 2rem 4.5rem;
+    /* margin: 0 2rem 4.5rem; */
+     margin: 0 2rem 1.2rem;
     color: black;
 }
 
@@ -2543,5 +2570,8 @@ export default {
 }
 .hgt-300{
     height: 300px;
+}
+.title-green {
+    color: #16a34a !important;
 }
 </style>

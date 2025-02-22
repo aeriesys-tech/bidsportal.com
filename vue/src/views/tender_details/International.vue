@@ -661,7 +661,11 @@
                 let vm = this;
                 vm.status = true;
                 vm.interstmodal = true;
-                // }
+
+                // Activate the tab button
+                const tabButton = document.getElementById("tour-pills-tab-4");
+                let tab = new bootstrap.Tab(tabButton);
+                tab.show();
             },
             checklogin() {
                 let vm = this;
