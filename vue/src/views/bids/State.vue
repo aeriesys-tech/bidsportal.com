@@ -741,7 +741,7 @@
                     <div class="">
                         <div class=""></div>
                         <div class="">
-                            <SaveSearch @closeModal="closeModal" @updateSearch="addStateFilter" :status="save_search_filter.status" :filter_name="meta.state_filter_name" :savedbids="savedbids" ref="save_search" />
+                            <SaveSearch @closeModal="closeModal" @updateSearch="updateStateFilter"  @saveSearch="addStateFilter" :status="save_search_filter.status" :filter_name="meta.state_filter_name" :savedbids="savedbids" ref="save_search" />
                         </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
@@ -1395,6 +1395,26 @@
             },
 
             addStateFilter(filter_name) {
+                let vm = this;
+                vm.meta.state_filter_name = filter_name;
+                if (this.$store.getters.user) {
+                    vm.meta.user_id = this.$store.getters.user.user_id;
+                    vm.$store
+                        .dispatch("post", { uri: "addStateFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.getStateFilters();
+                            vm.closeModal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
+
+            updateStateFilter(filter_name) {
                 let vm = this;
                 vm.meta.state_filter_name = filter_name;
                 if (this.$store.getters.user) {
