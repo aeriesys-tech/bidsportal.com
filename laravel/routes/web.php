@@ -15,3 +15,4 @@ Route::get("downloadStateAttachments/{state_tender_id}",[StateTenderController::
 Route::get("downloadFederalAttachments/{federal_tender_id}",[FederalTenderController::class,'downloadFederalAttachments']);
 Route::get("callPaypalSubscripton",[PaypalController::class,'callPaypalSubscripton']);
 Route::get("purchaseTender",[PaypalController::class,'purchaseTender']);
+Route::get("updateStateTenderNumber",[StateTenderController::class,'updateStateTenderNumber']);

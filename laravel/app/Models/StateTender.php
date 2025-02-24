@@ -32,7 +32,8 @@ class StateTender extends Model
         'category_name',
         'notice_name',
         'agency_name',
-        'status'
+        'status',
+        'tender_number'
     ];
 
     protected $primaryKey = 'state_tender_id';
