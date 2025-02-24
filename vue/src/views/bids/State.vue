@@ -741,7 +741,7 @@
                     <div class="">
                         <div class=""></div>
                         <div class="">
-                            <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addStateFilter" :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search" />
+                            <SaveSearch @closeModal="closeModal" @updateSearch="addStateFilter" :status="save_search_filter.status" :filter_name="meta.state_filter_name" :savedbids="savedbids" ref="save_search" />
                         </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
@@ -992,6 +992,7 @@
                     maxPage: 1,
                     to: "",
                     alert_label: false,
+                    status:true
                 },
                 savealert: {
                     id: "",
@@ -1103,6 +1104,9 @@
                 },
                 erroralertmodal: false,
                 delete_alert: null,
+                save_search_filter:{
+                    status:true
+                }
             };
         },
 
@@ -1343,7 +1347,7 @@
             },
 
             triggerStateTenders() {
-                console.log('posted from date----', this.meta.posted_from_date)
+                // console.log('posted from date----', this.meta.posted_from_date)
                 if (this.auto_call) {
                     this.cancelPreviousRequest();
                     this.getStateTenders();
@@ -1366,7 +1370,7 @@
 
             cancelPreviousRequest() {
                 if (this.cancel_token_source) {
-                    console.log("Cancelling previous request");
+                    // console.log("Cancelling previous request");
                     this.cancel_token_source.cancel("Operation canceled due to new request.");
                     this.cancel_token_source = null;
                 }
@@ -1385,6 +1389,8 @@
                 this.meta.categories = state_filter.categories;
                 this.meta.states = state_filter.states;
                 this.meta.state_agencies = state_filter.state_agencies;
+                this.meta.state_filter_name = state_filter.state_filter_name
+                this.save_search_filter.status = false
                 this.getStateTenders();
             },
 
@@ -1551,12 +1557,14 @@
                 this.meta.categories = []
                 this.meta.states = []
                 this.meta.state_agencies = []
+                this.meta.status = true
+                this.meta.state_filter_name = null
                 this.getStateTenders()
             },
             removeFilter(filter) {
-                console.log(filter);
+                // console.log(filter);
                 if (filter.id == "status" || filter.id == "date") {
-                    console.log("date", filter.id);
+                    // console.log("date", filter.id);
                     this.meta[filter.module] = false;
                     this.applyFilters();
                 } else if (typeof filter.id === "number") {
@@ -1669,7 +1677,7 @@
                     this.cancel_token_source.cancel("Operation canceled due to new request.");
                 }
                 this.cancel_token_source = axios.CancelToken.source();
-                console.log("cancel token source:", this.cancel_token_source);
+                // console.log("cancel token source:", this.cancel_token_source);
                 this.paginateStateTenders(this.cancel_token_source.token);
             },
 
