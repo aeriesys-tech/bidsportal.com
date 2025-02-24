@@ -13,8 +13,8 @@
                                         <!-- Current password -->
                                     <div class="field-wrapper ">
                                         <div class="field-placeholder">Label <span class="text-danger">*</span></div>
-                                        <input class="form-control" type="text" placeholder="Name" :class="{'is-invalid': errors.search_name}" v-model="search_name" ref="search_name" />
-                                        <span v-if="errors.search_name" class="invalid-feedback">{{ errors.search_name[0] }}</span>
+                                        <input class="form-control" type="text" placeholder="Name" :class="{'is-invalid': errors.filter_name}" v-model="search_name" ref="filter_name" />
+                                        <span v-if="errors.filter_name" class="invalid-feedback">{{ errors.filter_name[0] }}</span>
                                     </div>
 
                                     </form>
@@ -37,12 +37,13 @@
 export default {
     props:{
         status:Boolean,
-        search_name:String
+        filter_name:String
     },
 
     watch: {
-        'savebids' : function(){
-            console.log('savebids', this.savedbids)
+        'filter_name' : function(){
+            console.log('savebids', this.filter_name)
+            this.search_name = this.filter_name
         }
     },
     data(){
@@ -52,11 +53,9 @@ export default {
         }
     },
     mounted(){
-
-        if(this.status)
-            this.search_name = ''
-        else
-            this.search_name = this.savedbids.search_name
+        // console.log(this.filter_name)
+        this.search_name = this.filter_name
+        console.log('status',  this.status)
     },
 
     methods:{
@@ -64,22 +63,22 @@ export default {
             this.$emit("closeModal")
         },
         savedSearch(){
-            if(this.search_name){
-                delete this.errors.search_name
-                this.$emit("savedSearch", this.search_name)
+            if(this.filter_name){
+                delete this.errors.filter_name
+                this.$emit("savedSearch", this.filter_name)
             }
             else{
-                this.errors.search_name = ['This field cannot be blank']
+                // this.errors.filter_name = ['This field cannot be blank']
             }
         },
          updateSearch(){
-            if(this.search_name){
-                delete this.errors.search_name
-                this.$emit("updateSearch", this.search_name)
+            if(this.filter_name){
+                delete this.errors.filter_name
+                this.$emit("updateSearch", this.filter_name)
 
             }
             else{
-                this.errors.search_name = ['This field cannot be blank']
+                // this.errors.filter_name = ['This field cannot be blank']
             }
         }
 
