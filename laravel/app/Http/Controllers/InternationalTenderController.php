@@ -20,9 +20,16 @@ use App\Models\User;
 use App\Models\InternationalContact;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InternationalTenderMail;
+use Illuminate\Support\Facades\DB;
 
 class InternationalTenderController extends Controller
 {
+    public function updateInternationalTenderNumber(){
+        InternationalTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
+    }
+
     public function paginateInternationalTenders(Request $request)
     {
         $request->validate([

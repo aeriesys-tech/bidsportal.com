@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FederalTenderController;
 use App\Http\Controllers\StateTenderController;
+use App\Http\Controllers\PrivateTenderController;
+use App\Http\Controllers\InternationalTenderController;
 use App\Http\Controllers\PaypalController;
 
 
@@ -16,3 +18,6 @@ Route::get("downloadFederalAttachments/{federal_tender_id}",[FederalTenderContro
 Route::get("callPaypalSubscripton",[PaypalController::class,'callPaypalSubscripton']);
 Route::get("purchaseTender",[PaypalController::class,'purchaseTender']);
 Route::get("updateStateTenderNumber",[StateTenderController::class,'updateStateTenderNumber']);
+Route::get("updateFederalTenderNumber",[FederalTenderController::class,'updateFederalTenderNumber']);
+Route::get("updatePrivateTenderNumber",[PrivateTenderController::class,'updatePrivateTenderNumber']);
+Route::get("updateInternationalTenderNumber",[InternationalTenderController::class,'updateInternationalTenderNumber']);

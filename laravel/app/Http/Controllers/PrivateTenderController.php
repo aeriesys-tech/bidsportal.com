@@ -20,9 +20,16 @@ use App\Http\Resources\PrivateTenderDetailResource;
 use App\Models\PrivateTender;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PrivateTenderMail;
+use Illuminate\Support\Facades\DB;
 
 class PrivateTenderController extends Controller
 {
+    public function updatePrivateTenderNumber(){
+        PrivateTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
+    }
+
     public function paginatePrivateTenders(Request $request)
     {
         $request->validate([
