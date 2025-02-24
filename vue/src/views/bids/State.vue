@@ -1343,6 +1343,7 @@
             },
 
             triggerStateTenders() {
+                console.log('posted from date', this.meta.posted_from_date)
                 if (this.auto_call) {
                     this.cancelPreviousRequest();
                     this.getStateTenders();
@@ -1350,17 +1351,17 @@
             },
 
             triggerStateTendersForDates() {
-                if (((this.meta.posted_date && this.meta.posted_date != "custom") || (this.meta.response_date && this.meta.response_date != "custom")) && this.auto_call) {
-                    this.cancelPreviousRequest();
-                    this.getStateTenders();
-                }
+                // if (((this.meta.posted_date && this.meta.posted_date != "custom") || (this.meta.response_date && this.meta.response_date != "custom")) && this.auto_call) {
+                //     this.cancelPreviousRequest();
+                //     this.getStateTenders();
+                // }
             },
 
             triggerStateTendersWithCondition() {
-                if ((this.meta.posted_from_date && this.meta.posted_to_date) || (this.meta.response_from_date && this.meta.response_to_date && this.auto_call)) {
-                    this.cancelPreviousRequest();
-                    this.getStateTenders();
-                }
+                // if ((this.meta.posted_from_date && this.meta.posted_to_date) || (this.meta.response_from_date && this.meta.response_to_date && this.auto_call)) {
+                //     this.cancelPreviousRequest();
+                //     this.getStateTenders();
+                // }
             },
 
             cancelPreviousRequest() {
@@ -1536,21 +1537,21 @@
             },
             clearAllFilters() {
                 this.auto_call = false;
-                (this.meta.response_date = false),
-                    (this.meta.response_from_date = false),
-                    (this.meta.response_to_date = false),
-                    (this.meta.posted_date = false),
-                    (this.meta.posted_from_date = false),
-                    (this.meta.posted_to_date = false),
-                    (this.meta.active = false),
-                    (this.meta.expired = false),
-                    (this.meta.keywords = []),
-                    (this.tags = []),
-                    (this.meta.state_notices = []),
-                    (this.meta.categories = []),
-                    (this.meta.states = []),
-                    (this.meta.state_agencies = []);
-                this.getStateTenders();
+                this.meta.response_date = false
+                this.meta.response_from_date = false
+                this.meta.response_to_date = false
+                this.meta.posted_date = false
+                this.meta.posted_from_date = false
+                this.meta.posted_to_date = false
+                this.meta.active = false
+                this.meta.expired = false
+                this.meta.keywords = []
+                this.tags = []
+                this.meta.state_notices = []
+                this.meta.categories = []
+                this.meta.states = []
+                this.meta.state_agencies = []
+                this.getStateTenders()
             },
             removeFilter(filter) {
                 console.log(filter);
