@@ -52,7 +52,7 @@
                                         <i class="fas fa-caret-right text-primary my-auto"></i>
                                         <a class="dropdown-item dropitem2" href="javascript:void(0)"
                                             @click="showFederalFilter(state_filter)">{{ state_filter.federal_filter_name }}</a>
-                                        <a href="javascript:void(0)" class="icon red my-auto" @click="deleteView(state_filter)">
+                                        <a href="javascript:void(0)" class="icon red my-auto" @click="confirmDelete(state_filter)">
                                             <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
                                         </a>
                                     </li>
@@ -872,6 +872,20 @@
                 </div>
             </div>
         </teleport>
+         <!-- Confirmation Modal -->
+        <teleport to="#modals"  v-if="erroralertmodal">
+            <div class="modal-overlay">
+                <div class="confirm text-center" style="background-color: white !important;">
+                    <a class="btn btn-outline-none float-end" @click.prevent="closeModal()">
+                        <i class="fa-solid fa-close"></i>
+                    </a>
+                    <h1 class="title-green">Are you sure?</h1>
+                    <p>Do you really want to delete these records? This process cannot be undone.</p>
+                    <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closeModal()">Cancel</a>
+                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteAlert()">Confirm</a>
+                </div>
+            </div>
+        </teleport>
     </div>
 </template>
 
@@ -1065,7 +1079,9 @@ export default {
                 save_search: null,
                 set_alert: null,
                 federal_tender: null
-            }
+            },
+            erroralertmodal: false,
+            delete_alert: null,
         };
     },
 
@@ -1458,6 +1474,8 @@ export default {
             this.modal.save_search = false
             this.federal_tender = false
             this.modal.federal_tender = false
+            this.erroralertmodal = false; // Hide modal
+            this.delete_alert = null;
             this.share_federal_tender.federal_tenders = []
         },
 
@@ -1960,23 +1978,31 @@ export default {
             this.meta.page = 1;
             this.paginateFederalTenders();
         },
-        deleteView(state_filter) {
-            let vm = this;
-            let federal_filter_id = state_filter.federal_filter_id;
-            vm.$store
-                .dispatch("post", {
-                    uri: "deleteFederalFilter",
-                    data: { federal_filter_id: federal_filter_id } ,
-                })
-                .then((response) => {
-                    vm.$store.dispatch("success", response.data.message);
-                    vm.getFederalFilters()
-                })
-                .catch(function (error) {
-                    vm.errors = error.response.data.errors;
-                    vm.$store.dispatch("error", error.response.data.message);
-                });
-        },
+        deleteAlert() {
+                let vm = this;
+                if (vm.delete_alert) {
+                    let federal_filter_id = vm.delete_alert.federal_filter_id;
+                    vm.$store
+                        .dispatch("post", {
+                            uri: "deleteFederalFilter",
+                            data: { federal_filter_id: federal_filter_id },
+                        })
+                        .then((response) => {
+                            vm.$store.dispatch("success", response.data.message);
+                            vm.getFederalFilters()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+                this.closeModal();
+            },
+            confirmDelete(state_filter) {
+                console.log("State file", state_filter);
+                this.delete_alert = state_filter;
+                this.erroralertmodal = true;
+            },
         getTagClass(tag) {
     if (tag.includes('red')) return 'tag-red';
     if (tag.includes('green')) return 'tag-green';
@@ -2337,7 +2363,8 @@ export default {
 .confirm p {
     text-align: center;
     font-size: 1rem;
-    margin: 0 2rem 4.5rem;
+    /* margin: 0 2rem 4.5rem; */
+    margin: 0 2rem 1.2rem;
     color: black;
 }
 
@@ -2601,5 +2628,8 @@ export default {
     }
     .fs-24 {
         font-size: 24px;
+    }
+    .title-green {
+        color: #16a34a !important;
     }
 </style>
