@@ -27,12 +27,14 @@ class StateFilterController extends Controller
 
     public function addStateFilters(Request $request)
 	{
-    	$data = $request->validate([
-    		'user_id' => 'required'
-    	]);
-
 	    $data = $request->validate([
-	        'state_filter_name' => 'required',
+	    	'user_id' => 'required',
+	        'state_filter_name' => [
+	            'required',
+	            Rule::unique('state_filters')->where(function ($query) use ($request) {
+	                return $query->where('user_id', $request->user_id);
+	            }),
+	        ],
 	        'posted_date' => 'sometimes|nullable',
 	        'posted_from_date' => 'sometimes|nullable',
 	        'posted_to_date' => 'sometimes|nullable',
@@ -47,66 +49,60 @@ class StateFilterController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
 
-	    	try{
-		        $state_filter = StateFilter::whereHas('StateFilterKeywords', function($que) use($request){
-		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $request->user_id)->first();
-	 
-		        if (!$state_filter){
-			        $state_filter = StateFilter::create([
-			            'user_id' => $request->user_id,
-					    'state_filter_name' => $request->state_filter_name,
-					    'posted_date' => $request->posted_date ?: null,
-					    'active' => $request->active ?: null,
-					    'expired' => $request->expired ?: null,
-					    'posted_from_date' => $request->posted_from_date ?: null,
-					    'posted_to_date' => $request->posted_to_date ?: null,
-					    'response_date' => $request->response_date ?: null,
-					    'response_from_date' => $request->response_from_date ?: null,
-					    'response_to_date' => $request->response_to_date ?: null
-			        ]);
-			    }else {
-	                // Delete previous associations if the filter already exists
-	                $this->deleteAssociations($state_filter);
+	    $state_filter = StateFilter::whereHas('StateFilterKeywords', function($que) use($request){
+        	$que->whereIn('keyword', $request->keywords);
+        })->where('user_id', $request->user_id)->first();
+
+        if($state_filter){
+        	return response()->json(['errors' => 'Same filter already exists'], 422);
+
+        }else{
+        	$state_filter = StateFilter::create([
+	            'user_id' => $request->user_id,
+			    'state_filter_name' => $request->state_filter_name,
+			    'posted_date' => $request->posted_date ?: null,
+			    'active' => $request->active ?: null,
+			    'expired' => $request->expired ?: null,
+			    'posted_from_date' => $request->posted_from_date ?: null,
+			    'posted_to_date' => $request->posted_to_date ?: null,
+			    'response_date' => $request->response_date ?: null,
+			    'response_from_date' => $request->response_from_date ?: null,
+			    'response_to_date' => $request->response_to_date ?: null
+	        ]);
+
+	        if ($request->has('keywords')) {
+	            foreach ($request->keywords as $keyword) {
+	                StateFilterKeyword::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'keyword' => $keyword]
+	                );
 	            }
-
-		        // Handle the related data associations
-		        if ($request->has('keywords')) {
-		            foreach ($request->keywords as $keyword) {
-		                StateFilterKeyword::updateOrCreate(
-		                    ['state_filter_id' => $state_filter->state_filter_id, 'keyword' => $keyword]
-		                );
-		            }
-		        }
-
-		        if ($request->has('state_notices')) {
-		            foreach ($request->state_notices as $notice) {
-		                StateFilterNotice::updateOrCreate(
-		                    ['state_filter_id' => $state_filter->state_filter_id, 'state_notice_id' => $notice]
-		                );
-		            }
-		        }
-
-		        if ($request->has('states')) {
-		            foreach ($request->states as $state) {
-		                StateFilterState::updateOrCreate(
-		                    ['state_filter_id' => $state_filter->state_filter_id, 'state_id' => $state]
-		                );
-		            }
-		        }
-
-		        if ($request->has('state_agencies')) {
-		            foreach ($request->state_agencies as $agency) {
-		                StateFilterAgency::updateOrCreate(
-		                    ['state_filter_id' => $state_filter->state_filter_id, 'state_agency_id' => $agency]
-		                );
-		            }
-		        }
-
-		        return $state_filter;
-		    } catch (\Exception $e) {
-	            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
 	        }
+
+	        if ($request->has('state_notices')) {
+	            foreach ($request->state_notices as $notice) {
+	                StateFilterNotice::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_notice_id' => $notice]
+	                );
+	            }
+	        }
+
+	        if ($request->has('states')) {
+	            foreach ($request->states as $state) {
+	                StateFilterState::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_id' => $state]
+	                );
+	            }
+	        }
+
+	        if ($request->has('state_agencies')) {
+	            foreach ($request->state_agencies as $agency) {
+	                StateFilterAgency::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_agency_id' => $agency]
+	                );
+	            }
+	        }
+	        return $state_filter;
+        }
 	}
 
 	private function deleteAssociations($state_filter)

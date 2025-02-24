@@ -94,6 +94,96 @@ class PrivateTenderController extends Controller
                 $keywords = array_map('trim', $request->keywords);
             }
 
+            // Exact match first
+            $query->where(function ($q) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $q->orWhere('tender_no', $keyword)
+                      ->orWhere('tender_number', $keyword)
+                      ->orWhere('description', $keyword);
+                }
+            });
+
+            // Check if exact match found, else perform broader search
+            if (!$query->count()) {
+                $query->orWhere(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->orWhere('tender_no', 'like', "%$keyword%")
+                          ->orWhere('tender_number', 'like', "%$keyword%")
+                          ->orWhere('description', 'like', "%$keyword%");
+                    }
+                });
+            }
+        }
+
+        $query->orderBy('private_tender_id', 'DESC');
+        $private_tenders = $query->paginate($request->per_page); 
+        return PrivateTenderResource::collection($private_tenders);
+    }
+
+    public function paginatePrivateTenders1(Request $request)
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required|numeric'
+        ]);
+        $query = PrivateTender::query();
+        // $query->where('status', 1);
+
+        if (isset($request->status)) {
+            if ($request->status === 'All') {
+            } elseif ($request->status === 'Active') {
+                $query->where('status', true);
+            } elseif ($request->status === 'Inactive') {
+                $query->where('status', false);
+            }
+        }
+        
+        if ($request->active && $request->expired) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString())
+              ->orWhereDate('expiry_date', '<', now()->toDateString());
+        } elseif ($request->active) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString());
+        } elseif ($request->expired) {
+            $query->whereDate('expiry_date', '<', now()->toDateString());
+        }
+
+        if($request->posted_date && $request->posted_date != 'custom'){
+            $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
+            $query->whereDate('posted_date', '>=', $previous_date);
+        }
+
+        if($request->posted_from_date && $request->posted_to_date){
+            $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
+        }
+
+        if($request->response_date && $request->response_date != 'custom'){
+            $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
+            $query->whereDate('expiry_date', '<=', $next_date);
+        }
+
+        if($request->response_from_date && $request->response_to_date){
+            $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
+        }
+
+        if(!empty($request->state_notices)){
+            $query->whereIn('state_notice_id', $request->state_notices);
+        }
+
+        if(!empty($request->states)){
+            $query->whereIn('state_id', $request->states);
+        }
+
+        if(!empty($request->state_agencies)){
+            $query->whereIn('state_agency_id', $request->state_agencies);
+        }
+
+        if (!empty($request->keywords)) {
+            if (is_string($request->keywords)) {
+                $keywords = array_map('trim', explode(',', $request->keywords));
+            } else {
+                $keywords = array_map('trim', $request->keywords);
+            }
+
             $searchQuery = implode(' ', $keywords);
 
             // Normalize the search query by removing hyphens
