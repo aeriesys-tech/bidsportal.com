@@ -961,6 +961,7 @@
                 share_tender: false,
                 meta: {
                     state_filter_name: "",
+                     state_filter_id: "",
                     alert_title: "",
                     region: "",
                     frequency: "",
@@ -1389,7 +1390,8 @@
                 this.meta.categories = state_filter.categories;
                 this.meta.states = state_filter.states;
                 this.meta.state_agencies = state_filter.state_agencies;
-                this.meta.state_filter_name = state_filter.state_filter_name
+                this.meta.state_filter_name = state_filter.state_filter_name;
+                this.meta.state_filter_id = state_filter.state_filter_id;
                 this.save_search_filter.status = false
                 this.getStateTenders();
             },
@@ -1415,12 +1417,13 @@
             },
 
             updateStateFilter(filter_name) {
+                console.log("Filter-",filter_name)
                 let vm = this;
                 vm.meta.state_filter_name = filter_name;
                 if (this.$store.getters.user) {
                     vm.meta.user_id = this.$store.getters.user.user_id;
                     vm.$store
-                        .dispatch("post", { uri: "addStateFilters", data: vm.meta })
+                        .dispatch("post", { uri: "updateStateFilters", data: vm.meta })
                         .then(function (response) {
                             vm.$store.dispatch("success", "Filters saved successfully");
                             vm.getStateFilters();
