@@ -163,11 +163,11 @@
                                                 <div class="row" v-if="meta.posted_date == 'custom'" style="margin-left: 0px;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
 
@@ -220,11 +220,11 @@
                                                 <div class="row" v-if="meta.response_date == 'custom'" style="margin-left: 0px !important;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
                                                 <span style="color: #dc3545;">{{ errors?.response_error }}</span>
@@ -1343,7 +1343,7 @@
             },
 
             triggerStateTenders() {
-                console.log('posted from date', this.meta.posted_from_date)
+                console.log('posted from date----', this.meta.posted_from_date)
                 if (this.auto_call) {
                     this.cancelPreviousRequest();
                     this.getStateTenders();
@@ -1351,17 +1351,17 @@
             },
 
             triggerStateTendersForDates() {
-                // if (((this.meta.posted_date && this.meta.posted_date != "custom") || (this.meta.response_date && this.meta.response_date != "custom")) && this.auto_call) {
-                //     this.cancelPreviousRequest();
-                //     this.getStateTenders();
-                // }
+                if (((this.meta.posted_date && this.meta.posted_date != "custom") || (this.meta.response_date && this.meta.response_date != "custom")) && this.auto_call) {
+                    this.cancelPreviousRequest();
+                    this.getStateTenders();
+                }
             },
 
             triggerStateTendersWithCondition() {
-                // if ((this.meta.posted_from_date && this.meta.posted_to_date) || (this.meta.response_from_date && this.meta.response_to_date && this.auto_call)) {
-                //     this.cancelPreviousRequest();
-                //     this.getStateTenders();
-                // }
+                if ((this.meta.posted_from_date && this.meta.posted_to_date) || (this.meta.response_from_date && this.meta.response_to_date && this.auto_call)) {
+                    this.cancelPreviousRequest();
+                    this.getStateTenders();
+                }
             },
 
             cancelPreviousRequest() {
