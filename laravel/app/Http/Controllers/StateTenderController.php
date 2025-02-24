@@ -115,6 +115,50 @@ class StateTenderController extends Controller
                 $query->whereIn('state_agency_id', $request->state_agencies);
             }
 
+            // if (!empty($request->keywords)) {
+            //     if (is_string($request->keywords)) {
+            //         $keywords = array_map('trim', explode(',', $request->keywords));
+            //     } else {
+            //         $keywords = array_map('trim', $request->keywords);
+            //     }
+
+            //     $searchQuery = implode(' ', $keywords);
+
+            //     // Start building the query
+            //     $query->where(function ($subQuery) use ($searchQuery) {
+            //         // Check for exact match in title or tender_no
+            //         $subQuery->where('title', '=', $searchQuery)
+            //                  ->orWhere('tender_no', '=', $searchQuery);
+            //     });
+
+            //     // Use relevant matches only if there are no exact matches
+            //     $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
+            //         $subQuery->whereRaw("NOT EXISTS (
+            //             SELECT 1 FROM state_tenders 
+            //             WHERE title = ? OR tender_no = ?
+            //         )", [$searchQuery, $searchQuery])
+            //         ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+            //         // Fallback to LIKE for short keywords
+            //         foreach ($keywords as $keyword) {
+            //             if (strlen($keyword) < 4) {
+            //                 $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+            //                          ->orWhere('title', 'LIKE', "%{$keyword}%");
+            //             }
+            //         }
+            //     });
+
+            //     // Order the results to prioritize exact matches
+            //     $query->orderByRaw("
+            //         CASE 
+            //             WHEN title = ? THEN 1
+            //             WHEN tender_no = ? THEN 1
+            //             ELSE 2
+            //         END, 
+            //         MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+            //         state_tender_id DESC
+            //     ", [$searchQuery, $searchQuery, $searchQuery]);
+            // }
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
                     $keywords = array_map('trim', explode(',', $request->keywords));
@@ -123,27 +167,21 @@ class StateTenderController extends Controller
                 }
 
                 $searchQuery = implode(' ', $keywords);
+                $normalizedSearchQuery = str_replace('-', '', $searchQuery); // Remove hyphens from input
 
-                // Start building the query
-                $query->where(function ($subQuery) use ($searchQuery) {
-                    // Check for exact match in title or tender_no
-                    $subQuery->where('title', '=', $searchQuery)
-                             ->orWhere('tender_no', '=', $searchQuery);
-                });
+                $query->where(function ($subQuery) use ($searchQuery, $normalizedSearchQuery, $keywords) {
+                    $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                             ->orWhereRaw("REPLACE(title, '-', '') = ?", [$normalizedSearchQuery]);
 
-                // Use relevant matches only if there are no exact matches
-                $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
-                    $subQuery->whereRaw("NOT EXISTS (
-                        SELECT 1 FROM state_tenders 
-                        WHERE title = ? OR tender_no = ?
-                    )", [$searchQuery, $searchQuery])
-                    ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+                    // Use relevant matches only if there are no exact matches
+                    $subQuery->orWhereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
 
                     // Fallback to LIKE for short keywords
                     foreach ($keywords as $keyword) {
-                        if (strlen($keyword) < 4) {
-                            $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
-                                     ->orWhere('title', 'LIKE', "%{$keyword}%");
+                        $normalizedKeyword = str_replace('-', '', $keyword);
+                        if (strlen($normalizedKeyword) < 4) {
+                            $subQuery->orWhereRaw("REPLACE(tender_no, '-', '') LIKE ?", ["%{$normalizedKeyword}%"])
+                                     ->orWhereRaw("REPLACE(title, '-', '') LIKE ?", ["%{$normalizedKeyword}%"]);
                         }
                     }
                 });
@@ -151,19 +189,26 @@ class StateTenderController extends Controller
                 // Order the results to prioritize exact matches
                 $query->orderByRaw("
                     CASE 
-                        WHEN title = ? THEN 1
-                        WHEN tender_no = ? THEN 1
+                        WHEN REPLACE(title, '-', '') = ? THEN 1
+                        WHEN REPLACE(tender_no, '-', '') = ? THEN 1
                         ELSE 2
                     END, 
                     MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
                     state_tender_id DESC
-                ", [$searchQuery, $searchQuery, $searchQuery]);
+                ", [$normalizedSearchQuery, $normalizedSearchQuery, $searchQuery]);
             }
+
 
             $query->orderBy('state_tender_id', 'DESC');
         }
         $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
+    }
+
+    public function updateStateTenderNumber(){
+        StateTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
     }
 
     public function getTotalCount(){
@@ -485,15 +530,59 @@ class StateTenderController extends Controller
         ]);
     }
 
+    // public function updateStateBids(Request $request)
+    // {     
+    //     //Ensure the folder path ends with a '/'
+    //     $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+
+    //     //Get files from S3
+    //     $files = Storage::disk('s3')->files($folderPath);
+
+    //     if (count($files) > 0) {
+    //         foreach ($files as $key => $file) {
+    //             // Check if the file has an .xlsx extension
+    //             if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+    //                 // Proceed only if the file exists in S3
+    //                 if (Storage::disk('s3')->exists($file)) {
+    //                     try {
+    //                         // Import the file using Laravel Excel
+    //                         Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+    //                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //                         // Log the exception or handle it accordingly
+    //                         return response()->json([
+    //                             'message' => 'Error importing file: ' . $file,
+    //                             'error' => $e->failures()
+    //                         ], 500);
+    //                     }
+    //                 } else {
+    //                     return response()->json([
+    //                         'message' => 'File does not exist: ' . $file
+    //                     ], 404);
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'message' => 'Data imported successfully'
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'Folder does not exist or is empty',
+    //             'error' => []
+    //         ], 422);
+    //     }
+    // }
+
     public function updateStateBids(Request $request)
     {     
-        //Ensure the folder path ends with a '/'
+        // Ensure the folder path ends with a '/'
         $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
 
-        //Get files from S3
+        // Get files from S3
         $files = Storage::disk('s3')->files($folderPath);
 
         if (count($files) > 0) {
+            $errors = [];
             foreach ($files as $key => $file) {
                 // Check if the file has an .xlsx extension
                 if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
@@ -501,24 +590,35 @@ class StateTenderController extends Controller
                     if (Storage::disk('s3')->exists($file)) {
                         try {
                             // Import the file using Laravel Excel
-                            Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+                            $import = new StateTenderImport($folderPath, $request->folder);
+                            Excel::import($import, $file, 's3');
+
+                            // Check if the imported row count meets the required condition
+                            // if ($import->getRowCount() < 1) {
+                            //     $errors[] = "File {$file} did not meet row count condition.";
+                            //     continue; // Continue with the next file
+                            // }
                         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                            // Log the exception or handle it accordingly
-                            return response()->json([
-                                'message' => 'Error importing file: ' . $file,
-                                'error' => $e->failures()
-                            ], 500);
+                            $errors[] = "Error importing file: {$file} - " . json_encode($e->failures());
+                            continue; // Continue with the next file
                         }
                     } else {
-                        return response()->json([
-                            'message' => 'File does not exist: ' . $file
-                        ], 404);
+                        $errors[] = "File does not exist: {$file}";
+                        continue; // Continue with the next file
                     }
                 }
             }
 
+            // If there are errors, return them
+            if (!empty($errors)) {
+                return response()->json([
+                    'message' => 'Some files encountered issues during import',
+                    'errors'  => $errors
+                ], 422);
+            }
+
             return response()->json([
-                'message' => 'Data imported successfully'
+                'message' => 'All valid files imported successfully'
             ]);
         } else {
             return response()->json([
@@ -528,56 +628,6 @@ class StateTenderController extends Controller
         }
     }
 
-    // public function updateStateBids(Request $request)
-    // {     
-    //     $data = $request->validate([
-    //         'folder' => 'required|string'
-    //     ]);
-
-    //     // Ensure the folder path ends with a '/'
-    //     $folderPath = rtrim('State/attachments/' . $data['folder'], '/') . '/';
-
-    //     // Get files from S3
-    //     $files = Storage::disk('s3')->files($folderPath);
-
-    //     // If the folder has no files, assume it does not exist
-    //     if (empty($files)) {
-    //         return response()->json([
-    //             'message' => 'Folder does not exist or is empty: ' . $data['folder'],
-    //             'error' => 'Folder does not exist or is empty: ' . $data['folder']
-    //         ], 404);
-    //     }
-
-    //     $importedFiles = [];
-
-    //     foreach ($files as $file) {
-    //         // Check if the file has an .xlsx extension
-    //         if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
-    //             // Proceed only if the file exists in S3
-    //             if (Storage::disk('s3')->exists($file)) {
-    //                 try {
-    //                     // Import the file using Laravel Excel
-    //                     Excel::import(new StateTenderImport($folderPath, $data['folder']), $file, 's3');
-    //                     $importedFiles[] = basename($file);
-    //                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-    //                     return response()->json([
-    //                         'message' => 'Error importing file: ' . basename($file),
-    //                         'error' => $e->failures()
-    //                     ], 500);
-    //                 }
-    //             } else {
-    //                 return response()->json([
-    //                     'message' => 'File does not exist: ' . basename($file)
-    //                 ], 404);
-    //             }
-    //         }
-    //     }
-
-    //     return response()->json([
-    //         'message' => count($importedFiles) > 0 ? 'Data imported successfully' : 'No valid .xlsx files found',
-    //         'imported_files' => $importedFiles
-    //     ]);
-    // }
 
 
     public function updateStateBidsManual(Request $request)

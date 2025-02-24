@@ -53,6 +53,10 @@ class StateTenderImport implements ToCollection
         $s3 = Storage::disk('s3')->getClient();
         $bucket = config('app.AWS_BUCKET');
         foreach ($rows as $key => $row) {
+        	if ($row->count() !== 19) {
+	            Log::error("Row {$key} has an incorrect number of columns.");
+	            throw new \Exception("Row {$key} has an incorrect number of columns. Expected 19, got {$row->count()}.");
+	        }
         	$posted_date = date('Y-m-d H:i:s');
             $opening_date = $this->parseDate($row[1]);
             $expiry_date = $this->parseDate($row[2]);
@@ -141,48 +145,48 @@ class StateTenderImport implements ToCollection
                     ]);
 
                 }
+                $tender_attachments = $row[17]?$row[17]:null;
+                $filenames = [];
+                if (str_contains($tender_attachments, ',')){
+                    $filenames = explode(',', $tender_attachments);
+                }else {
+                    $filenames = [$tender_attachments];
+                }
+                if($state_tender){
+                    foreach ($filenames as $filename) {
+                        if ($filename) {
+                            $file_path = "State/attachments/{$this->s3_folder}/{$tender_no}/" . trim($filename);
+
+                            try {
+                                $result = $s3->headObject([
+                                    'Bucket' => $bucket,
+                                    'Key' => $file_path
+                                ]);
+
+                                $attachment_url = Storage::disk('s3')->url($file_path);
+                                $attachment_size = $result['ContentLength'] ?? null;
+                            } catch (\Exception $e) {
+                                $attachment_url = null;
+                                $attachment_size = null;
+                            }
+
+                            StateAttachment::updateOrCreate(
+                                [
+                                    'state_tender_id' => $state_tender->state_tender_id,
+                                    'attachment_name' => $filename,
+                                ],
+                                [
+                                    'attachment_size' => $attachment_size,
+                                    'attachment_date' => $this->s3_folder,
+                                    'attachment_url' => $attachment_url
+                                ]
+                            );
+                        }
+                    }
+                }
             } catch (\Exception $e){
                 Log::error("Error processing state tender: " . $e->getMessage());
             }
-
-            $tender_attachments = $row[17]?$row[17]:null;
-            $filenames = [];
-            if (str_contains($tender_attachments, ',')){
-                $filenames = explode(',', $tender_attachments);
-            }else {
-                $filenames = [$tender_attachments];
-            }
-            foreach ($filenames as $filename) {
-                if ($filename) {
-                    $file_path = "State/attachments/{$this->s3_folder}/{$tender_no}/" . trim($filename);
-
-                    try {
-                        $result = $s3->headObject([
-                            'Bucket' => $bucket,
-                            'Key' => $file_path
-                        ]);
-
-                        $attachment_url = Storage::disk('s3')->url($file_path);
-                        $attachment_size = $result['ContentLength'] ?? null;
-                    } catch (\Exception $e) {
-                        $attachment_url = null;
-                        $attachment_size = null;
-                    }
-
-                    StateAttachment::updateOrCreate(
-                        [
-                            'state_tender_id' => $state_tender->state_tender_id,
-                            'attachment_name' => $filename,
-                        ],
-                        [
-                            'attachment_size' => $attachment_size,
-                            'attachment_date' => $this->s3_folder,
-                            'attachment_url' => $attachment_url
-                        ]
-                    );
-                }
-            }
-           
         }
     }
 
