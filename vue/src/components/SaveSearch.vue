@@ -22,7 +22,7 @@
                                    <!-- <button type="button" @click.prevent="closeModal()" class="btn mb-0 btn-sm btn-secondary me-2" data-bs-dismiss="modal" ref="Close">
                                         Close
                                     </button> -->
-                                    <button type="button" v-if="status"  class="btn mb-0 btn-sm btn-success" @click.prevent="savedSearch()">
+                                    <button type="button" v-if="status"  class="btn mb-0 btn-sm btn-success" @click.prevent="saveSearch()">
                                         Save
                                     </button>
                                      <button type="button" v-else class="btn mb-0 btn-sm btn-success" @click.prevent="updateSearch()">
@@ -62,13 +62,14 @@ export default {
         closeModal(){
             this.$emit("closeModal")
         },
-        savedSearch(){
-            if(this.filter_name){
-                delete this.errors.filter_name
-                this.$emit("savedSearch", this.filter_name)
+        saveSearch(){
+
+            if(this.search_name){
+                delete this.errors.search_name
+                this.$emit("saveSearch", this.search_name)
             }
             else{
-                // this.errors.filter_name = ['This field cannot be blank']
+                this.errors.filter_name = ['This field cannot be blank']
             }
         },
          updateSearch(){

@@ -109,12 +109,13 @@ class StateFilterController extends Controller
 	public function updateStateFilters(Request $request)
 	{
 	    $data = $request->validate([
+	    	'state_filter_id' => 'required|exists:state_filters',
 	    	'user_id' => 'required',
 	        'state_filter_name' => [
-	            'required',
-	            Rule::unique('state_filters')->where(function ($query) use ($request) {
+            'required',
+	            Rule::unique('state_filters')->where(function ($query) use ($request, $id) {
 	                return $query->where('user_id', $request->user_id);
-	            }),
+	            })->ignore($id, 'state_filter_id'),
 	        ],
 	        'posted_date' => 'sometimes|nullable',
 	        'posted_from_date' => 'sometimes|nullable',
@@ -130,15 +131,10 @@ class StateFilterController extends Controller
 	        'statuses' => 'sometimes|nullable|array'
 	    ]);
 
-	    $state_filter = StateFilter::whereHas('StateFilterKeywords', function($que) use($request){
-        	$que->whereIn('keyword', $request->keywords);
-        })->where('user_id', $request->user_id)->first();
+	    $state_filter = StateFilter::where('state_filter_id', $request->state_filter_id)->first();
 
-        if($state_filter){
-        	return response()->json(['errors' => 'Same filter already exists'], 422);
-
-        }else{
-        	$state_filter = StateFilter::create([
+	    if($state_filter){
+	    	$state_filter = $state_filter->update([
 	            'user_id' => $request->user_id,
 			    'state_filter_name' => $request->state_filter_name,
 			    'posted_date' => $request->posted_date ?: null,
@@ -150,7 +146,7 @@ class StateFilterController extends Controller
 			    'response_from_date' => $request->response_from_date ?: null,
 			    'response_to_date' => $request->response_to_date ?: null
 	        ]);
-
+	        $this->deleteAssociations($state_filter);
 	        if ($request->has('keywords')) {
 	            foreach ($request->keywords as $keyword) {
 	                StateFilterKeyword::updateOrCreate(
@@ -183,7 +179,10 @@ class StateFilterController extends Controller
 	            }
 	        }
 	        return $state_filter;
-        }
+		}else{
+			return response()->json(['errors' => 'No records found'], 422);
+		}
+        
 	}
 
 	private function deleteAssociations($state_filter)
