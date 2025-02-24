@@ -2,7 +2,7 @@
     <nav class="header-main px-3 px-lg-4 sidebar-prime navbar navbar-expand-lg">
         <a class="navbar-brand" href="javascript:void(0)" style="margin-right: 0;">
             <img src="../../src/assets/bidsportal_logo.png" class="logo" width="100" />
-            <span href="javascript:void(0)" class="sidebar-logo ml-20"><span class="title">BidsPortal </span></span>
+            <!-- <span href="javascript:void(0)" class="sidebar-logo ml-20"><span class="title">BidsPortal1 </span></span> -->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
             aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@
                         <!-- <li>
                             <router-link to="/add_state_tender" class="dropdown-item"><i class="ri-donut-chart-fill"></i> Add State Bid</router-link>
                         </li> -->
-                        
+
                         <li>
                             <router-link to="/duplicate_state_tenders" class="dropdown-item"><i
                                     class="ri-government-line"></i>
@@ -65,7 +65,7 @@
                                     class="ri-global-line"></i>
                                 Duplicate International Bids</router-link>
                         </li>
-                        
+
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

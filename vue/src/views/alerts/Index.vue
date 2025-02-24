@@ -342,11 +342,11 @@
             },
             onPageChange(page) {
                 this.meta.currentPage = page;
-                this.getInterstedUser();
+                this.index();
             },
             onPerPageChange() {
                 this.meta.currentPage = 1;
-                this.getInterstedUser();
+                this.index();
             },
         },
     };

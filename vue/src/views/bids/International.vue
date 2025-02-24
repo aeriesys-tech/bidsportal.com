@@ -48,9 +48,9 @@
                                     <a class="dropdown-item dropitem2" href="javascript:void(0)"
                                         @click="showInternationalFilter(international_filter)">{{ international_filter.international_filter_name
                                         }}</a>
-                                    <a href="javascript:void(0)" class="icon red my-auto" @click="deleteView(international_filter)">
-                                        <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
-                                    </a>
+                                      <a href="javascript:void(0)" class="icon red my-auto" @click="confirmDelete(international_filter)">
+                                            <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
+                                        </a>
                                 </li>
                             </ul>
                         </li>
@@ -315,7 +315,7 @@
                                         </form>
                                     </div>
 
-                                    <div class="scroll1">
+                                    <div class="scroll1 hgt-300">
                                         <div class="d-flex justify-content-between align-items-center"
                                             v-for="category in sorted_categories" :key="category.category_id">
                                             <div class="form-check">
@@ -963,6 +963,19 @@
             </div>
         </div>
     </teleport>
+     <teleport to="#modals"  v-if="erroralertmodal">
+            <div class="modal-overlay">
+                <div class="confirm text-center" style="background-color: white !important;">
+                    <a class="btn btn-outline-none float-end" @click.prevent="closeModal()">
+                        <i class="fa-solid fa-close"></i>
+                    </a>
+                    <h1 class="title-green">Are you sure?</h1>
+                    <p>Do you really want to delete these records? This process cannot be undone.</p>
+                    <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closeModal()">Cancel</a>
+                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteAlert()">Confirm</a>
+                </div>
+            </div>
+        </teleport>
 </template>
 
 <script>
@@ -1146,7 +1159,9 @@ export default {
                 save_search: null,
                 set_alert: null,
                 share_tender: null
-            }
+            },
+            erroralertmodal: false,
+            delete_alert: null,
         };
     },
 
@@ -1483,6 +1498,8 @@ export default {
             this.modal.save_search = false
             this.share_tender = false
             this.modal.share_tender = false
+            this.erroralertmodal = false; // Hide modal
+            this.delete_alert = null;
             this.share_international_tender.international_tenders = []
         },
 
@@ -1928,23 +1945,48 @@ export default {
             this.meta.page = 1;
             this.paginateInternationalTenders();
         },
-        deleteView(international_filter) {
-            let vm = this;
-            let international_filter_id = international_filter.international_filter_id;
-            vm.$store
-                .dispatch("post", {
-                    uri: "deleteInternationalFilter",
-                    data: { international_filter_id: international_filter_id } ,
-                })
-                .then((response) => {
-                    vm.$store.dispatch("success", response.data.message);
-                    vm.getInternationalFilters()
-                })
-                .catch(function (error) {
-                    vm.errors = error.response.data.errors;
-                    vm.$store.dispatch("error", error.response.data.message);
-                });
-        },
+        // deleteView(international_filter) {
+        //     let vm = this;
+        //     let international_filter_id = international_filter.international_filter_id;
+        //     vm.$store
+        //         .dispatch("post", {
+        //             uri: "deleteInternationalFilter",
+        //             data: { international_filter_id: international_filter_id } ,
+        //         })
+        //         .then((response) => {
+        //             vm.$store.dispatch("success", response.data.message);
+        //             vm.getInternationalFilters()
+        //         })
+        //         .catch(function (error) {
+        //             vm.errors = error.response.data.errors;
+        //             vm.$store.dispatch("error", error.response.data.message);
+        //         });
+        // },
+        deleteAlert() {
+                let vm = this;
+                if (vm.delete_alert) {
+                    let international_filter_id = vm.delete_alert.international_filter_id;
+                    vm.$store
+                        .dispatch("post", {
+                            uri: "deleteInternationalFilter",
+                            data: { international_filter_id: international_filter_id },
+                        })
+                        .then((response) => {
+                            vm.$store.dispatch("success", response.data.message);
+                           vm.getInternationalFilters()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+                this.closeModal();
+            },
+         confirmDelete(international_filter) {
+                console.log("international_filter file", international_filter);
+                this.delete_alert = international_filter;
+                this.erroralertmodal = true;
+            },
     },
 };
 </script>
@@ -2300,7 +2342,8 @@ export default {
 .confirm p {
     text-align: center;
     font-size: 1rem;
-    margin: 0 2rem 4.5rem;
+    /* margin: 0 2rem 4.5rem; */
+     margin: 0 2rem 1.2rem;
     color: black;
 }
 
@@ -2564,4 +2607,10 @@ export default {
     .fs-24 {
         font-size: 24px;
     }
+    .hgt-300{
+        height: 300px;
+    }
+    .title-green {
+    color: #16a34a !important;
+}
 </style>
