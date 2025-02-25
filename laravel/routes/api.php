@@ -261,6 +261,7 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//Federal Filter
 	Route::post("addFederalFilters", [FederalFilterController::class,'addFederalFilters']);	
+	Route::post("updateFederalFilters", [FederalFilterController::class,'updateFederalFilters']);	
 	Route::post("getFederalFilters", [FederalFilterController::class,'getFederalFilters']);
 	Route::post("deleteFederalFilter", [FederalFilterController::class,'deleteFederalFilter']);
 
