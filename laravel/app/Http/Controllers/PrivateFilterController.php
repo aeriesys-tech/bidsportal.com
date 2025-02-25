@@ -12,6 +12,7 @@ use App\Models\PrivateFilterSetAside;
 use App\Models\PrivateFilterAgency;
 use App\Http\Resources\PrivateFilterResource;
 use Auth;
+use Illuminate\Validation\Rule;
 
 class PrivateFilterController extends Controller
 {
