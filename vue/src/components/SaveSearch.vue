@@ -72,10 +72,20 @@ export default {
                 this.errors.filter_name = ['This field cannot be blank']
             }
         },
-         updateSearch(){
+        updateSearch11() {
             if(this.filter_name){
                 delete this.errors.filter_name
                 this.$emit("updateSearch", this.filter_name)
+
+            }
+            else{
+                // this.errors.filter_name = ['This field cannot be blank']
+            }
+        },
+        updateSearch() {
+            if(this.search_name){
+                delete this.errors.search_name
+                this.$emit("updateSearch", this.search_name)
 
             }
             else{
