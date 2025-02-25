@@ -719,9 +719,12 @@
                 <div class="" style="width: 500px;">
                     <div class="">
                         <div class=""></div>
-                        <div class="">
+                        <!-- <div class="">
                             <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addFederalFilter"
                                 :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search" />
+                        </div> -->
+                         <div class="">
+                            <SaveSearch @closeModal="closeModal" @updateSearch="updateFederalFilter"  @saveSearch="addFederalFilter" :status="save_search_filter.status" :filter_name="meta.federal_filter_name" :savedbids="savedbids" ref="save_search" />
                         </div>
                     </div>
                     <div class="modal-footer m-foot"></div>
@@ -934,6 +937,7 @@ export default {
             federal_tender: false,
             meta: {
                 federal_filter_name: '',
+                federal_filter_id: '',
                 alert_title: '',
                 region: '',
                 frequency: '',
@@ -966,7 +970,8 @@ export default {
                 maxPage: 1,
                 to: '',
                 alert_label: false,
-                role:''
+                role: '',
+                status:true
             },
             savealert: {
                 id: "",
@@ -1082,6 +1087,9 @@ export default {
             },
             erroralertmodal: false,
             delete_alert: null,
+            save_search_filter:{
+                    status:true
+                }
         };
     },
 
@@ -1417,6 +1425,9 @@ export default {
             this.meta.federal_agencies = federal_filter.federal_agencies;
             this.$store.dispatch("setSelectedNaics", this.meta.naics);
             this.$store.dispatch("setSelectedPscs", this.meta.pscs);
+            this.meta.federal_filter_name = federal_filter.federal_filter_name;
+            this.meta.federal_filter_id = federal_filter.federal_filter_id;
+            this.save_search_filter.status = false
             this.getFederalTenders();
         },
 
@@ -1439,6 +1450,26 @@ export default {
                     });
             }
         },
+        updateFederalFilter(filter_name) {
+                console.log("Filter-",filter_name)
+                let vm = this;
+                vm.meta.federal_filter_name = filter_name;
+                if (this.$store.getters.user) {
+                    vm.meta.user_id = this.$store.getters.user.user_id;
+                    vm.$store
+                        .dispatch("post", { uri: "updateFederalFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.getFederalFilters();
+                            vm.closeModal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
         applyFilterNaics() {
             this.meta.naics = this.$store.getters.selected_naics
         },
@@ -1589,6 +1620,8 @@ export default {
             this.meta.set_asides = []
             this.meta.states = []
             this.meta.federal_agencies = []
+            this.meta.status = true
+            this.meta.federal_filter_name = null
             this.getFederalTenders()
             this.$store.dispatch("setSelectedNaics", [])
             this.$store.dispatch("setSelectedPscs", [])
