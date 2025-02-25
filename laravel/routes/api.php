@@ -277,12 +277,14 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post('sendStateTenderMail', [StateTenderController::class,'sendStateTenderMail']);
 
 	//State Filter
-	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);	
+	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);
+	Route::post("updateStateFilters", [StateFilterController::class,'updateStateFilters']);	
 	Route::post("getStateFilters", [StateFilterController::class,'getStateFilters']);
 	Route::post("deleteStateFilter", [StateFilterController::class,'deleteStateFilter']);
 
 	//Private Filter
 	Route::post("addPrivateFilters", [PrivateFilterController::class,'addPrivateFilters']);	
+	Route::post("updatePrivateFilters", [PrivateFilterController::class,'updatePrivateFilters']);	
 	Route::post("getPrivateFilters", [PrivateFilterController::class,'getPrivateFilters']);
 	Route::post("deletePrivateFilter", [PrivateFilterController::class,'deletePrivateFilter']);
 

@@ -62,6 +62,7 @@ class StateTenderImport implements ToCollection
             $expiry_date = $this->parseDate($row[2]);
             $tender_url = $row[16];
             $tender_no = $row[5];
+            $tender_number = str_replace($row[5], '-', '');
             $title = $row[6] ?? 'No Title';
 
             $state_notice = StateNotice::where(function ($query) use($row) {
@@ -113,6 +114,7 @@ class StateTenderImport implements ToCollection
                 $state_tender = StateTender::updateOrCreate(
                     [   'tender_no' => $tender_no ],
                     [
+                        'tender_number' => $tender_number,
                         'title' => $title,
                         'description' => $description,
                         'opening_date' => $opening_date,
@@ -132,7 +134,8 @@ class StateTenderImport implements ToCollection
                         'agency_name' => $agency_name,
                         'document_path' => null,
                         'status' => $status,
-                        'contracting_office_address' => $contracting_office_address
+                        'contracting_office_address' => $contracting_office_address,
+                        'upload_type' => 'auto'
                     ]);
                 if ($state_tender && is_array($contract_information) && count($contract_information) >= 4){
                     $state_office_address = StateOfficeAddress::create([

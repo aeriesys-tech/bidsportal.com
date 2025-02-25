@@ -113,9 +113,9 @@ class StateFilterController extends Controller
 	    	'user_id' => 'required',
 	        'state_filter_name' => [
             'required',
-	            Rule::unique('state_filters')->where(function ($query) use ($request, $id) {
+	            Rule::unique('state_filters')->where(function ($query) use ($request) {
 	                return $query->where('user_id', $request->user_id);
-	            })->ignore($id, 'state_filter_id'),
+	            })->ignore($request->state_filter_id, 'state_filter_id'),
 	        ],
 	        'posted_date' => 'sometimes|nullable',
 	        'posted_from_date' => 'sometimes|nullable',
@@ -132,9 +132,8 @@ class StateFilterController extends Controller
 	    ]);
 
 	    $state_filter = StateFilter::where('state_filter_id', $request->state_filter_id)->first();
-
 	    if($state_filter){
-	    	$state_filter = $state_filter->update([
+	    	StateFilter::where('state_filter_id', $request->state_filter_id)->update([
 	            'user_id' => $request->user_id,
 			    'state_filter_name' => $request->state_filter_name,
 			    'posted_date' => $request->posted_date ?: null,
