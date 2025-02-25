@@ -44,6 +44,7 @@ class TenderProcess implements ShouldQueue
         foreach($this->response as $opportunity)
         {
             $tender_no = (isset($opportunity['solicitationNumber']) && $opportunity['solicitationNumber']!=null)?$opportunity['solicitationNumber']:'';
+            $tender_number = str_replace($tender_no, '-', '');
             
             $title= (isset($opportunity['title']) && $opportunity['title']!==null)?$opportunity['title']:'';
 
@@ -211,11 +212,13 @@ class TenderProcess implements ShouldQueue
                     'psc_id' => $psc_id,
                     'tender_url' => $tender_url,
                     'description_link' => $description_link,
-                    'tender_no' => $tender_no
+                    'tender_no' => $tender_no,
+                    'tender_number' => $tender_number
                 ]);
                 }else{
                     $federal_tender = FederalTender::create([
                         'tender_no' => $tender_no,
+                        'tender_number' => $tender_number,
                         'title' => $title,
                         'opening_date' => $opening_date,
                         'posted_date' => Carbon::now(),

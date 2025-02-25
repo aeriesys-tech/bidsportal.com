@@ -574,6 +574,7 @@ class StateTenderController extends Controller
         ]);
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
+        $data['upload_type'] = 'manual';
 
         $state_tender = StateTender::create($data);
 
@@ -757,7 +758,7 @@ class StateTenderController extends Controller
     public function updateStateBidsManual(Request $request)
     {     
         //Ensure the folder path ends with a '/'
-        $file_name = public_path().'/attachments/20_County_of_San_Diego.xlsx';
+        $file_name = public_path().'/attachments/14_NorthCarolina_VendorPortal_eVP.xlsx';
         $files = [$file_name];
         // dd($files);
 
@@ -910,6 +911,7 @@ class StateTenderController extends Controller
         $data['fees'] = isset($request->fees) ? (is_numeric($request->fees) ? $request->fees : 0) : null;
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
+        $data['upload_type'] = 'manual';
 
         $state_tender = StateTender::where('state_tender_id', $request->state_tender_id)->first();
         $state_tender->update($data);
