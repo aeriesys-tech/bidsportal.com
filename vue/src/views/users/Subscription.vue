@@ -1,7 +1,7 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" />
     <!-- <div v-if="$store.getters.user.subscription_id==0" class="stripe-1">"You are not subscribed"</div> -->
-    <section class="pt-3" style="padding-bottom: 77px;">
+    <section class="pt-3" style="padding-bottom: 77px;background-color: #fafafa;">
         <div class="container">
             <div class="row g-2 g-lg-4">
                 <ProfileList></ProfileList>
@@ -9,9 +9,9 @@
                     <div class="d-grid mb-0 d-lg-none w-100">
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
-                    <div class="card border-0 p-5 pt-0 bg-transparent" style="margin-bottom: 125px;">
+                    <div class="card border-0 p-3 pt-0 " style="margin-bottom: 125px;">
                         <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
-                            <h5 class="card-header-title">Subscription Info</h5>
+                            <h5 class="card-header-title fw-500">Subscription Info</h5>
                         </div>
                         <div class="card-body p-0">
                             <ul class="nav nav-tabs nav-bottom-line nav-responsive nav-justified">
@@ -34,7 +34,7 @@
                                                     <ul class="list-group list-group-borderless mb-0">
                                                         <li class="list-group-item d-flex row">
                                                             <div class="col-md-4 col-sm-4 text-end">
-                                                                <span class="h6 fw-bold mb-0">Subscribed Plan :</span>
+                                                                <span class="h61 fw-bold mb-0">Subscribed Plan :</span>
                                                             </div>
                                                             <div class="col-md-8 col-sm-8">
                                                                 <span class="h6 fw-light mb-0" >{{ active_subscription.subscription_plan?.plan }}</span>
@@ -43,7 +43,7 @@
                                                         <li class="list-group-item py-0"></li>
                                                         <li class="list-group-item d-flex row">
                                                             <div class="col-md-4 col-sm-4 text-end">
-                                                                <span class="h6 fw-bold mb-0">Subscription Status :</span>
+                                                                <span class="h61 fw-bold mb-0">Subscription Status :</span>
                                                             </div>
                                                             <div class="col-md-8 col-sm-8">
                                                                 <span class="h6 fw-light mb-0" v-if="active_subscription.active_status=='active'">
@@ -57,7 +57,7 @@
                                                         <li class="list-group-item py-0"></li>
                                                         <li class="list-group-item d-flex row">
                                                             <div class="col-md-4 col-sm-4 text-end">
-                                                                <span class="h6 fw-bold mb-0">Associated Account :</span>
+                                                                <span class="h61 fw-bold mb-0">Associated Account :</span>
                                                             </div>
                                                             <div class="col-md-8 col-sm-8">
                                                                 <span class="h6 fw-light mb-0">{{ $store.getters.user.name }} | {{ $store.getters.user.email }}</span>
@@ -289,5 +289,8 @@
         border-radius: 11px !important;
         background-color: red !important;
         color: white;
+    }
+    .fw-500{
+        font-weight: 500;
     }
 </style>

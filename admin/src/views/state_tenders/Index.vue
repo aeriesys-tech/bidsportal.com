@@ -11,16 +11,14 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="d-sm-flex align-items-center justify-content-between">
-                            <h6 class="card-title mb-0"><strong>State Tenders</strong></h6>
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded-pill" style="font-size: 10pt;">Total Bids: {{ state_tenders_count?.total_bids }}</span>
-
-                                <span class="badge bg-success rounded-pill" style="font-size: 10pt; margin-left: 10px;">Active: {{ state_tenders_count?.active }}</span>
-
-                                <span class="badge bg-warning rounded-pill" style="font-size: 10pt; margin-left: 10px;">Approved Today: {{ state_tenders_count?.approved_today }}</span>
-                                <span class="badge bg-danger rounded-pill" style="margin-left: 10px; margin-right: 10px; font-size: 10pt;">Pending: {{ state_tenders_count?.pending }}</span>
-                                <select class="form-control" v-model="meta.status" @change="search">
+                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+                            <h6 class="card-title mb-2 mb-md-0"><strong>State Tenders</strong></h6>
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="badge bg-primary rounded-pill">Total Bids: {{ state_tenders_count?.total_bids }}</span>
+                                <span class="badge bg-success rounded-pill">Active: {{ state_tenders_count?.active }}</span>
+                                <span class="badge bg-warning rounded-pill">Approved Today: {{ state_tenders_count?.approved_today }}</span>
+                                <span class="badge bg-danger rounded-pill">Pending: {{ state_tenders_count?.pending }}</span>
+                                <select class="form-control form-select" v-model="meta.status" @change="search" style="width: 105px;">
                                     <option value="">Select Status</option>
                                     <option value="All">All</option>
                                     <option value="Active">Active</option>
@@ -205,8 +203,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <select class="form-select from-select-sm width-75" v-model="meta.per_page" @change="onPerPageChange">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start gap-2">
+                            <select class="form-select form-select-sm w-auto" v-model="meta.per_page" @change="onPerPageChange">
                                 <option>10</option>
                                 <option>15</option>
                                 <option>20</option>
@@ -218,7 +216,9 @@
                                 <option>500</option>
                             </select>
                             <span>Showing {{ meta.from }} to {{ meta.to }} of {{ meta.totalRows }} entries</span>
-                            <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page" @pagechanged="onPageChange" />
+                            <div class="d-flex justify-content-center">
+                                <Pagination :maxPage="meta.maxPage" :totalPages="meta.lastPage" :currentPage="meta.page" @pagechanged="onPageChange" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -384,7 +384,7 @@
                             vm.country.country_id = vm.tenders[0].tdr_country_id;
                             vm.getStates();
                         }
-                        vm.getTotalCount()
+                        vm.getTotalCount();
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -548,10 +548,10 @@
     }
 
     .table thead {
-    position: sticky;
-    top: -1px;
-    background: white; /* Ensure visibility */
-    z-index: 10;
-     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-}
+        position: sticky;
+        top: -1px;
+        background: white; /* Ensure visibility */
+        z-index: 10;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    }
 </style>
