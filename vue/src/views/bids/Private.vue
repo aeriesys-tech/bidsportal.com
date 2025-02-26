@@ -813,10 +813,13 @@
             <div class="" style="width: 500px;">
                 <div class="">
                     <div class=""></div>
-                    <div class="">
+                    <!-- <div class="">
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addPrivateFilter"
                             :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
-                    </div>
+                    </div> -->
+                      <div class="">
+                            <SaveSearch @closeModal="closeModal" @updateSearch="updatePrivateFilter"  @saveSearch="addPrivateFilter" :status="save_search_filter.status" :filter_name="meta.private_filter_name" :savedbids="savedbids" ref="save_search" />
+                        </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
             </div>
@@ -1019,6 +1022,7 @@ export default {
             share_tender: false,
             meta: {
                 private_filter_name: '',
+                private_filter_id: '',
                 alert_title: '',
                 region: '',
                 frequency: '',
@@ -1050,6 +1054,7 @@ export default {
                 maxPage: 1,
                 to: "",
                 alert_label: false,
+                status:true
             },
             savealert: {
                 id: "",
@@ -1160,6 +1165,9 @@ export default {
             },
             erroralertmodal: false,
             delete_alert: null,
+            save_search_filter:{
+                    status:true
+                }
         };
     },
 
@@ -1445,6 +1453,9 @@ export default {
             this.meta.categories = private_filter.categories
             this.meta.states = private_filter.states
             this.meta.private_agencies = private_filter.private_agencies
+            this.meta.private_filter_name = private_filter.private_filter_name;
+            this.meta.private_filter_id = private_filter.private_filter_id;
+            this.save_search_filter.status = false
             this.getPrivateTenders()
         },
 
@@ -1467,6 +1478,26 @@ export default {
                     });
             }
         },
+        updatePrivateFilter(filter_name) {
+                console.log("Filter-",filter_name)
+                let vm = this;
+                vm.meta.private_filter_name = filter_name;
+                if (this.$store.getters.user) {
+                    vm.meta.user_id = this.$store.getters.user.user_id;
+                    vm.$store
+                        .dispatch("post", { uri: "updatePrivateFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.getPrivateFilters();
+                            vm.closeModal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
 
         addAlert(alert) {
             let vm = this

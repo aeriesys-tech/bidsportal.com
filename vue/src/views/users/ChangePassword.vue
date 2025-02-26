@@ -1,7 +1,7 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :on-cancel="onCancel" :is-full-page="fullPage" />
 
-    <section class="pt-3" style="padding-bottom: 77px;">
+    <section class="pt-3" style="padding-bottom: 77px;background-color: #fafafa;">
         <div class="container">
             <div class="row">
                 <ProfileList></ProfileList>
@@ -9,10 +9,10 @@
                     <div class="d-grid mb-0 d-lg-none w-100">
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
-                    <div class="card border-0 p-5 pt-0">
-                        <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
+                    <div class="card border-0 p-3 pt-0">
+                        <div class="card-header bg-transparent pb-2 border-bottom d-sm-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="card-header-title">Account details</h5>
+                                <h5 class="card-header-title fw-500">Account details</h5>
                             </div>
                         </div>
                         <form class="card-body">
@@ -333,5 +333,12 @@
 
     .input-group {
         flex-wrap: wrap !important;
+    }
+     .fw-500{
+        font-weight: 500;
+    }
+    .form-label {
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity));
     }
 </style>

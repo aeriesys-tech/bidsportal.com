@@ -1,6 +1,6 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" />
-    <section class="pt-3">
+    <section class="pt-3" style="background-color: #fafafa;">
         <div class="container">
             <div class="row g-2 g-lg-4">
                 <ProfileList></ProfileList>
@@ -10,9 +10,9 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <div class="card border-0 p-5 pt-0 rounded-3">
+                            <div class="card border-0 p-3 pt-0 rounded-3">
                                 <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
-                                    <h5 class="mb-2 mb-sm-0">My Purchased Bids</h5>
+                                    <h5 class="mb-2 mb-sm-0 fw-500">My Purchased Bids</h5>
                                 </div>
                                 <div>
                                     <div v-for="userpayment, key in payment" :key="key">
@@ -20,8 +20,8 @@
                                             <div class="">
                                                 <div class="d-flex align-items-center">
                                                     <div class="" style="padding: 7px;">
-                                                        <h6>Transaction ID : <span style="font-weight: normal;">{{userpayment?.txn_id}}</span></h6>
-                                                        <h6>
+                                                        <h6 class="fw-500">Transaction ID : <span style="font-weight: normal;">{{userpayment?.txn_id}}</span></h6>
+                                                        <h6 class="fw-500">
                                                             Order ID : <span style="font-weight: normal;">{{userpayment?.order_id}} </span> <span style="font-weight: normal;"> |</span> Dated :
                                                             <span style="font-weight: normal;">{{format_date(userpayment?.payment_date)}}</span>
                                                         </h6>
@@ -237,5 +237,8 @@
         background-size: 56.57px 56.57px;
         text-align: center !important;
         margin-bottom: 10px;
+    }
+     .fw-500{
+        font-weight: 500;
     }
 </style>
