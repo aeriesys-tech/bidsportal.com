@@ -291,6 +291,7 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//International Filter
 	Route::post("addInternationalFilters", [InternationalFilterController::class,'addInternationalFilters']);	
+	Route::post("updateInternationalFilters", [InternationalFilterController::class,'updateInternationalFilters']);	
 	Route::post("getInternationalFilters", [InternationalFilterController::class,'getInternationalFilters']);
 	Route::post("deleteInternationalFilter", [InternationalFilterController::class,'deleteInternationalFilter']);
 
