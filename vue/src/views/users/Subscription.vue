@@ -94,8 +94,8 @@
                                                                     </tr>
                                                                     <tr v-for="subscription in subscriptions" :key="subscription.id">
                                                                         <td>
-                                                                            <h6 v-if="subscription.active_status=='active'" class="mb-0">{{subscription.active_status}}</h6>
-                                                                            <span v-else class="mb-0">{{subscription.active_status}}</span>
+                                                                            <h6 v-if="subscription.active_status=='active'" class="mb-0 fw-500">{{subscription.active_status}}</h6>
+                                                                            <span v-else><h6 class="mb-0 fw-500">{{subscription.active_status}}</h6></span>
                                                                         </td>
                                                                         <td>
                                                                             <span class="mb-0" v-if="subscription.active_status=='active'">{{ subscription.subscription_plan?.plan }}</span>
