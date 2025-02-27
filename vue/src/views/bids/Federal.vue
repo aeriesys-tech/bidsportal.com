@@ -394,6 +394,7 @@
                                     <div v-if="filters?.length != 0">
                                         <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
                                     </div>
+                                    <span style="color:red" v-if="save_search_filter.message">{{ save_search_filter.message }}</span>
                                 </div>
                             </div>
                             <section v-if="!federal_tenders?.length && !isLoading">
@@ -1088,8 +1089,9 @@ export default {
             erroralertmodal: false,
             delete_alert: null,
             save_search_filter:{
-                    status:true
-                }
+                status:true,
+                message:null
+            }
         };
     },
 
@@ -1444,8 +1446,9 @@ export default {
                         vm.closeModal();
                     })
                     .catch(function (error) {
-                        console.log(error);
-                        vm.errors = error.response.data.errors;
+                        vm.closeModal();
+                        vm.errors = error.response.data.errors
+                        vm.save_search_filter.message = error.response.data.message
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             }
@@ -1622,6 +1625,8 @@ export default {
             this.meta.federal_agencies = []
             this.meta.status = true
             this.meta.federal_filter_name = null
+            this.save_search_filter.status = true
+            this.save_search_filter.message = null
             this.getFederalTenders()
             this.$store.dispatch("setSelectedNaics", [])
             this.$store.dispatch("setSelectedPscs", [])

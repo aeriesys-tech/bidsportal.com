@@ -165,7 +165,7 @@ class FederalFilterController extends Controller
 	        })->where('user_id', $request->user_id)->first();
 
         if($federal_filter){
-        	return response()->json(['errors' => 'Same filter already exists'], 422);
+        	return response()->json(['message' => 'Same filter already exists'], 422);
 
         }else{
         	$federal_filter = FederalFilter::create([

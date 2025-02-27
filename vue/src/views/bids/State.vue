@@ -370,6 +370,7 @@
                                     <div v-if="filters.length != 0">
                                         <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1" @click.prevent="clearAllFilters()">Clear all</button>
                                     </div>
+                                    <span style="color:red" v-if="save_search_filter.message">{{ save_search_filter.message }}</span>
                                 </div>
                             </div>
                             <section v-if="!state_tenders.length && !isLoading">
@@ -1106,7 +1107,8 @@
                 erroralertmodal: false,
                 delete_alert: null,
                 save_search_filter:{
-                    status:true
+                    status:true,
+                    message:null
                 }
             };
         },
@@ -1409,8 +1411,9 @@
                             vm.closeModal();
                         })
                         .catch(function (error) {
-                            console.log(error);
-                            vm.errors = error.response.data.errors;
+                            vm.closeModal();
+                            vm.errors = error.response.data.errors
+                            vm.save_search_filter.message = error.response.data.message
                             vm.$store.dispatch("error", error.response.data.message);
                         });
                 }
@@ -1471,12 +1474,34 @@
 
             },
 
+            // tenderDetails(state_tender) {
+            //     this.closeModal();
+            //     if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
+            //         this.$store.commit("setStateTender", state_tender);
+            //         this.$store.commit("setFilters", this.meta);
+            //         this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
+            //     } else {
+            //         if (this.$store.getters.user) {
+            //             this.modal.subscribe = true;
+            //         } else {
+            //             this.modal.login = true;
+            //         }
+            //     }
+            // },
+
             tenderDetails(state_tender) {
                 this.closeModal();
                 if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
                     this.$store.commit("setStateTender", state_tender);
                     this.$store.commit("setFilters", this.meta);
-                    this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
+
+                    // Generate the URL
+                    const url = this.$router.resolve({
+                        path: "state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no
+                    }).href;
+
+                    // Open in a new tab
+                    window.open(url, "_blank");
                 } else {
                     if (this.$store.getters.user) {
                         this.modal.subscribe = true;
@@ -1485,6 +1510,7 @@
                     }
                 }
             },
+
 
             handleSelectedTag(tag) {
                 if (this.tag === "") {
@@ -1582,6 +1608,8 @@
                 this.meta.state_agencies = []
                 this.meta.status = true
                 this.meta.state_filter_name = null
+                this.save_search_filter.status = true
+                this.save_search_filter.message = null
                 this.getStateTenders()
             },
             removeFilter(filter) {

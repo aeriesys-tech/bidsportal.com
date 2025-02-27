@@ -51,7 +51,7 @@ class InternationalFilterController extends Controller
 		        	$que->whereIn('keyword', $request->keywords);
 		        })->where('user_id', $request->user_id)->first();
 	    if($international_filter){
-	    	return response()->json(['errors' => 'Same filter already exists'], 422);
+	    	return response()->json(['message' => 'Same filter already exists'], 422);
 	    }else{
 	    	$international_filter = InternationalFilter::create([
 	            'user_id' => $request->user_id,

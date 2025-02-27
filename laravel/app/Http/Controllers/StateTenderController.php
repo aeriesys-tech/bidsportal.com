@@ -342,7 +342,11 @@ class StateTenderController extends Controller
             SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_bids
         ")->first();
 
-        $approved_today = StateTender::where('status', 1)
+        $auto_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'auto')
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        $manual_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'manual')
             ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
             ->count();
 
@@ -350,7 +354,8 @@ class StateTenderController extends Controller
             'total_bids' => $counts->total_bids,
             'active' => $counts->active_bids,
             'pending' => $counts->inactive_bids,
-            'approved_today' => $approved_today
+            'auto_approved_today' => $auto_approved_today,
+            'manual_approved_today' => $manual_approved_today
         ]);
     }
 
@@ -797,6 +802,7 @@ class StateTenderController extends Controller
     public function updateStateTender(Request $request)
     {
         $request->validate([
+            'posted_date' => 'required',
             'opening_date' => 'required',
             'expiry_date' => 'required',
             'state_tender_id' => 'required',
@@ -812,6 +818,8 @@ class StateTenderController extends Controller
                 'state_agency_id' => $request->state_agency_id,
                 'category_id' => $request->category_id,
                 'state_id' => $request->state_id,
+                'posted_date' => $request->posted_date,
+                'upload_type' => 'manual',
                 'status' => true
             ]);
             if($update_state_tender){
