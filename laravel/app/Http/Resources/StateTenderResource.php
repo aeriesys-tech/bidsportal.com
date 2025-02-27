@@ -16,6 +16,7 @@ class StateTenderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $errors = [];
         if($this->posted_date) {
             if($request->time_zone) {
                 $difference = Carbon::parse($this->posted_date)
@@ -60,33 +61,21 @@ class StateTenderResource extends JsonResource
             $state_notice_color = '';
         }
 
-        if($this->state_notice_id){
-            $state_notice_error = null;
-        }else{
-            $state_notice_error = "State notice id field is required";
+        if (!$this->state_notice_id) {
+            $errors['state_notice_id'][] = "The state notice id field is required.";
         }
 
-        if($this->category_id){
-            $category_error = null;
-        }else{
-            $category_error = "Category id field is required";
+        if (!$this->category_id) {
+            $errors['category_id'][] = "The category id field is required.";
         }
 
-        if($this->state_agency_id){
-            $state_agency_error = null;
-        }else{
-            $state_agency_error = "State agency id field is required";
+        if (!$this->state_agency_id) {
+            $errors['state_agency_id'][] = "The state agency id field is required.";
         }
 
-        if($this->state_id){
-            $state_error = null;
-        }else{
-            $state_error = "State id field is required";
+        if (!$this->state_id) {
+            $errors['state_id'][] = "The state id field is required.";
         }
-
-
-
-
 
         return [
             'state_tender_id' => $this->state_tender_id,
@@ -123,10 +112,8 @@ class StateTenderResource extends JsonResource
             'cart_icon' => $cart_icon,
             'is_expired' => $is_expired,
             'state_notice_color' => $state_notice_color,
-            'state_notice_error' => $state_notice_error,
-            'category_error' => $category_error,
-            'state_agency_error' => $state_agency_error,
-            'state_error' => $state_error
+            'errors' => $errors,
+            'upload_type' => $this->upload_type
         ];
     }
 }

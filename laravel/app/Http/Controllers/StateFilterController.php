@@ -55,7 +55,7 @@ class StateFilterController extends Controller
         })->where('user_id', $request->user_id)->first();
 
         if($state_filter){
-        	return response()->json(['errors' => 'Same filter already exists'], 422);
+        	return response()->json(['message' => 'Same filter already exists'], 422);
 
         }else{
         	$state_filter = StateFilter::create([

@@ -16,7 +16,8 @@
                             <div class="d-flex flex-wrap align-items-center gap-2">
                                 <span class="badge bg-primary rounded-pill">Total Bids: {{ state_tenders_count?.total_bids }}</span>
                                 <span class="badge bg-success rounded-pill">Active: {{ state_tenders_count?.active }}</span>
-                                <span class="badge bg-warning rounded-pill">Approved Today: {{ state_tenders_count?.approved_today }}</span>
+                                <span class="badge bg-warning rounded-pill">Auto Approved Today: {{ state_tenders_count?.auto_approved_today }}</span>
+                                <span class="badge bg-warning rounded-pill">Manual Approved Today: {{ state_tenders_count?.manual_approved_today }}</span>
                                 <span class="badge bg-danger rounded-pill">Pending: {{ state_tenders_count?.pending }}</span>
                                 <select class="form-control form-select" v-model="meta.status" @change="search" style="width: 105px;">
                                     <option value="">Select Status</option>
@@ -270,7 +271,8 @@
                     active: null,
                     pending: null,
                     total_bids: null,
-                    approved_today: null,
+                    auto_approved_today: null,
+                    manual_approved_today:null
                 },
                 status: true,
                 tenders: [],

@@ -465,6 +465,7 @@
                                     <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1"
                                         @click.prevent="clearAllFilters()">Clear all</button>
                                 </div>
+                                <span style="color:red" v-if="save_search_filter.message">{{ save_search_filter.message }}</span>
                             </div>
                         </div>
                         <section v-if="!international_tenders.length && !isLoading">
@@ -1169,8 +1170,9 @@ export default {
             erroralertmodal: false,
             delete_alert: null,
             save_search_filter:{
-                    status:true
-                }
+                status:true,
+                message:null
+            }
         };
     },
 
@@ -1472,10 +1474,11 @@ export default {
                     .then(function (response) {
                         vm.$store.dispatch("success", "Filters saved successfully");
                         vm.getInternationalFilters()
-                        vm.closeModal();
+                        vm.closeModal()
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        vm.closeModal()
+                        vm.save_search_filter.message = error.response.data.message
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
@@ -1694,6 +1697,8 @@ export default {
             this.meta.international_agencies = []
             this.meta.status = true
             this.meta.international_filter_name = null
+            this.save_search_filter.status = true
+            this.save_search_filter.message = null
             this.getInternationalTenders();
         },
         removeFilter(filter) {
