@@ -813,10 +813,14 @@
             <div class="" style="width: 500px;">
                 <div class="">
                     <div class=""></div>
-                    <div class="">
+                    <!-- <div class="">
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addInternationalFilter"
                             :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
-                    </div>
+
+                    </div> -->
+                    <div class="">
+                            <SaveSearch @closeModal="closeModal" @updateSearch="updateInternationalFilter"  @saveSearch="addInternationalFilter" :status="save_search_filter.status" :filter_name="meta.international_filter_name" :savedbids="savedbids" ref="save_search" />
+                        </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
             </div>
@@ -1020,6 +1024,7 @@ export default {
             international_tenders: [],
             share_tender: false,
             meta: {
+                international_filter_id: '',
                 international_filter_name: '',
                 alert_title: '',
                 region: '',
@@ -1052,6 +1057,7 @@ export default {
                 maxPage: 1,
                 to: "",
                 alert_label: false,
+                status:true
             },
             savealert: {
                 id: "",
@@ -1162,6 +1168,9 @@ export default {
             },
             erroralertmodal: false,
             delete_alert: null,
+            save_search_filter:{
+                    status:true
+                }
         };
     },
 
@@ -1447,6 +1456,9 @@ export default {
             this.meta.categories = international_filter.categories
             this.meta.states = international_filter.states
             this.meta.international_agencies = international_filter.international_agencies
+            this.meta.international_filter_name = international_filter.international_filter_name;
+            this.meta.international_filter_id = international_filter.international_filter_id;
+            this.save_search_filter.status = false
             this.getInternationalTenders()
         },
 
@@ -1469,6 +1481,26 @@ export default {
                     });
             }
         },
+         updateInternationalFilter(filter_name) {
+                let vm = this;
+                vm.meta.international_filter_name = filter_name;
+                if (this.$store.getters.user) {
+                    vm.meta.user_id = this.$store.getters.user.user_id;
+                    vm.$store
+                        .dispatch("post", { uri: "updateInternationalFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.getInternationalFilters();
+                            vm.closeModal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
+
 
         addAlert(alert) {
             let vm = this;
@@ -1660,6 +1692,8 @@ export default {
             this.meta.categories = []
             this.meta.states = []
             this.meta.international_agencies = []
+            this.meta.status = true
+            this.meta.international_filter_name = null
             this.getInternationalTenders();
         },
         removeFilter(filter) {
