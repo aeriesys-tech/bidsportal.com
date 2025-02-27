@@ -1667,6 +1667,8 @@ export default {
             this.meta.categories = []
             this.meta.states = []
             this.meta.private_agencies = []
+            this.meta.status = true
+            this.meta.private_filter_name = null
             this.getPrivateTenders();
         },
         removeFilter(filter) {
