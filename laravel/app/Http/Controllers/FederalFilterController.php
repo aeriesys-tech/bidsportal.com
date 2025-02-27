@@ -56,7 +56,7 @@ class FederalFilterController extends Controller
 	    if($federal_filter){
 	    	FederalFilter::where('federal_filter_id', $request->federal_filter_id)->update([
 	            'user_id' => $request->user_id,
-			    'state_filter_name' => $request->state_filter_name,
+			    'federal_filter_name' => $request->federal_filter_name,
 			    'posted_date' => $request->posted_date ?: null,
 			    'active' => $request->active ?: null,
 			    'expired' => $request->expired ?: null,

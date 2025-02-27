@@ -60,6 +60,30 @@ class StateTenderResource extends JsonResource
             $state_notice_color = '';
         }
 
+        if($this->state_notice_id){
+            $state_notice_error = null;
+        }else{
+            $state_notice_error = "State notice id field is required";
+        }
+
+        if($this->category_id){
+            $category_error = null;
+        }else{
+            $category_error = "Category id field is required";
+        }
+
+        if($this->state_agency_id){
+            $state_agency_error = null;
+        }else{
+            $state_agency_error = "State agency id field is required";
+        }
+
+        if($this->state_id){
+            $state_error = null;
+        }else{
+            $state_error = "State id field is required";
+        }
+
 
 
 
@@ -98,7 +122,11 @@ class StateTenderResource extends JsonResource
             'state_attachments' => $this->StateAttachments,
             'cart_icon' => $cart_icon,
             'is_expired' => $is_expired,
-            'state_notice_color' => $state_notice_color
+            'state_notice_color' => $state_notice_color,
+            'state_notice_error' => $state_notice_error,
+            'category_error' => $category_error,
+            'state_agency_error' => $state_agency_error,
+            'state_error' => $state_error
         ];
     }
 }
