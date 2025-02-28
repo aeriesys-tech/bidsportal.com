@@ -427,9 +427,20 @@
                                         <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
-                                                    <a href="#" @click.prevent="tenderDetails(federal_tender)">
+                                                    <div v-if="$store.getters.user">
+                                                        <router-link
+                                                            :to="'/bids/federal-tenders/' + federal_tender.title.replace(/ /g, '-') + '--' + federal_tender.tender_no"
+                                                            :class="federal_active"
+                                                            @click.prevent="tenderDetails(federal_tender)"
+                                                        >
+                                                            <div v-html="highlight(federal_tender.title)"></div>
+                                                        </router-link>
+                                                    </div>
+                                                    <div v-else>
+                                                           <a href="javascript:void(0)" @click.prevent="tenderDetails(federal_tender)">
                                                         <div v-html="highlight(federal_tender.title)"></div>
                                                     </a>
+                                                    </div>
                                                 </strong>
                                                 <ul class="list-inline mb-0 z-index-2">
                                                     <li class="list-inline-item">

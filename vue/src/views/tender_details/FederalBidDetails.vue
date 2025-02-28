@@ -5,19 +5,27 @@
             <div class="container position-relative">
                 <div class="row px-2">
                     <div class="col-12 d-flex justify-content-md-between align-items-center">
-                        <ul class="list-inline text-end"></ul>
                         <ul class="list-inline text-end">
+                            <!-- <li class="list-inline-item">
+                                <a href="javascript:void(0)" @click.prevent="previousPage()" class="badge text-bg-secondary fs-6 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
+                            </li> -->
+                        </ul>
+                        <ul class="list-inline text-end">
+                            <!-- <li class="list-inline-item">
+                                <button class="mybutton-secondary mybutton-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
+                            </li> -->
                             <li class="list-inline-item">
                                 <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
                             </li>
-                            <li class="list-inline-item" v-if="state_tender?.tender_url">
-                                <a href="javascript:void(0)" @click="openWebSite()" class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
+                            <li class="list-inline-item" v-if="federal_tender?.notice_id">
+                                <button class="btn btn-sm btn-success" @click="openWebSite()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
                             </li>
                             <li class="list-inline-item" v-else>
-                                <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
+                                <button class="btn btn-sm btn-success" @click="showAlert()"><i class="fa-solid fa-globe m-1"></i>Open Website</button>
                             </li>
+
                             <li class="list-inline-item" v-if="$store.getters.user">
-                                <button class="btn btn-sm btn-primary" @click.prevent="sharestate_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                                <button class="btn btn-sm btn-primary" @click.prevent="sharefederal_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                             </li>
                         </ul>
                     </div>
@@ -28,18 +36,18 @@
                             <div class="col-12 d-flex justify-content-md-between">
                                 <ul class="list-inline text-end">
                                     <li class="list-inline-item">
-                                        <img class="icon me-2" src="/assets/icons/stateblue.svg" alt="icon" />
-                                        <span style="font-size: 16px; color: black;">State Opportunities</span>
+                                        <img class="icon me-2" src="/assets/icons/federalblue.svg" alt="icon" />
+                                        <span style="font-size: 16px; color: black;">Federal Opportunities </span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-12">
                                 <div class="d-md-flex justify-content-md-between">
                                     <div>
-                                        <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{ state_tender.title }}</h5>
+                                        <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{ federal_tender.title }}</h5>
                                         <ul class="nav nav-divider text-body mb-0">
-                                            <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ state_tender.tender_no }}</li>
-                                            <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(state_tender.posted_date) }}</li>
+                                            <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ federal_tender.tender_no }}</li>
+                                            <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(federal_tender.posted_date) }}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -85,39 +93,41 @@
                                             <div class="card-body p-0">
                                                 <ul class="list-group list-group-borderless mb-3">
                                                     <li class="list-group-item">
-                                                        <h6 class="mb-0 fw-normal">Agency : <span class="fw-light">{{state_tender.state_agency?.state_agency_name }}</span></h6>
+                                                        <h6 class="mb-0 fw-normal">Agency : <span class="fw-light">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
                                                     </li>
                                                 </ul>
-                                                <p class="mb-4 text-align-justify" v-html="state_tender.description"></p>
+                                                <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
 
                                                 <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                                    <div v-if="state_tender.place_of_performance">
+                                                    <div v-if="federal_tender.place_of_performance">
                                                         <h6 class="fw-normal mb-0">Place of Performance:</h6>
-                                                        <p>{{ state_tender.place_of_performance }}</p>
+                                                        <p>{{ federal_tender.place_of_performance }}</p>
                                                     </div>
-                                                    <!-- <div v-if="state_tender.state_office_address">
+                                                    <div v-if="federal_tender.federal_office_address">
                                                         <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                         <p>
-                                                            {{ state_tender.state_office_address.city }}
-                                                            <span v-if="state_tender.state_office_address.city">, </span>
-                                                            <span>
-                                                                {{ state_tender.state_office_address.state + ' ' +
-                                                                    state_tender.state_office_address.country }}
-                                                            </span>
+                                                            {{ federal_tender.federal_office_address.city }}<span v-if="federal_tender.federal_office_address.city">, </span>
+                                                            <span>{{ federal_tender.federal_office_address.state + '' + federal_tender.federal_office_address.country }}</span>
                                                         </p>
-                                                    </div> -->
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="card">
                                             <div class="card-body p-0">
                                                 <div class="row g-3 align-items-center justify-content-between mb-3">
-                                                    <div class="col-md-6" v-if="state_tender?.state_attachments?.length">
-                                                        <strong class="text-primary">Downloads ({{ state_tender?.state_attachments?.length }})</strong>
+                                                    <div class="col-md-6" v-if="federal_tender?.federal_attachments?.length">
+                                                        <strong class="text-primary">Downloads ({{ federal_tender?.federal_attachments?.length }})</strong>
                                                     </div>
                                                     <div class="col-md-6 text-end">
                                                         <span v-if="download_all_attachments">
-                                                            <a target="_blank" :href="$store.state.baseUrl + 'downloadStateAttachments/' + state_tender.state_tender_id" class="btn btn-sm btn-primary">
+                                                            <!-- <a target="_blank"
+                                                                :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id"
+                                                                class="mybutton-secondary1 mb-0">
+                                                                <i class="bi bi-cloud-download"></i> Download All
+                                                                Attachments/Links
+                                                            </a> -->
+                                                            <a target="_blank" :href="$store.state.baseUrl + 'downloadFederalAttachments/' + federal_tender.federal_tender_id" class="btn btn-sm btn-primary">
                                                                 <i class="bi bi-cloud-download"></i> Download All Attachments/Links
                                                             </a>
                                                         </span>
@@ -138,35 +148,36 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody class="border-top-0">
-                                                            <tr v-if="!state_tender?.state_attachments?.length">
+                                                            <tr v-if="!federal_tender?.federal_attachments?.length">
                                                                 <td class="text-center" colspan="5">No attachments are available</td>
                                                             </tr>
-                                                            <tr v-for="state_attachment, att_key in state_tender.state_attachments" :key="att_key">
+                                                            <tr v-for="federal_attachment, att_key in federal_tender.federal_attachments" :key="att_key">
                                                                 <td class="text-center">
-                                                                    <i :class="state_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
+                                                                    <i :class="federal_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
                                                                 </td>
-                                                                <!-- <td id="demo-3">{{ state_attachment.attachment_name }}</td> -->
-                                                                <td id="demo-3" :title="state_attachment.attachment_name">
-                                                                    <span class="truncated-text">{{ state_attachment.attachment_name }}</span>
+                                                                <td id="demo-3" :title="federal_attachment.attachment_name">
+                                                                    <span class="truncated-text">
+                                                                        {{ federal_attachment.attachment_name }}
+                                                                    </span>
                                                                 </td>
-                                                                <td>{{ state_attachment.attachment_size }}</td>
-                                                                <td>{{ state_attachment.attachment_date }}</td>
-                                                                <td class="text-center" v-if="state_attachment.attachment_url">
-                                                                    <a :href="state_attachment.attachment_url" target="_blank" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download">
+                                                                <td>{{ federal_attachment.attachment_size }}</td>
+                                                                <td>{{ federal_attachment.attachment_date }}</td>
+                                                                <td class="text-center" v-if="federal_attachment.download_url">
+                                                                    <a :href="federal_attachment.download_url" target="_blank" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download">
                                                                         <i class="bi bi-cloud-download"></i>
                                                                     </a>
                                                                 </td>
                                                                 <td class="text-center" v-else>
                                                                     <!-- <a
-                                                                :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ state_tender.region.region_id +'/'+ attachment.name+'/'+state_tender.tdr_id"
-                                                                target="_blank"
-                                                                class="btn btn-light btn-round mb-0"
-                                                                data-bs-toggle="tooltip"
-                                                                data-bs-placement="top"
-                                                                data-bs-title="Download"
-                                                            >
-                                                                <i class="bi bi-cloud-download"></i>
-                                                            </a> -->
+                                                                        :href="$store.state.baseUrl+'singleBidDownloadFromS3/'+ federal_tender.region.region_id +'/'+ attachment.name+'/'+federal_tender.tdr_id"
+                                                                        target="_blank"
+                                                                        class="btn btn-light btn-round mb-0"
+                                                                        data-bs-toggle="tooltip"
+                                                                        data-bs-placement="top"
+                                                                        data-bs-title="Download"
+                                                                    >
+                                                                        <i class="bi bi-cloud-download"></i>
+                                                                    </a> -->
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -179,7 +190,7 @@
                                         <div class="card bg-transparent p-4">
                                             <div class="card-body p-0">
                                                 <h6 class="">Synopis:</h6>
-                                                <p class="mb-4" v-html="state_tender.tdr_requirement"></p>
+                                                <p class="mb-4" v-html="federal_tender.tdr_requirement"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +198,7 @@
                                         <div class="card bg-transparent p-4">
                                             <div class="card-body p-0">
                                                 <h6 class="">Synopis:</h6>
-                                                <p class="mb-4" v-html="state_tender.tdr_prog_information"></p>
+                                                <p class="mb-4" v-html="federal_tender.tdr_prog_information"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -199,43 +210,48 @@
                                                         <li class="list-inline-item h6 fw-normal mb-0">
                                                             <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                                         </li>
-                                                        <li v-if="state_interests?.length" class="list-inline-item h6 fw-normal mb-0">
-                                                            <a :href="download_state_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                        <li v-if="federal_interests?.length" class="list-inline-item h6 fw-normal mb-0">
+                                                            <a :href="download_federal_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
                                             <div class="card-body p-0">
-                                                <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!state_interests.length">
+                                                <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!federal_interests.length">
                                                     No records found
                                                 </div>
-                                                <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="state_interest in state_interests" :key="state_interest.user_state_interest_id">
+                                                <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="federal_interest in federal_interests" :key="federal_interest.user_federal_interest_id">
                                                     <div class="d-sm-flex justify-content-between">
                                                         <div class="d-sm-flex align-items-center mb-3">
                                                             <div>
-                                                                <h6 class="m-0 mb-2">{{ state_interest.user?.company_name }}</h6>
-                                                                <span class="me-3">User Name : {{ state_interest.user?.name }}</span><br />
+                                                                <h6 class="m-0 mb-2">{{ federal_interest.user?.company_name }}</h6>
+                                                                <span class="me-3">User Name : {{ federal_interest.user?.name }}</span><br />
 
-                                                                <span class="me-3">Position : {{ state_interest.interest_type }}</span><br />
-                                                                <span class="me-3">Website : {{ state_interest.user?.web_address }}</span><br />
-                                                                <span class="me-3"><i class="fas fa-phone"></i> {{ state_interest.user?.phone }}</span>
-                                                                <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ state_interest.user?.email }}</span><br />
+                                                                <span class="me-3">Position : {{ federal_interest.interest_type }}</span><br />
+                                                                <span class="me-3">Website : {{ federal_interest.user?.web_address }}</span><br />
+                                                                <span class="me-3"><i class="fas fa-phone"></i> {{ federal_interest.user?.phone }}</span>
+                                                                <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ federal_interest.user?.email }}</span><br />
                                                             </div>
                                                         </div>
                                                         <ul class="list-inline mb-2 mb-sm-0"></ul>
                                                     </div>
                                                     <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
                                                     <ul>
-                                                        <li type="1" v-for="(user_set_aside, key) in state_interest.user?.user_set_asides" :key="key">
+                                                        <!-- <li type="1" v-for="(value, key) in bidintersed.user_details?.socioeconomic_status_description?.split(
+                                                            ','
+                                                        )" :key="key">
+                                                            {{ value }}
+                                                        </li> -->
+                                                        <li type="1" v-for="(user_set_aside, key) in federal_interest.user?.user_set_asides" :key="key">
                                                             {{ user_set_aside.set_aside?.set_aside_name }}
                                                         </li>
                                                     </ul>
-                                                    <div class="d-flex align-items-center" v-if="state_interest.user_id == $store.getters.user.user_id">
-                                                        <a href="javascript:void(0)" @click.prevent="edit(state_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
+                                                    <div class="d-flex align-items-center" v-if="federal_interest.user_id == $store.getters.user.user_id">
+                                                        <a href="javascript:void(0)" @click.prevent="edit(federal_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
                                                             <i class="bi bi-pencil-square"></i>
                                                         </a>
                                                         <span>
-                                                            <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(state_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
+                                                            <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(federal_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -250,7 +266,7 @@
                                 </div>
                             </div>
                             <aside class="col-xl-4">
-                                <div class="row g-4">
+                                <div class="row g-3">
                                     <div class="col-md-6 col-xl-12">
                                         <div class="card border card-body bg-light p-4">
                                             <h6 class="text-success fw-500" style="font-size: 18px;">GENERAL INFORMATION</h6>
@@ -259,58 +275,114 @@
                                                     <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                         Notice Type
                                                     </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ state_tender.state_notice?.notice_name }}</div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.federal_notice?.notice_name }}</div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                         Posted Date
                                                     </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(state_tender.posted_date) }}</div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.posted_date) }}</div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                         Response Date
                                                     </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(state_tender.expiry_date) }}</div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(federal_tender.expiry_date) }}</div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div>
                                                         <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
-                                                            Category
+                                                            Set Aside
                                                         </div>
-                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ state_tender.category?.category_name }}</div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">{{ federal_tender.set_aside?.set_aside_name }}</div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div>
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            PSC Code
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.psc?.psc_code }}-{{ federal_tender.psc?.psc_description }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div>
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            NAICS Code
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.naics?.naics_code }}-{{ federal_tender.naics?.naics_description }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <div v-if="federal_tender.tender_type && federal_tender.tender_type != 25 && federal_tender.region?.region_id == 2">
+                                                        <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
+                                                            Contract Type
+                                                        </div>
+                                                        <div class="mb-0" style="color: #747579; font-size: 16px;">
+                                                            {{ federal_tender.tenderType?.tdr_type_name }}
+                                                        </div>
                                                     </div>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
+                                    <!-- <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
+                                        <div class="card card-body border bg-light p-4">
+                                            <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
+                                            <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
+                                                <strong class="mb-1" v-if="federal_contact.type == 0">Primary Contact:</strong>
+                                                <strong class="mb-1" v-if="federal_contact.type == 1">Secondary Contact:</strong>
+                                                <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
+                                                    <li class="list-group-item py-1" v-if="federal_contact.fullName">
+                                                        <span class="text-info fw-light me -1 mb-0">{{ federal_contact.full_name }}</span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_contact.phone">
+                                                        <span href="#" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
+                                                            {{ federal_contact.phone }}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_contact.email">
+                                                        <span href="#" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
+                                                            {{ federal_contact.email }}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div> -->
                                     <div
                                         class="col-md-6 col-xl-12"
-                                        v-if="(state_tender?.primary_address?.full_name && state_tender.primary_address.full_name !== '-') ||
-                                                        (state_tender?.primary_address?.email && state_tender.primary_address.email !== '-') ||
-                                                        (state_tender?.primary_address?.phone && state_tender.primary_address.phone !== '-')"
+                                        v-if="(federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-') ||
+                                                        (federal_tender?.primary_address?.email && federal_tender.primary_address.email !== '-') ||
+                                                        (federal_tender?.primary_address?.phone && federal_tender.primary_address.phone !== '-')"
                                     >
                                         <div class="card card-body border bg-light p-4">
                                             <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
                                             <div>
                                                 <strong class="mb-1">Primary Contact:</strong>
                                                 <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
-                                                    <li class="list-group-item py-1" v-if="state_tender?.primary_address?.full_name && state_tender.primary_address.full_name !== '-'">
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-'">
                                                         <span class="mb-0">
                                                             <i class="fa-solid fa-fw fa-user text-primary fs-6"></i>
-                                                            {{state_tender?.primary_address?.full_name }}
+                                                            {{federal_tender?.primary_address?.full_name }}
                                                         </span>
                                                     </li>
-                                                    <li class="list-group-item py-1" v-if="state_tender?.primary_address?.email && state_tender?.primary_address?.email !== '-'">
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.email && federal_tender?.primary_address?.email !== '-'">
                                                         <span href="javscript:vioid(0)" class="mb-0">
                                                             <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
-                                                            {{ state_tender?.primary_address?.email}}
+                                                            {{ federal_tender?.primary_address?.email}}
                                                         </span>
                                                     </li>
-                                                    <li class="list-group-item py-1" v-if="state_tender?.primary_address?.phone && state_tender?.primary_address?.phone !== '-'">
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.phone && federal_tender?.primary_address?.phone !== '-'">
                                                         <span href="javscript:vioid(0)" class="mb-0">
                                                             <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
-                                                            {{ state_tender?.primary_address?.phone }}
+                                                            {{ federal_tender?.primary_address?.phone }}
                                                         </span>
                                                     </li>
                                                 </ul>
@@ -324,6 +396,7 @@
                 </div>
             </div>
         </section>
+
         <teleport to="#modals" v-if="sharebid">
             <div class="modal-overlay">
                 <div class="modal-dialog">
@@ -335,13 +408,14 @@
                         </div>
                         <div class="modal-header m-header"></div>
                         <div class="modal-body">
+                            <!-- <div class="card border">
+                                <div class="card-body vstack gap-4"> -->
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
                                         <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                         <div class="ms-2">
-                                            <!-- <h6 class="mb-0 title-green fw-500">Share Bid Details</h6> -->
-                                            <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">Share Bid Details</h5>
+                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -350,8 +424,8 @@
                                     <div class="mb-3">
                                         <input
                                             class="form-control"
-                                            :class="{ 'is-invalid': errors.recipient_email }"
                                             placeholder="Email"
+                                            :class="{ 'is-invalid': errors.recipient_email }"
                                             autocomplet="off"
                                             type="text"
                                             id="recipient-name"
@@ -389,9 +463,11 @@
                                     </div>
                                 </form>
                                 <div class="card-footer text-end pt-0">
-                                    <a href="javascript:void(0)" @click="sendStateTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
+                                    <a href="javascript:void(0)" @click="sendFederalTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
                                 </div>
                             </div>
+                            <!-- </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -403,12 +479,12 @@
                     <div class="modal-content">
                         <div class="modal-header m-header"></div>
                         <div class="modal-body">
-                            <div class="card p-0">
+                            <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
-                                            <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">
-                                                <span v-if="state_interest.status">Add Interest</span>
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
+                                                <span v-if="federal_interest.status">Add Interest</span>
                                                 <span v-else>Update Interest</span>
                                             </h5>
                                         </div>
@@ -417,22 +493,25 @@
                                 </div>
                                 <form class="card-body">
                                     <div class="form-check form-check-md mb-2">
-                                        <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="state_interest.interest_type" />
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-codepen"></i> </a> -->
+                                        <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Priming">Priming</label>
                                     </div>
                                     <div class="form-check form-check-md mb-2">
-                                        <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="state_interest.interest_type" />
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-dribbble"></i></a> -->
+                                        <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Subbing">Subbing</label>
                                     </div>
                                     <div class="form-check form-check-md">
-                                        <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="state_interest.interest_type" />
+                                        <!-- <a href="javascript:vodi(0)" class="btn btn-success-soft btn-round flex-shrink-0 ms-2 mb-0"><i class="fab fa-behance"></i> </a> -->
+                                        <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="federal_interest.interest_type" />
                                         <label class="form-check-label" for="Any">Any</label>
                                     </div>
                                     <span style="color: red;" v-if="errors.bid_interested_type">{{ errors.bid_interested_type[0] }}</span>
                                 </form>
                                 <div class="card-footer text-end pt-0">
                                     <button class="btn btn-sm btn-success mb-0" @click.prevent="submit()">
-                                        <span v-if="state_interest.status">Add </span>
+                                        <span v-if="federal_interest.status">Add </span>
                                         <span v-else>Update </span>
                                     </button>
                                 </div>
@@ -461,7 +540,7 @@
                     <h1 class="title-green">Are you sure?</h1>
                     <p>Do you really want to delete these records? This process cannot be undone.</p>
                     <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
-                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteStateInterest()">Confirm</a>
+                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</a>
                 </div>
             </div>
         </teleport>
@@ -479,8 +558,7 @@
         data() {
             return {
                 userintertsed: "",
-                download_all_attachments: "",
-                state_tender: "",
+                federal_tender: "",
                 meta: {
                     search: "",
                     order_by: "asc",
@@ -497,7 +575,7 @@
                 status: true,
                 addinterestmodal: false,
                 interstmodal: false,
-                state_tender: {},
+                federal_tender: {},
                 userinteresd: [],
                 userinteresed_id: "",
                 alertmodal: false,
@@ -515,13 +593,13 @@
                 bid_documents: {
                     tdr_documents: [],
                 },
-                state_interest: {
-                    user_state_interest_id: "",
-                    state_tender_id: "",
+                federal_interest: {
+                    user_federal_interest_id: "",
+                    federal_tender_id: "",
                     interest_type: "",
                     status: true,
                 },
-                state_interests: [],
+                federal_interests: [],
                 tdr: {
                     tdr_id: "",
                 },
@@ -533,41 +611,52 @@
                 var: "",
                 from_path: null,
                 attachments: false,
+                download_all_attachments: false,
                 share_tender: {
                     user_id: null,
                     recipient_email: null,
                     subject: "",
                     message: "",
-                    state_tenders: [],
+                    federal_tenders: [],
                 },
-                delete_state_interest: null,
-                download_state_interests: null,
+                delete_federal_interest: null,
+                download_federal_interests: null,
             };
         },
 
-        mounted() {
+        // beforeRouteEnter(to, from, next) {
+        //     next((vm) => {
+        //         vm.from_path = from.path;
+        //         if (vm.$store.getters.federal_tender) {
+        //             vm.federal_tender = vm.$store.getters.federal_tender;
+        //             vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
+        //             vm.federal_interest.user_id = vm.$store.getters.user?.user_id;
+        //             vm.download_federal_interests = vm.$store.getters.baseUrl + "api/downloadFederalInterests?federal_tender_id=" + vm.federal_tender.federal_tender_id;
+        //             vm.getFederalTender();
+        //         }
+        //     });
+        // },
+
+         mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
-            this.state_interest.user_id = this.$store.getters.user?.user_id;
-            this.getStateTender(tenderId);
+            this.federal_interest.user_id = this.$store.getters.user?.user_id;
+            this.getFederalTender(tenderId);
         },
 
         methods: {
             previousPage() {
                 this.$router.push(this.from_path);
             },
-            showAlert() {
-                this.$store.dispatch("info", "Didn't find the url to open");
-            },
 
-            getStateTender(tender_no) {
+            getFederalTender(tender_no) {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getStateTenderbyTenderNo", data: { tender_no: tender_no } })
+                    .dispatch("post", { uri: "getFederalTenderbyTenderNo", data: { tender_no: tender_no } })
                     .then(function (response) {
-                        vm.state_tender = response.data.data;
-                        vm.state_interest.state_tender_id = vm.state_tender?.state_tender_id;
-                        vm.download_all_attachments = vm.state_tender.state_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
-                        vm.paginateStateInterests();
+                        vm.federal_tender = response.data.data;
+                        vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
+                        vm.download_all_attachments = vm.federal_tender.federal_attachments.filter((attachment) => attachment.download_url).length >= 2;
+                        vm.paginateFederalInterests();
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -575,30 +664,18 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-
-            paginateStateInterests() {
-                let vm = this;
-                vm.$store
-                    .dispatch("post", { uri: "paginateStateInterests", data: vm.state_interest })
-                    .then(function (response) {
-                        vm.state_interest = response.data.state_interest;
-                        vm.state_interests = response.data.state_interests;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-            },
-
             replaceSpecialCharacters(value) {
                 value = value.replaceAll("+", " ");
                 value = value.replaceAll("-", " ");
                 value = value.replaceAll("_", " ");
                 return value;
             },
+            showAlert() {
+                this.$store.dispatch("info", "Didn't find notice id to open");
+            },
+
             openWebSite() {
-                window.open(this.state_tender.tender_url, "_target_blank");
+                window.open("https://sam.gov/opp/" + this.federal_tender.notice_id + "/view");
             },
             checkIfEmpty(str) {
                 if (str?.trim()) {
@@ -624,7 +701,13 @@
                 return moment(value).format("MMMM D, YYYY");
             },
             checkContact() {
-                if (this.state_tender?.tdr_pri_fullname !== "" || this.state_tender?.tdr_pri_phone !== "" || this.state_tender?.tdr_pri_email !== "" || this.state_tender?.tdr_sec_phone !== "" || this.state_tender?.tdr_sec_email !== "") {
+                if (
+                    this.federal_tender?.tdr_pri_fullname !== "" ||
+                    this.federal_tender?.tdr_pri_phone !== "" ||
+                    this.federal_tender?.tdr_pri_email !== "" ||
+                    this.federal_tender?.tdr_sec_phone !== "" ||
+                    this.federal_tender?.tdr_sec_email !== ""
+                ) {
                     return true;
                 }
             },
@@ -632,7 +715,8 @@
                 let vm = this;
                 vm.status = true;
                 vm.interstmodal = true;
-                // Activate the tab button
+
+                 // Activate the tab button
                 const tabButton = document.getElementById("tour-pills-tab-4");
                 let tab = new bootstrap.Tab(tabButton);
                 tab.show();
@@ -644,13 +728,13 @@
                 }
             },
             //  window.location.reload();
-            sharestate_tenders() {
+            sharefederal_tenders() {
                 let vm = this;
                 vm.errors = [];
                 vm.shareBid.bids = [];
                 vm.shareBid.mails = [];
-                vm.shareBid.region_id = vm.state_tender.tdr_region;
-                vm.shareBid.bids.push(vm.state_tender.tdr_id);
+                vm.shareBid.region_id = vm.federal_tender.tdr_region;
+                vm.shareBid.bids.push(vm.federal_tender.tdr_id);
 
                 if (vm.$store.getters.user == null) {
                     vm.userlogin = true;
@@ -658,14 +742,14 @@
                     vm.sharebid = true;
                 }
             },
-            sendStateTenderMail() {
+            sendFederalTenderMail() {
                 let vm = this;
                 vm.fullPage = true;
                 vm.isLoading = true;
                 vm.share_tender.user_id = this.$store.getters.user.user_id;
-                vm.share_tender.state_tenders.push(vm.state_tender.state_tender_id);
+                vm.share_tender.federal_tenders.push(vm.federal_tender.federal_tender_id);
                 vm.$store
-                    .dispatch("post", { uri: "sendStateTenderMail", data: vm.share_tender })
+                    .dispatch("post", { uri: "sendFederalTenderMail", data: vm.share_tender })
                     .then(function () {
                         vm.fullPage = false;
                         vm.isLoading = false;
@@ -683,33 +767,6 @@
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
-            },
-            shareMail() {
-                let vm = this;
-                vm.shareBid.mails = vm.mails.split(",");
-                if (vm.shareBid.mails[0] == "") {
-                    vm.shareBid.mails.splice(0);
-                } else {
-                    vm.shareBid.mails = vm.mails.split(",");
-                }
-                // let loader = vm.$loading.show();
-                vm.isLoading = true;
-                vm.$store
-                    .dispatch("post", { uri: "sendMailWithBids", data: vm.shareBid })
-                    .then(function () {
-                        // loader.hide();
-                        vm.isLoading = false;
-                        vm.$store.dispatch("success", "Share Bids successfully");
-                        vm.shareBid.bids = [];
-                        vm.shareBid.mails = [];
-                        vm.closemodal();
-                    })
-                    .catch(function (error) {
-                        vm.isLoading = false;
-                        vm.errors = error.response.data.errors;
-                        vm.$store.dispatch("error", error.response.data.message);
-                    });
-                // }
             },
 
             closemodal() {
@@ -738,7 +795,7 @@
                     .dispatch("post", { uri: "getBid", data: vm.tdr })
                     .then(function (response) {
                         vm.isLoading = false;
-                        vm.state_tender = response.data.data;
+                        vm.federal_tender = response.data.data;
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -748,11 +805,45 @@
                     });
             },
 
+            getFileExtension(file_extension) {
+                let image = null;
+                switch (file_extension) {
+                    case "ppt":
+                    case "pptx":
+                        image = "assets/icons/ppt.png";
+                        break;
+                    case "pdf":
+                        image = "assets/icons/PDF.svg";
+                        break;
+                    case "doc":
+                    case "docx":
+                        image = "assets/icons/DOCX.svg";
+                        break;
+                    case "png":
+                        image = "assets/icons/PNG.svg";
+                        break;
+                    case "xls":
+                    case "xlsx":
+                    case "csv":
+                        image = "assets/icons/XLS.svg";
+                        break;
+                    case "jpg":
+                    case "jpeg":
+                        image = "assets/icons/JPEG.svg";
+                        break;
+                    case "zip":
+                        image = "assets/icons/ZIP.svg";
+                        break;
+                    default:
+                        image = "assets/icons/default_file_icon.png";
+                }
+                return image;
+            },
             edit(bidintersed) {
                 let vm = this;
                 vm.status = 0;
                 vm.interstmodal = true;
-                vm.state_interest = bidintersed;
+                vm.federal_interest = bidintersed;
             },
             getBidInterest() {
                 let vm = this;
@@ -765,7 +856,6 @@
                     .dispatch("post", { uri: "getBidInterest", data: vm.tdr })
                     .then(function (response) {
                         vm.userinteresd = response.data.data;
-                        console.log("dfdsfdsf", vm.userinteresd);
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
@@ -773,10 +863,10 @@
                     });
             },
 
-            deleteStateInterest() {
+            deleteFederalInterest() {
                 let vm = this;
                 vm.isLoading = true;
-                let uri = { uri: "deleteStateInterest", data: vm.delete_state_interest };
+                let uri = { uri: "deleteFederalInterest", data: vm.delete_federal_interest };
                 vm.$store
                     .dispatch("post", uri)
                     .then(function () {
@@ -795,22 +885,22 @@
             submit() {
                 let vm = this;
                 if (vm.status) {
-                    vm.addStateInterest();
+                    vm.addFederalInterest();
                 } else {
-                    vm.updateStateInterest();
+                    vm.updateFederalInterest();
                 }
             },
-            addStateInterest() {
+            addFederalInterest() {
                 let vm = this;
                 vm.status = 1;
                 vm.isLoading = true;
                 vm.$store
-                    .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
+                    .dispatch("post", { uri: "addFederalInterest", data: vm.federal_interest })
                     .then(function () {
                         vm.isLoading = false;
-                        vm.$store.dispatch("success", "State interest updated successfully");
+                        vm.$store.dispatch("success", "Added successfully");
                         vm.interstmodal = false;
-                        vm.paginateStateInterests();
+                        vm.paginateFederalInterests();
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -818,18 +908,17 @@
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
-
-            updateStateInterest() {
+            updateFederalInterest() {
                 let vm = this;
                 vm.status = 1;
                 vm.isLoading = true;
                 vm.$store
-                    .dispatch("post", { uri: "addStateInterest", data: vm.state_interest })
+                    .dispatch("post", { uri: "addFederalInterest", data: vm.federal_interest })
                     .then(function () {
                         vm.isLoading = false;
-                        vm.$store.dispatch("success", "State interest updated successfully");
+                        vm.$store.dispatch("success", "Updated successfully");
                         vm.interstmodal = false;
-                        vm.paginateStateInterests();
+                        vm.paginateFederalInterests();
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -842,6 +931,31 @@
             //     return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
             // },
 
+            updateInterest() {
+                let vm = this;
+                vm.status = 1;
+                vm.addinterst.tdr_id = vm.$route.params.tdr_id;
+                vm.addinterst.bid_interested_user = vm.$store.getters.user.id;
+
+                vm.isLoading = true;
+                vm.$store
+                    .dispatch("post", {
+                        uri: "updateBidInterest/" + vm.addinterst.bid_interest_id,
+                        data: vm.addinterst,
+                    })
+                    .then(function () {
+                        vm.isLoading = false;
+                        vm.$store.dispatch("success", "Bids Interested is successfully updated");
+
+                        vm.interstmodal = false;
+                        vm.closemodal();
+                    })
+                    .catch(function (error) {
+                        vm.isLoading = false;
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
             getDocumentSize(tdr_documents_size, key) {
                 let size = [];
                 if (tdr_documents_size) {
@@ -904,6 +1018,20 @@
                     return 0;
                 }
             },
+            paginateFederalInterests() {
+                let vm = this;
+                vm.$store
+                    .dispatch("post", { uri: "paginateFederalInterests", data: vm.federal_interest })
+                    .then(function (response) {
+                        vm.federal_interest = response.data.federal_interest;
+                        vm.federal_interests = response.data.federal_interests;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        vm.errors = error.response.data.errors;
+                        vm.$store.dispatch("error", error.response.data.message);
+                    });
+            },
             onPageChange(page) {
                 this.meta.currentPage = page;
                 this.getBidInterest();
@@ -915,9 +1043,9 @@
             format_date(value) {
                 return moment(value).format("MMMM D, YYYY");
             },
-            deleteAlertpopup(state_interest) {
+            deleteAlertpopup(federal_interest) {
                 this.erroralertmodal = true;
-                this.delete_state_interest = state_interest;
+                this.delete_federal_interest = federal_interest;
             },
         },
     };
@@ -982,6 +1110,15 @@
     .mybutton-success {
         background: rgb(28, 184, 65);
         /* this is a green */
+    }
+
+    .mybutton-secondary {
+        background: rgb(28, 184, 65);
+        /* this is a green */
+    }
+
+    .sec {
+        background-color: #85878a !important;
     }
 
     .mybutton-secondary {
@@ -1224,7 +1361,6 @@
         cursor: pointer;
         /* Optional for hover indication */
     }
-
     .global-loader {
         position: fixed;
         top: 0;
