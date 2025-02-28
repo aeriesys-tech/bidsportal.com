@@ -1474,23 +1474,23 @@
 
             },
 
-            // tenderDetails(state_tender) {
-            //     this.closeModal();
-            //     if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
-            //         this.$store.commit("setStateTender", state_tender);
-            //         this.$store.commit("setFilters", this.meta);
-            //         this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
-            //     } else {
-            //         if (this.$store.getters.user) {
-            //             this.modal.subscribe = true;
-            //         } else {
-            //             this.modal.login = true;
-            //         }
-            //     }
-            // },
-
             tenderDetails(state_tender) {
-                window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
+                this.closeModal();
+                if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
+                    this.$store.commit("setStateTender", state_tender);
+                    this.$store.commit("setFilters", this.meta);
+                    this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
+                } else {
+                    if (this.$store.getters.user) {
+                        this.modal.subscribe = true;
+                    } else {
+                        this.modal.login = true;
+                    }
+                }
+            },
+
+            // tenderDetails(state_tender) {
+                // window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
                 // window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
                 // this.closeModal();
                 // if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
@@ -1511,7 +1511,7 @@
                 //         this.modal.login = true;
                 //     }
                 // }
-            },
+            // },
 
 
             handleSelectedTag(tag) {
