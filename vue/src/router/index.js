@@ -8,6 +8,7 @@ import InternationalTenderDetails from '@/views/tender_details/International.vue
 import Document from "@/views/bids/Document.vue";
 import FederalTenderDetails from '@/views/tender_details/Federal.vue'
 import StateTenderDetails from '@/views/tender_details/State.vue'
+import StateBidDetails from '@/views/tender_details/StateBidDetails.vue'
 import PrivateTenderDetails from '@/views/tender_details/Private.vue'
 import BidsDetailsPage from '@/views/bids/BidsDetailsPage.vue'
 // auth
@@ -185,6 +186,10 @@ const routes = [
 	{
 		path: "/bids/state-opportunities/:tender_id", name: "state_tender_details",
 		component: StateTenderDetails,
+	},
+	{
+		path: "/bids/state-tenders/:tender_id", name: "state_bid_details",
+		component: StateBidDetails,
 	},
 	{
 		path: "/bids/private-commercial/:tender_id", name: "private_tender_details",
