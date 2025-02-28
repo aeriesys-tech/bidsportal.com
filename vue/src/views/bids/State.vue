@@ -405,22 +405,21 @@
                                         <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
-                                                    <div>
-                                                        <router-link 
-                                                            :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '-' + state_tender.tender_no.replace(/ /g, '-')" 
-                                                            class="nav-link" 
-                                                            :class="federal_active" 
+                                                    <div v-if="$store.getters.user">
+                                                        <router-link
+                                                            :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '--' + state_tender.tender_no"
+                                                            :class="federal_active"
                                                             @click.prevent="tenderDetails(state_tender)"
                                                         >
                                                             <div v-html="highlight(state_tender.title)"></div>
                                                         </router-link>
                                                     </div>
 
-                                                    <!-- <div>
+                                                    <div v-else>
                                                         <a href="javascript:void(0)" @click="tenderDetails(state_tender)">
                                                             <div v-html="highlight(state_tender.title)"></div>
                                                         </a>
-                                                    </div> -->
+                                                    </div>
                                                 </strong>
                                                 <ul class="list-inline mb-0 z-index-2">
                                                     <li class="list-inline-item">
