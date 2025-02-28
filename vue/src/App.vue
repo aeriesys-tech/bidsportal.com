@@ -91,19 +91,19 @@ import 'vue-loading-overlay/dist/css/index.css';
             }
             if (localStorage.getItem("state_tender")) {
                 this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
-                localStorage.removeItem("state_tender");
+                // localStorage.removeItem("state_tender");
             }
             if (localStorage.getItem("federal_tender")) {
                 this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
-                localStorage.removeItem("federal_tender");
+                // localStorage.removeItem("federal_tender");
             }
             if (localStorage.getItem("private_tender")) {
                 this.$store.dispatch("setPrivateTender", JSON.parse(localStorage.getItem("private_tender")));
-                localStorage.removeItem("private_tender");
+                // localStorage.removeItem("private_tender");
             }
             if (localStorage.getItem("international_tender")) {
                 this.$store.dispatch("setsetInternationalTenderUser", JSON.parse(localStorage.getItem("international_tender")));
-                localStorage.removeItem("international_tender");
+                // localStorage.removeItem("international_tender");
             }
 
             //Save the information in vuex to localStorage when the page is refreshed

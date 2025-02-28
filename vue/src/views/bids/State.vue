@@ -1490,25 +1490,27 @@
             // },
 
             tenderDetails(state_tender) {
-                this.closeModal();
-                if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
-                    this.$store.commit("setStateTender", state_tender);
-                    this.$store.commit("setFilters", this.meta);
+                window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
+                // window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
+                // this.closeModal();
+                // if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
+                //     this.$store.commit("setStateTender", state_tender);
+                //     this.$store.commit("setFilters", this.meta);
 
-                    // Generate the URL
-                    const url = this.$router.resolve({
-                        path: "state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no
-                    }).href;
+                //     // Generate the URL
+                //     const url = this.$router.resolve({
+                //         path: "state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no
+                //     }).href;
 
-                    // Open in a new tab
-                    window.open(url, "_blank");
-                } else {
-                    if (this.$store.getters.user) {
-                        this.modal.subscribe = true;
-                    } else {
-                        this.modal.login = true;
-                    }
-                }
+                //     // Open in a new tab
+                //     window.open(url, "_blank");
+                // } else {
+                //     if (this.$store.getters.user) {
+                //         this.modal.subscribe = true;
+                //     } else {
+                //         this.modal.login = true;
+                //     }
+                // }
             },
 
 
