@@ -508,9 +508,20 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
-                                                        <div v-html="highlight(private_tender.title)"></div>
-                                                    </a>
+                                                  <div v-if="$store.getters.user">
+                                                        <router-link
+                                                            :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no"
+                                                            :class="federal_active"
+                                                            @click.prevent="tenderDetails(private_tender)"
+                                                        >
+                                                            <div v-html="highlight(private_tender.title)"></div>
+                                                        </router-link>
+                                                    </div>
+                                                    <div v-else>
+                                                        <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
+                                                            <div v-html="highlight(private_tender.title)"></div>
+                                                        </a>
+                                                    </div>
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
                                                 <li class="list-inline-item">
