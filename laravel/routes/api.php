@@ -273,6 +273,7 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//State Tender
 	Route::post("getStateTender", [StateTenderController::class,'getStateTender']);
+	Route::post("getStateTenderbyTenderNo", [StateTenderController::class,'getStateTenderbyTenderNo']);
 	Route::post("addStateTender", [StateTenderController::class,'addStateTender']);
 	// Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
 	Route::post('sendStateTenderMail', [StateTenderController::class,'sendStateTenderMail']);

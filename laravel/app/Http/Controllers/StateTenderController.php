@@ -150,6 +150,15 @@ class StateTenderController extends Controller
         return StateTenderResource::collection($state_tenders);
     }
 
+    public function getStateTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,state_tenders'
+        ]);
+        $state_tender = StateTender::where('tender_no', $request->tender_no)->first();
+        return new StateTenderDetailResource($state_tender);
+    }
+
     public function paginateStateTenders2(Request $request)
     {
         $request->validate([
