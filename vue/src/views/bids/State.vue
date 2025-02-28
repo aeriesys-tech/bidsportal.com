@@ -406,10 +406,21 @@
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="card-title mb-1">
                                                     <div>
+                                                        <router-link 
+                                                            :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '-' + state_tender.tender_no" 
+                                                            class="nav-link" 
+                                                            :class="federal_active" 
+                                                            @click.prevent="tenderDetails(state_tender)"
+                                                        >
+                                                            <div v-html="highlight(state_tender.title)"></div>
+                                                        </router-link>
+                                                    </div>
+
+                                                    <!-- <div>
                                                         <a href="javascript:void(0)" @click="tenderDetails(state_tender)">
                                                             <div v-html="highlight(state_tender.title)"></div>
                                                         </a>
-                                                    </div>
+                                                    </div> -->
                                                 </strong>
                                                 <ul class="list-inline mb-0 z-index-2">
                                                     <li class="list-inline-item">
@@ -1488,30 +1499,6 @@
                     }
                 }
             },
-
-            // tenderDetails(state_tender) {
-                // window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
-                // window.open('state-opportunities/'+ state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no)
-                // this.closeModal();
-                // if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
-                //     this.$store.commit("setStateTender", state_tender);
-                //     this.$store.commit("setFilters", this.meta);
-
-                //     // Generate the URL
-                //     const url = this.$router.resolve({
-                //         path: "state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no
-                //     }).href;
-
-                //     // Open in a new tab
-                //     window.open(url, "_blank");
-                // } else {
-                //     if (this.$store.getters.user) {
-                //         this.modal.subscribe = true;
-                //     } else {
-                //         this.modal.login = true;
-                //     }
-                // }
-            // },
 
 
             handleSelectedTag(tag) {

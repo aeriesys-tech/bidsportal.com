@@ -196,7 +196,7 @@ class TenderProcess implements ShouldQueue
             }
 
             try {
-                $federal_tender = FederalTender::where('notice_id', $notice_id)->first();
+                $federal_tender = FederalTender::where('tender_no', $tender_no)->first();
                 if($federal_tender){
                     $federal_tender->update([
                     'title' => $title,
@@ -212,7 +212,7 @@ class TenderProcess implements ShouldQueue
                     'psc_id' => $psc_id,
                     'tender_url' => $tender_url,
                     'description_link' => $description_link,
-                    'tender_no' => $tender_no,
+                    'notice_id' => $notice_id,
                     'tender_number' => $tender_number
                 ]);
                 }else{
