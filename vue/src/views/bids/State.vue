@@ -407,7 +407,7 @@
                                                 <strong class="card-title mb-1">
                                                     <div>
                                                         <router-link 
-                                                            :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '-' + state_tender.tender_no" 
+                                                            :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '-' + state_tender.tender_no.replace(/ /g, '-')" 
                                                             class="nav-link" 
                                                             :class="federal_active" 
                                                             @click.prevent="tenderDetails(state_tender)"
