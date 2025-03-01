@@ -92,6 +92,7 @@ Route::post("deletePrivateTender", [PrivateTenderController::class,'deletePrivat
 Route::post("addPrivateTender", [PrivateTenderController::class,'addPrivateTender']);
 Route::post("getPrivateTender", [PrivateTenderController::class,'getPrivateTender']);
 Route::post("sendPrivateTenderMail", [PrivateTenderController::class,'sendPrivateTenderMail']);
+Route::post("getPrivateTenderbyTenderNo", [PrivateTenderController::class,'getPrivateTenderbyTenderNo']);
 
 //AWS S3 Bucket
 Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
@@ -165,6 +166,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getInternationalTender", [InternationalTenderController::class,'getInternationalTender']);
 	Route::post("updateInternationalTender", [InternationalTenderController::class,'updateInternationalTender']);
 	Route::post("sendInternationalTenderMail", [InternationalTenderController::class,'sendInternationalTenderMail']);
+	Route::post("getInternationalTenderbyTenderNo", [InternationalTenderController::class,'getInternationalTenderbyTenderNo']);
 	
 
 	Route::post("changePassword",[UserController::class,'changePassword']);
@@ -335,6 +337,7 @@ Route::middleware(['api'])->group(function ($router) {
 	//Federal Tender
 	Route::post("paginateTenderFederals",[FederalTenderController::class,'paginateTenderFederals']);
 	Route::post("addFederalTender",[FederalTenderController::class,'addFederalTender']);
+	Route::post("getFederalTenderbyTenderNo", [FederalTenderController::class,'getFederalTenderbyTenderNo']);
 	Route::post("updateTenderFederal",[FederalTenderController::class,'updateTenderFederal']);
 	Route::post("updateFederalTender",[FederalTenderController::class,'updateFederalTender']);
 	Route::post("deleteFederalTender",[FederalTenderController::class,'deleteFederalTender']);

@@ -120,6 +120,16 @@ class PrivateTenderController extends Controller
         return PrivateTenderResource::collection($private_tenders);
     }
 
+    public function getPrivateTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,private_tenders'
+        ]);
+        $private_tender = PrivateTender::where('tender_no', $request->tender_no)->first();
+        // return $private_tender;
+        return new PrivateTenderDetailResource($private_tender);
+    }
+
     public function paginatePrivateTenders1(Request $request)
     {
         $request->validate([

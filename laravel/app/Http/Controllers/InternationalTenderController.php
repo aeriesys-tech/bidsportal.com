@@ -657,6 +657,15 @@ class InternationalTenderController extends Controller
         return new InternationalTenderDetailResource($international_tender);
     }
 
+    public function getInternationalTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,international_tenders'
+        ]);
+        $international_tender = InternationalTender::where('tender_no', $request->tender_no)->first();
+        return new InternationalTenderDetailResource($international_tender);
+    }
+
     public function sendInternationalTenderMail(Request $request)
     {
         $data = $request->validate([
