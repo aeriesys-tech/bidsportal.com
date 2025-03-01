@@ -224,7 +224,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
-                                    <div class="card bg-transparent ">
+                                    <div class="card bg-transparent">
                                         <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
                                             <div class="rounded">
                                                 <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
@@ -316,10 +316,12 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xl-12"
+                                <div
+                                    class="col-md-6 col-xl-12"
                                     v-if="(international_tender?.primary_address?.full_name && international_tender.primary_address.full_name !== '-') ||
                                         (international_tender?.primary_address?.email && international_tender.primary_address.email !== '-') ||
-                                        (international_tender?.primary_address?.phone && international_tender.primary_address.phone !== '-')">
+                                        (international_tender?.primary_address?.phone && international_tender.primary_address.phone !== '-')"
+                                >
                                     <div class="card card-body border bg-light p-4">
                                         <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
                                         <div>
@@ -368,9 +370,9 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
-                                   <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
+                                    <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                     <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
+                                        <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">Share Bid Details</h5>
                                     </div>
                                 </div>
                                 <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -436,7 +438,7 @@
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
+                                        <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">
                                             <span v-if="international_interest.status">Add Interest</span>
                                             <span v-else>Update Interest</span>
                                         </h5>
@@ -500,6 +502,7 @@
     import moment from "moment";
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
+    import { useHead } from "@vueuse/head";
     export default {
         name: "bidsDetailsPage",
         components: { Pagination, Loading },
@@ -569,10 +572,22 @@
                     international_tenders: [],
                 },
                 delete_international_interest: null,
-                download_international_interests: null
+                download_international_interests: null,
             };
         },
-         mounted() {
+        setup() {
+            useHead({
+                title: "",
+                meta: [
+                    { name: "description", content: "" },
+                    { name: "keywords", content: "" },
+                    { property: "og:title", content: "" },
+                    { property: "og:description", content: "" },
+                    { property: "og:type", content: "" },
+                ],
+            });
+        },
+        mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.international_interest.user_id = this.$store.getters.user?.user_id;
             this.getInternationalTender(tenderId);
@@ -595,6 +610,16 @@
                         vm.international_interest.international_tender_id = vm.international_tender?.international_tender_id;
                         vm.download_all_attachments = vm.international_tender.international_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
                         vm.paginateInternationalInterests();
+
+                        useHead({
+                            title: `${vm.international_tender.title} - Tender No: ${vm.international_tender.tender_no}`,
+                            meta: [
+                                { name: "description", content: vm.international_tender.description },
+                                { name: "keywords", content: `${vm.international_tender.title}, tender ${vm.international_tender.tender_no}` },
+                                { property: "og:title", content: vm.international_tender.title },
+                                { property: "og:description", content: vm.international_tender.description },
+                            ],
+                        });
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -1236,7 +1261,7 @@
         justify-content: center;
         z-index: 2000; /* Higher than modal */
     }
-    .avatar-xxs{
+    .avatar-xxs {
         height: 1.5rem;
         width: 1.5rem;
     }
