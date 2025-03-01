@@ -38,6 +38,15 @@ class FederalTenderController extends Controller
         }
     }
 
+    public function getFederalTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,state_tenders'
+        ]);
+        $federal_tender = FederalTender::where('tender_no', $request->tender_no)->first();
+        return new FederalTenderDetailResource($federal_tender);
+    }
+
     public function updateDescriptions()
     {
         $api_key = ApiKey::first()?->api_key ?? "8UPYOoBOM5C3ZSFpaxt1sIvZ3byn2Jfb91XoGyMT";
