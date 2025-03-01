@@ -1,26 +1,26 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="pt-4 pt-lg-4 result pb-4">
+    <section class="pt-4 pt-lg-5 result pb-4">
         <div class="container position-relative">
             <div class="row px-2">
                 <div class="col-12 d-flex justify-content-md-between align-items-center">
                     <ul class="list-inline text-end">
-                        <!-- <li class="list-inline-item">
-                            <a href="javascript:void(0)" @click.prevent="previousPage()" class="badge text-bg-secondary fs-6 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Back </a>
-                        </li> -->
+                        <li class="list-inline-item">
+                            <a href="javascript:void(0)" @click.prevent="previousPage()" class="badge text-bg-secondary fs-6 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
+                        </li>
                     </ul>
                     <ul class="list-inline text-end">
                         <li class="list-inline-item">
                             <button class="btn btn-sm btn-success" @click.prevent="interstedmodalpop()"><i class="fa-solid fa-user-plus m-1"></i>Add Interest</button>
                         </li>
-                        <li class="list-inline-item" v-if="private_tender?.tender_url">
+                        <li class="list-inline-item" v-if="international_tender?.tender_url">
                             <a href="javascript:void(0)" @click="openWebSite()" class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
                         <li class="list-inline-item" v-else>
                             <a href="javascript:void(0)" @click="showAlert()" class="btn btn-sm btn-success"><i class="fa-solid fa-globe m-1"></i>Open Website</a>
                         </li>
                         <li class="list-inline-item" v-if="$store.getters.user">
-                            <button class="btn btn-sm btn-primary" @click.prevent="shareprivate_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
+                            <button class="btn btn-sm btn-primary" @click.prevent="shareinternational_tenders()"><i class="fa-solid fa-fw fa fa-share-alt"></i>Share</button>
                         </li>
                     </ul>
                 </div>
@@ -31,18 +31,18 @@
                         <div class="col-12 d-flex justify-content-md-between">
                             <ul class="list-inline text-end">
                                 <li class="list-inline-item">
-                                    <img class="icon me-2" src="/assets/icons/privateblue.svg" alt="icon" />
-                                    <span style="font-size: 16px; color: black;">Private / Commerical </span>
+                                    <img class="icon me-2" src="/assets/icons/internationalblue.svg" alt="icon" />
+                                    <span style="font-size: 16px; color: black;">International Opportunities</span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-12">
                             <div class="d-md-flex justify-content-md-between">
                                 <div>
-                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{ private_tender.title }}</h5>
+                                    <h5 style="color: #5143d9; font-size: 18px; margin-bottom: 3px; font-weight: 700;" class="nav-item">{{ international_tender.title }}</h5>
                                     <ul class="nav nav-divider text-body mb-0">
-                                        <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ private_tender.tender_no }}</li>
-                                        <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(private_tender.posted_date) }}</li>
+                                        <li class="nav-item"><span style="font-weight: 900 !important; color: black;">Solicitiation Number :</span>&nbsp;{{ international_tender.tender_no }}</li>
+                                        <li class="nav-item"><img class="mb-1" src="assets/icons/posteddate.svg" width="17" /> Last Updated on {{ format_date(international_tender.posted_date) }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -84,46 +84,50 @@
                         <div class="col-xl-8">
                             <div class="tab-content mb-0" id="tour-pills-tabContent">
                                 <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
-                                    <div class="card bg-transparent ">
+                                    <div class="card bg-transparent">
                                         <div class="card-body p-0">
                                             <ul class="list-group list-group-borderless mb-3">
                                                 <li class="list-group-item">
-                                                    <h6 class="mb-0 fw-normal">Agency : <span class="fw-light mb-0">{{ private_tender.private_agency?.private_agency_name }}</span></h6>
+                                                    <h6 class="mb-0 fw-normal">Agency : <span class="fw-light mb-0">{{ international_tender.international_agency?.international_agency_name}}</span></h6>
                                                 </li>
                                             </ul>
-                                            <p class="mb-4 text-align-justify" v-html="private_tender.description"></p>
+                                            <p class="mb-4 text-align-justify" v-html="international_tender.description"></p>
 
                                             <div class="d-sm-flex justify-content-sm-between align-items-center mb-3">
-                                                <div v-if="private_tender.place_of_performance">
+                                                <div v-if="international_tender.place_of_performance">
                                                     <h6 class="fw-normal mb-0">Place of Performance:</h6>
-                                                    <p>{{ private_tender.place_of_performance }}</p>
+                                                    <p>{{ international_tender.place_of_performance }}</p>
                                                 </div>
-                                                <!-- <div v-if="private_tender.private_office_address">
+                                                <!-- <div v-if="international_tender.international_office_address">
                                                     <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                     <p>
-                                                        {{ private_tender.private_office_address.city }}
-                                                        <span v-if="private_tender.private_office_address.city">,
+                                                        {{ international_tender.international_office_address.city }}
+                                                        <span
+                                                            v-if="international_tender.international_office_address.city">,
                                                         </span>
                                                         <span>
-                                                            {{ private_tender.private_office_address.state + ' ' +
-                                                                private_tender.private_office_address.country }}
+                                                            {{
+                                                                international_tender.international_office_address.state
+                                                                + ' ' +
+                                                                international_tender.international_office_address.country }}
                                                         </span>
                                                     </p>
                                                 </div> -->
-
                                                 <div
-                                                    v-if="private_tender.private_office_address && (private_tender.private_office_address.city || private_tender.private_office_address.state || private_tender.private_office_address.country)"
+                                                    v-if="international_tender.international_office_address && (international_tender.international_office_address.city || international_tender.international_office_address.state || international_tender.international_office_address.country)"
                                                 >
                                                     <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                     <p>
-                                                        <span v-if="private_tender.private_office_address.city">
-                                                            {{ private_tender.private_office_address.city }}
+                                                        <span v-if="international_tender.international_office_address.city">
+                                                            {{ international_tender.international_office_address.city }}
                                                         </span>
-                                                        <span v-if="private_tender.private_office_address.city && (private_tender.private_office_address.state || private_tender.private_office_address.country)">
+                                                        <span
+                                                            v-if="international_tender.international_office_address.city && (international_tender.international_office_address.state || international_tender.international_office_address.country)"
+                                                        >
                                                             ,
                                                         </span>
-                                                        <span v-if="private_tender.private_office_address.state || private_tender.private_office_address.country">
-                                                            {{ private_tender.private_office_address.state }} {{ private_tender.private_office_address.country }}
+                                                        <span v-if="international_tender.international_office_address.state || international_tender.international_office_address.country">
+                                                            {{ international_tender.international_office_address.state }} {{ international_tender.international_office_address.country }}
                                                         </span>
                                                     </p>
                                                 </div>
@@ -133,12 +137,12 @@
                                     <div class="card">
                                         <div class="card-body p-0">
                                             <div class="row g-3 align-items-center justify-content-between mb-3">
-                                                <div class="col-md-6" v-if="private_tender?.private_attachments?.length">
-                                                    <strong class="text-primary">Downloads ({{ private_tender?.private_attachments?.length }})</strong>
+                                                <div class="col-md-6" v-if="international_tender?.international_attachments?.length">
+                                                    <strong class="text-primary">Downloads ({{ international_tender?.international_attachments?.length }})</strong>
                                                 </div>
                                                 <div class="col-md-6 text-end">
                                                     <span v-if="download_all_attachments">
-                                                        <a target="_blank" :href="$store.state.baseUrl + 'downloadPrivateAttachments/' + private_tender.private_tender_id" class="btn btn-sm btn-primary">
+                                                        <a target="_blank" :href="$store.state.baseUrl + 'downloadInternationalAttachments/' + international_tender.international_tender_id" class="btn btn-sm btn-primary">
                                                             <i class="bi bi-cloud-download"></i> Download All Attachments/Links
                                                         </a>
                                                     </span>
@@ -159,25 +163,43 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody class="border-top-0">
-                                                        <tr v-if="!private_tender?.private_attachments?.length">
+                                                        <tr v-if="!international_tender?.international_attachments?.length">
                                                             <td class="text-center" colspan="5">No attachments are available</td>
                                                         </tr>
-                                                        <tr v-for="private_attachment, att_key in private_tender.private_attachments" :key="att_key">
+                                                        <tr v-for="international_attachment, att_key in international_tender.international_attachments" :key="att_key">
                                                             <td class="text-center">
-                                                                <i :class="private_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
+                                                                <i :class="international_attachment.attachment_icon" class="fa-fw me-2 fs-5"></i>
                                                             </td>
-                                                            <!-- <td id="demo-3">{{ private_attachment.attachment_name }}</td> -->
-                                                            <td id="demo-3" :title="private_attachment.attachment_name">
-                                                                <span class="truncated-text">{{ private_attachment.attachment_name }}</span>
+                                                            <!-- <td id="demo-3">{{ international_attachment.attachment_name }}</td> -->
+                                                            <td id="demo-3" :title="international_attachment.attachment_name">
+                                                                <span class="truncated-text">{{ international_attachment.attachment_name }}</span>
                                                             </td>
-                                                            <td>{{ private_attachment.attachment_size }}</td>
-                                                            <td>{{ private_attachment.attachment_date }}</td>
-                                                            <td class="text-center" v-if="private_attachment.attachment_url">
-                                                                <a :href="private_attachment.attachment_url" target="_blank" class="btn btn-light btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Download">
+                                                            <td>{{ international_attachment.attachment_size }}</td>
+                                                            <td>{{ international_attachment.attachment_date }}</td>
+                                                            <td class="text-center" v-if="international_attachment.attachment_url">
+                                                                <a
+                                                                    :href="international_attachment.attachment_url"
+                                                                    target="_blank"
+                                                                    class="btn btn-light btn-round mb-0"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    data-bs-title="Download"
+                                                                >
                                                                     <i class="bi bi-cloud-download"></i>
                                                                 </a>
                                                             </td>
-                                                            <td class="text-center" v-else></td>
+                                                            <td class="text-center" v-else>
+                                                                <!-- <a
+                                                            :href="$store.international.baseUrl+'singleBidDownloadFromS3/'+ international_tender.region.region_id +'/'+ attachment.name+'/'+international_tender.tdr_id"
+                                                            target="_blank"
+                                                            class="btn btn-light btn-round mb-0"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Download"
+                                                        >
+                                                            <i class="bi bi-cloud-download"></i>
+                                                        </a> -->
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -189,7 +211,7 @@
                                     <div class="card bg-transparent p-4">
                                         <div class="card-body p-0">
                                             <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="private_tender.tdr_requirement"></p>
+                                            <p class="mb-4" v-html="international_tender.tdr_requirement"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -197,7 +219,7 @@
                                     <div class="card bg-transparent p-4">
                                         <div class="card-body p-0">
                                             <h6 class="">Synopis:</h6>
-                                            <p class="mb-4" v-html="private_tender.tdr_prog_information"></p>
+                                            <p class="mb-4" v-html="international_tender.tdr_prog_information"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -209,43 +231,43 @@
                                                     <li class="list-inline-item h6 fw-normal mb-0">
                                                         <a href="javascript:void:(0)" @click.prevent="interstedmodalpop()"><img class="mb-1" src="assets/icons/advertising-icon.png" width="24" /> Advertise Your Interest</a>
                                                     </li>
-                                                    <li v-if="private_interests?.length" class="list-inline-item h6 fw-normal mb-0">
-                                                        <a :href="download_private_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
+                                                    <li v-if="userintertsed?.length == 0" class="list-inline-item h6 fw-normal mb-0">
+                                                        <a :href="download_international_interests" class=""><img class="mb-1" src="assets/icons/excel-icon.png" width="24" />Download to Excel</a>
                                                     </li>
                                                 </ul>
                                             </div>
                                         </div>
                                         <div class="card-body p-0">
-                                            <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!private_interests.length">
+                                            <div class="border-bottom-rounded p-3 text-center" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-if="!international_interests.length">
                                                 No records found
                                             </div>
-                                            <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="private_interest in private_interests" :key="private_interest.user_private_interest_id">
+                                            <div class="p-3" style="margin-bottom: 5px; border: 1px solid #dfdfe3;" v-for="international_interest in international_interests" :key="international_interest.user_international_interest_id">
                                                 <div class="d-sm-flex justify-content-between">
                                                     <div class="d-sm-flex align-items-center mb-3">
                                                         <div>
-                                                            <h6 class="m-0 mb-2">{{ private_interest.user?.company_name }}</h6>
-                                                            <span class="me-3">User Name : {{ private_interest.user?.name }}</span><br />
+                                                            <h6 class="m-0 mb-2">{{ international_interest.user?.company_name }}</h6>
+                                                            <span class="me-3">User Name : {{ international_interest.user?.name }}</span><br />
 
-                                                            <span class="me-3">Position : {{ private_interest.interest_type }}</span><br />
-                                                            <span class="me-3">Website : {{ private_interest.user?.web_address }}</span><br />
-                                                            <span class="me-3"><i class="fas fa-phone"></i> {{ private_interest.user?.phone }}</span>
-                                                            <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ private_interest.user?.email }}</span><br />
+                                                            <span class="me-3">Position : {{ international_interest.interest_type }}</span><br />
+                                                            <span class="me-3">Website : {{ international_interest.user?.web_address }}</span><br />
+                                                            <span class="me-3"><i class="fas fa-phone"></i> {{ international_interest.user?.phone }}</span>
+                                                            <span class="me-3"><i class="msg11 far fa-envelope"></i> {{ international_interest.user?.email }}</span><br />
                                                         </div>
                                                     </div>
                                                     <ul class="list-inline mb-2 mb-sm-0"></ul>
                                                 </div>
                                                 <h6 class="fw-normal"><span class="text-body">Socioeconomic</span></h6>
                                                 <ul>
-                                                    <li type="1" v-for="(user_set_aside, key) in private_interest.user?.user_set_asides" :key="key">
+                                                    <li type="1" v-for="(user_set_aside, key) in international_interest.user?.user_set_asides" :key="key">
                                                         {{ user_set_aside.set_aside?.set_aside_name }}
                                                     </li>
                                                 </ul>
-                                                <div class="d-flex align-items-center" v-if="private_interest.user_id == $store.getters.user.user_id">
-                                                    <a href="javascript:void(0)" @click.prevent="edit(private_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
+                                                <div class="d-flex align-items-center" v-if="international_interest.user_id == $store.getters.user.user_id">
+                                                    <a href="javascript:void(0)" @click.prevent="edit(international_interest)" class="btn btn-xs btn-success-soft" style="margin: 5px;">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                     <span>
-                                                        <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(private_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
+                                                        <a href="javascript:void(0)" @click.prevent="deleteAlertpopup(international_interest)" class="btn btn-xs btn-danger-soft" style="margin: 5px;"><i class="bi bi-trash"></i></a>
                                                     </span>
                                                 </div>
                                             </div>
@@ -269,58 +291,56 @@
                                                 <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                     Notice Type
                                                 </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ private_tender.private_notice?.notice_name }}</div>
+                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ international_tender.international_notice?.notice_name }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                     Posted Date
                                                 </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(private_tender.posted_date) }}</div>
+                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(international_tender.posted_date) }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                     Response Date
                                                 </div>
-                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(private_tender.expiry_date) }}</div>
+                                                <div class="mb-0" style="color: #747579; font-size: 16px;">{{ format_date(international_tender.expiry_date) }}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div>
                                                     <div class="h6 fw-light mb-0" style="font-weight: 500 !important;">
                                                         Category
                                                     </div>
-                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ private_tender.category?.category_name }}</div>
+                                                    <div class="mb-0" style="color: #747579; font-size: 16px;">{{ international_tender.category?.category_name }}</div>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div
-                                    class="col-md-6 col-xl-12"
-                                    v-if="(private_tender?.primary_address?.full_name && private_tender.primary_address.full_name !== '-') ||
-                                                        (private_tender?.primary_address?.email && private_tender.primary_address.email !== '-') ||
-                                                        (private_tender?.primary_address?.phone && private_tender.primary_address.phone !== '-')"
-                                >
+                                <div class="col-md-6 col-xl-12"
+                                    v-if="(international_tender?.primary_address?.full_name && international_tender.primary_address.full_name !== '-') ||
+                                        (international_tender?.primary_address?.email && international_tender.primary_address.email !== '-') ||
+                                        (international_tender?.primary_address?.phone && international_tender.primary_address.phone !== '-')">
                                     <div class="card card-body border bg-light p-4">
                                         <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
                                         <div>
                                             <strong class="mb-1">Primary Contact:</strong>
                                             <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
-                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.full_name && private_tender.primary_address.full_name !== '-'">
+                                                <li class="list-group-item py-1" v-if="international_tender?.primary_address?.full_name && international_tender.primary_address.full_name !== '-'">
                                                     <span class="mb-0">
                                                         <i class="fa-solid fa-fw fa-user text-primary fs-6"></i>
-                                                        {{private_tender?.primary_address?.full_name }}
+                                                        {{international_tender?.primary_address?.full_name }}
                                                     </span>
                                                 </li>
-                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.email && private_tender?.primary_address?.email !== '-'">
+                                                <li class="list-group-item py-1" v-if="international_tender?.primary_address?.email && international_tender?.primary_address?.email !== '-'">
                                                     <span href="javscript:vioid(0)" class="mb-0">
                                                         <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
-                                                        {{ private_tender?.primary_address?.email}}
+                                                        {{ international_tender?.primary_address?.email}}
                                                     </span>
                                                 </li>
-                                                <li class="list-group-item py-1" v-if="private_tender?.primary_address?.phone && private_tender?.primary_address?.phone !== '-'">
+                                                <li class="list-group-item py-1" v-if="international_tender?.primary_address?.phone && international_tender?.primary_address?.phone !== '-'">
                                                     <span href="javscript:vioid(0)" class="mb-0">
                                                         <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
-                                                        {{ private_tender?.primary_address?.phone }}
+                                                        {{ international_tender?.primary_address?.phone }}
                                                     </span>
                                                 </li>
                                             </ul>
@@ -398,7 +418,7 @@
                                 </div>
                             </form>
                             <div class="card-footer text-end pt-0">
-                                <a href="javascript:void(0)" @click="sendPrivateTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
+                                <a href="javascript:void(0)" @click="sendInternationalTenderMail()" class="btn btn-sm btn-success mb-0 mt-2">Send</a>
                             </div>
                         </div>
                     </div>
@@ -417,7 +437,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="ms-2">
                                         <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
-                                            <span v-if="private_interest.status">Add Interest</span>
+                                            <span v-if="international_interest.status">Add Interest</span>
                                             <span v-else>Update Interest</span>
                                         </h5>
                                     </div>
@@ -426,22 +446,22 @@
                             </div>
                             <form class="card-body">
                                 <div class="form-check form-check-md mb-2">
-                                    <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="private_interest.interest_type" />
+                                    <input class="form-check-input mt-0" type="radio" name="box" value="Priming" id="Priming" v-model="international_interest.interest_type" />
                                     <label class="form-check-label" for="Priming">Priming</label>
                                 </div>
                                 <div class="form-check form-check-md mb-2">
-                                    <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="private_interest.interest_type" />
+                                    <input class="form-check-input" type="radio" name="box" value="Subbing" id="Subbing" v-model="international_interest.interest_type" />
                                     <label class="form-check-label" for="Subbing">Subbing</label>
                                 </div>
                                 <div class="form-check form-check-md">
-                                    <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="private_interest.interest_type" />
+                                    <input class="form-check-input" type="radio" name="box" value="Any" id="Any" v-model="international_interest.interest_type" />
                                     <label class="form-check-label" for="Any">Any</label>
                                 </div>
                                 <span style="color: red;" v-if="errors.bid_interested_type">{{ errors.bid_interested_type[0] }}</span>
                             </form>
                             <div class="card-footer text-end pt-0">
                                 <button class="btn btn-sm btn-success mb-0" @click.prevent="submit()">
-                                    <span v-if="private_interest.status">Add </span>
+                                    <span v-if="international_interest.status">Add </span>
                                     <span v-else>Update </span>
                                 </button>
                             </div>
@@ -469,8 +489,8 @@
                 <a class="btn btn-outline-none float-end" @click.prevent="closemodal()"><i class="fa-solid fa-close"></i></a>
                 <h1 class="title-green">Are you sure?</h1>
                 <p>Do you really want to delete these records? This process cannot be undone.</p>
-                <button class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</button>
-                <button class="btn btn-sm btn-success mb-3" @click.prevent="deletePrivateInterest(deleteduser)">Confirm</button>
+                <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
+                <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteInternationalInterest(deleteduser)">Confirm</a>
             </div>
         </div>
     </teleport>
@@ -488,7 +508,7 @@
             return {
                 userintertsed: "",
                 download_all_attachments: "",
-                private_tender: "",
+                international_tender: "",
                 meta: {
                     search: "",
                     order_by: "asc",
@@ -505,7 +525,7 @@
                 status: true,
                 addinterestmodal: false,
                 interstmodal: false,
-                private_tender: {},
+                international_tender: {},
                 userinteresd: [],
                 userinteresed_id: "",
                 alertmodal: false,
@@ -523,13 +543,13 @@
                 bid_documents: {
                     tdr_documents: [],
                 },
-                private_interest: {
-                    user_private_interest_id: "",
-                    private_tender_id: "",
+                international_interest: {
+                    user_international_interest_id: "",
+                    international_tender_id: "",
                     interest_type: "",
                     status: true,
                 },
-                private_interests: [],
+                international_interests: [],
                 tdr: {
                     tdr_id: "",
                 },
@@ -546,40 +566,16 @@
                     recipient_email: null,
                     subject: "",
                     message: "",
-                    private_tenders: [],
+                    international_tenders: [],
                 },
-                delete_private_interest: null,
-                download_private_interests: null,
+                delete_international_interest: null,
+                download_international_interests: null
             };
         },
-
-        // beforeRouteEnter(to, from, next) {
-        //     next((vm) => {
-        //         vm.from_path = from.path;
-        //         if (vm.$store.getters.private_tender) {
-        //             vm.private_tender = vm.$store.getters.private_tender;
-        //             vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-        //             vm.private_interest.user_id = vm.$store.getters.user?.user_id;
-        //             vm.download_private_interests = vm.$store.getters.baseUrl + "api/downloadPrivateInterests?private_tender_id=" + vm.private_tender.private_tender_id;
-        //             vm.getPrivateTender();
-        //         }
-        //     });
-        // },
-        //  mounted() {
-        //     let vm = this;
-        //     if (localStorage.getItem("private_tender")) {
-        //         vm.private_tender = JSON.parse(localStorage.getItem("private_tender"));
-        //         vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-        //         const storedUser = JSON.parse(localStorage.getItem("user")) || vm.$store.getters.user;
-        //         vm.private_interest.user_id = storedUser?.user_id;
-        //         vm.download_private_interests = vm.$store.getters.baseUrl + "api/downloadPrivateInterests?private_tender_id=" + vm.private_tender.private_tender_id;
-        //         vm.getPrivateTender();
-        //     }
-        // },
          mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
-            this.private_interest.user_id = this.$store.getters.user?.user_id;
-            this.getPrivateTender(tenderId);
+            this.international_interest.user_id = this.$store.getters.user?.user_id;
+            this.getInternationalTender(tenderId);
         },
 
         methods: {
@@ -590,15 +586,15 @@
             showAlert() {
                 this.$store.dispatch("info", "Didn't find the url to open");
             },
-            getPrivateTender(tender_no) {
+            getInternationalTender(tender_no) {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "getPrivateTenderbyTenderNo", data: { tender_no: tender_no } })
+                    .dispatch("post", { uri: "getInternationalTenderbyTenderNo", data: { tender_no: tender_no } })
                     .then(function (response) {
-                        vm.private_tender = response.data.data;
-                        vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-                        vm.download_all_attachments = vm.private_tender.private_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
-                        vm.paginatePrivateInterests();
+                        vm.international_tender = response.data.data;
+                        vm.international_interest.international_tender_id = vm.international_tender?.international_tender_id;
+                        vm.download_all_attachments = vm.international_tender.international_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
+                        vm.paginateInternationalInterests();
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -618,7 +614,7 @@
                 return value;
             },
             openWebSite() {
-                window.open(this.private_tender.tender_url, "_target_blank");
+                window.open(this.international_tender.tender_url, "_target_blank");
             },
             checkIfEmpty(str) {
                 if (str?.trim()) {
@@ -645,11 +641,11 @@
             },
             checkContact() {
                 if (
-                    this.private_tender?.tdr_pri_fullname !== "" ||
-                    this.private_tender?.tdr_pri_phone !== "" ||
-                    this.private_tender?.tdr_pri_email !== "" ||
-                    this.private_tender?.tdr_sec_phone !== "" ||
-                    this.private_tender?.tdr_sec_email !== ""
+                    this.international_tender?.tdr_pri_fullname !== "" ||
+                    this.international_tender?.tdr_pri_phone !== "" ||
+                    this.international_tender?.tdr_pri_email !== "" ||
+                    this.international_tender?.tdr_sec_phone !== "" ||
+                    this.international_tender?.tdr_sec_email !== ""
                 ) {
                     return true;
                 }
@@ -667,17 +663,17 @@
             checklogin() {
                 let vm = this;
                 if (vm.$store.getters.user == null) {
-                    vm.$router.push("/bids/private-opportunities");
+                    vm.$router.push("/bids/international-opportunities");
                 }
             },
             //  window.location.reload();
-            shareprivate_tenders() {
+            shareinternational_tenders() {
                 let vm = this;
                 vm.errors = [];
                 vm.shareBid.bids = [];
                 vm.shareBid.mails = [];
-                vm.shareBid.region_id = vm.private_tender.tdr_region;
-                vm.shareBid.bids.push(vm.private_tender.tdr_id);
+                vm.shareBid.region_id = vm.international_tender.tdr_region;
+                vm.shareBid.bids.push(vm.international_tender.tdr_id);
 
                 if (vm.$store.getters.user == null) {
                     vm.userlogin = true;
@@ -685,14 +681,14 @@
                     vm.sharebid = true;
                 }
             },
-            sendPrivateTenderMail() {
+            sendInternationalTenderMail() {
                 let vm = this;
                 vm.fullPage = true;
                 vm.isLoading = true;
                 vm.share_tender.user_id = this.$store.getters.user.user_id;
-                vm.share_tender.private_tenders.push(vm.private_tender.private_tender_id);
+                vm.share_tender.international_tenders.push(vm.international_tender.international_tender_id);
                 vm.$store
-                    .dispatch("post", { uri: "sendPrivateTenderMail", data: vm.share_tender })
+                    .dispatch("post", { uri: "sendInternationalTenderMail", data: vm.share_tender })
                     .then(function () {
                         vm.fullPage = false;
                         vm.isLoading = false;
@@ -738,7 +734,7 @@
                     .dispatch("post", { uri: "getBid", data: vm.tdr })
                     .then(function (response) {
                         vm.isLoading = false;
-                        vm.private_tender = response.data.data;
+                        vm.international_tender = response.data.data;
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -752,7 +748,7 @@
                 let vm = this;
                 vm.status = 0;
                 vm.interstmodal = true;
-                vm.private_interest = bidintersed;
+                vm.international_interest = bidintersed;
             },
             getBidInterest() {
                 let vm = this;
@@ -768,10 +764,10 @@
                     });
             },
 
-            deletePrivateInterest() {
+            deleteInternationalInterest() {
                 let vm = this;
                 vm.isLoading = true;
-                let uri = { uri: "deletePrivateInterest", data: vm.delete_private_interest };
+                let uri = { uri: "deleteInternationalInterest", data: vm.delete_international_interest };
                 vm.$store
                     .dispatch("post", uri)
                     .then(function () {
@@ -790,21 +786,22 @@
             submit() {
                 let vm = this;
                 if (vm.status) {
-                    vm.addPrivateInterest();
+                    vm.addInternationalInterest();
                 } else {
-                    vm.updatePrivateInterest();
+                    vm.updateInternationalInterest();
                 }
             },
-            addPrivateInterest() {
+            addInternationalInterest() {
                 let vm = this;
                 vm.status = 1;
+                vm.isLoading = true;
                 vm.$store
-                    .dispatch("post", { uri: "addPrivateInterest", data: vm.private_interest })
+                    .dispatch("post", { uri: "addInternationalInterest", data: vm.international_interest })
                     .then(function () {
                         vm.isLoading = false;
                         vm.$store.dispatch("success", "Added successfully");
                         vm.interstmodal = false;
-                        vm.paginatePrivateInterests();
+                        vm.paginateInternationalInterests();
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -813,17 +810,17 @@
                     });
             },
 
-            updatePrivateInterest() {
+            updateInternationalInterest() {
                 let vm = this;
                 vm.status = 1;
                 vm.isLoading = true;
                 vm.$store
-                    .dispatch("post", { uri: "addPrivateInterest", data: vm.private_interest })
+                    .dispatch("post", { uri: "addInternationalInterest", data: vm.international_interest })
                     .then(function () {
                         vm.isLoading = false;
                         vm.$store.dispatch("success", "Updated successfully");
                         vm.interstmodal = false;
-                        vm.paginatePrivateInterests();
+                        vm.paginateInternationalInterests();
                     })
                     .catch(function (error) {
                         vm.isLoading = false;
@@ -893,13 +890,13 @@
                     return 0;
                 }
             },
-            paginatePrivateInterests() {
+            paginateInternationalInterests() {
                 let vm = this;
                 vm.$store
-                    .dispatch("post", { uri: "paginatePrivateInterests", data: vm.private_interest })
+                    .dispatch("post", { uri: "paginateInternationalInterests", data: vm.international_interest })
                     .then(function (response) {
-                        vm.private_interest = response.data.private_interest;
-                        vm.private_interests = response.data.private_interests;
+                        vm.international_interest = response.data.international_interest;
+                        vm.international_interests = response.data.international_interests;
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -918,9 +915,9 @@
             format_date(value) {
                 return moment(value).format("MMMM D, YYYY");
             },
-            deleteAlertpopup(private_interest) {
+            deleteAlertpopup(international_interest) {
                 this.erroralertmodal = true;
-                this.delete_private_interest = private_interest;
+                this.delete_international_interest = international_interest;
             },
         },
     };
@@ -1239,7 +1236,7 @@
         justify-content: center;
         z-index: 2000; /* Higher than modal */
     }
-    .avatar-xxs {
+    .avatar-xxs{
         height: 1.5rem;
         width: 1.5rem;
     }
