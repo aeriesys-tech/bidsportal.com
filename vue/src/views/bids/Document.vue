@@ -142,7 +142,16 @@
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div>
+                                                <div v-if="$store.getters.user">
+                                                    <router-link
+                                                        :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '--' + state_tender.tender_no"
+                                                        :class="federal_active"
+                                                        @click="varifySubscription('state', state_tender)"
+                                                    >
+                                                        <div v-html="highlight(state_tender.title)"></div>
+                                                    </router-link>
+                                                </div>
+                                                <div v-else>
                                                     <a href="javascript:void(0)" @click="varifySubscription('state', state_tender)" >
                                                         <div v-html="highlight(state_tender.title)"></div>
                                                     </a>
@@ -343,7 +352,16 @@
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div>
+                                                <div v-if="$store.getters.user">
+                                                        <router-link
+                                                            :to="'/bids/federal-tenders/' + federal_tender.title.replace(/ /g, '-') + '--' + federal_tender.tender_no"
+                                                            :class="federal_active"
+                                                            @click="varifySubscription('federal', federal_tender)"
+                                                        >
+                                                            <div v-html="highlight(federal_tender.title)"></div>
+                                                        </router-link>
+                                                    </div>
+                                                <div v-else>
                                                     <a href="javascript:void(0)" @click="varifySubscription('federal', federal_tender)">
                                                         <div v-html="highlight(federal_tender.title)"></div>
                                                     </a>
@@ -544,7 +562,16 @@
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div>
+                                                <div v-if="$store.getters.user">
+                                                    <router-link
+                                                        :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no"
+                                                        :class="federal_active"
+                                                        @click="varifySubscription('private', private_tender)"
+                                                    >
+                                                        <div v-html="highlight(private_tender.title)"></div>
+                                                    </router-link>
+                                                </div>
+                                                <div v-else>
                                                     <a href="javascript:void(0)" @click="varifySubscription('private', private_tender)" >
                                                         <div v-html="highlight(private_tender.title)"></div>
                                                     </a>
@@ -745,7 +772,16 @@
                                     <div class="card-body py-md-3 d-flex flex-column h-100 position-relative" id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                <div>
+                                                  <div v-if="$store.getters.user">
+                                                    <router-link
+                                                        :to="'/bids/international-tenders/' + international_tender.title.replace(/ /g, '-') + '--' + international_tender.tender_no"
+                                                        :class="international_active"
+                                                        @click="varifySubscription('international',international_tender)"
+                                                    >
+                                                        <div v-html="highlight(international_tender.title)"></div>
+                                                    </router-link>
+                                                </div>
+                                                <div v-else>
                                                     <a href="javascript:void(0)" @click="varifySubscription('international',international_tender)">
                                                         <div v-html="highlight(international_tender.title)"></div>
                                                     </a>
