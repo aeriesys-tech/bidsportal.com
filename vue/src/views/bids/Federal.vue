@@ -545,12 +545,26 @@
                                                             <td class="w-250">
                                                                 <div class="row m-0">
                                                                     <div class="column" style="margin-left: 21px;">
-                                                                        <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                                            {{ federal_tender.tender_no }}
-                                                                        </span>
-                                                                        <span v-else>
-                                                                            <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
-                                                                        </span>
+                                                                        <div v-if="$store.getters.user">
+                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                                {{ federal_tender.tender_no }}
+                                                                            </span>
+                                                                            <span v-else>
+                                                                            <router-link
+                                                                                :to="'/bids/federal-tenders/' + federal_tender.title.replace(/ /g, '-') + '--' + federal_tender.tender_no"
+                                                                                :class="federal_active"
+                                                                                @click.prevent="tenderDetails(federal_tender)"
+                                                                                style="color: rgb(57, 112, 228);"
+                                                                            >{{ federal_tender.tender_no }}</router-link>
+                                                                                <!-- <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a> -->
+                                                                            </span>
+                                                                            <!-- </router-link> -->
+                                                                        </div>
+                                                                        <div v-else>
+                                                                            <span>
+                                                                                <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                            </span>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="column d-flex align-items-center">
                                                                         <span class="color-box me-2" :style="{ background: federal_tender?.federal_notice_color}"> </span>
@@ -562,9 +576,20 @@
                                                                 </div>
                                                             </td>
                                                             <td class="">
-                                                                <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
+                                                                <div v-if="$store.getters.user">
+                                                                    <router-link
+                                                                                :to="'/bids/federal-tenders/' + federal_tender.title.replace(/ /g, '-') + '--' + federal_tender.tender_no"
+                                                                                :class="federal_active"
+                                                                                @click.prevent="tenderDetails(federal_tender)"
+                                                                                style="color: rgb(57, 112, 228);"
+                                                                            ><div class="truncate-text" v-html="highlight(federal_tender.title)"></div></router-link>
+
+                                                                </div>
+                                                                <div v-else>
+                                                                    <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
                                                                     <div class="truncate-text" v-html="highlight(federal_tender.title)"></div>
                                                                 </a>
+                                                                </div>
                                                                 <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                     {{ federal_tender.federal_agency?.agency_name }}
                                                                 </span>
