@@ -545,20 +545,6 @@
                 download_state_interests: null,
             };
         },
-    
-
-        // setup() {
-        //     useHead({
-        //         title: "State Tenders - Find Opportunities",
-        //         meta: [
-        //             { name: "description", content: "Explore the latest state tender opportunities and apply easily." },
-        //             { name: "keywords", content: "state tenders, government contracts, procurement" },
-        //             { property: "og:title", content: "State Tenders - Find Opportunities" },
-        //             { property: "og:description", content: "Explore the latest state tender opportunities and apply easily." },
-        //             { property: "og:type", content: "website" },
-        //         ],
-        //     });
-        // },
 
         mounted() {
             let tender_no = this.$route.params.tender_id.split("--").pop();
@@ -580,7 +566,7 @@
                     .dispatch("post", { uri: "getStateTenderbyTenderNo", data: { tender_no: tender_no } })
                     .then(function (response) {
                         vm.state_tender = response.data.data;
-                        console.log("state-tender--",vm.state_tender)
+                        console.log("state-tender--", vm.state_tender);
                         vm.state_interest.state_tender_id = vm.state_tender?.state_tender_id;
                         vm.download_all_attachments = vm.state_tender.state_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
                         vm.paginateStateInterests();

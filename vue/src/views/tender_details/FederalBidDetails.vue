@@ -415,7 +415,7 @@
                                     <div class="d-flex align-items-center">
                                         <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                         <div class="ms-2">
-                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
+                                            <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">Share Bid Details</h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -483,7 +483,7 @@
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
-                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
+                                            <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">
                                                 <span v-if="federal_interest.status">Add Interest</span>
                                                 <span v-else>Update Interest</span>
                                             </h5>
@@ -551,6 +551,7 @@
     import moment from "moment";
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
+    import { useHead } from "@vueuse/head";
     export default {
         name: "bidsDetailsPage",
         components: { Pagination, Loading },
@@ -623,21 +624,20 @@
                 download_federal_interests: null,
             };
         },
+        setup() {
+            useHead({
+                title: "",
+                meta: [
+                    { name: "description", content: "" },
+                    { name: "keywords", content: "" },
+                    { property: "og:title", content: "" },
+                    { property: "og:description", content: "" },
+                    { property: "og:type", content: "" },
+                ],
+            });
+        },
 
-        // beforeRouteEnter(to, from, next) {
-        //     next((vm) => {
-        //         vm.from_path = from.path;
-        //         if (vm.$store.getters.federal_tender) {
-        //             vm.federal_tender = vm.$store.getters.federal_tender;
-        //             vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
-        //             vm.federal_interest.user_id = vm.$store.getters.user?.user_id;
-        //             vm.download_federal_interests = vm.$store.getters.baseUrl + "api/downloadFederalInterests?federal_tender_id=" + vm.federal_tender.federal_tender_id;
-        //             vm.getFederalTender();
-        //         }
-        //     });
-        // },
-
-         mounted() {
+        mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.federal_interest.user_id = this.$store.getters.user?.user_id;
             this.getFederalTender(tenderId);
@@ -657,6 +657,16 @@
                         vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
                         vm.download_all_attachments = vm.federal_tender.federal_attachments.filter((attachment) => attachment.download_url).length >= 2;
                         vm.paginateFederalInterests();
+
+                        useHead({
+                            title: `${vm.federal_tender.title} - Tender No: ${vm.federal_tender.tender_no}`,
+                            meta: [
+                                { name: "description", content: vm.federal_tender.description },
+                                { name: "keywords", content: `${vm.federal_tender.title}, tender ${vm.federal_tender.tender_no}` },
+                                { property: "og:title", content: vm.federal_tender.title },
+                                { property: "og:description", content: vm.federal_tender.description },
+                            ],
+                        });
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -716,7 +726,7 @@
                 vm.status = true;
                 vm.interstmodal = true;
 
-                 // Activate the tab button
+                // Activate the tab button
                 const tabButton = document.getElementById("tour-pills-tab-4");
                 let tab = new bootstrap.Tab(tabButton);
                 tab.show();
