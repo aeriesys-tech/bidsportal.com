@@ -509,19 +509,19 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
                                                 <div v-if="$store.getters.user">
-                                                        <router-link
-                                                            :to="'/bids/international-tenders/' + international_tender.title.replace(/ /g, '-') + '--' + international_tender.tender_no"
-                                                            :class="international_active"
-                                                            @click.prevent="tenderDetails(international_tender)"
-                                                        >
-                                                            <div v-html="highlight(international_tender.title)"></div>
-                                                        </router-link>
-                                                    </div>
-                                                    <div v-else>
-                                                         <a href="javascript:void(0)" @click="tenderDetails(international_tender)">
+                                                    <router-link
+                                                        :to="'/bids/international-tenders/' + international_tender.title.replace(/ /g, '-') + '--' + international_tender.tender_no"
+                                                        :class="international_active"
+                                                        @click.prevent="tenderDetails(international_tender)"
+                                                    >
                                                         <div v-html="highlight(international_tender.title)"></div>
-                                                    </a>
-                                                    </div>
+                                                    </router-link>
+                                                </div>
+                                                <div v-else>
+                                                        <a href="javascript:void(0)" @click="tenderDetails(international_tender)">
+                                                    <div v-html="highlight(international_tender.title)"></div>
+                                                </a>
+                                                </div>
 
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
