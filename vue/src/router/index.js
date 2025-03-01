@@ -5,6 +5,7 @@ import State from "@/views/bids/State.vue";
 import Private from "@/views/bids/Private.vue";
 import International from "@/views/bids/International.vue";
 import InternationalTenderDetails from '@/views/tender_details/International.vue'
+import InternationalBidDetails from '@/views/tender_details/InternationalBidDetails.vue'
 import Document from "@/views/bids/Document.vue";
 import FederalTenderDetails from '@/views/tender_details/Federal.vue'
 import FederalBidDetails from '@/views/tender_details/FederalBidDetails.vue'
@@ -251,6 +252,11 @@ const routes = [
 		path: "/bids/international-opportunities/:tender_id", name: "international_tender_details",
 		component: InternationalTenderDetails,
 	},
+	{
+		path: "/bids/international-tenders/:tender_id", name: "international_bid_details",
+		component: InternationalBidDetails,
+	},
+
 	{
 		path: "/bids/documents", name: "documents",
 		component: Document,
