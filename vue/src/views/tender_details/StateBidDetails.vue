@@ -546,9 +546,9 @@
         },
 
         mounted() {
-            let tenderId = this.$route.params.tender_id.split("--").pop();
+            let tender_no = this.$route.params.tender_id.split("--").pop();
             this.state_interest.user_id = this.$store.getters.user?.user_id;
-            this.getStateTender(tenderId);
+            this.getStateTender(tender_no);
         },
 
         methods: {
