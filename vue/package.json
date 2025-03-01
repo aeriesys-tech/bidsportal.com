@@ -10,6 +10,7 @@
   "dependencies": {
     "@jobinsjp/vue3-datepicker": "^1.0.2-jobins-03",
     "@vuepic/vue-datepicker": "^8.8.1",
+    "@vueuse/head": "^2.0.0",
     "axios": "^1.2.2",
     "core-js": "^3.8.3",
     "moment": "^2.29.4",
@@ -17,6 +18,7 @@
     "mosha-vue-toastify": "^1.0.23",
     "vue": "^3.2.13",
     "vue-loading-overlay": "^6.0.6",
+    "vue-meta": "^2.4.0",
     "vue-router": "^4.0.3",
     "vue3-tags-input": "^1.0.6",
     "vuex": "^4.0.0"
