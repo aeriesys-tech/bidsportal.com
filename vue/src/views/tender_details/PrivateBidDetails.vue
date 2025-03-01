@@ -84,7 +84,7 @@
                         <div class="col-xl-8">
                             <div class="tab-content mb-0" id="tour-pills-tabContent">
                                 <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
-                                    <div class="card bg-transparent ">
+                                    <div class="card bg-transparent">
                                         <div class="card-body p-0">
                                             <ul class="list-group list-group-borderless mb-3">
                                                 <li class="list-group-item">
@@ -202,7 +202,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
-                                    <div class="card bg-transparent ">
+                                    <div class="card bg-transparent">
                                         <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
                                             <div class="rounded">
                                                 <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
@@ -348,9 +348,9 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
-                                   <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
+                                    <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                     <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
+                                        <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">Share Bid Details</h5>
                                     </div>
                                 </div>
                                 <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -416,7 +416,7 @@
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
                                     <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
+                                        <h5 class="modal-title" style="color: #16a34a !important; font-weight: 500 !important;">
                                             <span v-if="private_interest.status">Add Interest</span>
                                             <span v-else>Update Interest</span>
                                         </h5>
@@ -480,6 +480,7 @@
     import moment from "moment";
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
+    import { useHead } from "@vueuse/head";
     export default {
         name: "bidsDetailsPage",
         components: { Pagination, Loading },
@@ -552,6 +553,18 @@
                 download_private_interests: null,
             };
         },
+        setup() {
+            useHead({
+                title: "",
+                meta: [
+                    { name: "description", content: "" },
+                    { name: "keywords", content: "" },
+                    { property: "og:title", content: "" },
+                    { property: "og:description", content: "" },
+                    { property: "og:type", content: "" },
+                ],
+            });
+        },
 
         // beforeRouteEnter(to, from, next) {
         //     next((vm) => {
@@ -576,7 +589,7 @@
         //         vm.getPrivateTender();
         //     }
         // },
-         mounted() {
+        mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.private_interest.user_id = this.$store.getters.user?.user_id;
             this.getPrivateTender(tenderId);
@@ -599,6 +612,16 @@
                         vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
                         vm.download_all_attachments = vm.private_tender.private_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
                         vm.paginatePrivateInterests();
+
+                        useHead({
+                            title: `${vm.private_tender.title} - Tender No: ${vm.private_tender.tender_no}`,
+                            meta: [
+                                { name: "description", content: vm.private_tender.description },
+                                { name: "keywords", content: `${vm.private_tender.title}, tender ${vm.private_tender.tender_no}` },
+                                { property: "og:title", content: vm.private_tender.title },
+                                { property: "og:description", content: vm.private_tender.description },
+                            ],
+                        });
                     })
                     .catch(function (error) {
                         console.log(error);
