@@ -5,9 +5,9 @@
             <div class="row px-2">
                 <div class="col-12 d-flex justify-content-md-between align-items-center">
                     <ul class="list-inline text-end">
-                        <li class="list-inline-item">
+                        <!-- <li class="list-inline-item">
                             <a href="javascript:void(0)" @click.prevent="previousPage()" class="badge text-bg-secondary fs-6 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
-                        </li>
+                        </li> -->
                     </ul>
                     <ul class="list-inline text-end">
                         <li class="list-inline-item">
@@ -575,18 +575,6 @@
                 download_international_interests: null,
             };
         },
-        setup() {
-            useHead({
-                title: "",
-                meta: [
-                    { name: "description", content: "" },
-                    { name: "keywords", content: "" },
-                    { property: "og:title", content: "" },
-                    { property: "og:description", content: "" },
-                    { property: "og:type", content: "" },
-                ],
-            });
-        },
         mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.international_interest.user_id = this.$store.getters.user?.user_id;
@@ -610,7 +598,7 @@
                         vm.international_interest.international_tender_id = vm.international_tender?.international_tender_id;
                         vm.download_all_attachments = vm.international_tender.international_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
                         vm.paginateInternationalInterests();
-
+                        document.title = `${vm.international_tender.title} - Tender No: ${vm.international_tender.tender_no}`
                         useHead({
                             title: `${vm.international_tender.title} - Tender No: ${vm.international_tender.tender_no}`,
                             meta: [

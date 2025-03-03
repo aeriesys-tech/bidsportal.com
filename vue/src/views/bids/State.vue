@@ -521,21 +521,33 @@
                                                     <tbody class="border-top-0">
                                                         <tr v-for="state_tender in state_tenders" :key="state_tender.state_tender_id">
                                                             <td class="text-center" v-if="$store.getters.user">
-                                                                <div class="form-check1">
+                                                                <div class="form-chrouter-linkeck1">
                                                                     <input class="form-check-input" type="checkbox" :value="state_tender.state_tender_id" v-model="share_state_tender.state_tenders" />
                                                                 </div>
                                                             </td>
                                                             <td class="">
                                                                 <div class="row m-0">
                                                                     <div class="column" style="margin-left: 21px;">
-                                                                        <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                                            {{ state_tender.tender_no }}
-                                                                        </span>
-                                                                        <span v-else>
-                                                                            <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(state_tender)">
+                                                                        <div v-if="$store.getters.user">
+                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                                 {{ state_tender.tender_no }}
-                                                                            </a>
-                                                                        </span>
+                                                                            </span>
+                                                                            <span v-else>
+                                                                                <router-link
+                                                                                 :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '--' + state_tender.tender_no"
+                                                                                 style="color: rgb(57, 112, 228);"
+                                                                                  @click="tenderDetails(state_tender)">
+                                                                                    {{ state_tender.tender_no }}
+                                                                                </router-link>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div v-else>
+                                                                            <span >
+                                                                                <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(state_tender)">
+                                                                                    {{ state_tender.tender_no }}
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="column d-flex align-items-center">
                                                                         <span class="color-box me-2" :style="{ backgroundColor: state_tender.state_notice_color }"> </span>
@@ -547,9 +559,20 @@
                                                                 </div>
                                                             </td>
                                                             <td class="">
-                                                                <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(state_tender)">
-                                                                    <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
-                                                                </a>
+                                                                <div v-if="$store.getters.user">
+                                                                    <router-link
+                                                                                :to="'/bids/state-tenders/' + state_tender.title.replace(/ /g, '-') + '--' + state_tender.tender_no"
+                                                                                :class="state_active"
+                                                                                @click.prevent="tenderDetails(state_tender)"
+                                                                                style="color: rgb(57, 112, 228);"
+                                                                            ><div class="truncate-text" v-html="highlight(state_tender.title)"></div></router-link>
+
+                                                                </div>
+                                                                <div v-else>
+                                                                    <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(state_tender)">
+                                                                        <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
+                                                                    </a>
+                                                                </div>
                                                                 <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                     {{ state_tender.state_agency?.state_agency_name }}
                                                                 </span>

@@ -553,42 +553,6 @@
                 download_private_interests: null,
             };
         },
-        setup() {
-            useHead({
-                title: "",
-                meta: [
-                    { name: "description", content: "" },
-                    { name: "keywords", content: "" },
-                    { property: "og:title", content: "" },
-                    { property: "og:description", content: "" },
-                    { property: "og:type", content: "" },
-                ],
-            });
-        },
-
-        // beforeRouteEnter(to, from, next) {
-        //     next((vm) => {
-        //         vm.from_path = from.path;
-        //         if (vm.$store.getters.private_tender) {
-        //             vm.private_tender = vm.$store.getters.private_tender;
-        //             vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-        //             vm.private_interest.user_id = vm.$store.getters.user?.user_id;
-        //             vm.download_private_interests = vm.$store.getters.baseUrl + "api/downloadPrivateInterests?private_tender_id=" + vm.private_tender.private_tender_id;
-        //             vm.getPrivateTender();
-        //         }
-        //     });
-        // },
-        //  mounted() {
-        //     let vm = this;
-        //     if (localStorage.getItem("private_tender")) {
-        //         vm.private_tender = JSON.parse(localStorage.getItem("private_tender"));
-        //         vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
-        //         const storedUser = JSON.parse(localStorage.getItem("user")) || vm.$store.getters.user;
-        //         vm.private_interest.user_id = storedUser?.user_id;
-        //         vm.download_private_interests = vm.$store.getters.baseUrl + "api/downloadPrivateInterests?private_tender_id=" + vm.private_tender.private_tender_id;
-        //         vm.getPrivateTender();
-        //     }
-        // },
         mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.private_interest.user_id = this.$store.getters.user?.user_id;
@@ -612,7 +576,7 @@
                         vm.private_interest.private_tender_id = vm.private_tender?.private_tender_id;
                         vm.download_all_attachments = vm.private_tender.private_attachments.filter((attachment) => attachment.attachment_url).length >= 2;
                         vm.paginatePrivateInterests();
-
+                        document.title = `${vm.private_tender.title} - Tender No: ${vm.private_tender.tender_no}`
                         useHead({
                             title: `${vm.private_tender.title} - Tender No: ${vm.private_tender.tender_no}`,
                             meta: [
