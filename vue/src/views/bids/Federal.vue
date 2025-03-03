@@ -173,11 +173,11 @@
                                                 <div class="row" v-if="meta.posted_date == 'custom'" style="margin-left: 0px;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.posted_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.posted_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
 
@@ -230,11 +230,11 @@
                                                 <div class="row" v-if="meta.response_date == 'custom'" style="margin-left: 0px !important;">
                                                     <div class="col-sm-6">
                                                         <label class="form-label">Start Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_from_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_from_date" :clearable="false"></date-picker>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="form-label">End Date<span class="text-danger">*</span></label>
-                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model="meta.response_to_date" :clearable="false"></date-picker>
+                                                        <date-picker format="MMM-DD-YYYY" value-type="YYYY-MM-DD" v-model:value="meta.response_to_date" :clearable="false"></date-picker>
                                                     </div>
                                                 </div>
                                                 <span style="color: #dc3545;">{{ errors?.response_error }}</span>
