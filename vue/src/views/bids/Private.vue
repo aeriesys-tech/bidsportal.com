@@ -650,12 +650,21 @@
                                                         <td class="w-250">
                                                             <div class="row">
                                                                 <div class="column" style="margin-left: 21px;">
-                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                                        {{ private_tender.tender_no }}
-                                                                    </span>
-                                                                    <span v-else>
-                                                                        <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
-                                                                    </span>
+                                                                    <div v-if="$store.getters.user">
+                                                                        <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                            {{ private_tender.tender_no }}
+                                                                        </span>
+                                                                        <span v-else>
+                                                                            <router-link
+                                                                             :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no"
+                                                                             style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</router-link>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div v-else>
+                                                                        <span>
+                                                                            <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                                 <div class="column d-flex align-items-center">
                                                                     <span class="color-box me-2" :style="{ backgroundColor: private_tender.private_notice_color}"> </span>
@@ -667,10 +676,18 @@
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                            <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(private_tender)">
-                                                                <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
-                                                            </a>
-
+                                                            <div v-if="$store.getters.user">
+                                                                <router-link
+                                                                 style="color: rgb(57, 112, 228); font-weight: bold;"
+                                                                  :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no" @click="tenderDetails(private_tender)">
+                                                                    <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
+                                                                </router-link>
+                                                            </div>
+                                                            <div v-else>
+                                                                    <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(private_tender)">
+                                                                        <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
+                                                                    </a>
+                                                                </div>
                                                             <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                 {{ private_tender.private_agency?.private_agency_name}}
                                                             </span>

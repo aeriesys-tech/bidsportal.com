@@ -624,19 +624,6 @@
                 download_federal_interests: null,
             };
         },
-        setup() {
-            useHead({
-                title: "",
-                meta: [
-                    { name: "description", content: "" },
-                    { name: "keywords", content: "" },
-                    { property: "og:title", content: "" },
-                    { property: "og:description", content: "" },
-                    { property: "og:type", content: "" },
-                ],
-            });
-        },
-
         mounted() {
             let tenderId = this.$route.params.tender_id.split("--").pop();
             this.federal_interest.user_id = this.$store.getters.user?.user_id;
@@ -657,7 +644,7 @@
                         vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
                         vm.download_all_attachments = vm.federal_tender.federal_attachments.filter((attachment) => attachment.download_url).length >= 2;
                         vm.paginateFederalInterests();
-
+                        document.title = `${vm.federal_tender.title} - Tender No: ${vm.federal_tender.tender_no}`
                         useHead({
                             title: `${vm.federal_tender.title} - Tender No: ${vm.federal_tender.tender_no}`,
                             meta: [
