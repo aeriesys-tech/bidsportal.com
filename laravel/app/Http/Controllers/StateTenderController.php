@@ -17,10 +17,12 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\StateTenderMail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StateTenderImport;
+use App\Imports\demoimport;
 use App\Jobs\UpdateFileSize;
 use ZipArchive;
 use Auth;
 use App\Models\StateContact;
+use Illuminate\Support\Facades\DB;
 
 class StateTenderController extends Controller
 {
@@ -39,6 +41,8 @@ class StateTenderController extends Controller
                 $query->where('status', 0);
             } elseif ($request->status == 'Active') {
                 $query->where('status', 1);
+            } elseif ($request->status == 'Today') {
+                $query->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')]);
             }
 
             if (!empty($request->search)) 
@@ -111,6 +115,183 @@ class StateTenderController extends Controller
                 $query->whereIn('state_agency_id', $request->state_agencies);
             }
 
+            
+            if (!empty($request->keywords)) {
+                if (is_string($request->keywords)) {
+                    $keywords = array_map('trim', explode(',', $request->keywords));
+                } else {
+                    $keywords = array_map('trim', $request->keywords);
+                }
+
+                // Exact match first
+                $query->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->orWhere('tender_no', $keyword)
+                          ->orWhere('tender_number', $keyword)
+                          ->orWhere('description', $keyword);
+                    }
+                });
+
+                // Check if exact match found, else perform broader search
+                if (!$query->count()) {
+                    $query->orWhere(function ($q) use ($keywords) {
+                        foreach ($keywords as $keyword) {
+                            $q->orWhere('tender_no', 'like', "%$keyword%")
+                              ->orWhere('tender_number', 'like', "%$keyword%")
+                              ->orWhere('description', 'like', "%$keyword%");
+                        }
+                    });
+                }
+            }
+
+            $query->orderBy('state_tender_id', 'DESC');
+        }
+        $state_tenders = $query->paginate($request->per_page); 
+        return StateTenderResource::collection($state_tenders);
+    }
+
+    public function getStateTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,state_tenders'
+        ]);
+        $state_tender = StateTender::where('tender_no', $request->tender_no)->first();
+        return new StateTenderDetailResource($state_tender);
+    }
+
+    public function paginateStateTenders2(Request $request)
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required|numeric'
+        ]);
+        $query = StateTender::query();
+    
+        if($request->role == 'admin'){
+            if($request->status == 'All'){
+                $query->whereIn('status', [0, 1]);
+            } else if ($request->status == 'Inactive') {
+                $query->where('status', 0);
+            } elseif ($request->status == 'Active') {
+                $query->where('status', 1);
+            } elseif ($request->status == 'Today') {
+                $query->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')]);
+            }
+
+            if (!empty($request->search)) 
+            {
+                $query->where('tender_no', 'like', '%'.$request->search.'%');
+                // $searchQuery = $request->search . '*';  
+                // $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                //     ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
+            }
+
+            if ($request->keyword == 'notice_name') {
+                $query->join('state_notices', 'state_tenders.state_notice_id', '=', 'state_notices.state_notice_id')
+                        ->select('state_tenders.*', 'state_notices.notice_name') 
+                      ->orderBy('state_notices.notice_name', $request->order_by);
+            } 
+            if ($request->keyword == 'agency_name') {
+                $query->join('state_agencies', 'state_tenders.state_agency_id', '=', 'state_agencies.state_agency_id')
+                        ->select('state_tenders.*', 'state_agencies.agency_name') 
+                      ->orderBy('state_agencies.agency_name', $request->order_by);
+            } else {
+                $query->orderBy($request->keyword, $request->order_by);
+            }
+        } else {
+
+            if (isset($request->status)) {
+                if ($request->status === 'All') {
+                } elseif ($request->status === 'Active') {
+                    $query->where('status', true);
+                } elseif ($request->status === 'Inactive') {
+                    $query->where('status', false);
+                }
+            }
+            
+            if ($request->active && $request->expired) {
+                $query->whereDate('expiry_date', '>=', now()->toDateString())
+                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+            } elseif ($request->active) {
+                $query->whereDate('expiry_date', '>=', now()->toDateString());
+            } elseif ($request->expired) {
+                $query->whereDate('expiry_date', '<', now()->toDateString());
+            }
+
+            if($request->posted_date && $request->posted_date != 'custom'){
+                $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
+                $query->whereDate('posted_date', '>=', $previous_date);
+            }
+
+            if($request->posted_from_date && $request->posted_to_date){
+                $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
+            }
+
+            if($request->response_date && $request->response_date != 'custom'){
+                $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
+                $query->whereDate('expiry_date', '<=', $next_date);
+            }
+
+            if($request->response_from_date && $request->response_to_date){
+                $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
+            }
+
+            if(!empty($request->state_notices)){
+                $query->whereIn('state_notice_id', $request->state_notices);
+            }
+
+            if(!empty($request->states)){
+                $query->whereIn('state_id', $request->states);
+            }
+
+            if(!empty($request->state_agencies)){
+                $query->whereIn('state_agency_id', $request->state_agencies);
+            }
+
+            // if (!empty($request->keywords)) {
+            //     if (is_string($request->keywords)) {
+            //         $keywords = array_map('trim', explode(',', $request->keywords));
+            //     } else {
+            //         $keywords = array_map('trim', $request->keywords);
+            //     }
+
+            //     $searchQuery = implode(' ', $keywords);
+
+            //     // Start building the query
+            //     $query->where(function ($subQuery) use ($searchQuery) {
+            //         // Check for exact match in title or tender_no
+            //         $subQuery->where('title', '=', $searchQuery)
+            //                  ->orWhere('tender_no', '=', $searchQuery);
+            //     });
+
+            //     // Use relevant matches only if there are no exact matches
+            //     $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
+            //         $subQuery->whereRaw("NOT EXISTS (
+            //             SELECT 1 FROM state_tenders 
+            //             WHERE title = ? OR tender_no = ?
+            //         )", [$searchQuery, $searchQuery])
+            //         ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+            //         // Fallback to LIKE for short keywords
+            //         foreach ($keywords as $keyword) {
+            //             if (strlen($keyword) < 4) {
+            //                 $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+            //                          ->orWhere('title', 'LIKE', "%{$keyword}%");
+            //             }
+            //         }
+            //     });
+
+            //     // Order the results to prioritize exact matches
+            //     $query->orderByRaw("
+            //         CASE 
+            //             WHEN title = ? THEN 1
+            //             WHEN tender_no = ? THEN 1
+            //             ELSE 2
+            //         END, 
+            //         MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+            //         state_tender_id DESC
+            //     ", [$searchQuery, $searchQuery, $searchQuery]);
+            // }
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
                     $keywords = array_map('trim', explode(',', $request->keywords));
@@ -119,27 +300,21 @@ class StateTenderController extends Controller
                 }
 
                 $searchQuery = implode(' ', $keywords);
+                $normalizedSearchQuery = str_replace('-', '', $searchQuery); // Remove hyphens from input
 
-                // Start building the query
-                $query->where(function ($subQuery) use ($searchQuery) {
-                    // Check for exact match in title or tender_no
-                    $subQuery->where('title', '=', $searchQuery)
-                             ->orWhere('tender_no', '=', $searchQuery);
-                });
+                $query->where(function ($subQuery) use ($searchQuery, $normalizedSearchQuery, $keywords) {
+                    $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                             ->orWhereRaw("REPLACE(title, '-', '') = ?", [$normalizedSearchQuery]);
 
-                // Use relevant matches only if there are no exact matches
-                $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
-                    $subQuery->whereRaw("NOT EXISTS (
-                        SELECT 1 FROM state_tenders 
-                        WHERE title = ? OR tender_no = ?
-                    )", [$searchQuery, $searchQuery])
-                    ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+                    // Use relevant matches only if there are no exact matches
+                    $subQuery->orWhereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
 
                     // Fallback to LIKE for short keywords
                     foreach ($keywords as $keyword) {
-                        if (strlen($keyword) < 4) {
-                            $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
-                                     ->orWhere('title', 'LIKE', "%{$keyword}%");
+                        $normalizedKeyword = str_replace('-', '', $keyword);
+                        if (strlen($normalizedKeyword) < 4) {
+                            $subQuery->orWhereRaw("REPLACE(tender_no, '-', '') LIKE ?", ["%{$normalizedKeyword}%"])
+                                     ->orWhereRaw("REPLACE(title, '-', '') LIKE ?", ["%{$normalizedKeyword}%"]);
                         }
                     }
                 });
@@ -147,19 +322,50 @@ class StateTenderController extends Controller
                 // Order the results to prioritize exact matches
                 $query->orderByRaw("
                     CASE 
-                        WHEN title = ? THEN 1
-                        WHEN tender_no = ? THEN 1
+                        WHEN REPLACE(title, '-', '') = ? THEN 1
+                        WHEN REPLACE(tender_no, '-', '') = ? THEN 1
                         ELSE 2
                     END, 
                     MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
                     state_tender_id DESC
-                ", [$searchQuery, $searchQuery, $searchQuery]);
+                ", [$normalizedSearchQuery, $normalizedSearchQuery, $searchQuery]);
             }
+
 
             $query->orderBy('state_tender_id', 'DESC');
         }
         $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
+    }
+
+    public function updateStateTenderNumber(){
+        StateTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
+    }
+
+    public function getTotalCount(){
+        $counts = StateTender::selectRaw("
+            COUNT(*) as total_bids,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_bids,
+            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_bids
+        ")->first();
+
+        $auto_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'auto')
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        $manual_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'manual')
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        return response()->json([
+            'total_bids' => $counts->total_bids,
+            'active' => $counts->active_bids,
+            'pending' => $counts->inactive_bids,
+            'auto_approved_today' => $auto_approved_today,
+            'manual_approved_today' => $manual_approved_today
+        ]);
     }
 
     public function paginateStateTenders1(Request $request)
@@ -362,9 +568,9 @@ class StateTenderController extends Controller
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
-            'state_notice_id' => 'nullable',
-            'category_id' => 'nullable',
-            'state_agency_id' => 'nullable',
+            'state_notice_id' => 'required',
+            'category_id' => 'required',
+            'state_agency_id' => 'required',
             'tender_url' => 'nullable',
             'fees' => 'nullable',
             'state_address_office.city' => 'nullable',
@@ -382,6 +588,7 @@ class StateTenderController extends Controller
         ]);
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
+        $data['upload_type'] = 'manual';
 
         $state_tender = StateTender::create($data);
 
@@ -462,15 +669,59 @@ class StateTenderController extends Controller
         ]);
     }
 
+    // public function updateStateBids(Request $request)
+    // {     
+    //     //Ensure the folder path ends with a '/'
+    //     $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+
+    //     //Get files from S3
+    //     $files = Storage::disk('s3')->files($folderPath);
+
+    //     if (count($files) > 0) {
+    //         foreach ($files as $key => $file) {
+    //             // Check if the file has an .xlsx extension
+    //             if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+    //                 // Proceed only if the file exists in S3
+    //                 if (Storage::disk('s3')->exists($file)) {
+    //                     try {
+    //                         // Import the file using Laravel Excel
+    //                         Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+    //                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //                         // Log the exception or handle it accordingly
+    //                         return response()->json([
+    //                             'message' => 'Error importing file: ' . $file,
+    //                             'error' => $e->failures()
+    //                         ], 500);
+    //                     }
+    //                 } else {
+    //                     return response()->json([
+    //                         'message' => 'File does not exist: ' . $file
+    //                     ], 404);
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'message' => 'Data imported successfully'
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'Folder does not exist or is empty',
+    //             'error' => []
+    //         ], 422);
+    //     }
+    // }
+
     public function updateStateBids(Request $request)
     {     
-        //Ensure the folder path ends with a '/'
+        // Ensure the folder path ends with a '/'
         $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
 
-        //Get files from S3
+        // Get files from S3
         $files = Storage::disk('s3')->files($folderPath);
 
         if (count($files) > 0) {
+            $errors = [];
             foreach ($files as $key => $file) {
                 // Check if the file has an .xlsx extension
                 if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
@@ -478,27 +729,69 @@ class StateTenderController extends Controller
                     if (Storage::disk('s3')->exists($file)) {
                         try {
                             // Import the file using Laravel Excel
-                            Excel::import(new StateTenderImport($folderPath, $request->folder), $file, 's3');
+                            $import = new StateTenderImport($folderPath, $request->folder);
+                            Excel::import($import, $file, 's3');
+
+                            // Check if the imported row count meets the required condition
+                            // if ($import->getRowCount() < 1) {
+                            //     $errors[] = "File {$file} did not meet row count condition.";
+                            //     continue; // Continue with the next file
+                            // }
                         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                            // Log the exception or handle it accordingly
-                            return response()->json([
-                                'message' => 'Error importing file: ' . $file,
-                                'error' => $e->failures()
-                            ], 500);
+                            $errors[] = "Error importing file: {$file} - " . json_encode($e->failures());
+                            continue; // Continue with the next file
                         }
                     } else {
-                        return response()->json([
-                            'message' => 'File does not exist: ' . $file
-                        ], 404);
+                        $errors[] = "File does not exist: {$file}";
+                        continue; // Continue with the next file
                     }
                 }
             }
-            
-            $today = Carbon::today();
-            $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-            foreach ($state_attachments as $state_attachment) {
-                UpdateFileSize::dispatch($state_attachment);
+
+            // If there are errors, return them
+            if (!empty($errors)) {
+                return response()->json([
+                    'message' => 'Some files encountered issues during import',
+                    'errors'  => $errors
+                ], 422);
             }
+
+            return response()->json([
+                'message' => 'All valid files imported successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Folder does not exist or is empty',
+                'error' => []
+            ], 422);
+        }
+    }
+
+
+
+    public function updateStateBidsManual(Request $request)
+    {     
+        //Ensure the folder path ends with a '/'
+        $file_name = public_path().'/attachments/14_NorthCarolina_VendorPortal_eVP.xlsx';
+        $files = [$file_name];
+        // dd($files);
+
+        $folderPath = rtrim('State/attachments/'.$request->folder, '/') . '/';
+        $folder = '';
+
+        if (count($files) > 0) {
+            foreach ($files as $key => $file) {
+                // Check if the file has an .xlsx extension
+                if (pathinfo($file, PATHINFO_EXTENSION) === 'xlsx') {
+                     Excel::import(new StateTenderImport($folderPath, $folder), $file);
+                }
+            }
+            
+            // $today = Carbon::today();
+            // $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+            // foreach ($state_attachments as $state_attachment) {
+            //     UpdateFileSize::dispatch($state_attachment);
+            // }
 
             return response()->json([
                 'message' => 'Data imported successfully'
@@ -510,12 +803,21 @@ class StateTenderController extends Controller
         }
     }
 
+    public function updateQuery(){
+        DB::statement('ALTER TABLE `state_tenders` CHANGE `description` `description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL');
+        DB::statement('ALTER TABLE `state_tenders` CHANGE `opening_date` `opening_date` DATE NULL');
+    }
+
     public function updateStateTender(Request $request)
     {
         $request->validate([
+            'posted_date' => 'required',
+            'opening_date' => 'required',
+            'expiry_date' => 'required',
             'state_tender_id' => 'required',
             'state_notice_id' => 'required',
             'category_id' => 'required',
+            'state_agency_id' => 'required',
             'state_id' => 'required'
         ]);
 
@@ -525,6 +827,8 @@ class StateTenderController extends Controller
                 'state_agency_id' => $request->state_agency_id,
                 'category_id' => $request->category_id,
                 'state_id' => $request->state_id,
+                'posted_date' => $request->posted_date,
+                'upload_type' => 'manual',
                 'status' => true
             ]);
             if($update_state_tender){
@@ -608,9 +912,9 @@ class StateTenderController extends Controller
             'country_id' => 'required',
             'state_id' => 'required',
             'tender_type_id' => 'nullable',
-            'state_notice_id' => 'nullable',
-            'category_id' => 'nullable',
-            'state_agency_id' => 'nullable',
+            'state_notice_id' => 'required',
+            'category_id' => 'required',
+            'state_agency_id' => 'required',
             'tender_url' => 'nullable',
             'primary_address.title' => 'nullable|string|max:255',
             'primary_address.email' => 'nullable',
@@ -624,6 +928,7 @@ class StateTenderController extends Controller
         $data['fees'] = isset($request->fees) ? (is_numeric($request->fees) ? $request->fees : 0) : null;
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
+        $data['upload_type'] = 'manual';
 
         $state_tender = StateTender::where('state_tender_id', $request->state_tender_id)->first();
         $state_tender->update($data);

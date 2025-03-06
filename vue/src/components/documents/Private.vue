@@ -142,7 +142,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="mb-1">
                     <a class="btn btn-link p-0 mb-0 me-2">({{ meta.categories.length }} of {{ categories.length }})</a>
-                    <span v-if="meta.categories.length !== sorted_categories.length"> 
+                    <span v-if="meta.categories.length !== sorted_categories.length">
                         <a href="" @click.prevent="selectAllCategories()" class="form-check-label text-primary me-2">| Select All</a></span>
                     <span v-if="meta.categories.length">
                         <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllCategories()">| Reset</a>
@@ -156,7 +156,7 @@
                 </form>
             </div>
 
-            <div class="scroll-sidebar">
+            <div class="scroll-sidebar hgt-300">
                 <div class="d-flex justify-content-between align-items-center" v-for="category in sorted_categories" :key="category.category_id">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" :value="category.category_id" v-model="meta.categories" />
@@ -179,7 +179,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="mb-1">
                     <a class="btn btn-link p-0 mb-0 me-2">({{ meta.states.length }} of {{ states.length }})</a>
-                    <span v-if="meta.states.length !== sorted_states.length"> 
+                    <span v-if="meta.states.length !== sorted_states.length">
                         <a href="" @click.prevent="selectAllStates()" class="form-check-label text-primary me-2">| Select All</a></span>
                     <span v-if="meta.states.length">
                         <a href="" class="form-check-label text-primary me-2" @click.prevent="deselectAllStates()">| Reset</a>
@@ -313,7 +313,7 @@ export default {
 
     mounted(){
         this.getPrivateNotices()
-        
+
     },
     methods:{
         updateFilters(){
@@ -498,5 +498,8 @@ export default {
         -ms-overflow-style: none;
         scrollbar-width: none;
         overflow-y: scroll;
+    }
+    .hgt-300{
+        height: 300px;
     }
 </style>

@@ -13,8 +13,8 @@
                                         <!-- Current password -->
                                     <div class="field-wrapper ">
                                         <div class="field-placeholder">Label <span class="text-danger">*</span></div>
-                                        <input class="form-control" type="text" placeholder="Name" :class="{'is-invalid': errors.alert_label}" v-model="alert_label" ref="alert_label" />
-                                        <span v-if="errors.alert_label" class="invalid-feedback">{{ errors.alert_label[0] }}</span>
+                                        <input class="form-control" type="text" placeholder="Name" :class="{'is-invalid': errors.filter_name}" v-model="search_name" ref="filter_name" />
+                                        <span v-if="errors.filter_name" class="invalid-feedback">{{ errors.filter_name[0] }}</span>
                                     </div>
 
                                     </form>
@@ -22,7 +22,7 @@
                                    <!-- <button type="button" @click.prevent="closeModal()" class="btn mb-0 btn-sm btn-secondary me-2" data-bs-dismiss="modal" ref="Close">
                                         Close
                                     </button> -->
-                                    <button type="button" v-if="status"  class="btn mb-0 btn-sm btn-success" @click.prevent="savedSearch()">
+                                    <button type="button" v-if="status"  class="btn mb-0 btn-sm btn-success" @click.prevent="saveSearch()">
                                         Save
                                     </button>
                                      <button type="button" v-else class="btn mb-0 btn-sm btn-success" @click.prevent="updateSearch()">
@@ -37,44 +37,59 @@
 export default {
     props:{
         status:Boolean,
-        alert_label:String,
-        savedbids:Object
+        filter_name:String
+    },
+
+    watch: {
+        'filter_name' : function(){
+            console.log('savebids', this.filter_name)
+            this.search_name = this.filter_name
+        }
     },
     data(){
         return{
-            alert_label:'',
+            search_name:'',
             errors:[]
         }
     },
     mounted(){
-
-        if(this.status)
-            this.alert_label = ''
-        else
-            this.alert_label = this.savedbids.alert_label
+        // console.log(this.filter_name)
+        this.search_name = this.filter_name
+        console.log('status',  this.status)
     },
 
     methods:{
         closeModal(){
             this.$emit("closeModal")
         },
-        savedSearch(){
-            if(this.alert_label){
-                delete this.errors.alert_label
-                this.$emit("savedSearch", this.alert_label)
+        saveSearch(){
+
+            if(this.search_name){
+                delete this.errors.search_name
+                this.$emit("saveSearch", this.search_name)
             }
             else{
-                this.errors.alert_label = ['This field cannot be blank']
+                this.errors.filter_name = ['This field cannot be blank']
             }
         },
-         updateSearch(){
-            if(this.alert_label){
-                delete this.errors.alert_label
-                this.$emit("updateSearch", this.alert_label)
+        updateSearch11() {
+            if(this.filter_name){
+                delete this.errors.filter_name
+                this.$emit("updateSearch", this.filter_name)
 
             }
             else{
-                this.errors.alert_label = ['This field cannot be blank']
+                // this.errors.filter_name = ['This field cannot be blank']
+            }
+        },
+        updateSearch() {
+            if(this.search_name){
+                delete this.errors.search_name
+                this.$emit("updateSearch", this.search_name)
+
+            }
+            else{
+                // this.errors.filter_name = ['This field cannot be blank']
             }
         }
 

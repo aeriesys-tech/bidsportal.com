@@ -39,6 +39,11 @@ class FederalTenderResource extends JsonResource
             $days_difference = null;
         }
 
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('M d, Y') : '-';
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('M d, Y') : '-';
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('M d, Y') : '-';
+        $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
+
         $place_of_performance = null;
         if($this->FederalPlaceOfPerformance){
             if($this->FederalPlaceOfPerformance->city_name){
@@ -82,6 +87,19 @@ class FederalTenderResource extends JsonResource
         // }
         $cart_icon = false;
 
+        $notice_colors = [
+            'Award Notice' => '#2569f9',
+            'Request for Proposal' => 'green',
+            'Request for Information' => 'yellow'
+        ];
+
+        if($this->FederalNotice){
+            $federal_notice_color = $this->FederalNotice->notice_name ?? '';
+            $federal_notice_color = $notice_colors[$federal_notice_color] ?? 'gray';            
+        }else{
+            $federal_notice_color = '';
+        }
+
         return [
             'federal_tender_id' => $this->federal_tender_id,
             'tender_no' => $this->tender_no,
@@ -115,7 +133,11 @@ class FederalTenderResource extends JsonResource
             'federal_attachments' => $this->FederalAttachments,
             'federal_office_address' => $this->FederalOfficeAddress,
             'cart_icon' => $cart_icon,
-            'is_expired' => $is_expired
+            'is_expired' => $is_expired,
+            'opening_date_parsed' => $opening_date_parsed,
+            'posted_date_parsed' => $posted_date_parsed,
+            'expiry_date_parsed' => $expiry_date_parsed,
+            'federal_notice_color' => $federal_notice_color
         ];
     }
 }

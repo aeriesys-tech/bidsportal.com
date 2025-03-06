@@ -31,11 +31,11 @@ class StateTenderDetailResource extends JsonResource
         }
         else{
             $primary_address = [
-                'title' => $this->StateContactPrimary->title ?? null,
-                'type' => $this->StateContactPrimary->type ?? null,
-                'email' => $this->StateContactPrimary->email ?? null,
-                'phone' => $this->StateContactPrimary->phone ?? null,
-                'full_name' => $this->StateContactPrimary->full_name ?? null,
+                'title' => isset($this->StateContactPrimary->title) && $this->StateContactPrimary->title !== '-' ? $this->StateContactPrimary->title : null,
+                'type' => isset($this->StateContactPrimary->type) && $this->StateContactPrimary->type !== '-' ? $this->StateContactPrimary->type : null,
+                'email' => isset($this->StateContactPrimary->email) && $this->StateContactPrimary->email !== '-' ? $this->StateContactPrimary->email : null,
+                'phone' => isset($this->StateContactPrimary->phone) && $this->StateContactPrimary->phone !== '-' ? $this->StateContactPrimary->phone : null,
+                'full_name' => isset($this->StateContactPrimary->full_name) && $this->StateContactPrimary->full_name !== '-' ? $this->StateContactPrimary->full_name : null,
             ];
         }
 

@@ -36,7 +36,8 @@ class FederalTender extends Model
         'category_name',
         'notice_name',
         'agency_name',
-        'is_latest'
+        'is_latest',
+        'tender_number'
     ];
 
     protected $primaryKey = 'federal_tender_id';

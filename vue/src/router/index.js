@@ -5,10 +5,14 @@ import State from "@/views/bids/State.vue";
 import Private from "@/views/bids/Private.vue";
 import International from "@/views/bids/International.vue";
 import InternationalTenderDetails from '@/views/tender_details/International.vue'
+import InternationalBidDetails from '@/views/tender_details/InternationalBidDetails.vue'
 import Document from "@/views/bids/Document.vue";
 import FederalTenderDetails from '@/views/tender_details/Federal.vue'
+import FederalBidDetails from '@/views/tender_details/FederalBidDetails.vue'
 import StateTenderDetails from '@/views/tender_details/State.vue'
+import StateBidDetails from '@/views/tender_details/StateBidDetails.vue'
 import PrivateTenderDetails from '@/views/tender_details/Private.vue'
+import PrivateBidDetails from '@/views/tender_details/PrivateBidDetails.vue'
 import BidsDetailsPage from '@/views/bids/BidsDetailsPage.vue'
 // auth
 import Login from "@/views/auth/Login.vue";
@@ -183,12 +187,24 @@ const routes = [
 		component: FederalTenderDetails,
 	},
 	{
+		path: "/bids/federal-tenders/:tender_id", name: "federal_bid_details",
+		component: FederalBidDetails,
+	},
+	{
 		path: "/bids/state-opportunities/:tender_id", name: "state_tender_details",
 		component: StateTenderDetails,
 	},
 	{
+		path: "/bids/state-tenders/:tender_id", name: "state_bid_details",
+		component: StateBidDetails,
+	},
+	{
 		path: "/bids/private-commercial/:tender_id", name: "private_tender_details",
 		component: PrivateTenderDetails,
+	},
+	{
+		path: "/bids/private-tenders/:tender_id", name: "private_bid_details",
+		component: PrivateBidDetails,
 	},
 	{
 		path: "/bids/:tdr_region/:tdr_id", name: "bidsDetailsPage",
@@ -236,6 +252,11 @@ const routes = [
 		path: "/bids/international-opportunities/:tender_id", name: "international_tender_details",
 		component: InternationalTenderDetails,
 	},
+	{
+		path: "/bids/international-tenders/:tender_id", name: "international_bid_details",
+		component: InternationalBidDetails,
+	},
+
 	{
 		path: "/bids/documents", name: "documents",
 		component: Document,
