@@ -6,7 +6,7 @@ import axios from "axios";
 export default createStore({
     state: {
         // apiUrl: "https://bidsportal.com/api/",
-        apiUrl: "http://bidsportal.com/",
+        apiUrl: "https://bidsportal.com/",
         // apiUrl: "http://192.168.0.174/bidsportal_new/laravel/public/",
         user: null,
         token: "",

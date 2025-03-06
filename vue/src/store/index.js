@@ -5,8 +5,8 @@ import axios from 'axios';
 
 export default createStore({
 	state: {
-		baseUrl: 'http://bidsportal.com/',
-		appUrl: 'http://bidsportal.com/#/',
+		baseUrl: 'https://bidsportal.com/',
+		appUrl: 'https://bidsportal.com/#/',
 		// baseUrl: "http://64.227.157.66/",
 		// appUrl: 'http://64.227.157.66/#/',
 		token: null,
