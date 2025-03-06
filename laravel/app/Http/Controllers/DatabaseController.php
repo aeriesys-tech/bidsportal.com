@@ -11,7 +11,7 @@ class DatabaseController extends Controller
 {
     public function transferFederalTenders()
     {
-        DB::connection('bidsp4h0_bids_n')->table('tbl_tender')->where('tdr_region', 2)
+        DB::connection('bidsportal.com')->table('tbl_tender')->where('tdr_region', 2)
         ->orderBy('tdr_no')->chunk(100, function ($tenders) {
             $jobData = $tenders->map(function ($tbl) {
                 return [
@@ -51,7 +51,7 @@ class DatabaseController extends Controller
 
     public function transferStateTenders()
     {
-        DB::connection('bidsp4h0_bids_n')->table('tbl_tender')->where('tdr_region', 1)
+        DB::connection('bidsportal.com')->table('tbl_tender')->where('tdr_region', 1)
         ->orderBy('tdr_no')->chunk(100, function ($tenders) {
             $jobData = $tenders->map(function ($tbl) {
                 return [
@@ -94,7 +94,7 @@ class DatabaseController extends Controller
 
     public function transferUsersData()
     {
-        $users = DB::connection('bidsp4h0_bids_n')->table('tbl_users')->get();
+        $users = DB::connection('bidsportal.com')->table('tbl_users')->get();
         foreach ($users as $key => $user) {
             $user_exists = DB::connection('mysql')->table('users')->where('email', $user->email)->first();
             if(!$user_exists){
@@ -117,7 +117,7 @@ class DatabaseController extends Controller
                 if($user->socioeconomic_status){
                     $set_asides = explode(",", $user->socioeconomic_status);
                     foreach ($set_asides as $set_aside_id) {
-                        $set_aside_old = DB::connection('bidsp4h0_bids_n')->table('tbl_set_aside_status')->where('status_id', $set_aside_id)->first();
+                        $set_aside_old = DB::connection('bidsportal.com')->table('tbl_set_aside_status')->where('status_id', $set_aside_id)->first();
                         if($set_aside_old){
                             $set_aside_new = DB::connection('mysql')->table('set_asides')->where('set_aside_name', 'like', $set_aside_old->status_name)->first();
                             if($set_aside_new){
@@ -130,7 +130,7 @@ class DatabaseController extends Controller
                     }
                     // Log::info('Set asides:', $set_asides);
                 }
-                $user_subscription_old = DB::connection('bidsp4h0_bids_n')->table('user_subscriptions')->where('user_id', $user->id)->first();
+                $user_subscription_old = DB::connection('bidsportal.com')->table('user_subscriptions')->where('user_id', $user->id)->first();
                 if($user_subscription_old){
                     $subscription_plan = DB::connection('mysql')->table('subscription_plans')->where('month', $user_subscription_old->validity)->first();
                     if($subscription_plan){
