@@ -60,7 +60,11 @@
                         loader.hide();
                         vm.$store.dispatch("setUser", response.data.admin);
                         vm.$store.dispatch("setToken", response.data.token);
-                        vm.$router.push("/dashboard");
+                        if(vm.$store.getters.user.role=='Super'){
+                            vm.$router.push("/dashboard");
+                        }else{
+                            vm.$router.push("/state_tenders");
+                        }
                        
                     })
                     .catch(function (error) {
