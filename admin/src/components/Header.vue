@@ -10,7 +10,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="nav">
-                <li class="nav-item">
+                <li class="nav-item" v-if="$store.getters.user.role=='Super'">
                     <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
                 </li>
                 <li class="nav-item dropdown">
@@ -36,7 +36,7 @@
                             <router-link to="/international_tenders" class="dropdown-item"><i class="ri-global-line"></i>
                                 International Bids</router-link>
                         </li>
-                        <li>
+                        <li v-if="$store.getters.user.role=='Super'">
                             <router-link to="/delete_tenders" class="dropdown-item"><i class="ri-close-circle-fill"></i>
                                 Delete Bids</router-link>
                         </li>
@@ -68,7 +68,7 @@
 
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" v-if="$store.getters.user.role=='Super'">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
                         role="button" aria-expanded="false">Users</a>
                     <ul class="dropdown-menu">
@@ -86,10 +86,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" v-if="$store.getters.user.role=='Super'">
                     <router-link to="/admins" class="nav-link">Admin Management</router-link>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" v-if="$store.getters.user.role=='Super'">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
                         role="button" aria-expanded="false">Agencies</a>
                     <ul class="dropdown-menu">
@@ -112,7 +112,7 @@
 
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" v-if="$store.getters.user.role=='Super'">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
                         role="button" aria-expanded="false">Notices</a>
                     <ul class="dropdown-menu">
@@ -135,10 +135,10 @@
 
                     </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" v-if="$store.getters.user.role=='Super'">
                     <router-link to="/subscription_plans" class="nav-link">Subscription Plans</router-link>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" v-if="$store.getters.user.role=='Super'">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0)"
                         role="button" aria-expanded="false">Masters</a>
                     <ul class="dropdown-menu">
