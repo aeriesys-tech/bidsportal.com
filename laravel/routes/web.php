@@ -21,3 +21,6 @@ Route::get("updateStateTenderNumber",[StateTenderController::class,'updateStateT
 Route::get("updateFederalTenderNumber",[FederalTenderController::class,'updateFederalTenderNumber']);
 Route::get("updatePrivateTenderNumber",[PrivateTenderController::class,'updatePrivateTenderNumber']);
 Route::get("updateInternationalTenderNumber",[InternationalTenderController::class,'updateInternationalTenderNumber']);
+Route::get("updateFederalTenderNumber",[FederalTenderController::class,'updateFederalTenderNumber']);
+Route::get("updateDescriptions",[FederalTenderController::class,'updateDescriptions']);
+Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
