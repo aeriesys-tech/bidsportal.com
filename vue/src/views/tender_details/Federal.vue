@@ -89,11 +89,11 @@
                             <div class="col-xl-8">
                                 <div class="tab-content mb-0" id="tour-pills-tabContent">
                                     <div class="tab-pane fade show active" id="tour-pills-tab1" role="tabpanel" aria-labelledby="tour-pills-tab-1">
-                                        <div class="card bg-transparent py-0 p-4">
+                                        <div class="card bg-transparent">
                                             <div class="card-body p-0">
                                                 <ul class="list-group list-group-borderless mb-3">
                                                     <li class="list-group-item">
-                                                        <h6 class="mb-0 fw-normal">Department / Agency : <span class="fw-light ">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
+                                                        <h6 class="mb-0 fw-normal">Agency : <span class="fw-light">{{ federal_tender.federal_agency?.agency_name }}</span></h6>
                                                     </li>
                                                 </ul>
                                                 <p class="mb-4 text-align-justify" v-html="federal_tender.description"></p>
@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                         <div class="card">
-                                            <div class="card-body py-0 p-4">
+                                            <div class="card-body p-0">
                                                 <div class="row g-3 align-items-center justify-content-between mb-3">
                                                     <div class="col-md-6" v-if="federal_tender?.federal_attachments?.length">
                                                         <strong class="text-primary">Downloads ({{ federal_tender?.federal_attachments?.length }})</strong>
@@ -203,7 +203,7 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="tour-pills-tab4" role="tabpanel" aria-labelledby="tour-pills-tab-4">
-                                        <div class="card bg-transparent p-4 pt-0">
+                                        <div class="card bg-transparent">
                                             <div class="card-header p-3 d-flex justify-content-between align-items-center" style="border: 1px solid rgb(223, 223, 227); border-bottom: 0px;">
                                                 <div class="rounded">
                                                     <ul class="list-inline hstack flex-wrap gap-2 justify-content-between mb-0">
@@ -330,11 +330,9 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
+                                    <!-- <div class="col-md-6 col-xl-12" v-if="federal_tender.federal_contacts?.length">
                                         <div class="card card-body border bg-light p-4">
-                                            <!-- <div class="hstack gap-2 mb-1"> -->
                                             <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
-                                            <!-- </div> -->
                                             <div v-for="federal_contact, key in federal_tender.federal_contacts" :key="key">
                                                 <strong class="mb-1" v-if="federal_contact.type == 0">Primary Contact:</strong>
                                                 <strong class="mb-1" v-if="federal_contact.type == 1">Secondary Contact:</strong>
@@ -352,6 +350,39 @@
                                                         <span href="#" class="mb-0">
                                                             <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
                                                             {{ federal_contact.email }}
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div
+                                        class="col-md-6 col-xl-12"
+                                        v-if="(federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-') ||
+                                                        (federal_tender?.primary_address?.email && federal_tender.primary_address.email !== '-') ||
+                                                        (federal_tender?.primary_address?.phone && federal_tender.primary_address.phone !== '-')"
+                                    >
+                                        <div class="card card-body border bg-light p-4">
+                                            <h6 class="text-success fw-500" style="font-size: 18px;">CONTACT INFORMATION</h6>
+                                            <div>
+                                                <strong class="mb-1">Primary Contact:</strong>
+                                                <ul lass="list-group list-group-borderless" style="border-top: none; padding-left: 0;">
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.full_name && federal_tender.primary_address.full_name !== '-'">
+                                                        <span class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-user text-primary fs-6"></i>
+                                                            {{federal_tender?.primary_address?.full_name }}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.email && federal_tender?.primary_address?.email !== '-'">
+                                                        <span href="javscript:vioid(0)" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-envelope text-primary fs-6"></i>
+                                                            {{ federal_tender?.primary_address?.email}}
+                                                        </span>
+                                                    </li>
+                                                    <li class="list-group-item py-1" v-if="federal_tender?.primary_address?.phone && federal_tender?.primary_address?.phone !== '-'">
+                                                        <span href="javscript:vioid(0)" class="mb-0">
+                                                            <i class="fa-solid fa-fw fa-phone text-primary fs-6"></i>
+                                                            {{ federal_tender?.primary_address?.phone }}
                                                         </span>
                                                     </li>
                                                 </ul>
@@ -382,11 +413,9 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-xxs">
-                                            <img class="avatar-img" src="assets/images/emailicon1.png" alt="avatar" />
-                                        </div>
+                                        <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                         <div class="ms-2">
-                                            <h6 class="mb-0 title-green fw-500">Share Bid Detail</h6>
+                                           <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -395,7 +424,7 @@
                                     <div class="mb-3">
                                         <input
                                             class="form-control"
-                                            placeholder="Employee/Colleague Email Address"
+                                            placeholder="Email"
                                             :class="{ 'is-invalid': errors.recipient_email }"
                                             autocomplet="off"
                                             type="text"
@@ -411,7 +440,7 @@
                                             type="text"
                                             name="email_subject"
                                             :class="{ 'is-invalid': errors.subject }"
-                                            placeholder="Subject of Email"
+                                            placeholder="Subject"
                                             autocomplet="off"
                                             id="email_subject"
                                             v-model="share_tender.subject"
@@ -425,7 +454,7 @@
                                             rows="3"
                                             name="email_message"
                                             :class="{ 'is-invalid': errors.message }"
-                                            placeholder="Brief Messsage/Note"
+                                            placeholder="Messsage"
                                             autocomplet="off"
                                             id="email_message"
                                             v-model="share_tender.message"
@@ -454,10 +483,10 @@
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
-                                            <h6 class="mb-0 title-green fw-500">
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">
                                                 <span v-if="federal_interest.status">Add Interest</span>
                                                 <span v-else>Update Interest</span>
-                                            </h6>
+                                            </h5>
                                         </div>
                                     </div>
                                     <a href="#" class="btn btn-sm btn-link p-0 mb-0"><button type="button" @click.prevent="closemodal()" class="btn-close"></button></a>
@@ -506,11 +535,12 @@
         </teleport>
         <teleport to="#modals" v-if="erroralertmodal">
             <div class="modal-overlay">
-                <div class="confirm" style="background-color: white !important;">
-                    <h1>Are you sure?</h1>
+                <div class="confirm text-center" style="background-color: white !important;">
+                    <a class="btn btn-outline-none float-end" @click.prevent="closemodal()"><i class="fa-solid fa-close"></i></a>
+                    <h1 class="title-green">Are you sure?</h1>
                     <p>Do you really want to delete these records? This process cannot be undone.</p>
-                    <button style="background-color: white !important;" @click.prevent="closemodal()">Cancel</button>
-                    <button style="color: red !important; background-color: white !important;" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</button>
+                    <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closemodal()">Cancel</a>
+                    <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteFederalInterest(deleteduser)">Confirm</a>
                 </div>
             </div>
         </teleport>
@@ -590,7 +620,7 @@
                     federal_tenders: [],
                 },
                 delete_federal_interest: null,
-                download_federal_interests: null
+                download_federal_interests: null,
             };
         },
 
@@ -601,7 +631,7 @@
                     vm.federal_tender = vm.$store.getters.federal_tender;
                     vm.federal_interest.federal_tender_id = vm.federal_tender?.federal_tender_id;
                     vm.federal_interest.user_id = vm.$store.getters.user?.user_id;
-                    vm.download_federal_interests = vm.$store.getters.baseUrl+'api/downloadFederalInterests?federal_tender_id='+vm.federal_tender.federal_tender_id
+                    vm.download_federal_interests = vm.$store.getters.baseUrl + "api/downloadFederalInterests?federal_tender_id=" + vm.federal_tender.federal_tender_id;
                     vm.getFederalTender();
                 }
             });
@@ -678,7 +708,11 @@
                 let vm = this;
                 vm.status = true;
                 vm.interstmodal = true;
-                // }
+
+                 // Activate the tab button
+                const tabButton = document.getElementById("tour-pills-tab-4");
+                let tab = new bootstrap.Tab(tabButton);
+                tab.show();
             },
             checklogin() {
                 let vm = this;
@@ -1174,7 +1208,8 @@
     .confirm p {
         text-align: center;
         font-size: 1rem;
-        margin: 0 2rem 4.5rem;
+        /* margin: 0 2rem 4.5rem; */
+        margin: 0 2rem 1.2rem;
         color: black;
     }
 
@@ -1331,8 +1366,11 @@
         justify-content: center;
         z-index: 2000; /* Higher than modal */
     }
-    .avatar-xxs{
+    .avatar-xxs {
         height: 1.5rem;
         width: 1.5rem;
+    }
+    .fs-24 {
+        font-size: 24px;
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :on-cancel="onCancel" :is-full-page="fullPage" />
-    <section class="pt-3" style="padding-bottom: 74px;">
+    <section class="pt-3" style="padding-bottom: 74px; background-color: #fafafa;">
         <div class="container">
             <div class="row">
                 <ProfileList></ProfileList>
@@ -8,10 +8,10 @@
                     <div class="d-grid mb-0 d-lg-none w-100">
                         <button class="btn btn-primary mb-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar"><i class="fas fa-sliders-h"></i> Menu</button>
                     </div>
-                    <div class="card border-0 p-5 pt-0">
-                        <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
+                    <div class="card border-0 p-3 pt-0">
+                        <div class="card-header bg-transparent border-bottom pb-2 d-sm-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="card-header-title">Profile</h5>
+                                <h5 class="card-header-title fw-500">Profile</h5>
                             </div>
                         </div>
                         <div class="card-body">
@@ -533,4 +533,11 @@
         background-color: #5143d9 !important;
         border-radius: 10px !important;
     }
+    .fw-500{
+        font-weight: 500;
+    }
+    .form-label {
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity));
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
     <loading v-model:active="isLoading" :can-cancel="false" :z-index="10001" :is-full-page="fullPage" />
     <!-- <div v-if="$store.getters.user.subscription_id==0"  class="stripe-1">"You are not subscribed" </div> -->
-    <section class="pt-3">
+    <section class="pt-3" style="background-color: #fafafa;">
         <div class="container">
             <div class="row g-2 g-lg-4">
                 <ProfileList></ProfileList>
@@ -12,22 +12,22 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <div class="card border-0 p-5 pt-0 rounded-3" style="margin-bottom: 195px;">
+                            <div class="card border-0 p-3 pt-0 rounded-3" style="margin-bottom: 195px;">
                                 <div class="card-header bg-transparent border-bottom d-sm-flex justify-content-between align-items-center">
                                     <h6 class="mb-2 mb-sm-0" v-if="payment.length===0">This section includes the purchase details history of single Bids only - NOT APPLICABLE for subscriptions based user</h6>
-                                    <h5 v-else class="mb-2 mb-sm-0">Single Bid Purchases</h5>
+                                    <h5 v-else class="mb-2 mb-sm-0 fw-500">Single Bid Purchases</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive border-0">
                                         <table class="table align-middle p-4 mb-0 table-hover table-shrink">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th scope="col" class="border-0">DATE</th>
-                                                    <th scope="col" class="border-0">ORDER ID</th>
-                                                    <th scope="col" class="border-0">TRANSACTION</th>
-                                                    <th scope="col" class="border-0">AMOUNT</th>
-                                                    <th scope="col" class="border-0">TYPE</th>
-                                                    <th scope="col" class="border-0 rounded-end">DESCRIPTION</th>
+                                                    <th scope="col" class="border-0">Date</th>
+                                                    <th scope="col" class="border-0">Order ID</th>
+                                                    <th scope="col" class="border-0">Transaction</th>
+                                                    <th scope="col" class="border-0">Amount</th>
+                                                    <th scope="col" class="border-0">Type</th>
+                                                    <th scope="col" class="border-0 rounded-end">Description</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="border-top-0">
@@ -36,7 +36,7 @@
                                                 </tr>
                                                 <tr v-for="userpayment in payment" :key="userpayment.payment_id">
                                                     <td>
-                                                        <h6 class="mb-0">{{format_date(userpayment.payment_date)}}</h6>
+                                                        <h6 class="mb-0 fw-500">{{format_date(userpayment.payment_date)}}</h6>
                                                     </td>
                                                     <td>{{userpayment.order_id}}</td>
                                                     <td>{{userpayment.txn_id}}</td>
@@ -176,5 +176,8 @@
         background-size: 56.57px 56.57px;
         text-align: center !important;
         margin-bottom: 10px;
+    }
+      .fw-500{
+        font-weight: 500;
     }
 </style>

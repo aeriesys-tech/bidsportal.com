@@ -30,52 +30,90 @@ import 'vue-loading-overlay/dist/css/index.css';
         },
 
 
+        // created() {
+        //     let vm = this;
+        //     let main = document.createElement("script");
+        //     main.setAttribute("src", "assets/js/functions.js");
+        //     document.head.appendChild(main);
+
+        //     // Restore state from localStorage
+        //     const restoreState = (key, action) => {
+        //         try {
+        //             const storedData = localStorage.getItem(key);
+        //             if (storedData) {
+        //                 const data = JSON.parse(storedData);
+        //                 this.$store.dispatch(action, data);
+        //                 localStorage.removeItem(key);
+        //             }
+        //         } catch (e) {
+        //             console.error(`Error restoring ${key} from localStorage:`, e);
+        //         }
+        //     };
+
+        //     if (localStorage.getItem("user")) {
+        //         restoreState("user", "setUser");
+        //         if (this.$store.getters.user) {
+        //             restoreState("token", "setToken");
+        //             restoreState("alert", "setAlert");
+        //             restoreState("federal_tender", "setFederalTender");
+        //             restoreState("state_tender", "setStateTender");
+        //             restoreState("private_tender", "setPrivateTender");
+        //             restoreState("international_tender", "setInternationalTender");
+        //         }
+        //     }
+
+        //     // Save state to localStorage on page refresh
+        //     window.addEventListener("beforeunload", () => {
+        //         const saveState = (key, getter) => {
+        //             const data = this.$store?.getters?.[getter];
+        //             if (data) localStorage.setItem(key, JSON.stringify(data));
+        //         };
+
+        //         saveState("user", "user");
+        //         saveState("token", "token");
+        //         saveState("alert", "alert");
+        //         saveState("federal_tender", "federal_tender");
+        //         saveState("state_tender", "state_tender");
+        //         saveState("private_tender", "private_tender");
+        //         saveState("international_tender", "international_tender");
+        //     });
+        // },
+
         created() {
-            let vm = this;
-            let main = document.createElement("script");
-            main.setAttribute("src", "assets/js/functions.js");
-            document.head.appendChild(main);
-
-            // Restore state from localStorage
-            const restoreState = (key, action) => {
-                try {
-                    const storedData = localStorage.getItem(key);
-                    if (storedData) {
-                        const data = JSON.parse(storedData);
-                        this.$store.dispatch(action, data);
-                        localStorage.removeItem(key);
-                    }
-                } catch (e) {
-                    console.error(`Error restoring ${key} from localStorage:`, e);
-                }
-            };
-
+            //Read the status information in sessionStorage when the page is loaded
             if (localStorage.getItem("user")) {
-                restoreState("user", "setUser");
-                if (this.$store.getters.user) {
-                    restoreState("token", "setToken");
-                    restoreState("alert", "setAlert");
-                    restoreState("federal_tender", "setFederalTender");
-                    restoreState("state_tender", "setStateTender");
-                    restoreState("private_tender", "setPrivateTender");
-                    restoreState("international_tender", "setInternationalTender");
-                }
+                this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
+                // localStorage.removeItem("user");
+            }
+            if (localStorage.getItem("token")) {
+                this.$store.dispatch("setToken", localStorage.getItem("token"));
+                // localStorage.removeItem("token");
+            }
+            if (localStorage.getItem("state_tender")) {
+                this.$store.dispatch("setStateTender", JSON.parse(localStorage.getItem("state_tender")));
+                // localStorage.removeItem("state_tender");
+            }
+            if (localStorage.getItem("federal_tender")) {
+                this.$store.dispatch("setFederalTender", JSON.parse(localStorage.getItem("federal_tender")));
+                // localStorage.removeItem("federal_tender");
+            }
+            if (localStorage.getItem("private_tender")) {
+                this.$store.dispatch("setPrivateTender", JSON.parse(localStorage.getItem("private_tender")));
+                // localStorage.removeItem("private_tender");
+            }
+            if (localStorage.getItem("international_tender")) {
+                this.$store.dispatch("setsetInternationalTenderUser", JSON.parse(localStorage.getItem("international_tender")));
+                // localStorage.removeItem("international_tender");
             }
 
-            // Save state to localStorage on page refresh
+            //Save the information in vuex to localStorage when the page is refreshed
             window.addEventListener("beforeunload", () => {
-                const saveState = (key, getter) => {
-                    const data = this.$store?.getters?.[getter];
-                    if (data) localStorage.setItem(key, JSON.stringify(data));
-                };
-
-                saveState("user", "user");
-                saveState("token", "token");
-                saveState("alert", "alert");
-                saveState("federal_tender", "federal_tender");
-                saveState("state_tender", "state_tender");
-                saveState("private_tender", "private_tender");
-                saveState("international_tender", "international_tender");
+                localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
+                localStorage.setItem("token", this.$store?.getters?.token);
+                localStorage.setItem("state_tender", JSON.stringify(this.$store?.getters?.state_tender));
+                localStorage.setItem("federal_tender", JSON.stringify(this.$store?.getters?.federal_tender));
+                localStorage.setItem("private_tender", JSON.stringify(this.$store?.getters?.private_tender));
+                localStorage.setItem("international_tender", JSON.stringify(this.$store?.getters?.international_tender));
             });
         },
 

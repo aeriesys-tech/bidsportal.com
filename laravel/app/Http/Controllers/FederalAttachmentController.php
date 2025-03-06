@@ -42,7 +42,7 @@ class FederalAttachmentController extends Controller
                         $attachment_name = $content_disposition[1];
                      }
 
-                	$file_path = 'Federal/testing'.$attachment_name; 
+                	$file_path = 'Federal/'.$attachment_name; 
                     Storage::disk('s3')->put($file_path, file_get_contents($federal_attachment['attachment_url']));
                     if (Storage::disk('s3')->exists($file_path)) {
                         $attachment_s3_url = Storage::disk('s3')->url($file_path);

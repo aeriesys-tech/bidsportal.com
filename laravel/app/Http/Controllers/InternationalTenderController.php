@@ -20,10 +20,122 @@ use App\Models\User;
 use App\Models\InternationalContact;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InternationalTenderMail;
+use Illuminate\Support\Facades\DB;
 
 class InternationalTenderController extends Controller
 {
+    public function updateInternationalTenderNumber(){
+        InternationalTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
+    }
+
     public function paginateInternationalTenders(Request $request)
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required|numeric'
+        ]);
+        $query = InternationalTender::query();
+        // $query->where('status', 1);
+
+        if (isset($request->status)) {
+            if ($request->status === 'All') {
+            } elseif ($request->status === 'Active') {
+                $query->where('status', true);
+            } elseif ($request->status === 'Inactive') {
+                $query->where('status', false);
+            }
+        }
+        
+        if ($request->active && $request->expired) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString())
+              ->orWhereDate('expiry_date', '<', now()->toDateString());
+        } elseif ($request->active) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString());
+        } elseif ($request->expired) {
+            $query->whereDate('expiry_date', '<', now()->toDateString());
+        }
+
+        if($request->posted_date && $request->posted_date != 'custom'){
+            $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
+            $query->whereDate('posted_date', '>=', $previous_date);
+        }
+
+        if($request->posted_from_date && $request->posted_to_date){
+            $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
+        }
+
+        if($request->response_date && $request->response_date != 'custom'){
+            $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
+            $query->whereDate('expiry_date', '<=', $next_date);
+        }
+
+        if($request->response_from_date && $request->response_to_date){
+            $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
+        }
+
+        if(!empty($request->state_notices)){
+            $query->whereIn('state_notice_id', $request->state_notices);
+        }
+
+        if(!empty($request->states)){
+            $query->whereIn('state_id', $request->states);
+        }
+
+        if(!empty($request->state_agencies)){
+            $query->whereIn('state_agency_id', $request->state_agencies);
+        }
+
+        if (!empty($request->keywords)) {
+            if (is_string($request->keywords)) {
+                $keywords = array_map('trim', explode(',', $request->keywords));
+            } else {
+                $keywords = array_map('trim', $request->keywords);
+            }
+
+            $searchQuery = implode(' ', $keywords); // Join keywords for full-text search
+
+            // Search for matches
+            $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+            $query->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, international_tender_id DESC", [$searchQuery]);
+        }
+
+        if (!empty($request->keywords)) {
+            if (is_string($request->keywords)) {
+                $keywords = array_map('trim', explode(',', $request->keywords));
+            } else {
+                $keywords = array_map('trim', $request->keywords);
+            }
+
+            // Exact match first
+            $query->where(function ($q) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $q->orWhere('tender_no', $keyword)
+                      ->orWhere('tender_number', $keyword)
+                      ->orWhere('description', $keyword);
+                }
+            });
+
+            // Check if exact match found, else perform broader search
+            if (!$query->count()) {
+                $query->orWhere(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->orWhere('tender_no', 'like', "%$keyword%")
+                          ->orWhere('tender_number', 'like', "%$keyword%")
+                          ->orWhere('description', 'like', "%$keyword%");
+                    }
+                });
+            }
+        }
+
+        $query->orderBy('international_tender_id', 'DESC');
+        $international_tenders = $query->paginate($request->per_page); 
+        return InternationalTenderResource::collection($international_tenders);
+    }
+
+    public function paginateInternationalTenders1(Request $request)
     {
         $request->validate([
             'order_by' => 'required',
@@ -542,6 +654,15 @@ class InternationalTenderController extends Controller
     public function getInternationalTender(Request $request)
     {
         $international_tender = InternationalTender::where('international_tender_id', $request->international_tender_id)->first();
+        return new InternationalTenderDetailResource($international_tender);
+    }
+
+    public function getInternationalTenderbyTenderNo(Request $request)
+    {
+        $data = $request->validate([
+            'tender_no' => 'required:exists,international_tenders'
+        ]);
+        $international_tender = InternationalTender::where('tender_no', $request->tender_no)->first();
         return new InternationalTenderDetailResource($international_tender);
     }
 

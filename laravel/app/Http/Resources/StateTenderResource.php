@@ -16,6 +16,7 @@ class StateTenderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $errors = [];
         if($this->posted_date) {
             if($request->time_zone) {
                 $difference = Carbon::parse($this->posted_date)
@@ -26,6 +27,8 @@ class StateTenderResource extends JsonResource
             }
 
             $time_ago  = $difference->diffForHumans();
+        }else{
+            $time_ago = null;
         }
 
         if($this->expiry_date && now()->lte($this->expiry_date)){
@@ -40,9 +43,39 @@ class StateTenderResource extends JsonResource
 
         $cart_icon = false;
 
-        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('d-m-Y') : null;
-        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('d-m-Y') : null;
-        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('d-m-Y') : null;
+        $opening_date_parsed = $this->opening_date ? Carbon::parse($this->opening_date)->format('M d, Y') : '-';
+        $posted_date_parsed = $this->posted_date ? Carbon::parse($this->posted_date)->format('M d, Y') : '-';
+        $expiry_date_parsed = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('M d, Y') : '-';
+        $expiry_date = $this->expiry_date ? Carbon::parse($this->expiry_date)->format('Y-m-d') : null;
+
+        $notice_colors = [
+            'Award Notice' => '#2569f9',
+            'Request for Proposal' => 'green',
+            'Request for Information' => 'yellow'
+        ];
+
+        if($this->StateNotice){
+            $state_notice_color = $this->StateNotice->notice_name ?? '';
+            $state_notice_color = $notice_colors[$state_notice_color] ?? 'gray';            
+        }else{
+            $state_notice_color = '';
+        }
+
+        if (!$this->state_notice_id) {
+            $errors['state_notice_id'][] = "The state notice id field is required.";
+        }
+
+        if (!$this->category_id) {
+            $errors['category_id'][] = "The category id field is required.";
+        }
+
+        if (!$this->state_agency_id) {
+            $errors['state_agency_id'][] = "The state agency id field is required.";
+        }
+
+        if (!$this->state_id) {
+            $errors['state_id'][] = "The state id field is required.";
+        }
 
         return [
             'state_tender_id' => $this->state_tender_id,
@@ -53,7 +86,7 @@ class StateTenderResource extends JsonResource
             'opening_date_parsed' => $opening_date_parsed, 
             'posted_date' => $this->posted_date,
             'posted_date_parsed' => $posted_date_parsed,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $expiry_date,
             'expiry_date_parsed' => $expiry_date_parsed,
             'country_id' => $this->country_id,
             'country' => $this->Country,
@@ -77,7 +110,10 @@ class StateTenderResource extends JsonResource
             'days_difference' => $days_difference,
             'state_attachments' => $this->StateAttachments,
             'cart_icon' => $cart_icon,
-            'is_expired' => $is_expired
+            'is_expired' => $is_expired,
+            'state_notice_color' => $state_notice_color,
+            'errors' => $errors,
+            'upload_type' => $this->upload_type
         ];
     }
 }

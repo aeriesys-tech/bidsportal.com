@@ -7,7 +7,6 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Facades\Log;
 use App\Models\StateTender;
-// use App\Models\DuplicateBid;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use App\Models\Country;
@@ -21,9 +20,11 @@ use GuzzleHttp\Client;
 use Storage;
 use App\Models\StateNotice;
 use App\Models\StateAgency;
-use App\models\Category;
+use App\Models\Category;
+use App\Models\StateOfficeAddress;
+use Illuminate\Support\Facades\DB;
 
-class StateTenderImport implements ToCollection, WithValidation, WithStartRow
+class StateTenderImport implements ToCollection
 {
     protected $existing_tender_nos;
     protected $folder_path;
@@ -46,102 +47,107 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             return null; // or handle error
         }
     }
-
+    
     public function collection(Collection $rows)
     {
+        $s3 = Storage::disk('s3')->getClient();
+        $bucket = config('app.AWS_BUCKET');
         foreach ($rows as $key => $row) {
-            Log::info($row[18]);
-            // try {
-                $created_date = $this->parseDate($row[1]);
-                $expiry_date = $this->parseDate($row[2]);
-                $tender_url = $row[16];
-                $tender_no = $row[5];
-                $title = $row[6] ?? 'No Title';
+        	if ($row->count() !== 19) {
+	            Log::error("Row {$key} has an incorrect number of columns.");
+	            throw new \Exception("Row {$key} has an incorrect number of columns. Expected 19, got {$row->count()}.");
+	        }
+        	$posted_date = date('Y-m-d H:i:s');
+            $opening_date = $this->parseDate($row[1]);
+            $expiry_date = $this->parseDate($row[2]);
+            $tender_url = $row[16];
+            $tender_no = $row[5];
+            $tender_number = str_replace($row[5], '-', '');
+            $title = $row[6] ?? 'No Title';
 
-                $state_notice = StateNotice::where('notice_name', $row[4])->first();
-                if ($state_notice) {
-                    $state_notice_id = $state_notice->state_notice_id;
-                } else {
-                    $state_notice_id = null;
-                }
-                $stat_agency = StateAgency::where('state_agency_name', $row[8])->first();
-                if ($stat_agency) {
-                    $state_agency_id = $stat_agency->state_agency_id;
-                } else {
-                    $state_agency_id = null;
-                }
-                $category = Category::where('category_name', $row[11])->first();
-                if ($category) {
-                    $category_id = $category->category_id;
-                } else {
-                    $category_id = null;
-                }
-                $state = State::where('state_name', $row[18])->first();
-                if ($state) {
-                    $state_id = $state->state_id;
-                } else {
-                    $state_id = null;
-                }
+            $state_notice = StateNotice::where(function ($query) use($row) {
+                $query->where(DB::raw('LOWER(notice_name)'), $row[4]);
+            })->first();
+            $state_notice_id = $state_notice->state_notice_id ?? null;
 
+            $state_agency = StateAgency::where(function ($query) use($row) {
+                $query->where(DB::raw('LOWER(state_agency_name)'), $row[8]);
+            })->first();
+            $state_agency_id = $state_agency->state_agency_id ?? null;
 
-                if (in_array($tender_no, $this->existing_tender_nos)) {
-                    DuplicateStateTender::updateOrCreate([
-                        'tender_no' => $tender_no,
-                        'posted_date' => $created_date,
+            $category = Category::where(function ($query) use($row) {
+                $query->where(DB::raw('LOWER(category_name)'), $row[11]);
+            })->first();
+            $category_id = $category->category_id ?? null;
+
+            $state = State::where(function ($query) use($row) {
+                $query->where(DB::raw('LOWER(state_name)'), $row[18]);
+            })->first();
+            $state_id = $state->state_id ?? null;
+
+            if (in_array($tender_no, $this->existing_tender_nos)) {
+                DuplicateStateTender::updateOrCreate([
+                    'tender_no' => $tender_no,
+                    'posted_date' => $posted_date,
+                    'title' => $title,
+                    'tender_url' => $tender_url
+                ]);
+                continue;
+            }
+
+            $country = Country::where('country_code', 'US')->first();
+            $description = (!empty($row[12]) ? $row[12] : '') . (!empty($row[13]) ? ' ' . $row[13] : '');
+            $notice_name = $row[3]?$row[3]:null;
+            $category_name = $row[9]?$row[9]:null;
+            $agency_name = $row[7]?$row[7]:null;
+            $contracting_office_address = !empty($row[14]) ? $row[14] : '';
+            $contract_information = !empty($row[15]) ? explode("|", $row[15]) : [];
+            $tdr_fees = 0;
+
+            if($opening_date && $expiry_date && $state_notice_id && $state_agency_id && $state_id){
+                $status = true;
+            }else{
+                $status = false;
+            }
+
+            try{
+                $state_tender = StateTender::updateOrCreate(
+                    [   'tender_no' => $tender_no ],
+                    [
+                        'tender_number' => $tender_number,
                         'title' => $title,
-                        'tender_url' => $tender_url
+                        'description' => $description,
+                        'opening_date' => $opening_date,
+                        'posted_date' => $posted_date,
+                        'expiry_date' => $expiry_date,
+                        'country_id' => $country->country_id,
+                        'state_id' => $state_id,
+                        'tender_type_id' => null,
+                        'state_notice_id' => $state_notice_id,
+                        'category_id' => $category_id,
+                        'state_agency_id' => $state_agency_id,
+                        'tender_url' => $tender_url,
+                        'notice_id' => null,
+                        'description_link' => null,
+                        'category_name' => $category_name,
+                        'notice_name' => $notice_name,
+                        'agency_name' => $agency_name,
+                        'document_path' => null,
+                        'status' => $status,
+                        'contracting_office_address' => $contracting_office_address,
+                        'upload_type' => 'auto'
                     ]);
-                    continue;
+                if ($state_tender && is_array($contract_information) && count($contract_information) >= 4){
+                    $state_office_address = StateOfficeAddress::create([
+                        'state_tender_id' => $state_tender->state_tender_id,
+                        'type' => 'Primary',
+                        'full_name' => $contract_information[0],
+                        'title' => $contract_information[1],
+                        'phone' => $contract_information[2],
+                        'email' => $contract_information[3]
+                    ]);
+
                 }
-
-                $country = Country::where('country_code', 'US')->first();
-                $description = (!empty($row[12]) ? $row[12] : '') . (!empty($row[13]) ? ' ' . $row[13] : '');
-                $notice_name = $row[3]?$row[3]:null;
-                $category_name = $row[9]?$row[9]:null;
-                $agency_name = $row[7]?$row[7]:null;
-                $contracting_office_address = (!empty($row[14]) ? $row[14] : '') . (!empty($row[15]) ? ' ' . $row[15] : '');
-                $tdr_fees = 0;
-
-                Log::info('state_notice_id:' .$state_notice_id);
-
-                Log::info('state_agency_id:' .$state_agency_id);
-
-                Log::info('state_id:' .$state_id);
-                
-                if($state_notice_id && $state_agency_id && $state_id){
-                    $status = true;
-                }else{
-                    $status = false;
-                }
-                try{
-                    $state_tender = StateTender::updateOrCreate(
-                        [   'tender_no' => $tender_no ],
-                        [
-                            'title' => $title,
-                            'description' => $description,
-                            'opening_date' => $created_date,
-                            'posted_date' => $created_date,
-                            'expiry_date' => $expiry_date,
-                            'country_id' => $country->country_id,
-                            'state_id ' => $state_id,
-                            'tender_type_id' => null,
-                            'state_notice_id' => $state_notice_id,
-                            'category_id' => $category_id,
-                            'state_agency_id' => $state_agency_id,
-                            'tender_url' => $tender_url,
-                            'notice_id' => null,
-                            'description_link' => null,
-                            'category_name' => $category_name,
-                            'notice_name' => $notice_name,
-                            'agency_name' => $agency_name,
-                            'document_path' => null,
-                            'status' => false,
-                            'contracting_office_address' => $contracting_office_address
-                        ]);
-                } catch (\Exception $e){
-                    Log::error("Error processing state tender: " . $e->getMessage());
-                }
-
                 $tender_attachments = $row[17]?$row[17]:null;
                 $filenames = [];
                 if (str_contains($tender_attachments, ',')){
@@ -149,35 +155,41 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
                 }else {
                     $filenames = [$tender_attachments];
                 }
-                foreach ($filenames as $filename) {
-                    if($filename){
-                        try{
-                            $file_path = 'State/attachments/'.$this->s3_folder.'/'.$tender_no.'/'. trim($filename);
-                            Log::info("file_path: " . $file_path);
-                            if (Storage::disk('s3')->exists($file_path)) {
-                                Log::info("file_path: " . $file_path);
+                if($state_tender){
+                    foreach ($filenames as $filename) {
+                        if ($filename) {
+                            $file_path = "State/attachments/{$this->s3_folder}/{$tender_no}/" . trim($filename);
+
+                            try {
+                                $result = $s3->headObject([
+                                    'Bucket' => $bucket,
+                                    'Key' => $file_path
+                                ]);
+
                                 $attachment_url = Storage::disk('s3')->url($file_path);
-                            }else{
+                                $attachment_size = $result['ContentLength'] ?? null;
+                            } catch (\Exception $e) {
                                 $attachment_url = null;
+                                $attachment_size = null;
                             }
-                            Log::info("attachment_url: " . $attachment_url);
+
                             StateAttachment::updateOrCreate(
-                            [
-                                'state_tender_id' => $state_tender->state_tender_id,
-                                'attachment_name' => $filename,
-                            ],[
-                                'attachment_size' => null,
-                                'attachment_date' => $this->s3_folder,
-                                'attachment_url' => $attachment_url
-                            ]);
-                        } catch (\Exception $e){
-                            Log::error("Error processing attachement State tender id $state_tender->state_tender_id: " . $e->getMessage());
+                                [
+                                    'state_tender_id' => $state_tender->state_tender_id,
+                                    'attachment_name' => $filename,
+                                ],
+                                [
+                                    'attachment_size' => $attachment_size,
+                                    'attachment_date' => $this->s3_folder,
+                                    'attachment_url' => $attachment_url
+                                ]
+                            );
                         }
                     }
                 }
-            // }catch (\Exception $e) {
-            //     Log::error("Error processing row $key: " . $e->getMessage());
-            // }
+            } catch (\Exception $e){
+                Log::error("Error processing state tender: " . $e->getMessage());
+            }
         }
     }
 
@@ -210,18 +222,18 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
     {
         return [
             '*.0' => 'required',                  
-            '*.1' => ['required', new ValidDateRule], 
+            '*.1' => ['nullable', new ValidDateRule], 
             '*.2' => ['required', new ValidDateRule], 
             '*.3' => 'nullable',
             '*.4' => 'nullable',
-            '*.5' => 'nullable',
+            '*.5' => 'required',
             '*.6' => 'nullable',
             '*.7' => 'nullable',
             '*.8' => 'nullable',
             '*.9' => 'nullable',
             '*.10' => 'nullable',
             '*.11' => 'nullable',
-            '*.12' => 'required',
+            '*.12' => 'nullable',
             '*.13' => 'nullable',
             '*.14' => 'nullable',
             '*.15' => 'nullable',
@@ -230,4 +242,5 @@ class StateTenderImport implements ToCollection, WithValidation, WithStartRow
             '*.18' => 'nullable',
         ];
     }
+
 }

@@ -28,7 +28,7 @@ class StateAttachmentResource extends JsonResource
 	    }
 
 	    if($this->attachment_date){
-	    	$attachment_date = Carbon::parse($this->attachment_date)->format('d-m-Y');
+	    	$attachment_date = Carbon::parse($this->attachment_date)->format('M d, Y');
 	    }else{
 	    	$attachment_date = null;
 	    }

@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
+Route::get("updateStateBidsManual", [StateTenderController::class,'updateStateBidsManual']);
 Route::post("forgotPassword",[AuthController::class,'forgotPassword']);
 Route::post("resetPassword",[AuthController::class,'resetPassword']);
 
@@ -70,6 +71,7 @@ Route::post("updateTenderState", [StateTenderController::class,'updateTenderStat
 Route::post("deleteStateTender", [StateTenderController::class,'deleteStateTender']);
 Route::post("getStateTendersRange", [StateTenderController::class,'getStateTendersRange']);
 Route::post("deleteStateTendersRange", [StateTenderController::class,'deleteStateTendersRange']);
+Route::post("getTotalCount", [StateTenderController::class,'getTotalCount']);
 
 Route::post("paginateDuplicateStateTenders",[DuplicateStateTenderController::class,'paginateDuplicateStateTenders']);
 Route::post("deleteDuplicateStateTenders",[DuplicateStateTenderController::class,'deleteDuplicateStateTenders']);
@@ -90,6 +92,7 @@ Route::post("deletePrivateTender", [PrivateTenderController::class,'deletePrivat
 Route::post("addPrivateTender", [PrivateTenderController::class,'addPrivateTender']);
 Route::post("getPrivateTender", [PrivateTenderController::class,'getPrivateTender']);
 Route::post("sendPrivateTenderMail", [PrivateTenderController::class,'sendPrivateTenderMail']);
+Route::post("getPrivateTenderbyTenderNo", [PrivateTenderController::class,'getPrivateTenderbyTenderNo']);
 
 //AWS S3 Bucket
 Route::post("getAwsFolders",[AdminController::class,'getAwsFolders']);
@@ -163,6 +166,7 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getInternationalTender", [InternationalTenderController::class,'getInternationalTender']);
 	Route::post("updateInternationalTender", [InternationalTenderController::class,'updateInternationalTender']);
 	Route::post("sendInternationalTenderMail", [InternationalTenderController::class,'sendInternationalTenderMail']);
+	Route::post("getInternationalTenderbyTenderNo", [InternationalTenderController::class,'getInternationalTenderbyTenderNo']);
 	
 
 	Route::post("changePassword",[UserController::class,'changePassword']);
@@ -259,7 +263,9 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//Federal Filter
 	Route::post("addFederalFilters", [FederalFilterController::class,'addFederalFilters']);	
+	Route::post("updateFederalFilters", [FederalFilterController::class,'updateFederalFilters']);	
 	Route::post("getFederalFilters", [FederalFilterController::class,'getFederalFilters']);
+	Route::post("deleteFederalFilter", [FederalFilterController::class,'deleteFederalFilter']);
 
 	//Federal Tender
 	Route::post("getFederalTender", [FederalTenderController::class,'getFederalTender']);
@@ -269,21 +275,28 @@ Route::middleware(['api'])->group(function ($router) {
 
 	//State Tender
 	Route::post("getStateTender", [StateTenderController::class,'getStateTender']);
+	Route::post("getStateTenderbyTenderNo", [StateTenderController::class,'getStateTenderbyTenderNo']);
 	Route::post("addStateTender", [StateTenderController::class,'addStateTender']);
 	// Route::post("updateStateBids", [StateTenderController::class,'updateStateBids']);
 	Route::post('sendStateTenderMail', [StateTenderController::class,'sendStateTenderMail']);
 
 	//State Filter
-	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);	
+	Route::post("addStateFilters", [StateFilterController::class,'addStateFilters']);
+	Route::post("updateStateFilters", [StateFilterController::class,'updateStateFilters']);	
 	Route::post("getStateFilters", [StateFilterController::class,'getStateFilters']);
+	Route::post("deleteStateFilter", [StateFilterController::class,'deleteStateFilter']);
 
 	//Private Filter
 	Route::post("addPrivateFilters", [PrivateFilterController::class,'addPrivateFilters']);	
+	Route::post("updatePrivateFilters", [PrivateFilterController::class,'updatePrivateFilters']);	
 	Route::post("getPrivateFilters", [PrivateFilterController::class,'getPrivateFilters']);
+	Route::post("deletePrivateFilter", [PrivateFilterController::class,'deletePrivateFilter']);
 
 	//International Filter
 	Route::post("addInternationalFilters", [InternationalFilterController::class,'addInternationalFilters']);	
+	Route::post("updateInternationalFilters", [InternationalFilterController::class,'updateInternationalFilters']);	
 	Route::post("getInternationalFilters", [InternationalFilterController::class,'getInternationalFilters']);
+	Route::post("deleteInternationalFilter", [InternationalFilterController::class,'deleteInternationalFilter']);
 
 	//Admin Controller
 	Route::post("paginateAdmins",[AdminController::class,'paginateAdmins']);
@@ -324,6 +337,7 @@ Route::middleware(['api'])->group(function ($router) {
 	//Federal Tender
 	Route::post("paginateTenderFederals",[FederalTenderController::class,'paginateTenderFederals']);
 	Route::post("addFederalTender",[FederalTenderController::class,'addFederalTender']);
+	Route::post("getFederalTenderbyTenderNo", [FederalTenderController::class,'getFederalTenderbyTenderNo']);
 	Route::post("updateTenderFederal",[FederalTenderController::class,'updateTenderFederal']);
 	Route::post("updateFederalTender",[FederalTenderController::class,'updateFederalTender']);
 	Route::post("deleteFederalTender",[FederalTenderController::class,'deleteFederalTender']);

@@ -62,6 +62,20 @@ return [
             ]) : [],
         ],
 
+        'bidsp4h0_bids_n' => [
+            'driver' => 'mysql',
+            'host' => env('DB_BIDS_HOST', '127.0.0.1'),
+            'port' => env('DB_BIDS_PORT', '3306'),
+            'database' => env('DB_BIDS_DATABASE', 'forge'),
+            'username' => env('DB_BIDS_USERNAME', 'forge'),
+            'password' => env('DB_BIDS_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

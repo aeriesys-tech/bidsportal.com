@@ -490,6 +490,7 @@
                         .dispatch("post", uri)
                         .then(function (response) {
                             loader.hide();
+                            console.log("getALert---",response.data.data)
                             vm.alert = response.data.data;
                             vm.tags = vm.alert.keywords;
                             vm.status = false;

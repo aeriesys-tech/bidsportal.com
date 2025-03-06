@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Issuing Agency </label>
+                                    <label>Issuing Agency <span class="text-danger">*</span> </label>
                                     <search :class="{ 'is-invalid': errors?.state_agency_id }"
                                         :customClass="{ 'is-invalid': errors?.state_agency_id }"
                                         :initialize="tender.state_agency_id" id="state_agency_id"
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Notice </label>
+                                    <label>Notice <span class="text-danger">*</span></label>
                                     <select class="form-control form-control-sm"
                                         :class="{ 'is-invalid': errors?.state_notice_id }"
                                         v-model="tender.state_notice_id">
@@ -200,7 +200,7 @@
                             </div>
                             <div class="col-sm-4 margin_top">
                                 <div class="form-group">
-                                    <label>Category </label>
+                                    <label>Category <span class="text-danger">*</span></label>
                                     <search :class="{ 'is-invalid': errors?.category_id }"
                                         :customClass="{ 'is-invalid': errors?.category_id }"
                                         :initialize="tender.category_id" id="category_id" label="category_name"

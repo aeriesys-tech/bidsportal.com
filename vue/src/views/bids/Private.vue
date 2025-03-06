@@ -48,8 +48,8 @@
                                     <a class="dropdown-item dropitem2" href="javascript:void(0)"
                                         @click="showPrivateFilter(private_filter)">{{ private_filter.private_filter_name
                                         }}</a>
-                                    <a href="javascript:void(0)" class="icon red my-auto">
-                                        <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
+                                   <a href="javascript:void(0)" class="icon red my-auto" @click="confirmDelete(private_filter)">
+                                            <i class="fa fa-trash text-danger blueicon" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             </ul>
@@ -315,7 +315,7 @@
                                         </form>
                                     </div>
 
-                                    <div class="scroll1">
+                                    <div class="scroll1 hgt-300">
                                         <div class="d-flex justify-content-between align-items-center"
                                             v-for="category in sorted_categories" :key="category.category_id">
                                             <div class="form-check">
@@ -465,6 +465,7 @@
                                     <button type="button" class="btn btn-xs text-primary textclose mb-0 p-1"
                                         @click.prevent="clearAllFilters()">Clear all</button>
                                 </div>
+                                <span style="color:red" v-if="save_search_filter.message">{{ save_search_filter.message }}</span>
                             </div>
                         </div>
                         <section v-if="!private_tenders.length && !isLoading">
@@ -507,9 +508,20 @@
                                         id="hovershadow">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <strong class="card-title mb-1">
-                                                    <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
-                                                        <div v-html="highlight(private_tender.title)"></div>
-                                                    </a>
+                                                  <div v-if="$store.getters.user">
+                                                        <router-link
+                                                            :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no"
+                                                            :class="federal_active"
+                                                            @click.prevent="tenderDetails(private_tender)"
+                                                        >
+                                                            <div v-html="highlight(private_tender.title)"></div>
+                                                        </router-link>
+                                                    </div>
+                                                    <div v-else>
+                                                        <a href="javascript:void(0)" @click="tenderDetails(private_tender)">
+                                                            <div v-html="highlight(private_tender.title)"></div>
+                                                        </a>
+                                                    </div>
                                             </strong>
                                             <ul class="list-inline mb-0 z-index-2">
                                                 <li class="list-inline-item">
@@ -611,67 +623,78 @@
                             </div>
                             <div v-else>
                                 <div class="card shadow mb-3" v-if="private_tenders.length !== 0">
-                                    <div class="card-body py-md-2 d-flex flex-column h-100 position-relative">
-                                        <div class="table-responsive table-responsive-sm border-0">
-                                            <table class="table table-sm small align-middle p-4 mb-0 table-hover table-shrink">
+                                    <div class="card-body p-0 d-flex flex-column h-100 position-relative">
+                                        <div class="table-responsive border border-radius-10">
+                                            <table class="table small align-middle p-4 mb-0 table-hover table-shrink">
                                                 <thead class="table-light">
-                                                    <tr class="vertical-align-top1">
-                                                        <th class="border-0"></th>
-                                                        <th scope="col" class="border-0">Bid number & notice
-                                                            type</th>
-                                                        <th scope="col" class="border-0">Title</th>
-                                                        <th scope="col" class="border-0">Agency</th>
-                                                        <th scope="col" class="border-0">Place of <br>performance
+                                                    <tr class="vertical-align-middle">
+                                                        <th class="border-0 text-center" v-if="$store.getters.user !== null">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" />
+                                                            </div>
                                                         </th>
+                                                        <th scope="col" class="border-0 border-right ">Bid Number & Notice type</th>
+                                                        <th scope="col" class="border-0 border-right">Title & Agency</th>
+                                                        <th scope="col" class="border-0 border-right">State</th>
                                                         <th scope="col" class="border-0">Due date</th>
-                                                        <th scope="col" class="border-0"></th>
                                                     </tr>
                                                 </thead>
 
-                                                <tbody class="border-top-0" v-for="private_tender in private_tenders"
-                                                    :key="private_tender.private_tender_id">
-                                                    <tr>
-                                                        <td class="">
-                                                            <div class="form-check my-auto"
-                                                                v-if="$store.getters.user !== null">
-                                                                <input class="form-check-input me-3" type="checkbox"
-                                                                    :value="private_tender.private_tender_id"
-                                                                    v-model="share_private_tender.private_tenders" />
+                                                <tbody class="border-top-0">
+                                                    <tr v-for="private_tender in private_tenders" :key="private_tender.private_tender_id">
+                                                        <td class="text-center" v-if="$store.getters.user !== null">
+                                                            <div class="form-check1">
+                                                                <input class="form-check-input" type="checkbox" :value="private_tender.private_tender_id" v-model="share_private_tender.private_tenders" />
                                                             </div>
                                                         </td>
-                                                        <td class="">
+                                                        <td class="w-250">
                                                             <div class="row">
-                                                                <div class="column">
-                                                                    <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.tender_no }}</span>
-                                                                    <span v-else>
-                                                                        <a href="javascript:void(0)" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
-                                                                    </span>
+                                                                <div class="column" style="margin-left: 21px;">
+                                                                    <div v-if="$store.getters.user">
+                                                                        <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                            {{ private_tender.tender_no }}
+                                                                        </span>
+                                                                        <span v-else>
+                                                                            <router-link
+                                                                             :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no"
+                                                                             style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</router-link>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div v-else>
+                                                                        <span>
+                                                                            <a href="javascript:void(0)" style="color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="column">
-                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }"
-                                                                        style="color: black;"
-                                                                        class="badge bg-success bg-opacity-10">
-                                                                        {{ private_tender.private_notice?.notice_name }}
+                                                                <div class="column d-flex align-items-center">
+                                                                    <span class="color-box me-2" :style="{ backgroundColor: private_tender.private_notice_color}"> </span>
+
+                                                                    <a :style="{ color: private_tender.private_notice?.backround_color }" class="txt-gray">
+                                                                        {{ private_tender.private_notice?.private_notice_name }}
                                                                     </a>
                                                                 </div>
                                                             </div>
                                                         </td>
                                                         <td class="">
-                                                             <a style="color: #353535;" href="javascript:void(0)"
-                                                                        @click="tenderDetails(private_tender)">
-                                                            <div v-html="highlight(private_tender.title)"></div>
-                                                            </a>
+                                                            <div v-if="$store.getters.user">
+                                                                <router-link
+                                                                 style="color: rgb(57, 112, 228); font-weight: bold;"
+                                                                  :to="'/bids/private-tenders/' + private_tender.title.replace(/ /g, '-') + '--' + private_tender.tender_no" @click="tenderDetails(private_tender)">
+                                                                    <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
+                                                                </router-link>
+                                                            </div>
+                                                            <div v-else>
+                                                                    <a style="color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(private_tender)">
+                                                                        <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
+                                                                    </a>
+                                                                </div>
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                {{ private_tender.private_agency?.private_agency_name}}
+                                                            </span>
+                                                            <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
                                                         </td>
-                                                        <td class="">
-                                                            <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
-                                                            <span v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
-                                                        </td>
-                                                        <td class="">{{ private_tender?.state?.state_name }}</td>
-                                                        <td class="" style="width: 110px;">{{
-                                                            private_tender.expiry_date }}</td>
-                                                        <td>
-
-                                                        </td>
+                                                        <td class="txt-gray">{{ private_tender?.state?.state_name }}</td>
+                                                        <td class="txt-gray" style="width: 110px;">{{ private_tender.expiry_date_parsed }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -819,10 +842,13 @@
             <div class="" style="width: 500px;">
                 <div class="">
                     <div class=""></div>
-                    <div class="">
+                    <!-- <div class="">
                         <SaveSearch @closeModal="closeModal" @savedSearch="saveSearch" @updateSearch="addPrivateFilter"
                             :status="status" :alert_label="meta.alert_label" :savedbids="savedbids" ref="save_search"/>
-                    </div>
+                    </div> -->
+                      <div class="">
+                            <SaveSearch @closeModal="closeModal" @updateSearch="updatePrivateFilter"  @saveSearch="addPrivateFilter" :status="save_search_filter.status" :filter_name="meta.private_filter_name" :savedbids="savedbids" ref="save_search" />
+                        </div>
                 </div>
                 <div class="modal-footer m-foot"></div>
             </div>
@@ -836,8 +862,11 @@
                         <div class="modal-body">
                             <div class="card border">
                                 <div class="card-header d-flex justify-content-between align-items-center p-3">
-                                    <div class="ms-2">
-                                        <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-bell fs-24 fa-fw text-success"></i>
+                                        <div class="ms-2">
+                                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                                        </div>
                                     </div>
                                     <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0">
                                         <button type="button" @click.prevent="closeModal()" class="btn-close"></button></a>
@@ -856,11 +885,22 @@
     </teleport>
     <teleport to="#modals" v-if="modal.share_tender">
         <div class="modal-overlay">
-            <div id="popup1" class="confirm1" style="background-color: white !important;">
-                <div class="">
-                    <h1>Alert</h1>
-                    <p>Please select bid !</p>
-                    <button @click.prevent="closeModal()" style="background-color: white !important;">Close</button>
+            <div class="modal-body">
+                <div class="card border">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-bell fs-24 fa-fw text-success"></i>
+                            <div class="ms-2">
+                            <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Alert</h5>
+                            </div>
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
+                                type="button" @click.prevent="closeModal()"
+                                class="btn-close"></button></a>
+                    </div>
+                    <div class="card-body text-center" style="min-width: 350px;">
+                        <h6 class="text-danger">Please select bid !</h6>
+                    </div>
                 </div>
             </div>
         </div>
@@ -907,11 +947,9 @@
                         <div class="card border">
                             <div class="card-header d-flex justify-content-between align-items-center p-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-xs">
-                                        <img class="avatar-img" src="assets/images/mail.png" alt="avatar" />
-                                    </div>
+                                     <i class="fa fa-envelope fs-24 fa-fw text-success"></i>
                                     <div class="ms-2">
-                                       <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Detail</h5>
+                                       <h5 class="modal-title" style="color: #16a34a!important;font-weight: 500!important;">Share Bid Details</h5>
                                     </div>
                                 </div>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-link p-0 mb-0"><button
@@ -921,7 +959,7 @@
                             <form class="card-body" style="min-width: 350px;">
                                 <div class="mb-3">
                                     <input class="form-control" :class="{ 'is-invalid': errors.recipient_email }"
-                                        placeholder="Employee/Colleague Email Address" autocomplet="off"
+                                        placeholder="Email" autocomplet="off"
                                         type="text" id="recipient-name"
                                         v-model="share_private_tender.recipient_email" ref="recipient_email" />
                                     <span v-if="errors.recipient_email" class="invalid-feedback">{{ errors.recipient_email[0]
@@ -929,7 +967,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <input class="form-control" type="text" name="email_subject"
-                                        :class="{ 'is-invalid': errors.subject }" placeholder="Subject of Email"
+                                        :class="{ 'is-invalid': errors.subject }" placeholder="Subject"
                                         autocomplet="off" id="email_subject"
                                         v-model="share_private_tender.subject" ref="subject" />
                                     <span v-if="errors.subject" class="invalid-feedback">{{ errors.subject[0]
@@ -938,7 +976,7 @@
                                 <div class="mb-3">
                                     <textarea class="form-control" rows="3" name="email_message"
                                         :class="{ 'is-invalid': errors.message }"
-                                        placeholder="Brief Messsage/Note" autocomplet="off" id="email_message"
+                                        placeholder="Messsage" autocomplet="off" id="email_message"
                                         v-model="share_private_tender.message"></textarea>
                                     <span v-if="errors.message" class="invalid-feedback">{{ errors.message[0]
                                         }}</span>
@@ -951,6 +989,20 @@
                     </div>
                     <div class="modal-footer m-foot"></div>
                 </div>
+            </div>
+        </div>
+    </teleport>
+    <!-- Confirmation Modal -->
+    <teleport to="#modals" v-if="erroralertmodal">
+        <div class="modal-overlay">
+            <div class="confirm text-center" style="background-color: white !important;">
+                <a class="btn btn-outline-none float-end" @click.prevent="closeModal()">
+                    <i class="fa-solid fa-close"></i>
+                </a>
+                <h1 class="title-green">Are you sure?</h1>
+                <p>Do you really want to delete these records? This process cannot be undone.</p>
+                <a class="btn btn-sm btn-secondary mb-3 me-2" @click.prevent="closeModal()">Cancel</a>
+                <a class="btn btn-sm btn-success mb-3" @click.prevent="deleteAlert()">Confirm</a>
             </div>
         </div>
     </teleport>
@@ -999,6 +1051,7 @@ export default {
             share_tender: false,
             meta: {
                 private_filter_name: '',
+                private_filter_id: '',
                 alert_title: '',
                 region: '',
                 frequency: '',
@@ -1030,6 +1083,7 @@ export default {
                 maxPage: 1,
                 to: "",
                 alert_label: false,
+                status:true
             },
             savealert: {
                 id: "",
@@ -1137,6 +1191,12 @@ export default {
                 save_search: null,
                 set_alert: null,
                 share_tender: null
+            },
+            erroralertmodal: false,
+            delete_alert: null,
+            save_search_filter:{
+                status:true,
+                message:null
             }
         };
     },
@@ -1342,13 +1402,13 @@ export default {
         listviewgrid() {
             this.listview = false;
             this.gridview = true;
-            this.meta.per_page = 38;
+            this.meta.per_page = 30;
             this.getPrivateTenders();
         },
         gridviewgrid() {
             this.listview = true;
             this.gridview = false;
-            this.meta.per_page = 10;
+            this.meta.per_page = 15;
             this.getPrivateTenders();
         },
 
@@ -1423,6 +1483,9 @@ export default {
             this.meta.categories = private_filter.categories
             this.meta.states = private_filter.states
             this.meta.private_agencies = private_filter.private_agencies
+            this.meta.private_filter_name = private_filter.private_filter_name;
+            this.meta.private_filter_id = private_filter.private_filter_id;
+            this.save_search_filter.status = false
             this.getPrivateTenders()
         },
 
@@ -1436,15 +1499,36 @@ export default {
                     .then(function (response) {
                         vm.$store.dispatch("success", "Filters saved successfully");
                         vm.getPrivateFilters()
-                        vm.closeModal();
+                        vm.closeModal()
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        vm.closeModal()
+                        vm.save_search_filter.message = error.response.data.message
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             }
         },
+        updatePrivateFilter(filter_name) {
+                console.log("Filter-",filter_name)
+                let vm = this;
+                vm.meta.private_filter_name = filter_name;
+                if (this.$store.getters.user) {
+                    vm.meta.user_id = this.$store.getters.user.user_id;
+                    vm.$store
+                        .dispatch("post", { uri: "updatePrivateFilters", data: vm.meta })
+                        .then(function (response) {
+                            vm.$store.dispatch("success", "Filters saved successfully");
+                            vm.getPrivateFilters();
+                            vm.closeModal();
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
 
         addAlert(alert) {
             let vm = this
@@ -1474,6 +1558,8 @@ export default {
             this.modal.save_search = false
             this.share_tender = false
             this.modal.share_tender = false
+            this.erroralertmodal = false; // Hide modal
+            this.delete_alert = null;
             this.share_private_tender.private_tenders = []
         },
 
@@ -1612,6 +1698,10 @@ export default {
             this.meta.categories = []
             this.meta.states = []
             this.meta.private_agencies = []
+            this.meta.status = true
+            this.meta.private_filter_name = null
+            this.save_search_filter.status = true
+            this.save_search_filter.message = null
             this.getPrivateTenders();
         },
         removeFilter(filter) {
@@ -1896,6 +1986,31 @@ export default {
             this.meta.page = 1;
             this.paginatePrivateTenders();
         },
+         deleteAlert() {
+                let vm = this;
+                if (vm.delete_alert) {
+                    let private_filter_id = vm.delete_alert.private_filter_id;
+                    vm.$store
+                        .dispatch("post", {
+                            uri: "deletePrivateFilter",
+                            data: { private_filter_id: private_filter_id },
+                        })
+                        .then((response) => {
+                            vm.$store.dispatch("success", response.data.message);
+                           vm.getPrivateFilters()
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+                this.closeModal();
+            },
+          confirmDelete(private_filter) {
+                console.log("private_filter file", private_filter);
+                this.delete_alert = private_filter;
+                this.erroralertmodal = true;
+            },
     },
 };
 </script>
@@ -2251,7 +2366,8 @@ export default {
 .confirm p {
     text-align: center;
     font-size: 1rem;
-    margin: 0 2rem 4.5rem;
+    /* margin: 0 2rem 4.5rem; */
+     margin: 0 2rem 1.2rem;
     color: black;
 }
 
@@ -2460,4 +2576,68 @@ export default {
     flex: 1;
     padding: 5px;
   }
+  .vertical-align-middle {
+        vertical-align: middle;
+    }
+    .border-radius-10 {
+        border-radius: 10px;
+    }
+    .truncate-text {
+        white-space: nowrap; /* Prevents text from wrapping */
+        overflow: hidden; /* Hides overflowing text */
+        text-overflow: ellipsis; /* Shows "..." for overflow text */
+        max-width: 450px; /* Adjust the width as needed */
+        display: block;
+    }
+    .color-box {
+        width: 12px;
+        height: 12px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    th {
+        position: relative;
+        color: rgba(45, 59, 84, 1);
+        font-weight: 600;
+        text-align: start;
+        /* background: #fafbfb; */
+        border-bottom: 1px solid #ebecf0;
+        padding: 16px 16px;
+    }
+
+    .border-right::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        inset-inline-end: 0;
+        width: 1px;
+        height: 1.6em;
+        background-color: #ebecf0;
+        transform: translateY(-50%);
+        transition: background-color 0.2s;
+    }
+
+    .border-right:last-child::after {
+        display: none; /* Remove border from the last column */
+    }
+    .w-250 {
+        width: 250px;
+    }
+    .txt-gray {
+        color: rgba(45, 59, 84, 1);
+    }
+    .fs-24 {
+        font-size: 24px;
+    }
+    .ml-21 {
+    margin-left: 21px;
+}
+.hgt-300{
+    height: 300px;
+}
+.title-green {
+    color: #16a34a !important;
+}
 </style>

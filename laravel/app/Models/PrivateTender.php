@@ -33,6 +33,7 @@ class PrivateTender extends Model
         'agency_name',
         'document_path',
         'status',
+        'tender_number'
        
     ];
 
