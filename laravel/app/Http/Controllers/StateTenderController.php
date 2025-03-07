@@ -588,6 +588,7 @@ class StateTenderController extends Controller
         ]);
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
+        $data['tender_number'] = str_replace($data['tender_no'], '-', '');
         $data['upload_type'] = 'manual';
 
         $state_tender = StateTender::create($data);
@@ -929,6 +930,7 @@ class StateTenderController extends Controller
         $data['posted_date'] = date('Y-m-d H:i:s');
         $data['status'] = true;
         $data['upload_type'] = 'manual';
+        $data['tender_number'] = str_replace($data['tender_no'], '-', '');
 
         $state_tender = StateTender::where('state_tender_id', $request->state_tender_id)->first();
         $state_tender->update($data);
