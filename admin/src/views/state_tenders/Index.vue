@@ -123,7 +123,7 @@
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ tender.tender_no }}</td>
                                         <td>
-                                            <input type="datetime-local" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.posted_date }" v-model="tender.posted_date" />
+                                            <input type="datetime-local" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.posted_date }" v-model="postedDate" readonly />
                                             <span class="invalid-feedback" v-if="tender.errors?.posted_date">{{ tender.errors?.posted_date[0] }}</span>
                                         </td>
                                         <td>
@@ -233,6 +233,7 @@
     import category_search from "@/components/CategorySearch.vue";
     import agency_search from "@/components/AgencySearch.vue";
     import state_search from "@/components/StateSearch.vue";
+    import moment from 'moment'
     export default {
         components: {
             Pagination,
@@ -287,9 +288,14 @@
                 },
             };
         },
+        computed:{
+            postedDate(){
+                return moment().format("YYYY-MM-DDTHH:mm")                           
+            }                                
+        },
         mounted() {
             let vm = this;
-            vm.getStateNotices();
+            vm.getStateNotices()
         },
 
         watch: {
@@ -303,6 +309,7 @@
         },
 
         methods: {
+
             search() {
                 let vm = this;
                 vm.meta.page = 1;

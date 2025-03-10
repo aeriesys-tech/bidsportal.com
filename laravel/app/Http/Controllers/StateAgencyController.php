@@ -10,10 +10,11 @@ use App\Http\Resources\StateAgencyResource;
 class StateAgencyController extends Controller
 {
     public function getStateAgencies(Request $request){
-		$cacheKey = 'state_agencies';
-        $state_agencies = Cache::remember($cacheKey, 60 * 60, function () use($request) {
-        	return StateAgency::orderBy('state_agency_name')->get();
-        });
+		// $cacheKey = 'state_agencies';
+  //       $state_agencies = Cache::remember($cacheKey, 60 * 60, function () use($request) {
+  //       	return StateAgency::orderBy('state_agency_name')->get();
+  //       });
+        $state_agencies = StateAgency::orderBy('state_agency_name')->get();
         return $state_agencies;
 	}
 

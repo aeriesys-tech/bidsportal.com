@@ -111,6 +111,7 @@ class TransferFederalTenderJob implements ShouldQueue
             {
                 $tender = DB::connection('mysql')->table('federal_tenders')->insertGetId([
                     'tender_no' => $data['tdr_no'],
+                    'tender_number' => str_replace($data['tdr_no'], '-', ''),
                     'title' => $data['tdr_title'],
                     'description' => $data['tdr_desc'],
                     'opening_date' => ($data['tdr_opening_date'] === '0000-00-00' || empty($data['tdr_opening_date'])) ? '2024-11-14' : $data['tdr_opening_date'],

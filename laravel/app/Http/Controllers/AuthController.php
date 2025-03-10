@@ -187,7 +187,7 @@ class AuthController extends Controller
         if($request->search!='')
         {
             $query->where('name', 'like', "%$request->search%")->orWhere('email', 'like', "$request->search%")
-                ->orWhere('phone', 'like', "$request->search%")->orWhere('company', 'like', "$request->search%");
+                ->orWhere('phone', 'like', "$request->search%")->orWhere('company_name', 'like', "$request->search%");
         }
         $user = $query->orderBy($request->keyword,$request->order_by)->paginate($request->per_page); 
         return UserResource::collection($user);

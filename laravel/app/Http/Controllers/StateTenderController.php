@@ -144,7 +144,7 @@ class StateTenderController extends Controller
                 }
             }
 
-            $query->orderBy('state_tender_id', 'DESC');
+            $query->orderBy('posted_date', 'DESC');
         }
         $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
@@ -812,7 +812,6 @@ class StateTenderController extends Controller
     public function updateStateTender(Request $request)
     {
         $request->validate([
-            'posted_date' => 'required',
             'opening_date' => 'required',
             'expiry_date' => 'required',
             'state_tender_id' => 'required',
@@ -828,7 +827,7 @@ class StateTenderController extends Controller
                 'state_agency_id' => $request->state_agency_id,
                 'category_id' => $request->category_id,
                 'state_id' => $request->state_id,
-                'posted_date' => $request->posted_date,
+                'posted_date' => Carbon::now()->format('Y-m-d H:i:s'),
                 'upload_type' => 'manual',
                 'status' => true
             ]);

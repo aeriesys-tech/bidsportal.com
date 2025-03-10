@@ -62,7 +62,7 @@ return [
             ]) : [],
         ],
 
-        'bidsp4h0_bids_n' => [
+        'bidsdb' => [
             'driver' => 'mysql',
             'host' => env('DB_BIDS_HOST', '127.0.0.1'),
             'port' => env('DB_BIDS_PORT', '3306'),
