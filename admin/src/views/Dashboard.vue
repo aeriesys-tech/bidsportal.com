@@ -178,7 +178,7 @@
                             <div class="col-md-4 mt-auto">
                                 <button class="btn btn-sm btn-primary" @click="updateBids()">Update</button>
                             </div>
-                            <div class="col-md-12" v-if="errors.length" style="margin-top: 10px;">
+                            <div class="col-md-12" v-if="errors?.length" style="margin-top: 10px;">
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm">
                                         <thead>
