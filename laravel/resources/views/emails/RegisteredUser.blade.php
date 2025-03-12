@@ -8,7 +8,7 @@
 <body style="background: #f9f9f9; font-family: Arial, sans-serif; margin: 0; padding: 0;">
     <div style="max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
         <div style="text-align: center;">
-            <img src="https://bidsportal.com/storage/images/logo.png" alt="BidsPortal" style="width: 150px; height: auto;">
+            <img src="https://bidsportal.com/images/logo.png" alt="BidsPortal" style="width: 150px; height: auto;">
             <hr style="margin: 20px 0;">
         </div>
         <p>Hi {{ $data['name'] }},</p>

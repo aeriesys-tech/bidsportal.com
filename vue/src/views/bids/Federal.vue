@@ -1208,6 +1208,14 @@ export default {
     },
 
     methods: {
+        setPerPage(){
+            if(this.gridview){
+                this.meta.per_page = 30
+            }
+            if(this.listview){
+                this.meta.per_page = 15
+            }
+        },
         deselectNaics(){
             let vm = this
             vm.clear_all_naics = !vm.clear_all_naics
@@ -1799,6 +1807,7 @@ export default {
                 });
             }
             localStorage.setItem('meta_federal', JSON.stringify(vm.meta))
+            this.setPerPage()
         },
 
         getFederalTenders() {

@@ -403,7 +403,8 @@ class FederalTenderController extends Controller
                 return response()->json(['error' => 'Failed to create ZIP file'], 500);
             }
             return response()->download($temp_zip_path, $zip_file_name)->deleteFileAfterSend(true);
-        }   
+        }
+        return response()->json(['info' => 'No attachments found']);   
     }
 
     public function paginateTenderFederals(Request $request)

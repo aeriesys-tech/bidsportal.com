@@ -8,6 +8,8 @@ use App\Models\UserSetAside;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Auth;
+use App\Mail\FederalTenderMail;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -66,6 +68,16 @@ class UserController extends Controller
 	        'message' => ['Password has been successfully updated.']
 	    ], 200);
 	}
+
+    public function sendMail(){
+        $emailData = [
+                'name' => 'Ajit K',
+                'email' => 'ajit@aeriesys.com',
+                'link' => 'test'
+            ];
+    
+        Mail::to('ajit@aeriesys.com')->send(new FederalTenderMail($emailData));
+    }
 
     public function updateUser(Request $request)
     {

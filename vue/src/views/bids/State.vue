@@ -1130,6 +1130,7 @@
             if (state_tender?.tender_no) {
                 this.handleSelectedTag(state_tender.tender_no);
             }
+            this.setPerPage()
         },
 
         computed: {
@@ -1145,6 +1146,14 @@
         },
 
         methods: {
+            setPerPage(){
+                if(this.gridview){
+                    this.meta.per_page = 30
+                }
+                if(this.listview){
+                    this.meta.per_page = 15
+                }
+            },
             updateStatus(event) {
                 if (event.target.checked) {
                     this.meta.active = true;
@@ -1663,6 +1672,7 @@
                     });
                 }
                 localStorage.setItem("meta_state", JSON.stringify(vm.meta));
+                this.setPerPage()
             },
 
             getStateTenders() {
