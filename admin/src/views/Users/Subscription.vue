@@ -21,11 +21,11 @@
                             </div>
                             <div class="form-group" style="flex-1">
                                 <label class="label_9">Status</label>
-                                <select class="form-select form-select-sm ms-2" v-model="meta.status" @change="filterBystatus()">
+                                <select class="form-select form-select-sm ms-2" v-model="meta.status" @change="index()">
                                     <option value="">Select Status</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Expiring">Expiring (15 Days)</option>
-                                    <option value="Expired/Suspended">Expired/Suspended</option>
+                                    <option value="active">Active</option>
+                                    <option value="expiring">Expiring (15 Days)</option>
+                                    <option value="expired">Expired/Suspended</option>
                                 </select>
                             </div>
                         </div>
@@ -148,6 +148,7 @@
                     from: 1,
                     to: 1,
                     maxPage: 1,
+                    status:''
                 },
                 subscriptions: [],
             };
