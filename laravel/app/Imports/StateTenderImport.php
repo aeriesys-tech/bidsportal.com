@@ -86,12 +86,14 @@ class StateTenderImport implements ToCollection
             $state_id = $state->state_id ?? null;
 
             if (in_array($tender_no, $this->existing_tender_nos)) {
-                DuplicateStateTender::updateOrCreate([
-                    'tender_no' => $tender_no,
-                    'posted_date' => $posted_date,
-                    'title' => $title,
-                    'tender_url' => $tender_url
-                ]);
+                if($tender_no){
+                    DuplicateStateTender::updateOrCreate([
+                        'tender_no' => $tender_no,
+                        'posted_date' => $posted_date,
+                        'title' => $title,
+                        'tender_url' => $tender_url
+                    ]);
+                }
                 continue;
             }
 
