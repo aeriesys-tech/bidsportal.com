@@ -61,13 +61,13 @@
                                                     <tbody>
                                                         <tr>
                                                             <td style="padding: 0px 0px 0px; text-align: left;">
-                                                                <a href="https://bidsportal.com/#/bids" target="_blank" style="padding: 2px; color: #fff; background: #21e040; font-size: 12px; border: 1px solid #21e040; border-radius: 5px; padding: 5px;">
+                                                                <a href="https://bidsportal.com/#/bids/private-commercial" target="_blank" style="padding: 2px; color: #fff; background: #21e040; font-size: 12px; border: 1px solid #21e040; border-radius: 5px; padding: 5px;">
                                                                     View All
                                                                 </a>
                                                             </td>
                                                             <td style="padding: 0px 0px 0px; font-family: arial; font-size: 12px; text-align: right; line-height: 1.5; color: #000;" align="center">
-                                                                <img src="https://bidsportal.com/storage/images/phone.png" class="imgcol" style="width: 15px;">&nbsp; (913)232-2255 
-                                                                <img src="https://bidsportal.com/storage/images/mail_png.png" class="imgcol" style="width: 15px;">&nbsp; support@bidsportal.com
+                                                                <img src="https://bidsportal.com/images/phone.png" class="imgcol" style="width: 15px;">&nbsp; (913)232-2255 
+                                                                <img src="https://bidsportal.com/images/email.png" class="imgcol" style="width: 15px;">&nbsp; support@bidsportal.com
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -95,14 +95,14 @@
                                                                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="border-bottom: 1px solid #ddd;">
                                                                     <tbody style="background-color: #fdffff;">
                                                                         <tr>
-                                                                            <td style="padding: 0px 12px 0px; text-align: left;"><img src="https://bidsportal.com/storage/images/share.png" class="imgcol" style="width: 40px; height: 40px;" /></td>
+                                                                            <td style="padding: 0px 12px 0px; text-align: left;"><img src="https://bidsportal.com/images/share.png" class="imgcol" style="width: 40px; height: 40px;" /></td>
                                                                             <td style="width: 700px; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: 500;">
                                                                                 BidsPortal Team,<br />
                                                                                 <a style="font-weight: 400; font-size: 16px;"> Has Shared this with you! </a>
                                                                             </td>
                                                                             <td style="padding: 0px; font-family: sans-serif; font-size: 12px; line-height: 1.5; color: #000000;" align="center">
                                                                                 <a href="#">
-                                                                                    <img style="padding: 25px 12px 25px; border-width: 0px; border-style: none; display: block; width: 150px;" src="https://bidsportal.com/storage/images/logo.png" alt="BidsPortal" width="25%" />
+                                                                                    <img style="padding: 25px 12px 25px; border-width: 0px; border-style: none; display: block; width: 150px;" src="https://bidsportal.com/images/logo.png" alt="BidsPortal" width="25%" />
                                                                                 </a>
                                                                             </td>
                                                                         </tr>
@@ -126,7 +126,7 @@
                                                                         <tr style="padding-bottom: 10px;">
                                                                             <td colspan="4">
                                                                                 <b style="color: #99cc00; font-size: 16px; font-family: sans-serif;">
-                                                                                    <a href="https://bidsportal.com/#/bids" style="color: #02c459;" target="_blank">
+                                                                                    <a href="https://bidsportal.com/#/bids/private-commercial" style="color: #02c459;" target="_blank">
                                                                                         {{ $bid->tender_no }} :: {{ $bid->title }}
                                                                                     </a>
                                                                                 </b>
@@ -135,7 +135,7 @@
                                                                         <tr style="padding-bottom: 10px;">
                                                                             <td style="width: 35%;">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
+                                                                                    <img src="https://bidsportal.com/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
                                                                                         <a style="color: #626262;"> Opening Date : </a>
                                                                                     </b>
@@ -144,7 +144,7 @@
                                                                             </td>
                                                                             <td style="width: 42%;">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
+                                                                                    <img src="https://bidsportal.com/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
                                                                                         <a style="color: #626262;"> Expired : </a>
                                                                                     </b>
@@ -158,7 +158,7 @@
                                                                                         <a style="color: #626262;"> Files : </a>
                                                                                     </b>
                                                                                     <span style="color: #3997ff;">
-                                                                                        <a target="_blank" href="{{ config('app.url').'downloadPrivateAttachments/'.$bid->private_tender_id }}">
+                                                                                        <a target="_blank" href="https://bidsportal.com/downloadStateAttachments/{{ $bid->private_tender_id }}">
                                                                                             Download Attachments
                                                                                         </a>
                                                                                     </span>
@@ -168,7 +168,7 @@
                                                                         <tr style="padding-bottom: 10px;">
                                                                             <td colspan=4>
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/notice-type.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" />
+                                                                                    <img src="https://bidsportal.com/images/notice-type.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
                                                                                         <a style="color: #626262;"> Notice Type : {{ $bid_details['notice'] }}</a>
                                                                                     </b>
@@ -179,7 +179,7 @@
                                                                         <tr style="padding-bottom:10px;">
                                                                             <td colspan=4>
                                                                                 <span style="font-size: 13px;font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/agency.png" style="max-height: 13px;vertical-align:middle;image-rendering: pixelated;">
+                                                                                    <img src="https://bidsportal.com/images/agency.png" style="max-height: 13px;vertical-align:middle;image-rendering: pixelated;">
                                                                                     <b>
                                                                                         <a style="Color: #626262;">  Agency Link : </a>
                                                                                     </b>
@@ -193,7 +193,7 @@
                                                                             <td colspan="4">
                                                                                 <br />
                                                                                 <span class="text" style="font-size: 13px;font-family: sans-serif; font-style: italic; color: #808080">
-                                                                                    <img src="https://bidsportal.com/storage/images/description.png" style="max-height: 12px; vertical-align: text-bottom; image-rendering: pixelated; line-height: 0.9;" />
+                                                                                    <img src="https://bidsportal.com/images/description.png" style="max-height: 12px; vertical-align: text-bottom; image-rendering: pixelated; line-height: 0.9;" />
                                                                                     <b> Description : </b><br>
                                                                                     {!! \Illuminate\Support\Str::limit($bid->description, 300, $end='...') !!}
                                                                                 </span>
@@ -203,7 +203,7 @@
                                                                         <tr>
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/location.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Location : </a></b>
+                                                                                    <img src="https://bidsportal.com/images/location.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Location : </a></b>
                                                                                     {{ $bid_details['place_of_performance'] }}
                                                                                 </span>
                                                                             </td>
@@ -212,7 +212,7 @@
                                                                         <tr style="padding-bottom: 10px; line-height: 1.8;">
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/storage/images/category.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : {{ $bid_details['category']}}</a></b>
+                                                                                    <img src="https://bidsportal.com/images/category.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : {{ $bid_details['category']}}</a></b>
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
@@ -237,10 +237,10 @@
                                                         <tr>
                                                             <td style="text-align: center;">
                                                                 <span>
-                                                                    <a href="https://facebook.com/bidsportal" target="_blank"><img src="https://bidsportal.com/storage/images/facebook.png" class="imgcol" style="width: 25px; height: 25px;"></a>
-                                                                    <a href="https://twitter.com/BidsPortal" target="_blank"><img src="https://bidsportal.com/storage/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
-                                                                    <a href="https://linkedin.com/company/bidsportal" target="_blank"><img src="https://bidsportal.com/storage/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
-                                                                    <a href="mailto:support@bidsportal.com" target="_blank"><img src="https://bidsportal.com/storage/images/mail.jpg" class="imgcol" style="width: 25px; height: 25px;"></a>
+                                                                    <a href="https://facebook.com/bidsportal" target="_blank"><img src="https://bidsportal.com/images/facebook.png" class="imgcol" style="width: 25px; height: 25px;"></a>
+                                                                    <a href="https://twitter.com/BidsPortal" target="_blank"><img src="https://bidsportal.com/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
+                                                                    <a href="https://linkedin.com/company/bidsportal" target="_blank"><img src="https://bidsportal.com/images/twitter.png" class="imgcol" style="width: 25px; height: 25px;"></a>
+                                                                    <a href="mailto:support@bidsportal.com" target="_blank"><img src="https://bidsportal.com/images/mail.jpg" class="imgcol" style="width: 25px; height: 25px;"></a>
                                                                 </span>
                                                                 <br />
                                                                 <br />

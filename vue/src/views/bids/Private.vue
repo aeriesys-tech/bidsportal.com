@@ -1284,6 +1284,14 @@ export default {
     },
 
     methods: {
+        setPerPage(){
+            if(this.gridview){
+                this.meta.per_page = 30
+            }
+            if(this.listview){
+                this.meta.per_page = 15
+            }
+        },
         updateStatus(event) {
             if (event.target.checked) {
                 this.meta.active = true
@@ -1816,6 +1824,7 @@ export default {
                 });
             }
             localStorage.setItem('meta_private', JSON.stringify(vm.meta))
+            this.setPerPage()
         },
 
         getPrivateTenders() {

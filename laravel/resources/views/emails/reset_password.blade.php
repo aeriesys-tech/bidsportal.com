@@ -23,7 +23,7 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td style="padding: 0px 0px 20px; font-family: Arial; font-size: 18px; line-height: 1.5; color: #000000;" align="center">
-                                                                        <a href="https://www.bidsportal.com"><img src="https://bidsportal.com/storage/images/logo.png" alt="BidsPortal" height="70" /></a>
+                                                                        <a href="https://www.bidsportal.com"><img src="https://bidsportal.com/images/logo.png" alt="BidsPortal" height="70" /></a>
                                                                         <hr style="width: 50%; margin: 0px;">
                                                                         <span style="color: #21e040; font-size: 12px;"><em>Password Reset Instructions</em></span>
                                                                     </td>

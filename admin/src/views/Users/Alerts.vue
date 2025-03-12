@@ -40,6 +40,16 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th @click="sort('user_id')">
+                                            Eamil
+                                            <span>
+                                                <i v-if="meta.keyword == 'user_id' && meta.order_by == 'asc'"
+                                                    class="ri-arrow-up-line"></i>
+                                                <i v-else-if="meta.keyword == 'user_id' && meta.order_by == 'desc'"
+                                                    class="ri-arrow-down-line"></i>
+                                                <i v-else class="fas fa-sort"></i>
+                                            </span>
+                                        </th>
                                         <th @click="sort('alert_title')">
                                             Alert Title
                                             <span>
@@ -80,6 +90,7 @@
                                     <tr v-for="alert, key in alerts" :key="key">
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ alert.user?.name }}</td>
+                                        <td class="wrap-text">{{ alert.user?.email }}</td>
                                         <td>{{ alert.alert_title }}</td>
                                         <td>{{ alert.frequency }}</td>
                                         <td>{{ alert.region }}</td>
