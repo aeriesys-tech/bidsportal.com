@@ -199,7 +199,7 @@ class FederalTenderController extends Controller
                     });
                 }
             }
-            $query->orderBy('federal_tender_id', 'DESC');
+            $query->orderBy('posted_date', 'DESC');
         }
         
         $federal_tenders = $query->paginate($request->per_page); 

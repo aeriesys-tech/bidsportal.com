@@ -104,17 +104,20 @@
             addAgency() {
                 let vm = this
                 let agency = {
-                    agency_name : this.initialize?.target?.value
+                    state_agency_name : this.initialize?.target?.value
                 }
+                let loader = vm.$loading.show();
                 vm.$store
-                    .dispatch("post", { uri: "addAgency", data: agency })
+                    .dispatch("post", { uri: "addStateAgency", data: agency })
                     .then(function (response) {
+                        loader.hide();
                         vm.$emit('updateAgencies')
                         vm.$emit('input', response.data?.agency?.agency_id)
                         vm.isOpen = false
                         vm.$store.dispatch("success", "Agency added successfully");
                     })
                     .catch(function (error) {
+                        loader.hide();
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });

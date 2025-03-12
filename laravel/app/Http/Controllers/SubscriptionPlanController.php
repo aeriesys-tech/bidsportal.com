@@ -23,6 +23,16 @@ class SubscriptionPlanController extends Controller
         ]);
     	$query = UserSubscription::query();
 
+        if($request->status){
+            if ($request->status === 'active') {
+                $query->where('valid_to', '>', now());
+            } elseif ($request->status === 'expiring') {
+                $query->whereBetween('valid_to', [now(), now()->addDays(15)]);
+            } elseif ($request->status === 'expired') {
+                $query->where('valid_to', '<', now());
+            }
+        }
+
         if($request->search!='')
 		{
 			$query->where('payment_method', 'like', "%$request->search%")->orWhere('validity', 'like', "$request->search%")

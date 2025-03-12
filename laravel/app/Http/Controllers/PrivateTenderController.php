@@ -115,7 +115,7 @@ class PrivateTenderController extends Controller
             }
         }
 
-        $query->orderBy('private_tender_id', 'DESC');
+        $query->orderBy('posted_date', 'DESC');
         $private_tenders = $query->paginate($request->per_page); 
         return PrivateTenderResource::collection($private_tenders);
     }

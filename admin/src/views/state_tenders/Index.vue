@@ -319,16 +319,17 @@
                 this.$router.push("/state_tenders/" + tender.state_tender_id + "/edit");
             },
             updateAgencies(value) {
-                let vm = this;
-                vm.agency.agency_name = value;
-                vm.$store
-                    .dispatch("post", { uri: "getAgency" })
-                    .then((response) => {
-                        vm.agencies = response.data.data;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                window.location.reload()
+                // let vm = this;
+                // vm.agency.agency_name = value;
+                // vm.$store
+                //     .dispatch("post", { uri: "getStateAgencies" })
+                //     .then((response) => {
+                //         vm.agencies = response.data.data;
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error);
+                //     });
             },
 
             toggleSelectAll() {

@@ -130,7 +130,7 @@ class InternationalTenderController extends Controller
             }
         }
 
-        $query->orderBy('international_tender_id', 'DESC');
+        $query->orderBy('posted_date', 'DESC');
         $international_tenders = $query->paginate($request->per_page); 
         return InternationalTenderResource::collection($international_tenders);
     }
