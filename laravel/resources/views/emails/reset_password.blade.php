@@ -35,7 +35,7 @@
                                                                 <tr>
                                                                     <td style="padding: 0px 10px 0px; text-align: left;" align="center">
                                                                         <p style="font-family: Arial; font-size: 12px; line-height: 18px; color: #787878;">
-                                                                            Hi {{ $name }},
+                                                                            Hi {{ $data['name'] }},
                                                                         </p>
                                                                         <p style="font-family: Arial; font-size: 12px; line-height: 18px; color: #787878;">
                                                                             You recently requested a password reset for your BidsPortal account. To set a new password, click the link below and follow the instructions.
@@ -48,7 +48,7 @@
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td style="padding: 0px; border-radius: 5px; background: #21e040;" align="center" width="33" height="30">
-                                                                                        <a href="{{ $resetPassLink }}" style="vertical-align: middle; width: 122px; height: 31px; display: inline-block; font-family: Arial; font-size: 13px; line-height: 30px; color: #ffffff; text-decoration: none;">Reset Password</a>
+                                                                                        <a href="{{ $data['resetPassLink'] }}" style="vertical-align: middle; width: 122px; height: 31px; display: inline-block; font-family: Arial; font-size: 13px; line-height: 30px; color: #ffffff; text-decoration: none;">Reset Password</a>
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>
