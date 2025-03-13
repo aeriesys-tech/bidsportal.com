@@ -13,8 +13,10 @@ use App\Models\SubscriptionPlan;
 use App\Models\UserSubscription;
 use Carbon\Carbon;
 use App\Mail\RegistrationEmail;
+use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\UserSetAside;
+use Log;
 
 class AuthController extends Controller
 {
@@ -219,15 +221,28 @@ class AuthController extends Controller
         $data['name'] = $user->name;
         $data['resetPassLink'] = $resetPassLink;
 
-        $mailSent = $this->sendEmailToResetPassword($data);
+        // $mailSent = $this->sendEmailToResetPassword($data);
+        // $mailSent = Mail::to($request->email)->send(new ForgotPasswordMail($data));
 
-        if ($mailSent === "SUCCESS") {
+        // if ($mailSent === "SUCCESS") {
+        //     return response()->json([
+        //         'message' => 'Please check your inbox! We have sent an email with instructions to reset your password.'
+        //     ]);
+        // } else {
+        //     return response()->json([
+        //         'message' => 'Email sending failed. Please contact the administrator.'
+        //     ], 500);
+        // }
+        try {
+            Mail::to($request->email)->send(new ForgotPasswordMail($data));
+
             return response()->json([
                 'message' => 'Please check your inbox! We have sent an email with instructions to reset your password.'
             ]);
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Email sending failed. Please contact the administrator.'
+                'message' => 'Email sending failed. Please contact the administrator.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -289,6 +304,7 @@ class AuthController extends Controller
         );
 
         $msg = "";
+        Log::info($request);
         try {
             $retval = app('SendPulse')->smtpSendMail($request);
             $retval = json_decode(json_encode($retval), true);
