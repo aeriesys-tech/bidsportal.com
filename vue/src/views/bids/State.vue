@@ -1810,7 +1810,6 @@
                 this.isLoading = true;
                 vm.state_tenders = [];
                 vm.applyFilters();
-                window.scrollTo({ top: 0, behavior: "smooth" });
                 vm.$store
                     .dispatch("post", { uri: "paginateStateTenders", data: vm.meta, cancel_token })
                     .then(function (response) {
@@ -1837,11 +1836,13 @@
                 this.is_updating_meta = true;
                 this.pageChangeInProgress = true;
                 this.meta.page = page;
+                window.scrollTo({ top: 0, behavior: "smooth" });
                 this.getStateTenders();
             },
 
             onPerPageChange() {
                 this.meta.page = 1;
+                window.scrollTo({ top: 0, behavior: "smooth" });
                 this.paginateStateTenders();
             },
             getNoticeColor(noticeName) {

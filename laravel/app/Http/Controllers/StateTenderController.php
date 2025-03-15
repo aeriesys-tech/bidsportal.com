@@ -30,7 +30,9 @@ class StateTenderController extends Controller
     {
         $request->validate([
             'order_by' => 'required',
-            'per_page' => 'required|numeric'
+            'per_page' => 'required|numeric',
+            'from_date' => 'sometimes|nullable|date',
+            'to_date' => 'sometimes|nullable|date|after_or_equal:from_date'
         ]);
         $query = StateTender::query();
     
@@ -43,6 +45,10 @@ class StateTenderController extends Controller
                 $query->where('status', 1);
             } elseif ($request->status == 'Today') {
                 $query->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')]);
+            }
+
+            if($request->from_date && $request->to_date){
+                $query->whereBetween('posted_date', [$request->from_date, $request->to_date]);   
             }
 
             if (!empty($request->search)) 

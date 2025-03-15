@@ -30,8 +30,43 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="form-group mb-2 d-flex">
-                            <input class="form-control form-control-sm" type="text" placeholder="Type keyword and press enter key" v-model="meta.search" @keypress.enter="search()" />
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <input 
+                                    class="form-control form-control-sm" 
+                                    type="text" 
+                                    placeholder="Type keyword and press enter key" 
+                                    v-model="meta.search" 
+                                    @keypress.enter="search()" 
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input 
+                                        type="date" 
+                                        class="form-control form-control-sm" 
+                                        :class="{ 'is-invalid': errors.from_date }" 
+                                        v-model="meta.from_date" 
+                                    />
+                                    <span v-if="errors?.from_date" class="invalid-feedback d-block">
+                                        {{ errors?.from_date[0] }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group d-flex align-items-center">
+                                    <input 
+                                        type="date" 
+                                        class="form-control form-control-sm me-2" 
+                                        :class="{ 'is-invalid': errors.to_date }" 
+                                        v-model="meta.to_date" 
+                                    />
+                                    <button class="btn btn-primary btn-sm" @click="index()">Search</button>
+                                </div>
+                                <span v-if="errors?.to_date" class="invalid-feedback d-block">
+                                    {{ errors?.to_date[0] }}
+                                </span>
+                            </div>
                         </div>
                         <div class="table-responsive table-responsive-sm" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
                             <table class="table table-striped table-sm text-wrap table-bordered mb-0">
@@ -86,7 +121,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="10%">Notices</th>
+                                        <th class="text-center" width="15%">Notices</th>
                                         <th @click="sort('category_name')">
                                             Category
                                             <span>
@@ -95,7 +130,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="10%">Categories</th>
+                                        <th class="text-center" width="20%">Categories</th>
                                         <th @click="sort('agency_name')">
                                             Issuing Agency
                                             <span>
@@ -104,8 +139,8 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="10%">Agencies</th>
-                                        <th class="text-center" width="10%">States</th>
+                                        <th class="text-center" width="20%">Agencies</th>
+                                        <th class="text-center" width="20%">States</th>
                                         <th class="text-center" width="5%">Bid Link</th>
                                         <th class="text-center" width="3%">
                                             Action
@@ -122,9 +157,9 @@
                                     <tr v-for="tender, key in tenders" :key="key">
                                         <td class="text-center">{{ meta.from + key }}</td>
                                         <td class="wrap-text">{{ tender.tender_no }}</td>
-                                        <td>
-                                            <input type="datetime-local" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.posted_date }" v-model="postedDate" readonly />
-                                            <span class="invalid-feedback" v-if="tender.errors?.posted_date">{{ tender.errors?.posted_date[0] }}</span>
+                                        <td>{{ tender.posted_date }}
+                                            <!-- <input type="datetime-local" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.posted_date }" v-model="postedDate" readonly />
+                                            <span class="invalid-feedback" v-if="tender.errors?.posted_date">{{ tender.errors?.posted_date[0] }}</span> -->
                                         </td>
                                         <td>
                                             <input type="date" class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.opening_date }" v-model="tender.opening_date" />
@@ -192,7 +227,7 @@
                                         <td class="text-center">
                                             <a href="javascript:void(0)" title="Update" class="text-success me-2" @click="updateStateTender(tender)"><i class="ri-refresh-line icon_ht"></i></a>
 
-                                            <a href="javascript:void(0)" class="text-success me-2" @click="editState(tender)"><i class="ri-pencil-line fs-18 lh-1"></i></a>
+                                            <router-link :to="'/state_tenders/'+tender.state_tender_id+'/nt'" class="text-success me-2" @click.prevent="editState(tender)"><i class="ri-pencil-line fs-18 lh-1"></i></router-link>
                                             <a href="javascript:void(0)" class="text-danger" @click="deleteState(tender)"><i class="ri-delete-bin-6-line fs-18 lh-1"></i></a>
                                         </td>
                                         <td class="text-center">
@@ -257,6 +292,8 @@
                     trashed: false,
                     status: "Inactive",
                     role: "admin",
+                    from_date:'',
+                    to_date:''
                 },
                 role: {
                     role_id: "",
@@ -286,6 +323,7 @@
                 agency: {
                     agency_name: "",
                 },
+                errors:[]
             };
         },
         computed:{
@@ -380,10 +418,12 @@
                     });
             },
             index() {
-                let vm = this;
+                let vm = this
+                let loader = vm.$loading.show()
                 vm.$store
                     .dispatch("post", { uri: "paginateStateTenders", data: vm.meta })
                     .then((response) => {
+                        loader.hide()
                         vm.tenders = response.data.data;
                         vm.meta.totalRows = response.data.meta.total;
                         vm.meta.lastPage = response.data.meta.last_page;
@@ -395,9 +435,11 @@
                             vm.getStates();
                         }
                         vm.getTotalCount();
+                        vm.errors = []
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        loader.hide()
+                        vm.errors = error.response.data.errors
                     });
             },
             getStateNotices() {
@@ -557,11 +599,47 @@
         /* Disable text wrapping */
     }
 
-    .table thead {
+    .table thead  {
         position: sticky;
         top: -1px;
-        background: white; /* Ensure visibility */
+        background: transparent; /* Ensure visibility */
         z-index: 10;
         box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
     }
+
+
+
+
+
+
+
+    .table {
+    width: 100%;
+    border-collapse: collapse; /* Remove double borders */
+}
+
+.table thead th {
+    position: sticky;
+    top: -1;
+    background-color: #ffffff; /* Ensure visibility */
+    z-index: 10; /* Keep above table body */
+    padding: 8px;
+    border: 1px solid #e2e5ec; /* Define border for visibility */
+    text-align: left;
+}
+
+.table tbody td {
+    padding: 8px;
+    border: 1px solid #e2e5ec;
+}
+
+.table thead th:first-child,
+.table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 5;
+}
+
+   
 </style>

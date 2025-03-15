@@ -1961,7 +1961,7 @@ export default {
             this.isLoading = true;
             vm.private_tenders = [];
             vm.applyFilters();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            // window.scrollTo({ top: 0, behavior: "smooth" });
             vm.$store
                 .dispatch("post", { uri: "paginatePrivateTenders", data: vm.meta, cancel_token })
                 .then(function (response) {
@@ -1988,11 +1988,13 @@ export default {
             this.is_updating_meta = true;
             this.pageChangeInProgress = true;
             this.meta.page = page;
+            window.scrollTo({ top: 0, behavior: "smooth" });
             this.getPrivateTenders();
         },
 
         onPerPageChange() {
             this.meta.page = 1;
+            window.scrollTo({ top: 0, behavior: "smooth" });
             this.paginatePrivateTenders();
         },
          deleteAlert() {

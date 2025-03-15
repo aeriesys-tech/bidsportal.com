@@ -20,20 +20,20 @@ export default {
 	components: { Sidebar, Header, Footer },
 
 	created() {
-		//Read the status information in sessionStorage when the page is loaded
-		if (sessionStorage.getItem("user")) {
-			this.$store.dispatch("setUser", JSON.parse(sessionStorage.getItem("user")));
-			sessionStorage.removeItem("user");
+		//Read the status information in localStorage when the page is loaded
+		if (localStorage.getItem("user")) {
+			this.$store.dispatch("setUser", JSON.parse(localStorage.getItem("user")));
+			localStorage.removeItem("user");
 		}
-		if (sessionStorage.getItem("token")) {
-			this.$store.dispatch("setToken", sessionStorage.getItem("token"));
-			sessionStorage.removeItem("token");
+		if (localStorage.getItem("token")) {
+			this.$store.dispatch("setToken", localStorage.getItem("token"));
+			localStorage.removeItem("token");
 		}
 
-		//Save the information in vuex to sessionStorage when the page is refreshed
+		//Save the information in vuex to localStorage when the page is refreshed
 		window.addEventListener("beforeunload", () => {
-			sessionStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
-			sessionStorage.setItem("token", this.$store?.getters?.token);
+			localStorage.setItem("user", JSON.stringify(this.$store?.getters?.user));
+			localStorage.setItem("token", this.$store?.getters?.token);
 		});
 	},
 };

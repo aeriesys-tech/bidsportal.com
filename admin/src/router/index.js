@@ -5,6 +5,7 @@ import ForgotPassword from "@/views/auth/ForgotPassword.vue";
 import Profile from "@/views/auth/Profile.vue";
 import Dashboard from "../views/Dashboard.vue";
 import AddStateTender from "@/views/state_tenders/Create.vue";
+import EditStateTender from "@/views/state_tenders/Edit.vue";
 import StateTenders from "@/views/state_tenders/Index.vue";
 
 import AddFederalTender from "@/views/federal_tenders/Create.vue";
@@ -95,6 +96,10 @@ const routes = [
     {
         path: "/state_tenders/:state_tender_id/edit", name: 'StateTender.Edit',
         component: AddStateTender,
+    },
+    {
+        path: "/state_tenders/:state_tender_id/nt", name: 'StateTender.EditNewTab',
+        component: EditStateTender,
     },
 
     // private tenders
