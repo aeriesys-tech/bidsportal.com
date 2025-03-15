@@ -1,7 +1,7 @@
 <template>
     <div :class="[isOpen ? 'search search-open' : 'search']" class="dropdown-container">
         <div class="search-inner">
-            <input class="form-control form-control-sm search-selected" 
+            <input class="form-control form-control-sm search-selected fs-12" 
                 ref="toggle" 
                 :tabindex="tabindex"
                 :value="selectedText"
@@ -253,12 +253,13 @@
       -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
               box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
        overflow-y: scroll !important;
-      max-height: 300px !important;        
+      max-height: 300px !important;
+      font-size: 12px;        
     }
 
     .search-input {
       line-height: 13px;
-      font-size: 13px;
+      font-size: 12px;
       background: #fafafa;
       border: none;
       min-height: 10px !important;

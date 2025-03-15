@@ -70,6 +70,10 @@ const routes = [
 		path: "/", name: "home",
 		component: Home,
 	},
+	{
+		path: "/home/:id", name: "UserActivation",
+		component: Home,
+	},
 
 	{
 		path: "/bids/alerts", name: "Alert",

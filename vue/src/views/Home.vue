@@ -2,6 +2,9 @@
     <section class="py-0">
         <div class="container-fluid" style="padding-right: 0px; padding-left: 0px;">
             <div class="row">
+                <div class="bg-success bg-opacity-10 text-success fw-light rounded-2 p-2" role="alert" v-if="active_status">
+                    You account has been Activated Login here
+                </div>
                 <div class="col-lg-12">
                     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
                         <div class="carousel-indicators">
@@ -396,7 +399,14 @@
     import moment from 'moment';
     export default {
         data() {
-            return {};
+            return {
+                user: {
+                    user_id:null,
+                    email: "",
+                    password: "",
+                },
+                active_status:false
+            };
         },
         mounted() {
             if(this.$store.getters.user){
@@ -428,6 +438,29 @@
             // this.getPsces();
             // this.getNaicses();
         },
+
+        beforeRouteEnter(to, from, next) {
+            next((vm) => {
+                if (to.name == "UserActivation") {
+                    vm.user.user_id = atob(vm.$route.params.id)
+                    let uri = "activateUser";
+                    vm.$store
+                        .dispatch("post", { uri: uri, data: vm.user })
+                        .then(function (response) {
+                            vm.user = response.data
+                            vm.active_status = true
+                            vm.$router.push('/bids/state-opportunities')
+                        })
+                        .catch(function (error) {
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                } else {
+                    
+                }
+            });
+        },
+
         methods: {
             getPsces() {
                 let vm = this;

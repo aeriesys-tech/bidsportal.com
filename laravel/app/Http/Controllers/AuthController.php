@@ -65,7 +65,7 @@ class AuthController extends Controller
                     'subscription_plan_id' => $subscription_plan->subscription_plan_id
                 ]);
                 if($user_subscription){
-                    $data['link'] = config('app.url')."/#/bids/state-opportunities/".base64_encode($user->user_id);
+                    $data['link'] = config('app.url')."/#/home/".base64_encode($user->user_id);
                 }else{
                     $data['link'] = config('app.url')."/#/subscription_plans/".base64_encode($user->user_id);
                 }
@@ -221,18 +221,6 @@ class AuthController extends Controller
         $data['name'] = $user->name;
         $data['resetPassLink'] = $resetPassLink;
 
-        // $mailSent = $this->sendEmailToResetPassword($data);
-        // $mailSent = Mail::to($request->email)->send(new ForgotPasswordMail($data));
-
-        // if ($mailSent === "SUCCESS") {
-        //     return response()->json([
-        //         'message' => 'Please check your inbox! We have sent an email with instructions to reset your password.'
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'message' => 'Email sending failed. Please contact the administrator.'
-        //     ], 500);
-        // }
         try {
             Mail::to($request->email)->send(new ForgotPasswordMail($data));
 
