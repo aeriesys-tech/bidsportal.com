@@ -20,6 +20,7 @@ use Auth;
 use App\Models\FederalOfficeAddress;
 use App\Models\FederalContact;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class FederalTenderController extends Controller
 {
@@ -787,4 +788,18 @@ class FederalTenderController extends Controller
             ], 422);
         }
     }
+
+    public function updateFederalApi(){
+        Artisan::call('app:fetch-federal-data');
+    }
+
+    public function updateAttachments(){
+        Artisan::call('app:update-federal-attachments');
+    }
+
+    public function updateDescription(){
+        Artisan::call('app:update-federal-description');
+    }
+
+
 }
