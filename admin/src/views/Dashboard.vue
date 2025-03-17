@@ -203,6 +203,9 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="col-md-12" v-if="message" style="margin-top: 10px;">
+                                <span style="color:red">{{ message }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -336,6 +339,7 @@
                 subs_expire_inmonth: 0,
                 total_trial_actives: 0,
                 total_trial_Inactives: 0,
+                message:null
             };
         },
         beforeRouteEnter(to, from, next) {
@@ -546,6 +550,7 @@
                     .catch(function (error) {
                         loader.hide();
                         vm.errors = error?.response?.data?.error;
+                        vm.message = error.response.data.message
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },

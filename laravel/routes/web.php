@@ -7,6 +7,7 @@ use App\Http\Controllers\PrivateTenderController;
 use App\Http\Controllers\InternationalTenderController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AlertController;
 
 
 Route::get('/', function () {
@@ -27,3 +28,4 @@ Route::get("updateDescriptions",[FederalTenderController::class,'updateDescripti
 Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
 Route::get("updateUserStatus",[UserController::class,'updateUserStatus']);
 Route::get("sendMail",[UserController::class,'sendMail']);
+Route::get("sendAlertMails",[AlertController::class,'sendAlertMails']);

@@ -567,7 +567,7 @@ class StateTenderController extends Controller
     {
         $data = $request->validate([
             'tender_no' => 'required',
-            'title' => 'required|unique:state_tenders,title',
+            'title' => 'required',
             'description' => 'required',
             'opening_date' => 'required|date',
             'expiry_date' => 'required|date|after:opening_date',
@@ -736,7 +736,7 @@ class StateTenderController extends Controller
                     if (Storage::disk('s3')->exists($file)) {
                         try {
                             // Import the file using Laravel Excel
-                            $import = new StateTenderImport($folderPath, $request->folder);
+                            $import = new StateTenderImport($folderPath, $request->folder, $file);
                             Excel::import($import, $file, 's3');
 
                             // Check if the imported row count meets the required condition

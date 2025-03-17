@@ -1,5 +1,5 @@
 <template>
-<div v-if="$store.getters.user && !$store.getters.user?.status" class="alert alert-warning py-2 m-0 bg-primary border-0 rounded-0 alert-dismissible fade show text-center overflow-hidden" role="alert">
+<div v-if="$store.getters.user && !$store.getters.user?.email_varified_at" class="alert alert-warning py-2 m-0 bg-primary border-0 rounded-0 alert-dismissible fade show text-center overflow-hidden" role="alert">
  <span  ><p class="text-white m-0">Your email is not confirmed, please check your inbox or<a class="text-white" href="javascript:void(0);" style="font-weight:600;text-decoration: underline;" @click.prevent="resendEmail"> resend email</a></p></span>
  <button type="button" class="btn-close btn-close-white opacity-9 p-3" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
