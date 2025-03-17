@@ -64,16 +64,31 @@ class StateTender extends Model
             $notice = null;
         }
 
+        if($this->StateAgency){
+            $agency = $this->StateAgency->state_agency_name;
+        }else{
+            $agency = null;
+        }
+
         if($this->Category){
             $category = $this->Category->category_name;
         }else{
             $category = null;
         }
+
+        if($this->State){
+            $state = $this->State->state_name;
+        }else{
+            $state = null;
+        }
+
         return ([
             'place_of_performance' => $place_of_performance,
             'notice' => $notice,
             'tender_url' => $this->tender_url,
-            'category' => $category
+            'category' => $category,
+            'agency' => $agency,
+            'state' => $state
         ]);   
     }
 

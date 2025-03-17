@@ -95,14 +95,16 @@
                                                                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="border-bottom: 1px solid #ddd;">
                                                                     <tbody style="background-color: #fdffff;">
                                                                         <tr>
-                                                                            <td style="padding: 0px 12px 0px; text-align: left;"><img src="https://bidsportal.com/images/share.png" class="imgcol" style="width: 40px; height: 40px;" /></td>
+                                                                            <td style="padding: 0px 12px 0px; text-align: left;"><img src="https://bidsportal.com/images/alert.png" class="imgcol" style="width: 40px; height: 40px;" /></td>
                                                                             <td style="width: 700px; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: 500;">
-                                                                                BidsPortal Team,<br />
-                                                                                <a style="font-weight: 400; font-size: 16px;"> Has Shared this with you! </a>
+                                                                                Daily Opportunity Alert,<br />
+                                                                                <a style="font-weight: 400; font-size: 16px;"> 
+                                                                                    {{ $alert->alert_title }}
+                                                                                </a>
                                                                             </td>
                                                                             <td style="padding: 0px; font-family: sans-serif; font-size: 12px; line-height: 1.5; color: #000000;" align="center">
                                                                                 <a href="#">
-                                                                                    <img style="padding: 25px 12px 25px; border-width: 0px; border-style: none; display: block; width: 150px;" src="https://bidsportal.com/images/logo.png" alt="BidsPortal" width="25%" />
+                                                                                    <img style="padding: 5px 12px 5px; border-width: 0px; border-style: none; display: block; width: 150px;" src="https://bidsportal.com/images/logo.png" alt="BidsPortal" width="25%" />
                                                                                 </a>
                                                                             </td>
                                                                         </tr>
@@ -115,11 +117,17 @@
                                                         </tr>
                                                         <tr>
                                                             <td style="padding: 15px 30px 0px; text-align: left;" align="center">
-                                                                <span style="font-family: sans-serif; font-size: 13px; line-height: 18px; color: #505050; white-space: pre;"><b>Comments: </b> {{ $request->message }}</span>
+                                                                <span style="font-family: sans-serif; font-size: 13px; line-height: 18px; color: #505050; white-space: pre;"><b>Matching bids for your alerts </b></span>
                                                             </td>
                                                         </tr>
-                                                        @foreach($bids as $bid)
-                                                            @php $bid_details = $bid->StateTenderDetails() @endphp
+                                                        <tr>
+                                                            <td style="padding: 0px 10px 0px; text-align: center;">
+                                                                <p style="margin-bottom: -7px;">Please contact the buyer for the latest addenda to any soliciation.</p>
+                                                            </td>
+                                                        </tr>
+
+                                                        @foreach($bids as $key=>$bid)
+                                                            @php $bid_details = $bid->FederalTenderDetails() @endphp
                                                             <tr>
                                                                 <td style="padding: 10px 30px 10px;" align="center">
                                                                     <table style="height: 82px; border: 1px solid #eee; padding: 5px;" width="850" cellspacing="0" cellpadding="3">
@@ -127,7 +135,7 @@
                                                                             <td colspan="4">
                                                                                 <b style="color: #99cc00; font-size: 16px; font-family: sans-serif;">
                                                                                     <a href="https://bidsportal.com/#/bids/state-opportunities" style="color: #02c459;" target="_blank">
-                                                                                        {{ $bid->tender_no }} :: {{ $bid->title }}
+                                                                                        {{$key+1}}::{{ $bid->tender_no }} :: {{ $bid->title }}
                                                                                     </a>
                                                                                 </b>
                                                                             </td>
@@ -137,9 +145,9 @@
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
                                                                                     <img src="https://bidsportal.com/images/cal.png" style="max-height: 13px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
-                                                                                        <a style="color: #626262;"> Opening Date : </a>
+                                                                                        <a style="color: #626262;"> Posted : </a>
                                                                                     </b>
-                                                                                    {{ date('d M, Y', strtotime($bid->opening_date)) }}
+                                                                                    {{ date('d M, Y', strtotime($bid->posted_date)) }}
                                                                                 </span>
                                                                             </td>
                                                                             <td style="width: 42%;">
@@ -166,15 +174,26 @@
                                                                             </td>
                                                                         </tr>
                                                                         <tr style="padding-bottom: 10px;">
-                                                                            <td colspan=4>
+                                                                            <td style="width: 35%;">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
                                                                                     <img src="https://bidsportal.com/images/notice-type.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" />
                                                                                     <b>
-                                                                                        <a style="color: #626262;"> Notice Type : {{ $bid_details['notice'] }}</a>
+                                                                                        <a style="color: #626262;"> Notice Type : </a>
                                                                                     </b>
-                                                                                    
+                                                                                    {{ $bid_details['notice'] }}
                                                                                 </span>
                                                                             </td>
+                                                                            <td style="width: 42%;">
+                                                                                <span style="font-size: 13px; font-family: sans-serif;">
+                                                                                    <img src="https://bidsportal.com/images/region.png" style="max-height: 13px; vertical-align: text-bottom; image-rendering: pixelated;" />
+                                                                                    <b>
+                                                                                        <a style="color: #626262;"> State: </a>
+                                                                                    </b>
+                                                                                    {{ $bid_details['state'] }}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td style="width: 0%;"></td>
+                                                                            <td style="width: 23%;"></td>
                                                                         </tr>
                                                                         <tr style="padding-bottom:10px;">
                                                                             <td colspan=4>
@@ -183,7 +202,7 @@
                                                                                     <b>
                                                                                         <a style="Color: #626262;">  Agency Link : </a>
                                                                                     </b>
-                                                                                    <a target="_blank" href="{{ $bid_details['tender_url'] }}" style="color:#3997ff; font-size: 13px;font-family: sans-serif;">
+                                                                                    <a target="_blank" href="{{ $bid->tdr_posting_link }}" style="color:#3997ff; font-size: 13px;font-family: sans-serif;">
                                                                                         {{ $bid_details['tender_url']}}
                                                                                     </a>
                                                                                 </span>
@@ -199,7 +218,6 @@
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
-                                                                        
                                                                         <tr>
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
@@ -212,11 +230,18 @@
                                                                         <tr style="padding-bottom: 10px; line-height: 1.8;">
                                                                             <td colspan="3">
                                                                                 <span style="font-size: 13px; font-family: sans-serif;">
-                                                                                    <img src="https://bidsportal.com/images/category.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : {{ $bid_details['category']}}</a></b>
+                                                                                    <img src="https://bidsportal.com/images/category.png" style="max-height: 12px; vertical-align: middle; image-rendering: pixelated;" /><b><a style="color: #626262;"> Category : </a></b>
+                                                                                    {{ $bid_details['category']}}
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
-                                                                       
+                                                                        
+                                                                        <tr style="padding-bottom: 10px;">
+                                                                            <td colspan="4" style="text-align: center; font-family: sans-serif; font-size: 12px; font-style: italic;">
+                                                                                <br />
+                                                                                <span style="text-align: center;">PS: Please have WinZip software installed on your machine to extract the files quickly. </span>
+                                                                            </td>
+                                                                        </tr>
                                                                     </table>
                                                                 </td>
                                                             </tr>
@@ -255,11 +280,16 @@
                                 <table width="920">
                                     <tr>
                                         <td>
-                                            <p style="margin: 10px; text-align: center; font-family: sans-serif; font-size: 12px; color: #787878;">
-                                                You are receiving this mail because {{ $user->name }} shared this with you on Bidsportal.
+                                            <p style="margin-top: 10px;text-align: center;">
+                                                <span style="font-family: sans-serif; font-size: 12px; line-height: 18px;">**This is a sysytem generated email - Please do not reply to it. If you have any queries, please email <a href="mailto:support@bidsportal.com">support@bidsportal.com</a>&nbsp;or call (913)232-2255.</span>
+                                            </p> 
+                                            <p style="margin-top: 10px; text-align: center; font-family: sans-serif; font-size: 12px; color: #787878;">
+                                                You are receiving this mail as a result of Alert Agents being shedule for email notification under your BidsPortal Account. If yo no longer wish to receive these email notification please login to your BidsPortal account and
+                                                follow these steps.
                                             </p>
-                                            <p style="margin: 10px; text-align: center; font-family: sans-serif; font-size: 12px; color: #787878;">
-                                                To keep this email coming, add <span style="color: 3997ff;"><strong>BidsPortal Alert </strong></span> to your address book.
+                                            <p style="margin-top: 10px; text-align: center; font-family: sans-serif; font-size: 12px; color: #787878;">
+                                                Use the Quicklink, <span style="text-color: blue;">"Alert" </span> tab > For the Alert Agent you want to disabled click on ON/OFF. > Set the enabled field to OFF. > This will desable email notification form being sent for
+                                                the Alert Agent. > Repeat this process for each Alert Agent you want disabled, If you have multiple Search Agents setup.
                                             </p>
                                             <p style="margin-top: 15px; text-align: center; font-family: sans-serif; font-size: 14px; color: #333;">
                                                 Copyrights ©2018 - 2024. All rights reserved | BidsPortal

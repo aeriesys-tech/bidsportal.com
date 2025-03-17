@@ -24,7 +24,7 @@ class UserController extends Controller
     public function updateUserStatus(){
         $excludedEmails = ['ashfaq@bidsportal.com', 'bnw@mvation.com', 'debbieb@linktechconsulting.com', 'Business@FEDecisionStrategies.com', 'tai.khuu@iisolutionsinc.com', 'david.thomas@stsint.com', 'test-60kbp@mail-tester.com', 'testemail@yahoo.com', 'trialsubscription@yahoo.com', 'tyron.works@wsips.net', 'sendpulse007@gmail.com', 'schimpidi@quadyster.com', 'bizops@quadyster.com', 'dsears@hrtec.net', 'csummerfield@sigsum.com', 'kmemon@dynamiccontractsconsultants.com', 'greg.greening@cdotech.com', 'noreply@bidsportal.com', 'dave@seafront.com', 'Paul.keene@unicomgov.com', 'Dan.Barfield@unicomgov.com', 'adhiman@pricesenz.com', 'Jhondoe90@gmail.com', 'kgrimes@kpgglobal.com', 'ma@guaranteeestimation.net', 'af@guaranteeestimation.com', 'Angus@miatlantic.us', 'subcontractorhenryjames@gmail.com', 'vebit26912@cindalle.com', 'mubashir.bashir@lancesoft.com', 'Paul@digitalestimating.com', 'ajit@aeiresys.com', 'snehal@aeriesys.com', 'soragi4301@flexvio.com', 'falozu@closetab.email', 'terdaletri@gufum.com', 'raj@gmail.com', 'ravi@gmail.com', 'snehal@bidsPortal.com', 'neha.b@gmail.com', 'vrushabh@aeriesys.com', 'wogacel489@giratex.com', 'neha.b@aeriesys.com', 'bharatesh@aeriesys.com', 'example@bidsportal.com', 'wn23@bidsportal.com', 'example123@bidsportal.com', 'example12@bidsportal.com', 'hassanali.constructestimates@gmail.com', 'info@usestimation.com', 'servola@motivatepurpose.com', 'david.cooper@radgov.com', 'ktrotter@quickprotectioninc.com', '5349olivedrive@gmail.com', 'jykim@kerec.co.kr', 'kalyani@aeriesys.com', 'shankar@gmail.com' ];
 
-        User::whereNotIn('email', $excludedEmails)->update(['status' => 1]);
+        User::whereNotIn('email', $excludedEmails)->update(['email_verified_at' => date('Y-m-d H:i:s')]);
     }
 
     public function getUsers(Request $request){
@@ -138,7 +138,7 @@ class UserController extends Controller
             'user_id' => 'required'
         ]);
         $activate_user = User::where('user_id', $request->user_id)->update([
-            'status' => true
+            'email_varified_at' => date('Y-m-d H:i:s')
         ]);
         if($activate_user){
             $user = User::where('user_id', $request->user_id)->first();
@@ -147,5 +147,4 @@ class UserController extends Controller
             return response()->json(['error' => 'Unbale to activate'], 422);
         }
     }
-
 }

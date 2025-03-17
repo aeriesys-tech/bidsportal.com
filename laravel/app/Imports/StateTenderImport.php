@@ -30,11 +30,12 @@ class StateTenderImport implements ToCollection
     protected $folder_path;
     protected $s3_folder;
 
-    public function __construct($folder_path, $s3_folder)
+    public function __construct($folder_path, $s3_folder, $file)
     {
         $this->existing_tender_nos = StateTender::pluck('tender_no')->toArray();
         $this->folder_path = $folder_path;
         $this->s3_folder = $s3_folder;
+        $this->file = $file;
     }
 
     public function getFileSizeWithGuzzle($url) {
@@ -54,8 +55,8 @@ class StateTenderImport implements ToCollection
         $bucket = config('app.AWS_BUCKET');
         foreach ($rows as $key => $row) {
         	if ($row->count() !== 19) {
-	            Log::error("Row {$key} has an incorrect number of columns.");
-	            throw new \Exception("Row {$key} has an incorrect number of columns. Expected 19, got {$row->count()}.");
+	            Log::error("File {$key} has an incorrect number of columns.");
+	            throw new \Exception("File {$this->file} has an incorrect number of columns. Expected 19 columns got {$row->count()}.");
 	        }
         	$posted_date = date('Y-m-d H:i:s');
             $opening_date = $this->parseDate($row[1]);

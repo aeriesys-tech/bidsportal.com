@@ -10,6 +10,8 @@ use App\Models\AlertNaics;
 use App\Models\AlertPsc;
 use App\Models\AlertState;
 use App\Models\AlertSetAside;
+use App\Models\StateTender;
+use App\Models\User;
 use App\Models\FederalAlertAgency;
 use App\Models\AlertCategory;
 use App\Models\StateAlertNotice;
@@ -22,6 +24,8 @@ use App\Models\InternationalAlertAgency;
 use App\Http\Resources\AlertResource;
 use App\Http\Resources\AlertPaginateResource;
 use Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StateAlertMail;
 
 class AlertController extends Controller
 {
@@ -1090,5 +1094,72 @@ class AlertController extends Controller
 		$update = Alert::where('alert_id', $request->alert_id)->update([
 			'status'
 		]);
+	}
+
+	public function sendAlertMails(){
+		$users = Alert::distinct()->get('user_id');
+		foreach ($users as $key => $user) {
+			$active_user = User::where('status', 1)->where('user_id', $user['user_id'])->first();
+			if($active_user){
+				$state_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'State')->where('frequency', 'like', 'Daily')->get();
+				foreach ($state_alerts as $key => $alert) {
+					$state_query = StateTender::query();
+					
+					$alert_states = AlertState::where('alert_id', $alert->alert_id)->pluck('state_id')->toArray();
+					if (!empty($alert_states)) {
+						$state_query->whereIn('state_id', $alert_states);
+					}
+
+					$state_alert_notices = StateAlertNotice::where('alert_id', $alert->alert_id)->pluck('state_notice_id')->toArray();
+					if((!empty($state_alert_notices))){
+						$state_query->whereIn('state_notice_id', $state_alert_notices);
+					}
+
+					$state_alert_agencies = StateAlertAgency::where('alert_id', $alert->alert_id)->pluck('state_agency_id')->toArray();
+					if((!empty($state_alert_agencies))){
+						$state_query->whereIn('state_agency_id', $state_alert_agencies);
+					}
+
+					$alert_categories = AlertCategory::where('alert_id', $alert->alert_id)->pluck('category_id')->toArray();
+					if (!empty($alert_categories)) {
+						$state_query->whereIn('category_id', $alert_categories);
+					}
+					
+					$alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
+					if (!empty($alert_keywords)) {
+		                if (is_string($alert_keywords)) {
+		                    $keywords = array_map('trim', explode(',', $alert_keywords));
+		                } else {
+		                    $keywords = array_map('trim', $alert_keywords);
+		                }
+
+		                // Exact match first
+		                $state_query->where(function ($q) use ($keywords) {
+		                    foreach ($keywords as $keyword) {
+		                        $q->orWhere('tender_no', $keyword)
+		                          ->orWhere('tender_number', $keyword)
+		                          ->orWhere('description', $keyword);
+		                    }
+		                });
+
+		                // Check if exact match found, else perform broader search
+		                if (!$state_query->count()) {
+		                    $state_query->orWhere(function ($q) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $q->orWhere('tender_no', 'like', "%$keyword%")
+		                              ->orWhere('tender_number', 'like', "%$keyword%")
+		                              ->orWhere('description', 'like', "%$keyword%");
+		                        }
+		                    });
+		                }
+		            }
+		            $state_query->orderBy('posted_date', 'DESC');
+		            $state_tenders = $state_query->with('StateNotice')->get();
+		            // $emails = array_map('trim', explode(',', $request->recipient_email));
+            		Mail::to('ajit@aeriesys.com')->send(new StateAlertMail($state_tenders, $user, [], $alert));
+				}
+
+			}
+		}
 	}
 }
