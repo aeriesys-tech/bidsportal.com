@@ -278,7 +278,7 @@
                                                 <td class="text-center">{{ parseInt(file_key)+1 }}</td>
                                                 <td width="60%">{{ file.filename }}</td>
                                                 <td class="text-center">
-                                                    <input type="checkbox" v-model="upload_excel.delete_files" :value="file" />
+                                                    <input type="checkbox" v-model="upload_excel.delete_files" :value="file.filename" />
                                                 </td>
                                                 <td class="text-center">
                                                     <a v-if="file.download_url" :href="file.download_url"><i class="ri-download-line"></i></a>
