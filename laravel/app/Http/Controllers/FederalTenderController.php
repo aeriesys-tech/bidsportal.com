@@ -21,6 +21,8 @@ use App\Models\FederalOfficeAddress;
 use App\Models\FederalContact;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
+use App\Jobs\TenderProcess;
 
 class FederalTenderController extends Controller
 {
@@ -799,6 +801,24 @@ class FederalTenderController extends Controller
 
     public function updateDescription(){
         Artisan::call('app:update-federal-description');
+    }
+
+    public function downloadFederalTenders(Request $request){
+        $data = $request->validate([
+            'from_date' => 'required|date'
+        ]);
+
+        $api_key_res = ApiKey::first();
+        if($api_key_res){
+            $api_key = $api_key_res->api_key;
+        }else{
+            $api_key="8UPYOoBOM5C3ZSFpaxt1sIvZ3byn2Jfb91XoGyMT";
+        }
+        $posted_from= $request->from_date;
+        $posted_to = $request->from_date;
+
+        $url = "https://api.sam.gov/prod/opportunities/v2/search?limit=1&api_key={$api_key}&postedFrom={$posted_from}&postedTo={$posted_to}";
+        return $url;
     }
 
 
