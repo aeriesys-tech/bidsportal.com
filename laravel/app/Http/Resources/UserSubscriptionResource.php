@@ -23,9 +23,17 @@ class UserSubscriptionResource extends JsonResource
             $days_left = $diff->d; 
             $is_future = $valid_to->isFuture();
             $formatted_expiry_date = $valid_to->format('M d, Y'); 
+            // Format the output for months and days
+            if($months_left > 0){
+                $time_left = $is_future ? "{$months_left} month(s) and {$days_left} day(s)" : "Expired";
+            }else{
+                $time_left = $is_future ? "{$days_left} day(s)" : "Expired";
+            }
         } else{
             $valid_to = null;
-            $formatted_expiry_date = null; 
+            $formatted_expiry_date = null;
+            $months_left = null;
+            $time_left = null; 
         }
 
         if($this->valid_from){
@@ -34,13 +42,6 @@ class UserSubscriptionResource extends JsonResource
         }else{
             $formatted_valid_from_date = null;
         } 
-
-        // Format the output for months and days
-        if($months_left > 0){
-            $time_left = $is_future ? "{$months_left} month(s) and {$days_left} day(s)" : "Expired";
-        }else{
-            $time_left = $is_future ? "{$days_left} day(s)" : "Expired";
-        }
 
         return [
             'user_subscription_id' => $this->user_subscription_id,

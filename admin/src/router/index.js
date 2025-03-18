@@ -10,6 +10,7 @@ import StateTenders from "@/views/state_tenders/Index.vue";
 
 import AddFederalTender from "@/views/federal_tenders/Create.vue";
 import FederalTenders from "@/views/federal_tenders/Index.vue";
+import DownloadFederalTenders from "@/views/federal_tenders/DownloadTenders.vue";
 
 import AddInternationalTender from "@/views/international_tenders/Create.vue";
 import InternationalTenders from "@/views/international_tenders/Index.vue";
@@ -135,6 +136,11 @@ const routes = [
     },
 
     // federal tender
+    {
+        path: "/download_federal_tenders",
+        name: "DownloadFederalTender",
+        component: DownloadFederalTenders,
+    },
     {
         path: "/add_federal_tender",
         name: "AddFederalTender",
