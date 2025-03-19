@@ -45,6 +45,7 @@ class AuthController extends Controller
         $data['pin_code'] = $data['zipcode'];
 
         $user = User::create($data);
+        // $user = true;
         if($user){
             foreach ($request->set_asides as $set_aside_id) {
                 UserSetAside::updateOrCreate([
@@ -60,8 +61,8 @@ class AuthController extends Controller
                     'user_id' => $user->user_id,
                     'active_status' => 'active',
                     'validity' => $subscription_plan->days,
-                    'validity_from' => $validity_from,
-                    'validity_to' => $validity_to,
+                    'valid_from' => $validity_from->format('Y-m-d H:i:s'),
+                    'valid_to' => $validity_to->format('Y-m-d H:i:s'),
                     'subscription_plan_id' => $subscription_plan->subscription_plan_id
                 ]);
                 if($user_subscription){

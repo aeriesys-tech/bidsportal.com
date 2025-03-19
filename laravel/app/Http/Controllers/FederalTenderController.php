@@ -53,7 +53,7 @@ class FederalTenderController extends Controller
     public function updateDescriptions()
     {
         $api_key = ApiKey::first()?->api_key ?? "8UPYOoBOM5C3ZSFpaxt1sIvZ3byn2Jfb91XoGyMT";
-        $federal_tenders = FederalTender::whereNull('description')->get();
+        $federal_tenders = FederalTender::whereNull('description1')->orderBy('posted_date', 'DESC')->get();
         if ($federal_tenders->isEmpty()) {
             \Log::info('No federal tenders found with null descriptions.');
             return;
@@ -61,23 +61,24 @@ class FederalTenderController extends Controller
 
         $client = new Client();
         foreach ($federal_tenders as $federal_tender) {
-            try {
-                $url = $federal_tender['description_link'] . "&api_key=" . $api_key;
+            UpdateFederalDescriptionJob::dispatch($federal_tender['federal_tender_id']);
+            // try {
+            //     $url = $federal_tender['description_link'] . "&api_key=" . $api_key;
 
-                $response = $client->get($url);
-                $responseBody = json_decode($response->getBody(), true);
+            //     $response = $client->get($url);
+            //     $responseBody = json_decode($response->getBody(), true);
 
-                $description = $responseBody['description'] ?? null;
+            //     $description = $responseBody['description'] ?? null;
 
-                if ($description) {
-                    $federal_tender->update(['description' => $description]);
-                }
+            //     if ($description) {
+            //         $federal_tender->update(['description' => $description]);
+            //     }
 
-            } catch (\GuzzleHttp\Exception\ClientException $e) {
-                \Log::error("Error fetching description for tender ID: {$federal_tender['federal_tender_id']} - " . $e->getMessage());
-            } catch (\Exception $e) {
-                \Log::error("Unexpected error for tender ID: {$federal_tender['federal_tender_id']} - " . $e->getMessage());
-            }
+            // } catch (\GuzzleHttp\Exception\ClientException $e) {
+            //     \Log::error("Error fetching description for tender ID: {$federal_tender['federal_tender_id']} - " . $e->getMessage());
+            // } catch (\Exception $e) {
+            //     \Log::error("Unexpected error for tender ID: {$federal_tender['federal_tender_id']} - " . $e->getMessage());
+            // }
         }
     }
 
@@ -814,11 +815,46 @@ class FederalTenderController extends Controller
         }else{
             $api_key="8UPYOoBOM5C3ZSFpaxt1sIvZ3byn2Jfb91XoGyMT";
         }
-        $posted_from= $request->from_date;
-        $posted_to = $request->from_date;
+        $posted_from = Carbon::createFromFormat('Y-m-d', $request->from_date)->format('m/d/Y');
+        $posted_to = $posted_from;
 
         $url = "https://api.sam.gov/prod/opportunities/v2/search?limit=1&api_key={$api_key}&postedFrom={$posted_from}&postedTo={$posted_to}";
-        return $url;
+        $response = Http::get($url);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $total_records = $data['totalRecords'];
+            $limit=1000;
+            $last_offset=$total_records-($total_records%$limit); 
+            $offset_array=[];
+            for($offset=0; $offset<=$last_offset; $offset=$offset+$limit)
+            {
+                array_push($offset_array, $offset);         
+            }
+
+            foreach ($offset_array as $offset) 
+            {
+                $api_link_offset ='https://api.sam.gov/prod/opportunities/v2/search?limit='.$limit.'&offset='.$offset.'&api_key='.$api_key.'&postedFrom='.$posted_from.'&postedTo='.$posted_to;
+                
+                $response_data = Http::get($api_link_offset);
+                if ($response_data->successful()) {
+                    $federal_response = $response_data->json();
+                    $chunks = array_chunk($federal_response['opportunitiesData'], 1);
+                    foreach($chunks as $key => $chunk)
+                    {
+                         TenderProcess::dispatch($chunk, $api_key, $api_link_offset);
+                    }
+                }
+            }
+            Queue::after(function ($event) {
+                $this->updateDescriptions();
+                $this->info('Descriptions updated after queue processing.');
+            });
+            return response()->json(['message' => $total_records.' records fetched and queued for processing']);
+            // $this->info('Opportunities fetched and queued for processing.');
+        }else{
+            return response()->json(['message' => 'Unable to fetch records'], 422);
+        }
     }
 
 

@@ -47,10 +47,10 @@ export default {
                 .dispatch("post", { uri: "downloadFederalTenders", data:vm.federal_tender })
                 .then((response) => {
                     loader.hide();
+                    vm.$store.dispatch("success", response.data.message);
                 })
                 .catch(function (error) {
                     loader.hide();
-                    vm.errors = error.response.data.errors;
                     vm.$store.dispatch("error", error.response.data.message);
                 });
         }

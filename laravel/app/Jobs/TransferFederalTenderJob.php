@@ -182,30 +182,33 @@ class TransferFederalTenderJob implements ShouldQueue
                 {
                     $contacts = json_decode($data['point_of_contact'], true);
                 
-                    foreach ($contacts as $contact) 
+                    if (is_array($contacts)) 
                     {
-                        if ($contact['type'] === 'primary') 
+                        foreach ($contacts as $contact) 
                         {
-                            DB::connection('mysql')->table('federal_contacts')->insert([
-                                'federal_tender_id' => $tender,
-                                'full_name' => $contact['fullName'] ?? null,
-                                'title' => $contact['title'] ?? null,
-                                'email' => $contact['email'] ?? null,
-                                'phone' => $contact['phone'] ?? null,
-                                'type' => 0,
-                            ]);
-                        }
-                
-                        if ($contact['type'] === 'secondary') 
-                        {
-                            DB::connection('mysql')->table('federal_contacts')->insert([
-                                'federal_tender_id' => $tender,
-                                'full_name' => $contact['fullName'] ?? null,
-                                'title' => $contact['title'] ?? null,
-                                'email' => $contact['email'] ?? null,
-                                'phone' => $contact['phone'] ?? null,
-                                'type' => 1,  
-                            ]);
+                            if ($contact['type'] === 'primary') 
+                            {
+                                DB::connection('mysql')->table('federal_contacts')->insert([
+                                    'federal_tender_id' => $tender,
+                                    'full_name' => $contact['fullName'] ?? null,
+                                    'title' => $contact['title'] ?? null,
+                                    'email' => $contact['email'] ?? null,
+                                    'phone' => $contact['phone'] ?? null,
+                                    'type' => 0,
+                                ]);
+                            }
+                    
+                            if ($contact['type'] === 'secondary') 
+                            {
+                                DB::connection('mysql')->table('federal_contacts')->insert([
+                                    'federal_tender_id' => $tender,
+                                    'full_name' => $contact['fullName'] ?? null,
+                                    'title' => $contact['title'] ?? null,
+                                    'email' => $contact['email'] ?? null,
+                                    'phone' => $contact['phone'] ?? null,
+                                    'type' => 1,  
+                                ]);
+                            }
                         }
                     }
                 }                

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use App\Jobs\TenderProcess;
 use App\Models\FederalTender;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\FederalTenderController;
 
 class FetchFederalData extends Command
 {
@@ -70,6 +71,11 @@ class FetchFederalData extends Command
                     }
                 }
             }
+            Queue::after(function ($event) {
+                $federal_tender = new FederalTenderController;
+                $federal_tender->updateDescriptions();
+                $this->info('Descriptions updated after queue processing.');
+            });
             $this->info('Opportunities fetched and queued for processing.');
         } else {
             $this->error('Failed to fetch data from API');

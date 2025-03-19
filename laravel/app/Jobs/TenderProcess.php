@@ -18,6 +18,8 @@ use App\Models\FederalContact;
 use App\Models\FederalOfficeAddress;
 use App\Models\FederalPlaceOfPerformance;
 use App\Models\FederalTenderLink;
+use App\Jobs\UpdateFederalAttachment;
+use App\Jobs\UpdateFederalDescriptionJob;
 
 
 class TenderProcess implements ShouldQueue
@@ -234,14 +236,21 @@ class TenderProcess implements ShouldQueue
                         'description_link' => $description_link,
                         'notice_id' => $notice_id
                     ]);
+                    UpdateFederalDescriptionJob::dispatch($federal_tender->federal_tender_id);
                 }
                 if (isset($opportunity['resourceLinks'])) {
-                    foreach ($opportunity['resourceLinks'] as $attachment) {   
-                        FederalAttachment::updateOrCreate([
-                            'federal_tender_id' => $federal_tender->federal_tender_id,
-                            'attachment_name' => $federal_tender->tender_no,
-                            'attachment_url' => $attachment
-                        ]);
+                    foreach ($opportunity['resourceLinks'] as $attachment) {
+                        $attachment_exists = FederalAttachment::where('federal_tender_id', $federal_tender->federal_tender_id)->where('attachment_name', $federal_tender->tender_no)->where('attachment_url', $attachment)->first();
+                        if(!$attachment_exists){   
+                            $federal_attachment = FederalAttachment::create([
+                                'federal_tender_id' => $federal_tender->federal_tender_id,
+                                'attachment_name' => $federal_tender->tender_no,
+                                'attachment_url' => $attachment
+                            ]);
+                            // UpdateFederalAttachment::dispatch($federal_attachment);
+                        }else{
+                            // UpdateFederalAttachment::dispatch($attachment_exists);
+                        }
                     }
                 }
 

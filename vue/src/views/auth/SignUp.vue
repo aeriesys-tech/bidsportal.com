@@ -211,7 +211,7 @@
                                                                             <input type="checkbox" :value="'nosetaside'"
                                                                                 v-model="user.set_asides"
                                                                                 class="form-check-input me-2"
-                                                                                @click="noSetAside('nosetaside')"
+                                                                                @click="noSetAside('')"
                                                                                 ref="rolesSelected" />No Set Aside
                                                                         </li>
                                                                         <li class="list-group-item fnt"
