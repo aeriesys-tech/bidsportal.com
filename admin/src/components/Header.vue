@@ -41,7 +41,7 @@
                                 Delete Bids</router-link>
                         </li>
                         <li v-if="$store.getters.user.role=='Super'">
-                            <router-link to="/download_federal_tenders" class="dropdown-item"><i class="ri-close-circle-fill"></i>
+                            <router-link to="/download_federal_tenders" class="dropdown-item"><i class="ri-download-fill"></i>
                                 Download Federal Bids</router-link>
                         </li>
                     </ul>

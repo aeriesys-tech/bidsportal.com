@@ -32,3 +32,4 @@ Route::get("sendAlertMails",[AlertController::class,'sendAlertMails']);
 Route::get("updateFederalApi",[FederalTenderController::class,'updateFederalApi']);
 Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
 Route::get("updateDescription",[FederalTenderController::class,'updateDescription']);
+Route::get("updateUserSubscription",[UserController::class,'updateUserSubscription']);

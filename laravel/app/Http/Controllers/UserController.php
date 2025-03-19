@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Auth;
 use App\Mail\FederalTenderMail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\UserSubscription;
+use App\Models\SubscriptionPlan;
 
 class UserController extends Controller
 {
@@ -145,6 +147,22 @@ class UserController extends Controller
             return new UserResource($user);
         }else{
             return response()->json(['error' => 'Unbale to activate'], 422);
+        }
+    }
+
+    public function updateUserSubscription(){
+        $user_subscriptions = UserSubscription::whereNull('valid_from')->get();
+        foreach ($user_subscriptions as $key => $user_subscription) {
+            $subscription_plan = SubscriptionPlan::where('subscription_plan_id', $user_subscription['subscription_plan_id'])->first();
+            if($subscription_plan){
+                $valid_from = $user_subscription['created_at'];
+                UserSubscription::where('user_subscription_id', $user_subscription['user_subscription_id'])->update([
+                    'valid_from' => $user_subscription['created_at'],
+                    'valid_to' => $valid_from->copy()->addDays($subscription_plan->days),
+                    'validity' => $subscription_plan->days
+                ]);
+
+            }
         }
     }
 }
