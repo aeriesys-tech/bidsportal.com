@@ -140,7 +140,7 @@ class UserController extends Controller
             'user_id' => 'required'
         ]);
         $activate_user = User::where('user_id', $request->user_id)->update([
-            'email_varified_at' => date('Y-m-d H:i:s')
+            'email_verified_at' => date('Y-m-d H:i:s')
         ]);
         if($activate_user){
             $user = User::where('user_id', $request->user_id)->first();
