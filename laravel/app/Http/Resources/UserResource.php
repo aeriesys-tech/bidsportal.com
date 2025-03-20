@@ -63,7 +63,7 @@ class UserResource extends JsonResource
             'subscription' => $subscription,
             'set_asides' => $set_asides_arr,
             'user_set_asides' => $user_set_asides,
-            'email_varified_at' => 'test'
+            'email_varified_at' => $this->email_varified_at
        ];
     }
 }

@@ -443,12 +443,14 @@
             next((vm) => {
                 if (to.name == "UserActivation") {
                     vm.user.user_id = atob(vm.$route.params.id)
+                    alert(vm.user.user_id)
                     let uri = "activateUser";
                     vm.$store
                         .dispatch("post", { uri: uri, data: vm.user })
                         .then(function (response) {
                             vm.user = response.data
                             vm.active_status = true
+                            vm.$store.dispatch("success", "You account has been Activated Please Login");
                             vm.$router.push('/bids/state-opportunities')
                         })
                         .catch(function (error) {
