@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use App\Jobs\TenderProcess;
-use Illuminate\Support\Facades\Queue;
+use Queue;
 
 class FederalTenderController extends Controller
 {

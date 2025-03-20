@@ -9,6 +9,7 @@ use App\Jobs\TenderProcess;
 use App\Models\FederalTender;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\FederalTenderController;
+use Queue;
 
 class FetchFederalData extends Command
 {
