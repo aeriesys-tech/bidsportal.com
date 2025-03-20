@@ -170,7 +170,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                               <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ state_tender.tender_no}}</span>
+                                               <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ state_tender.tender_no}}</span>
                                                <span v-else>{{ state_tender.tender_no }}</span>
 
                                             </li>
@@ -187,7 +187,7 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="state_tender.state_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in state_tender.state_attachments" :key="key">
-                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ attachment.attachment_name }}</span>
+                                                <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ attachment.attachment_name }}</span>
                                                 <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
@@ -202,7 +202,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ state_tender.state_agency?.state_agency_name }}</span>
+                                                        <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ state_tender.state_agency?.state_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ state_tender.state_agency?.state_agency_name }}</span>
                                                     </li>
 
@@ -253,7 +253,7 @@
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                      <div v-if="$store.getters.user">
-                                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
+                                                                        <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
                                                                             {{ state_tender.tender_no }}
                                                                         </span>
                                                                         <span v-else>
@@ -296,7 +296,7 @@
                                                                 <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
                                                                 </a>
                                                             </div>
-                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                 {{ state_tender.state_agency?.state_agency_name }}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ state_tender.state_agency?.agency_name }}</span>
@@ -400,7 +400,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ federal_tender.tender_no}}</span>
+                                                <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ federal_tender.tender_no}}</span>
                                                 <span v-else>{{ federal_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{ federal_tender.time_ago }} </span></li>
@@ -416,7 +416,7 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="federal_tender.federal_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in federal_tender.federal_attachments" :key="key">
-                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ attachment.attachment_name }}</span>
+                                                <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ attachment.attachment_name }}</span>
                                                 <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
@@ -431,7 +431,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                         <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                         <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ federal_tender.federal_agency?.agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name }}</span>
                                                     </li>
 
@@ -483,7 +483,7 @@
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                      <div v-if="$store.getters.user">
-                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ federal_tender.tender_no }}
                                                                     </span>
                                                                     <span v-else>
@@ -525,7 +525,7 @@
                                                                 <div class="truncate-text" v-html="highlight(federal_tender.title)"></div>
                                                             </a>
                                                             </div>
-                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                 {{ federal_tender.federal_agency?.agency_name }}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ federal_tender.federal_agency?.agency_name }}</span>
@@ -630,7 +630,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                 <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ private_tender.tender_no}}</span>
+                                                 <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ private_tender.tender_no}}</span>
                                                 <span v-else>{{ private_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(private_tender.opening_date) }} &nbsp;<span>{{ private_tender.time_ago }} </span></li>
@@ -646,7 +646,7 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="private_tender.private_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in private_tender.private_attachments" :key="key">
-                                                <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
+                                                <span style="filter: blur(3px);color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
                                                 <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
@@ -661,7 +661,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name }}</span>
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
@@ -713,7 +713,7 @@
                                                             <div class="row">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <div v-if="$store.getters.user">
-                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ private_tender.tender_no }}
                                                                     </span>
                                                                     <span v-else>
@@ -756,7 +756,7 @@
                                                             </a>
                                                             </div>
 
-                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                 {{ private_tender.private_agency?.private_agency_name }}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name }}</span>
@@ -866,7 +866,7 @@
                                         <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ international_tender.international_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ international_tender.tender_no }}</span>
+                                                <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ international_tender.tender_no }}</span>
                                                 <span v-else>{{ international_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item">
@@ -884,7 +884,7 @@
 
                                         <ul class="list-group list-group-borderless small mb-0 mt-2" v-if="international_tender.international_attachments?.length">
                                             <li class="list-group-item d-flex text-success p-0" v-for="attachment, key in international_tender.international_attachments" :key="key">
-                                                <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
+                                                <span style="filter: blur(3px);color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">{{ attachment.attachment_name }}</span>
                                                 <span v-else><a :href="attachment.attachment_url" target="_blank">{{ attachment.attachment_name }}</a></span>
                                             </li>
                                         </ul>
@@ -899,7 +899,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span style="filter: blur(3px);color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ international_tender.international_agency?.international_agency_name }}</span>
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">{{ international_tender.international_agency?.international_agency_name }}</span>
                                                         <span v-else style="color: rgb(86, 84, 109);">{{ international_tender.international_agency?.international_agency_name }}</span>
                                                     </li>
 
@@ -951,7 +951,7 @@
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <div v-if="$store.getters.user">
-                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                    <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                         {{ international_tender.tender_no }}
                                                                     </span>
                                                                     <span v-else>
@@ -994,7 +994,7 @@
                                                             </a>
                                                             </div>
 
-                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                 {{ international_tender.international_agency?.international_agency_name }}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ international_tender.international_agency?.international_agency_name }}</span>

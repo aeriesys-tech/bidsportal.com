@@ -435,7 +435,7 @@
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                                 <li class="nav-item">
                                                     <img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: #696969;"> {{ state_tender.tender_no}}</span>
+                                                    <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: #696969;"> {{ state_tender.tender_no}}</span>
                                                     <span v-else> {{ state_tender.tender_no}}</span>
                                                 </li>
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.opening_date_parsed }} &nbsp;<span>{{ state_tender.time_ago }} </span></li>
@@ -455,7 +455,7 @@
                                                         v-html="state_tender.description"
                                                         v-if="state_tender.description != '0' && state_tender.description != '-'">
                                                     </p> -->
-                                                    <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                    <span v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                         <p
                                                             class="limited-text"
                                                             style="filter: blur(3px); color: #696969; text-align: justify;"
@@ -474,7 +474,7 @@
                                                     <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                         <li class="nav-item text-primary">
                                                             <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                            <span style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                 {{state_tender.state_agency?.state_agency_name }}
                                                             </span>
                                                             <span v-else style="color: rgb(86, 84, 109);">{{state_tender.state_agency?.state_agency_name }}</span>
@@ -529,7 +529,7 @@
                                                                 <div class="row m-0">
                                                                     <div class="column" style="margin-left: 21px;">
                                                                         <div v-if="$store.getters.user">
-                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                                 {{ state_tender.tender_no }}
                                                                             </span>
                                                                             <span v-else>
@@ -573,7 +573,7 @@
                                                                         <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
                                                                     </a>
                                                                 </div>
-                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || this.$store.getters.user.subscription !== 'valid')">
                                                                     {{ state_tender.state_agency?.state_agency_name }}
                                                                 </span>
                                                                 <span class="txt-gray" v-else>{{ state_tender.state_agency?.state_agency_name }}</span>
