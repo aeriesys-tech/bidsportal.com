@@ -236,7 +236,7 @@ class TenderProcess implements ShouldQueue
                         'description_link' => $description_link,
                         'notice_id' => $notice_id
                     ]);
-                    UpdateFederalDescriptionJob::dispatch($federal_tender->federal_tender_id);
+                    // UpdateFederalDescriptionJob::dispatch($federal_tender->federal_tender_id);
                 }
                 if (isset($opportunity['resourceLinks'])) {
                     foreach ($opportunity['resourceLinks'] as $attachment) {
@@ -247,9 +247,9 @@ class TenderProcess implements ShouldQueue
                                 'attachment_name' => $federal_tender->tender_no,
                                 'attachment_url' => $attachment
                             ]);
-                            // UpdateFederalAttachment::dispatch($federal_attachment);
+                            UpdateFederalAttachment::dispatch($federal_attachment);
                         }else{
-                            // UpdateFederalAttachment::dispatch($attachment_exists);
+                            UpdateFederalAttachment::dispatch($attachment_exists);
                         }
                     }
                 }
