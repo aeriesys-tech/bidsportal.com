@@ -43,7 +43,7 @@ class StateFilterResource extends JsonResource
                 })->toArray() : [],
 
             //categories
-            'categories' => $this->Categories ? collect($this->Categories->toArray())->map(function($state_set_aside) {
+            'categories' => $this->StateFilterCategories ? collect($this->StateFilterCategories->toArray())->map(function($state_set_aside) {
                     return $state_set_aside['category_id'];
                 })->toArray() : [],
 

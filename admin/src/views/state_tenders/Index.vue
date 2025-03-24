@@ -68,12 +68,12 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="table-responsive table-responsive-sm" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <div class="table-responsive table-responsive-sm" style="max-height: 400px; width:auto; overflow-y: auto; overflow-x: auto;">
                             <table class="table table-striped table-sm text-wrap table-bordered mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" width="1%">#</th>
-                                        <th @click="sort('tender_no')" width="5%">
+                                        <th class="text-center">#</th>
+                                        <th @click="sort('tender_no')">
                                             Tender No
                                             <span>
                                                 <i v-if="meta.keyword == 'tender_no' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -81,7 +81,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('posted_date')" width="5%">
+                                        <th @click="sort('posted_date')">
                                             Publish Date
                                             <span>
                                                 <i v-if="meta.keyword == 'posted_date' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -89,7 +89,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('opening_date')" width="5%">
+                                        <th @click="sort('opening_date')">
                                             Opening Date
                                             <span>
                                                 <i v-if="meta.keyword == 'opening_date' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -97,7 +97,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('expiry_date')" width="5%">
+                                        <th @click="sort('expiry_date')">
                                             Expiry Date
                                             <span>
                                                 <i v-if="meta.keyword == 'expiry_date' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -105,7 +105,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('title')" width="10%">
+                                        <th @click="sort('title')">
                                             Tender Title
                                             <span>
                                                 <i v-if="meta.keyword == 'title' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -113,7 +113,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th @click="sort('notice_name')" width="7%">
+                                        <th @click="sort('notice_name')">
                                             Notice
                                             <span>
                                                 <i v-if="meta.keyword == 'notice_name' && meta.order_by == 'asc'" class="ri-arrow-up-line"></i>
@@ -130,7 +130,7 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="20%">Categories</th>
+                                        <th class="text-center" width="15%">Categories</th>
                                         <th @click="sort('agency_name')">
                                             Issuing Agency
                                             <span>
@@ -139,10 +139,10 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
-                                        <th class="text-center" width="20%">Agencies</th>
-                                        <th class="text-center" width="20%">States</th>
-                                        <th class="text-center" width="5%">Bid Link</th>
-                                        <th class="text-center" width="3%">
+                                        <th class="text-center" width="15%">Agencies</th>
+                                        <th class="text-center" width="15%">States</th>
+                                        <th class="text-center">Bid Link</th>
+                                        <th class="text-center">
                                             Action
                                         </th>
                                         <th class="text-center" width="3%">
@@ -172,15 +172,17 @@
                                         <td class="wrap-text">{{ tender.title }}</td>
                                         <td>{{ tender.notice_name }}</td>
                                         <td>
-                                            <select class="form-control form-control-sm" :class="{ 'is-invalid': tender.errors?.state_notice_id }" v-model="tender.state_notice_id">
+                                            <select class="form-control form-control-sm notice_dropdown_expand" :class="{ 'is-invalid': tender.errors?.state_notice_id }" v-model="tender.state_notice_id" @change="updateStateNoticeName(tender, tender.state_notice_id)">
                                                 <option value="null">Select Notice</option>
                                                 <option v-for="notice, notice_key in notices" :key="notice_key" :value="notice.state_notice_id">{{ notice.notice_name }}</option>
                                             </select>
+                                            <span>{{ tender?.state_notice?.notice_name }}</span>
                                             <span class="invalid-feedback" v-if="tender.errors?.state_notice_id?.length">{{ tender.errors?.state_notice_id[0] }}</span>
                                         </td>
                                         <td>{{ tender.category_name }}</td>
                                         <td>
                                             <category_search
+                                                class="notice_dropdown_expand"
                                                 :class="{ 'is-invalid': tender.errors?.category_id }"
                                                 :customClass="{ 'is-invalid': tender.errors?.category_id }"
                                                 :initialize="tender.category_id"
@@ -188,14 +190,16 @@
                                                 label="category_name"
                                                 placeholder="Select Category"
                                                 :data="categories"
-                                                @input="category => tender.category_id = category"
+                                                @input="category => updateCategory(category, tender)"
                                             >
                                             </category_search>
+                                            <span>{{ tender?.category?.category_name }}</span>
                                             <span class="invalid-feedback" v-if="tender.errors?.category_id?.length">{{ tender.errors?.category_id[0] }}</span>
                                         </td>
                                         <td>{{ tender.agency_name }}</td>
                                         <td>
                                             <agency_search
+                                                class="agency_dropdown_expand"
                                                 :class="{ 'is-invalid': tender.errors?.state_agency_id }"
                                                 :customClass="{ 'is-invalid': tender.errors?.state_agency_id }"
                                                 :initialize="tender.state_agency_id"
@@ -203,14 +207,16 @@
                                                 label="state_agency_name"
                                                 placeholder="Select Agency"
                                                 :data="agencies"
-                                                @input="agency => tender.state_agency_id = agency"
+                                                @input="agency_id => updateAgencyName(agency_id, tender)"
                                                 @updateAgencies="updateAgencies"
                                             >
                                             </agency_search>
-                                            <span class="invalid-feedback" v-if="tender.errors?.state_agency_id?.length">{{ tender.errors?.state_agency_id[0] }}</span>
+                                            <span>{{ tender?.state_agency?.state_agency_name }}</span>
+                                            <span class="invalid-feedback" v-if="tender.errors?.state_agency_id?.length && !tender?.state_agency?.state_agency_name">{{ tender.errors?.state_agency_id[0] }}</span>
                                         </td>
                                         <td>
                                             <state_search
+                                                class="state_dropdown_expand"
                                                 :class="{ 'is-invalid': tender.errors?.state_id }"
                                                 :customClass="{ 'is-invalid': tender.errors?.state_id }"
                                                 :initialize="tender.state_id"
@@ -347,6 +353,45 @@
         },
 
         methods: {
+            updateAgencyName(agency_id, tender){
+                tender.state_agency_id = agency_id
+                let vm = this
+                let state_agency = vm.agencies.filter(function(element){
+                    return element.state_agency_id == agency_id
+                })
+                console.log(state_agency)
+                if(state_agency.length){
+                    if(tender.state_agency){
+                        tender.state_agency.state_agency_name = state_agency[0].state_agency_name                    
+                    }else{
+                        tender.state_agency = {
+                             state_agency_name : state_agency[0].state_agency_name 
+                        }
+                    }
+                                           
+                }
+
+            },
+            updateCategory(category_id, tender){
+                let vm = this
+                tender.category_id = category_id
+                let category = vm.categories.filter(function(cat){
+                    return cat.category_id == category_id
+                })
+                if(category.length){
+                    tender.category.category_name = category[0].category_name
+                }
+            },
+
+            updateStateNoticeName(tender, state_notice_id){
+                let vm = this
+                let notice = vm.notices.filter(function(notice){
+                    return notice.state_notice_id == state_notice_id                            
+                })
+                if(notice.length){
+                    tender.state_notice.notice_name = notice[0].notice_name                            
+                }                                 
+            },                                 
 
             search() {
                 let vm = this;
@@ -640,6 +685,8 @@
     background-color: white;
     z-index: 5;
 }
+
+
 
    
 </style>

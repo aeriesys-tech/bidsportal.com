@@ -10,6 +10,7 @@ use App\Models\StateFilterNotice;
 use App\Models\StateFilterState;
 use App\Models\StateFilterSetAside;
 use App\Models\StateFilterAgency;
+use App\Models\StateFilterCategory;
 use App\Http\Resources\StateFilterResource;
 use Auth;
 use Illuminate\Validation\Rule;
@@ -99,6 +100,14 @@ class StateFilterController extends Controller
 	            foreach ($request->state_agencies as $agency) {
 	                StateFilterAgency::updateOrCreate(
 	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_agency_id' => $agency]
+	                );
+	            }
+	        }
+
+	        if ($request->has('categories')) {
+	            foreach ($request->categories as $category) {
+	                StateFilterCategory::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'category_id' => $category]
 	                );
 	            }
 	        }
