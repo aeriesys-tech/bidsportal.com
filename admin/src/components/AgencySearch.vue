@@ -267,7 +267,7 @@
       -webkit-box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
               box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
       padding: 4px 4px;
-      width: 100%;
+      /* width: 100%; */
       display: block;
      
     }
@@ -300,8 +300,9 @@
     }
 
     .search-list td, th { 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow:ellipsis; 
+        white-space: normal; 
+        overflow: visible; 
+        text-overflow: unset;
+        max-width: none; 
     }
 </style>

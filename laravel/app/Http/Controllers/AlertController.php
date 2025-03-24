@@ -78,9 +78,15 @@ class AlertController extends Controller
 	{
 	    $data = $request->validate([
 	    	'user_id' => 'required',
+	    	'alert_title' => [
+	            'required',
+	            Rule::unique('alerts')->where(function ($query) use ($request) {
+	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
+	            }),
+	        ],
 	        'alert_title' => 'required',
 	        'frequency' => 'required',
-	        'region' => 'required',
+	        'region' => 'required',		
 	        'posted_date' => 'sometimes|nullable',
 	        'posted_from_date' => 'sometimes|nullable',
 	        'posted_to_date' => 'sometimes|nullable',

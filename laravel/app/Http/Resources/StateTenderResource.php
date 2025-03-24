@@ -95,6 +95,7 @@ class StateTenderResource extends JsonResource
             'state_notice_id' => $this->state_notice_id,
             'state_notice' => $this->StateNotice,
             'category_id' => $this->category_id,
+            'category' => $this->Category,
             'state_agency_id' => $this->state_agency_id,
             'state_agency' => $this->StateAgency,
             'tender_url' => $this->tender_url,

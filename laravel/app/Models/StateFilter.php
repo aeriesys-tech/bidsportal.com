@@ -57,4 +57,8 @@ class StateFilter extends Model
     public function StateFilterAgencies(){
         return $this->hasMany('App\Models\StateFilterAgency', 'state_filter_id', 'state_filter_id');
     }
+
+    public function StateFilterCategories(){
+        return $this->hasMany('App\Models\StateFilterCategory', 'state_filter_id', 'state_filter_id');
+    }
 }
