@@ -84,11 +84,17 @@ class FederalTender extends Model
         }else{
             $category = null;
         }
+        if($this->FederalOfficeAddress->state){ 
+            $state = $this->FederalOfficeAddress->state;
+        }else{
+            $state = null;
+        }
         return ([
             'place_of_performance' => $place_of_performance,
             'notice' => $notice,
             'tender_url' => $this->tender_url,
-            'category' => $category
+            'category' => $category,
+            'state' => $state
         ]);   
     }
 

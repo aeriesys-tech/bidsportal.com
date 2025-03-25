@@ -821,6 +821,7 @@ class FederalTenderController extends Controller
         $posted_to = $posted_from;
 
         $url = "https://api.sam.gov/prod/opportunities/v2/search?limit=1&api_key={$api_key}&postedFrom={$posted_from}&postedTo={$posted_to}";
+        // return $url;
         $response = Http::get($url);
 
         if ($response->successful()) {
