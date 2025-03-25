@@ -28,7 +28,7 @@ Route::get("updateDescriptions",[FederalTenderController::class,'updateDescripti
 Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
 Route::get("updateUserStatus",[UserController::class,'updateUserStatus']);
 Route::get("sendMail",[UserController::class,'sendMail']);
-Route::get("sendAlertMails",[AlertController::class,'sendAlertMails']);
+Route::get("sendStateAlertMails",[AlertController::class,'sendStateAlertMails']);
 Route::get("updateFederalApi",[FederalTenderController::class,'updateFederalApi']);
 Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
 Route::get("updateDescription",[FederalTenderController::class,'updateDescription']);

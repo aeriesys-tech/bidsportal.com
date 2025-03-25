@@ -32,7 +32,8 @@ class User extends Authenticatable
         'pin_code',
         'status',
         'pw',
-        'forgot_pass_identity'
+        'forgot_pass_identity',
+        'email_verified_at'
     ];
 
     protected $primaryKey = 'user_id';

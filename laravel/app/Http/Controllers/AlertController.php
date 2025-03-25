@@ -11,6 +11,7 @@ use App\Models\AlertPsc;
 use App\Models\AlertState;
 use App\Models\AlertSetAside;
 use App\Models\StateTender;
+use App\Models\FederalTender;
 use App\Models\User;
 use App\Models\FederalAlertAgency;
 use App\Models\AlertCategory;
@@ -26,6 +27,8 @@ use App\Http\Resources\AlertPaginateResource;
 use Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\StateAlertMail;
+use App\Mail\FederalAlertMail;
+use Illuminate\Support\Facades\Log;
 
 class AlertController extends Controller
 {
@@ -1102,11 +1105,14 @@ class AlertController extends Controller
 		]);
 	}
 
-	public function sendAlertMails(){
+	public function sendStateAlertMails(){
 		$users = Alert::distinct()->get('user_id');
+		Log::info($users);
 		foreach ($users as $key => $user) {
 			$active_user = User::where('status', 1)->where('user_id', $user['user_id'])->first();
 			if($active_user){
+
+				//State Alerts
 				$state_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'State')->where('frequency', 'like', 'Daily')->get();
 				foreach ($state_alerts as $key => $alert) {
 					$state_query = StateTender::query();
@@ -1139,7 +1145,6 @@ class AlertController extends Controller
 		                    $keywords = array_map('trim', $alert_keywords);
 		                }
 
-		                // Exact match first
 		                $state_query->where(function ($q) use ($keywords) {
 		                    foreach ($keywords as $keyword) {
 		                        $q->orWhere('tender_no', $keyword)
@@ -1148,7 +1153,6 @@ class AlertController extends Controller
 		                    }
 		                });
 
-		                // Check if exact match found, else perform broader search
 		                if (!$state_query->count()) {
 		                    $state_query->orWhere(function ($q) use ($keywords) {
 		                        foreach ($keywords as $keyword) {
@@ -1160,11 +1164,82 @@ class AlertController extends Controller
 		                }
 		            }
 		            $state_query->orderBy('posted_date', 'DESC');
-		            $state_tenders = $state_query->with('StateNotice')->get();
-		            // $emails = array_map('trim', explode(',', $request->recipient_email));
-            		Mail::to('ajit@aeriesys.com')->send(new StateAlertMail($state_tenders, $user, [], $alert));
+		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
+		            // if($active_user->email){
+			           //  Log::info($active_user->email);
+	            	// 	Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
+	            	// }
 				}
 
+				//Federal Alerts
+				$federal_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'Federal')->where('frequency', 'like', 'Daily')->get();
+				foreach ($federal_alerts as $key => $alert) {
+					$federal_query = FederalTender::query();
+					
+					$alert_states = AlertState::where('alert_id', $alert->alert_id)->pluck('state_id')->toArray();
+					if (!empty($alert_states)) {
+						$federal_query->whereIn('state_id', $alert_states);
+					}
+
+					$state_alert_notices = StateAlertNotice::where('alert_id', $alert->alert_id)->pluck('state_notice_id')->toArray();
+					if((!empty($state_alert_notices))){
+						$federal_query->whereIn('state_notice_id', $state_alert_notices);
+					}
+
+					$state_alert_agencies = StateAlertAgency::where('alert_id', $alert->alert_id)->pluck('state_agency_id')->toArray();
+					if((!empty($state_alert_agencies))){
+						$federal_query->whereIn('state_agency_id', $state_alert_agencies);
+					}
+
+					$alert_categories = AlertCategory::where('alert_id', $alert->alert_id)->pluck('category_id')->toArray();
+					if (!empty($alert_categories)) {
+						$federal_query->whereIn('category_id', $alert_categories);
+					}
+
+					$alert_naics = AlertNaics::where('alert_id', $alert->alert_id)->pluck('alert_naics_id')->toArray();
+					if(!empty($alert_naics)){
+						$federal_query->whereIn('naics_id', $alert_naics);
+					}
+
+					$alert_psc = AlertPsc::where('alert_id', $alert->alert_id)->pluck('alert_psc_id')->toArray();
+					if(!empty($alert_psc)){
+						$federal_query->whereIn('psc_id', $alert_psc);
+					}
+					
+					$alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
+					if (!empty($alert_keywords)) {
+		                if (is_string($alert_keywords)) {
+		                    $keywords = array_map('trim', explode(',', $alert_keywords));
+		                } else {
+		                    $keywords = array_map('trim', $alert_keywords);
+		                }
+
+		                $federal_query->where(function ($q) use ($keywords) {
+		                    foreach ($keywords as $keyword) {
+		                        $q->orWhere('tender_no', $keyword)
+		                          ->orWhere('tender_number', $keyword)
+		                          ->orWhere('description', $keyword);
+		                    }
+		                });
+
+		                if (!$federal_query->count()) {
+		                    $federal_query->orWhere(function ($q) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $q->orWhere('tender_no', 'like', "%$keyword%")
+		                              ->orWhere('tender_number', 'like', "%$keyword%")
+		                              ->orWhere('description', 'like', "%$keyword%");
+		                        }
+		                    });
+		                }
+		            }
+		            $federal_query->orderBy('posted_date', 'DESC');
+		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
+		            if($active_user->email){
+			            Log::info($active_user->email);
+	            		Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
+	            	}
+
+				}
 			}
 		}
 	}
