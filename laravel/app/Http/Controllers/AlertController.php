@@ -1165,10 +1165,10 @@ class AlertController extends Controller
 		            }
 		            $state_query->orderBy('posted_date', 'DESC');
 		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
-		            // if($active_user->email){
-			           //  Log::info($active_user->email);
-	            	// 	Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
-	            	// }
+		            if($active_user->email){
+			            Log::info($active_user->email);
+	            		Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
+	            	}
 				}
 
 				//Federal Alerts
