@@ -23,6 +23,8 @@ use App\Models\StateAgency;
 use App\Models\Category;
 use App\Models\StateOfficeAddress;
 use Illuminate\Support\Facades\DB;
+use Google\Client as GoogleClient;
+use Google\Service\SearchConsole;
 
 class StateTenderImport implements ToCollection
 {
@@ -96,6 +98,10 @@ class StateTenderImport implements ToCollection
                     ]);
                 }
                 continue;
+            }
+            if($title && $tender_no){
+                $sitemap_url = "/bids/state-opportunities/".$title."-".$tender_no;
+                $this->submitToGoogle($sitemap_url);
             }
 
             $country = Country::where('country_code', 'US')->first();
@@ -244,6 +250,25 @@ class StateTenderImport implements ToCollection
             '*.17' => 'nullable',
             '*.18' => 'nullable',
         ];
+    }
+
+    public function submitToGoogle($sitemap_url)
+    {
+        try {
+            $client = new GoogleClient();
+            $client->setAuthConfig(storage_path('app/google/client_secret.json')); // Ensure this file exists
+            $client->addScope(SearchConsole::WEBMASTERS_READONLY);
+            $client->setAccessType('offline');
+
+            $searchConsole = new SearchConsole($client);
+            $siteUrl = config('app.url'); // Change this if needed
+
+            $searchConsole->sitemaps->submit($siteUrl, $sitemap_url);
+
+            Log::info("Sitemap submitted successfully: " . $sitemap_url);
+        } catch (\Exception $e) {
+            Log::error("Failed to submit sitemap: " . $e->getMessage());
+        }
     }
 
 }

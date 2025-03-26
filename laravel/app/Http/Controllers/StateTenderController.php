@@ -121,6 +121,10 @@ class StateTenderController extends Controller
                 $query->whereIn('state_agency_id', $request->state_agencies);
             }
 
+            if(!empty($request->categories)){
+                $query->whereIn('category_id', $request->categories);
+            }
+
             
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
