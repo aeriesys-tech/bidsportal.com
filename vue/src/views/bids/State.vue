@@ -1452,7 +1452,7 @@
                 if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
                     this.$store.commit("setStateTender", state_tender);
                     this.$store.commit("setFilters", this.meta);
-                    this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
+                    this.$router.push("state-opportunities/" + state_tender.title.replace(/[\s/]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "") + "-" + state_tender.tender_no);
                 } else {
                     if (this.$store.getters.user) {
                         this.modal.subscribe = true;
