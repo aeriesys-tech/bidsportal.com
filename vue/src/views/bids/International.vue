@@ -1608,7 +1608,8 @@ export default {
             if(this.$store.getters.user && this.$store.getters.user.subscription == 'valid'){
                 this.$store.commit("setInternationalTender", international_tender)
                 this.$store.commit("setFilters", this.meta)
-                this.$router.push("international-opportunities/" + international_tender.title.replace(/ /g, "-") + "-" + international_tender.tender_no)
+                this.$router.push("international-opportunities/" + international_tender.title.replace(/[\s/]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "") + "-" + international_tender.tender_no);
+                // this.$router.push("international-opportunities/" + international_tender.title.replace(/ /g, "-") + "-" + international_tender.tender_no)
             }else{
                 if(this.$store.getters.user){
                     this.modal.subscribe = true
