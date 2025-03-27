@@ -99,10 +99,10 @@ class StateTenderImport implements ToCollection
                 }
                 continue;
             }
-            if($title && $tender_no){
-                $sitemap_url = "/bids/state-opportunities/".$title."-".$tender_no;
-                $this->submitToGoogle($sitemap_url);
-            }
+            // if($title && $tender_no){
+            //     $sitemap_url = "/bids/state-opportunities/".$title."-".$tender_no;
+            //     $this->submitToGoogle($sitemap_url);
+            // }
 
             $country = Country::where('country_code', 'US')->first();
             $description = (!empty($row[12]) ? $row[12] : '') . (!empty($row[13]) ? ' ' . $row[13] : '');
