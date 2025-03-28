@@ -189,8 +189,7 @@ class FederalTenderController extends Controller
                 $query->where(function ($q) use ($keywords) {
                     foreach ($keywords as $keyword) {
                         $q->orWhere('tender_no', $keyword)
-                          ->orWhere('tender_number', $keyword)
-                          ->orWhere('description', $keyword);
+                          ->orWhere('tender_number', $keyword);
                     }
                 });
 
@@ -200,7 +199,7 @@ class FederalTenderController extends Controller
                         foreach ($keywords as $keyword) {
                             $q->orWhere('tender_no', 'like', "%$keyword%")
                               ->orWhere('tender_number', 'like', "%$keyword%")
-                              ->orWhere('description', 'like', "%$keyword%");
+                              ->orWhere('title', 'like', "%$keyword%");
                         }
                     });
                 }
@@ -211,7 +210,6 @@ class FederalTenderController extends Controller
         $federal_tenders = $query->paginate($request->per_page); 
         return FederalTenderResource::collection($federal_tenders);
     }
-
 
     public function paginateFederalTenders2(Request $request)
     {

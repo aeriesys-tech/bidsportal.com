@@ -186,6 +186,13 @@ class StateFilterController extends Controller
 	                );
 	            }
 	        }
+	        if ($request->has('categories')) {
+	            foreach ($request->categories as $category) {
+	                StateFilterCategory::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'category_id' => $category]
+	                );
+	            }
+	        }
 	        return $state_filter;
 		}else{
 			return response()->json(['errors' => 'No records found'], 422);
@@ -201,6 +208,7 @@ class StateFilterController extends Controller
 		    StateFilterNotice::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		    StateFilterState::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		    StateFilterAgency::where('state_filter_id', $state_filter->state_filter_id)->delete();
+		    StateFilterCategory::where('state_filter_id', $state_filter->state_filter_id)->delete();
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }

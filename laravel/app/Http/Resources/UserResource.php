@@ -24,6 +24,13 @@ class UserResource extends JsonResource
             $formatted_date = null;
         }
 
+        if($this->email_verified_at){
+            $email_date = Carbon::parse($this->email_verified_at); 
+            $confirm_email = $email_date->format('M d, Y' ); 
+        }else{
+            $confirm_email = null;
+        }
+
         $user_subscription = UserSubscription::where('user_id', $this->user_id)->where('active_status', 'like', 'active')->first();
         $subscription = null;
         if($user_subscription){
@@ -63,7 +70,8 @@ class UserResource extends JsonResource
             'subscription' => $subscription,
             'set_asides' => $set_asides_arr,
             'user_set_asides' => $user_set_asides,
-            'email_verified_at' => $this->email_verified_at
+            'email_verified_at' => $this->email_verified_at,
+            'confirm_email' => $confirm_email
        ];
     }
 }

@@ -157,11 +157,11 @@ class FederalTender extends Model
     public function FederalContactPrimary()
     {
         return $this->hasOne('App\Models\FederalContact', 'federal_tender_id', 'federal_tender_id')
-                ->where('type', 'Primary');
+                ->where('type', '0');
     }
     
     public function FederalContactSecondary()
     {
-        return $this->hasOne('App\Models\FederalContact','federal_tender_id','federal_tender_id')->where('type', 'Secondary');
+        return $this->hasOne('App\Models\FederalContact','federal_tender_id','federal_tender_id')->where('type', '1');
     }
 }
