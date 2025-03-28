@@ -586,7 +586,7 @@
 
                                                                 </div>
                                                                 <div v-else>
-                                                                    <a style="color: filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
+                                                                    <a style="filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
                                                                     <div class="truncate-text" v-html="highlight(federal_tender.title)"></div>
                                                                 </a>
                                                                 </div>
