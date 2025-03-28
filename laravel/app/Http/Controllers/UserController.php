@@ -13,6 +13,54 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\UserSubscription;
 use App\Models\SubscriptionPlan;
 
+use App\Models\Alert;
+use App\Models\AlertKeyword;
+use App\Models\FederalAlertNotice;
+use App\Models\AlertNaics;
+use App\Models\AlertPsc;
+use App\Models\AlertState;
+use App\Models\AlertSetAside;
+use App\Models\FederalAlertAgency;
+use App\Models\StateAlertNotice;
+use App\Models\AlertCategory;
+use App\Models\StateAlertAgency;
+use App\Models\PrivateAlertNotice;
+use App\Models\PrivateAlertAgency;
+use App\Models\InternationalAlertNotice;
+use App\Models\InternationalAlertAgency;
+use App\Models\StateFilter;
+use App\Models\StateFilterKeyword;
+use App\Models\StateFilterNotice;
+use App\Models\StateFilterState;
+use App\Models\StateFilterAgency;
+use App\Models\StateFilterCategory;
+use App\Models\PrivateFilter;
+use App\Models\PrivateFilterKeyword;
+use App\Models\PrivateFilterNotice;
+use App\Models\PrivateFilterState;
+use App\Models\PrivateFilterAgency;
+use App\Models\PrivateFilterCategory;
+use App\Models\InternationalFilter;
+use App\Models\InternationalFilterKeyword;
+use App\Models\InternationalFilterNotice;
+use App\Models\InternationalFilterState;
+use App\Models\InternationalFilterAgency;
+use App\Models\InternationalFilterCategory;
+use App\Models\FederalFilter;
+use App\Models\FederalFilterKeyword;
+use App\Models\FederalFilterNotice;
+use App\Models\FederalFilterState;
+use App\Models\FederalFilterAgency;
+use App\Models\FederalFilterStatus;
+use App\Models\FederalFilterNaics;
+use App\Models\FederalFilterPsc;
+use App\Models\UserStateInterest;
+use App\Models\UserFederalInterest;
+use App\Models\UserPrivateInterest;
+use App\Models\UserInternationalInterest;
+use App\Models\UserPayment;
+
+
 class UserController extends Controller
 {
     public function getUser(Request $request){
@@ -163,6 +211,110 @@ class UserController extends Controller
                 ]);
 
             }
+        }
+    }
+
+    public function confirmEmail(Request $request){
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,user_id'
+        ]);
+        $user = User::where('user_id', $request->user_id)->update([
+            'email_verified_at' => date('Y-m-d H:i:s')
+        ]);
+        if($user){
+            return response()->json([
+                'message' => 'Confirm email field updated successfully'
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Unbale to update field'
+            ]);
+        }
+    }
+
+    public function deleteUser(Request $request){
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,user_id'
+        ]);
+        $alerts = Alert::where('user_id', $request->user_id)->pluck('alert_id')->toArray();
+
+        try{
+            if (!empty($alerts)) {
+                AlertKeyword::whereIn('alert_id', $alerts)->delete();
+                FederalAlertNotice::whereIn('alert_id', $alerts)->delete();
+                AlertNaics::whereIn('alert_id', $alerts)->delete();
+                AlertPsc::whereIn('alert_id', $alerts)->delete();
+                AlertState::whereIn('alert_id', $alerts)->delete();
+                AlertSetAside::whereIn('alert_id', $alerts)->delete();
+                FederalAlertAgency::whereIn('alert_id', $alerts)->delete();
+                StateAlertNotice::whereIn('alert_id', $alerts)->delete();
+                AlertCategory::whereIn('alert_id', $alerts)->delete();
+                StateAlertAgency::whereIn('alert_id', $alerts)->delete();
+                PrivateAlertNotice::whereIn('alert_id', $alerts)->delete();
+                PrivateAlertAgency::whereIn('alert_id', $alerts)->delete();
+                InternationalAlertNotice::whereIn('alert_id', $alerts)->delete();
+                InternationalAlertAgency::whereIn('alert_id', $alerts)->delete();
+
+                Alert::whereIn('alert_id', $alerts)->delete();
+            }
+
+            $state_filters = StateFilter::where('user_id', $request->user_id)->pluck('state_filter_id')->toArray();
+
+            if(!empty($state_filters)){
+
+                StateFilterKeyword::whereIn('state_filter_id', $state_filters)->delete();
+                StateFilterNotice::whereIn('state_filter_id', $state_filters)->delete();
+                StateFilterState::whereIn('state_filter_id', $state_filters)->delete();
+                StateFilterAgency::whereIn('state_filter_id', $state_filters)->delete();
+                StateFilterCategory::whereIn('state_filter_id', $state_filters)->delete();
+            }
+
+
+
+            $federal_filters = FederalFilter::where('user_id', $request->user_id)->pluck('federal_filter_id')->toArray();
+
+            if(!empty($federal_filters)){
+
+                FederalFilterKeyword::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterStatus::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterNotice::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterNaics::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterPsc::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterState::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterSetAside::whereIn('federal_filter_id', $federal_filters)->delete();
+                FederalFilterAgency::whereIn('federal_filter_id', $federal_filters)->delete();
+            }
+
+            $private_filters = PrivateFilter::where('user_id', $request->user_id)->pluck('private_filter_id')->toArray();
+
+            if(!empty($private_filters)){
+                PrivateFilterKeyword::whereIn('private_filter_id', $private_filters)->delete();
+                PrivateFilterNotice::whereIn('private_filter_id', $private_filters)->delete();
+                PrivateFilterState::whereIn('private_filter_id', $private_filters)->delete();
+                PrivateFilterAgency::whereIn('private_filter_id', $private_filters)->delete();
+            }
+
+            $international_filters = InternationalFilter::where('user_id', $request->user_id)->pluck('international_filter_id')->toArray();
+
+            if(!empty($international_filters)){
+                InternationalFilterKeyword::whereIn('international_filter_id', $international_filters)->delete();
+                InternationalFilterNotice::whereIn('international_filter_id', $international_filters)->delete();
+                InternationalFilterState::whereIn('international_filter_id', $international_filters)->delete();
+                InternationalFilterAgency::whereIn('international_filter_id', $international_filters)->delete();
+            }
+
+            UserSubscription::where('user_id', $request->user_id)->delete();
+            UserStateInterest::where('user_id', $request->user_id)->delete();
+            UserFederalInterest::where('user_id', $request->user_id)->delete();
+            UserPrivateInterest::where('user_id', $request->user_id)->delete();
+            UserInternationalInterest::where('user_id', $request->user_id)->delete();
+            UserSetAside::where('user_id', $request->user_id)->delete();
+            UserPayment::where('user_id', $request->user_id)->delete();
+            User::where('user_id', $request->user_id)->delete();
+
+            return response()->json(['message' => 'User deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
     }
 }

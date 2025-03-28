@@ -110,6 +110,8 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+                                        <th class="text-center">Confirm Email</th>
+                                        <th class="text-center">Delete User</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -130,11 +132,22 @@
                                         <td>{{ user.state }}</td>
                                         <td>{{ user.pin_code }}</td>
                                         <td class="text-center">
-                                            <a href="javascript:void(0)" class="text-success me-2" @click="toggleUser(user)"> 
+                                            <a href="#" class="text-success me-2" @click.prevent="toggleUser(user)"> 
                                                 <span :class="['badge', user.status == 1 ? 'badge-success' : 'badge-warning']">
                                                     {{ user.status == 1 ? 'Active' : 'Inactive' }}
                                                 </span>
                                             </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <span v-if="user.confirm_email">
+                                                {{ user.confirm_email }}
+                                            </span>
+                                            <span v-else>
+                                                <a href="#" class="text-success me-2" @click.prevent="confirmEmail(user)"><i class="ri-mail-check-line fs-18 lh-1"></i></a>
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" class="text-danger" @click.prevent="deleteUser(user)"><i class="ri-delete-bin-6-line fs-18 lh-1"></i></a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -199,12 +212,15 @@
                 }
 
                 if(confirm_user){
+                    let loader = vm.$loading.show();
                     vm.$store
                         .dispatch("post", { uri: "toggleUser", data: user })
                         .then((response) => {
+                            loader.hide()
                             vm.index()
                         })
                         .catch(function (error) {
+                            loader.hide()
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
@@ -213,9 +229,11 @@
 
             index() {
                 let vm = this;
+                let loader = vm.$loading.show();
                 vm.$store
                     .dispatch("post", { uri: "paginateActiveUsers", data: vm.meta })
                     .then((response) => {
+                        loader.hide()
                         vm.users = response.data.data;
                         vm.meta.totalRows = response.data.meta.total;
                         vm.meta.lastPage = response.data.meta.last_page;
@@ -224,10 +242,50 @@
                         vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
                     })
                     .catch(function (error) {
+                        loader.hide()
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
+
+            confirmEmail(user) {
+                if(confirm('Are you sure you want to Confirm Email ?')){
+                    let vm = this;
+                    let loader = vm.$loading.show();
+                    vm.$store
+                        .dispatch("post", { uri: "confirmEmail", data: user })
+                        .then((response) => {
+                            loader.hide()
+                            vm.index()
+                            vm.$store.dispatch("success", response.data.message);
+                        })
+                        .catch(function (error) {
+                            loader.hide()
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
+
+            deleteUser(user) {
+                if(confirm('Are you sure you want to delete User ?')){
+                    let vm = this;
+                    let loader = vm.$loading.show();
+                    vm.$store
+                        .dispatch("post", { uri: "deleteUser", data: user })
+                        .then((response) => {
+                            loader.hide()
+                            vm.index()
+                            vm.$store.dispatch("success", response.data.message);
+                        })
+                        .catch(function (error) {
+                            loader.hide()
+                            vm.errors = error.response.data.errors;
+                            vm.$store.dispatch("error", error.response.data.message);
+                        });
+                }
+            },
+
             search() {
                 let vm = this;
                 vm.meta.page = 1;
