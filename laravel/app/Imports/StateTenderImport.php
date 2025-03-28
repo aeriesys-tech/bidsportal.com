@@ -21,6 +21,7 @@ use Storage;
 use App\Models\StateNotice;
 use App\Models\StateAgency;
 use App\Models\Category;
+use App\Models\StateContact;
 use App\Models\StateOfficeAddress;
 use Illuminate\Support\Facades\DB;
 use Google\Client as GoogleClient;
@@ -110,7 +111,8 @@ class StateTenderImport implements ToCollection
             $category_name = $row[9]?$row[9]:null;
             $agency_name = $row[7]?$row[7]:null;
             $contracting_office_address = !empty($row[14]) ? $row[14] : '';
-            $contract_information = !empty($row[15]) ? explode("|", $row[15]) : [];
+            // $contract_information = !empty($row[15]) ? explode("|", $row[15]) : [];
+            $contract_information = !empty($row[15]) ? array_map('trim', explode("|", $row[15])) : [];
             $tdr_fees = 0;
 
             if($opening_date && $expiry_date && $state_notice_id && $state_agency_id && $state_id){
@@ -146,16 +148,18 @@ class StateTenderImport implements ToCollection
                         'contracting_office_address' => $contracting_office_address,
                         'upload_type' => 'auto'
                     ]);
-                if ($state_tender && is_array($contract_information) && count($contract_information) >= 4){
-                    $state_office_address = StateOfficeAddress::create([
+                // Log::info("file". $this->file);
+                // Log::info("contact_info". count($contract_information));
+                // Log::info("tender_no". $tender_no);
+                if ($state_tender && count($contract_information) >= 4) {
+                    $state_office_address = StateContact::create([
                         'state_tender_id' => $state_tender->state_tender_id,
                         'type' => 'Primary',
-                        'full_name' => $contract_information[0],
-                        'title' => $contract_information[1],
-                        'phone' => $contract_information[2],
-                        'email' => $contract_information[3]
+                        'full_name' => $contract_information[0] ?? null,  
+                        'title' => $contract_information[1] ?? null,
+                        'phone' => $contract_information[2] ?? null,
+                        'email' => $contract_information[3] ?? null
                     ]);
-
                 }
                 $tender_attachments = $row[17]?$row[17]:null;
                 $filenames = [];

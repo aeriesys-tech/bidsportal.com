@@ -544,7 +544,7 @@
                                                         international_tender.international_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/bidnumber.svg" />
-                                                    <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ international_tender.tender_no}}</span>
+                                                    <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;"> {{ international_tender.tender_no}}</span>
                                                     <span v-else>{{ international_tender.tender_no}}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
@@ -564,7 +564,7 @@
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
                                                 <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                    <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify;"
+                                                    <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify; user-select: none; pointer-events: none;"
                                                     v-html="international_tender.description"
                                                     v-if="international_tender.description != '0' && international_tender.description != '-'">
                                                     </p>
@@ -584,7 +584,7 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                        <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{international_tender.international_agency?.international_agency_name }}</span>
+                                                        <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;">{{international_tender.international_agency?.international_agency_name }}</span>
                                                          <span v-else style="color: rgb(86, 84, 109);">{{international_tender.international_agency?.international_agency_name }}</span>
                                                     </li>
 
@@ -652,7 +652,7 @@
                                                             <div class="row m-0">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <div v-if="$store.getters.user">
-                                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228);">
+                                                                        <span v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;">
                                                                             {{international_tender.tender_no }}
                                                                         </span>
                                                                        <span v-else>
@@ -690,7 +690,7 @@
                                                                         <div class="truncate-text" v-html="highlight(international_tender.title)"></div>
                                                                     </a>
                                                                 </div>
-                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="!this.$store.getters.user|| (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;" v-if="!this.$store.getters.user|| (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                 {{international_tender.international_agency?.international_agency_name }}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ international_tender.international_agency?.agency_name }}</span>

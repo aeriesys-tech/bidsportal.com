@@ -99,17 +99,12 @@
                                                         <h6 class="fw-normal mb-0">Place of Performance:</h6>
                                                         <p>{{ state_tender.place_of_performance }}</p>
                                                     </div>
-                                                    <!-- <div v-if="state_tender.state_office_address">
+                                                    <div v-if="state_tender.contracting_office_address">
                                                         <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                         <p>
-                                                            {{ state_tender.state_office_address.city }}
-                                                            <span v-if="state_tender.state_office_address.city">, </span>
-                                                            <span>
-                                                                {{ state_tender.state_office_address.state + ' ' +
-                                                                    state_tender.state_office_address.country }}
-                                                            </span>
+                                                            {{ state_tender.contracting_office_address }}
                                                         </p>
-                                                    </div> -->
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

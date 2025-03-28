@@ -455,7 +455,7 @@
                                             <ul class="nav nav-divider mt-3" style="color: #646c9a;">
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ federal_tender.federal_notice?.notice_name }}</li>
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
-                                                   <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;">{{ federal_tender.tender_no }}</span>
+                                                   <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;">{{ federal_tender.tender_no }}</span>
                                                    <span v-else>{{ federal_tender.tender_no }}</span>
                                                 </li>
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ dateFormat(federal_tender.opening_date) }} &nbsp;<span>{{ federal_tender.time_ago }} </span></li>
@@ -472,7 +472,7 @@
                                             <ul class="list-group list-group-borderless small mb-0 mt-2">
                                                 <li class="list-group-item d-flex text-success p-0">
                                                     <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                    <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify;" v-html="federal_tender.description" v-if="federal_tender.description != '0' && federal_tender.description != '-'"></p>
+                                                    <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify; user-select: none; pointer-events: none;" v-html="federal_tender.description" v-if="federal_tender.description != '0' && federal_tender.description != '-'"></p>
                                                     </span>
                                                      <span v-else>
                                                     <p class="limited-text" style="color: #595d6e; text-align: justify;" v-html="federal_tender.description" v-if="federal_tender.description != '0' && federal_tender.description != '-'"></p>
@@ -485,7 +485,7 @@
                                                     <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                         <li class="nav-item text-primary">
                                                             <i class="bi bi-patch-check-fill text-primary me-2"></i>
-                                                            <span style="filter: blur(3px);color: #696969;" v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ federal_tender.federal_agency?.agency_name }}</span>
+                                                            <span style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;"  v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ federal_tender.federal_agency?.agency_name }}</span>
                                                             <span v-else style="color: rgb(86, 84, 109);">{{ federal_tender.federal_agency?.agency_name }}</span>
                                                         </li>
 
@@ -546,7 +546,7 @@
                                                                 <div class="row m-0">
                                                                     <div class="column" style="margin-left: 21px;">
                                                                         <div v-if="$store.getters.user">
-                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                                 {{ federal_tender.tender_no }}
                                                                             </span>
                                                                             <span v-else>
@@ -562,7 +562,7 @@
                                                                         </div>
                                                                         <div v-else>
                                                                             <span>
-                                                                                <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228);" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
+                                                                                <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" @click.prevent="tenderDetails(federal_tender)">{{ federal_tender.tender_no }}</a>
                                                                             </span>
                                                                         </div>
                                                                     </div>
@@ -586,32 +586,17 @@
 
                                                                 </div>
                                                                 <div v-else>
-                                                                    <a style="filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
+                                                                    <a style="filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold; user-select: none; pointer-events: none;" href="javascript:void(0)" @click="tenderDetails(federal_tender)">
                                                                     <div class="truncate-text" v-html="highlight(federal_tender.title)"></div>
                                                                 </a>
                                                                 </div>
-                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;" v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                                     {{ federal_tender.federal_agency?.agency_name }}
                                                                 </span>
                                                                 <span class="txt-gray" v-else>{{ federal_tender.federal_agency?.agency_name }}</span>
                                                             </td>
-                                                            <!-- <td class="">
-                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
-                                                                    {{ federal_tender.federal_agency?.agency_name }}</span>
-                                                                <span class="txt-gray" v-else>{{ federal_tender.federal_agency?.agency_name }}</span>
-                                                            </td> -->
                                                             <td class="txt-gray">{{ federal_tender.place_of_performance }}</td>
                                                             <td class="txt-gray" style="width: 110px;">{{ federal_tender.expiry_date_parsed}}</td>
-                                                            <!-- <td> -->
-                                                            <!-- <span v-if="federal_tender.cart_icon">
-                                                                    <div>
-                                                                        <a href="javascript:void(0)" @click="addToCart(federal_tender)"><img class="mb-1 me-2" src="@/assets/icons/addcart.svg" width="20" /></a>
-                                                                    </div>
-                                                                </span>
-                                                                <span v-else>
-                                                                    <img src="assets/images/icons/cart-24.svg" width="19" />
-                                                                </span> -->
-                                                            <!-- </td> -->
                                                         </tr>
                                                     </tbody>
                                                 </table>
