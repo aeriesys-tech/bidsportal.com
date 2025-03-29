@@ -2,10 +2,10 @@
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="main-title mb-2">State Tender</h2>
-            <div class="col-md-3">
+            <!-- <div class="col-md-3">
                 <input type="file" class="form-control form-control-sm" :class="{'is-invalid': upload_excel.errors?.file}" @change="getExcelFile($event)" ref="excel_file" />
                 <button class="btn btn-secondary btn-sm mb-2 me-2 mt-2" @click="uploadExcelFile()">Upload Excel</button>
-            </div>
+            </div> -->
             <div>
                 <button v-if="tender_delete.delete_tenders.length" class="btn btn-danger mb-2 me-2" @click="deleteTenders()">Delete Bid</button>
                 <router-link to="/add_state_tender" class="btn btn-primary mb-2">Add State Bid</router-link>
