@@ -1005,6 +1005,7 @@ class AlertController extends Controller
 		    AlertPsc::where('alert_id', $alert->alert_id)->delete();
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
 		    AlertSetAside::where('alert_id', $alert->alert_id)->delete();
+		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
 		    FederalAlertAgency::where('alert_id', $alert->alert_id)->delete();
 		    return true;
 		} catch (\Exception $e) {

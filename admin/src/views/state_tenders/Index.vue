@@ -2,6 +2,10 @@
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="main-title mb-2">State Tender</h2>
+            <div class="col-md-3">
+                <input type="file" class="form-control form-control-sm" :class="{'is-invalid': upload_excel.errors?.file}" @change="getExcelFile($event)" ref="excel_file" />
+                <button class="btn btn-secondary btn-sm mb-2 me-2 mt-2" @click="uploadExcelFile()">Upload Excel</button>
+            </div>
             <div>
                 <button v-if="tender_delete.delete_tenders.length" class="btn btn-danger mb-2 me-2" @click="deleteTenders()">Delete Bid</button>
                 <router-link to="/add_state_tender" class="btn btn-primary mb-2">Add State Bid</router-link>
@@ -329,7 +333,11 @@
                 agency: {
                     agency_name: "",
                 },
-                errors:[]
+                errors:[],
+                upload_excel: {
+                    file: "",
+                    errors: [],
+                },
             };
         },
         computed:{
@@ -353,6 +361,10 @@
         },
 
         methods: {
+            getExcelFile(e) {
+                let vm = this;
+                vm.upload_excel.file = e.target.files[0];
+            },
             updateAgencyName(agency_id, tender){
                 tender.state_agency_id = agency_id
                 let vm = this
@@ -423,6 +435,28 @@
                 } else {
                     this.tender_delete.delete_tenders = [];
                 }
+            },
+
+            uploadExcelFile(){
+                let vm = this;
+                let loader = vm.$loading.show();
+                vm.upload_excel.errors = [];
+                const formData = new FormData();
+                formData.append("file", vm.upload_excel.file);
+                vm.$store
+                    .dispatch("post", { uri: "uploadStateExcelFile", data: formData })
+                    .then(() => {
+                        loader.hide();
+                        vm.$refs.excel_file.value = "";
+                        vm.upload_excel.file = "";
+                        vm.showS3BucketFiles();
+                    })
+                    .catch(function (error) {
+                        loader.hide();
+                        vm.$refs.excel_file.value = "";
+                        vm.upload_excel.file = "";
+                        vm.upload_excel.errors = error.response.data.errors;
+                    });
             },
 
             deleteTenders() {

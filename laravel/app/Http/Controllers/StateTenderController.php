@@ -777,6 +777,38 @@ class StateTenderController extends Controller
         }
     }
 
+    public function uploadStateExcelFile(Request $request)
+    {
+        $data = $request->validate([
+            'file' => 'required|file|mimes:xlsx|max:2048'
+        ]);
+        $folderPath = 'State/attachments/' . trim($request->folder, '/') . '/';
+        $file = $request->file('file');
+        $folder = '';
+        if($file){
+            try {
+                $import = new StateTenderImport($folderPath, $folder, $file);
+                Excel::import($import, $file, 's3');
+                return response()->json([
+                    'message' => 'Data imported successfully'
+                ]);
+            }catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+                return response()->json([
+                    'errors' => json_encode($e->failures())
+                ], 422);
+            }
+        }
+        
+    }
+
+    public function deletetodayStateTenders(){
+        $state_tenders = StateTender::where('posted_date', '>=', date('Y-m-d'))->pluck('state_tender_id')->toArray();
+        StateContact::whereIn('state_tender_id', $state_tenders)->delete();
+        StateAttachment::whereIn('state_tender_id', $state_tenders)->delete();
+        StateOfficeAddress::whereIn('state_tender_id', $state_tenders)->delete();
+        return StateTender::whereIn('state_tender_id', $state_tenders)->delete();
+    }
+
 
 
     public function updateStateBidsManual(Request $request)
@@ -796,12 +828,6 @@ class StateTenderController extends Controller
                      Excel::import(new StateTenderImport($folderPath, $folder), $file);
                 }
             }
-            
-            // $today = Carbon::today();
-            // $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
-            // foreach ($state_attachments as $state_attachment) {
-            //     UpdateFileSize::dispatch($state_attachment);
-            // }
 
             return response()->json([
                 'message' => 'Data imported successfully'
