@@ -52,6 +52,7 @@ Route::post("updateStateBids", [StateTenderController::class,'updateStateBids'])
 Route::get("updateStateBidsManual", [StateTenderController::class,'updateStateBidsManual']);
 Route::post("forgotPassword",[AuthController::class,'forgotPassword']);
 Route::post("resetPassword",[AuthController::class,'resetPassword']);
+Route::post("uploadStateExcelFile",[StateTenderController::class,'uploadStateExcelFile']);
 
 Route::get('generateSubscriptionPdf/{user_id}', [UserPaymentController::class, 'generateSubscriptionPdf']);
 Route::post("login", [AuthController::class,'login']);
