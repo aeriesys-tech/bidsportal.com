@@ -126,6 +126,33 @@ class StateTenderController extends Controller
             }
 
             
+            // if (!empty($request->keywords)) {
+            //     if (is_string($request->keywords)) {
+            //         $keywords = array_map('trim', explode(',', $request->keywords));
+            //     } else {
+            //         $keywords = array_map('trim', $request->keywords);
+            //     }
+
+            //     // Exact match first
+            //     $query->where(function ($q) use ($keywords) {
+            //         foreach ($keywords as $keyword) {
+            //             $q->where('tender_no', $keyword)
+            //               ->orWhere('tender_number', $keyword);
+            //         }
+            //     });
+
+            //     // Check if exact match found, else perform broader search
+            //     if (!$query->count()) {
+            //         $query->orWhere(function ($q) use ($keywords) {
+            //             foreach ($keywords as $keyword) {
+            //                 $q->orWhere('tender_no', 'like', "%$keyword%")
+            //                   ->orWhere('tender_number', 'like', "%$keyword%")
+            //                   ->orWhere('title', 'like', "%$keyword%");
+            //             }
+            //         });
+            //     }
+            // }
+
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
                     $keywords = array_map('trim', explode(',', $request->keywords));
@@ -133,24 +160,24 @@ class StateTenderController extends Controller
                     $keywords = array_map('trim', $request->keywords);
                 }
 
-                // Exact match first
                 $query->where(function ($q) use ($keywords) {
-                    foreach ($keywords as $keyword) {
-                        $q->orWhere('tender_no', $keyword)
-                          ->orWhere('tender_number', $keyword);
-                    }
-                });
-
-                // Check if exact match found, else perform broader search
-                if (!$query->count()) {
-                    $query->orWhere(function ($q) use ($keywords) {
+                    // First, exact match within existing filters
+                    $q->where(function ($subQuery) use ($keywords) {
                         foreach ($keywords as $keyword) {
-                            $q->orWhere('tender_no', 'like', "%$keyword%")
-                              ->orWhere('tender_number', 'like', "%$keyword%")
-                              ->orWhere('title', 'like', "%$keyword%");
+                            $subQuery->orWhere('tender_no', $keyword)
+                                     ->orWhere('tender_number', $keyword);
                         }
                     });
-                }
+
+                    // Then, broader search within existing filters
+                    $q->orWhere(function ($subQuery) use ($keywords) {
+                        foreach ($keywords as $keyword) {
+                            $subQuery->orWhere('tender_no', 'like', "%$keyword%")
+                                     ->orWhere('tender_number', 'like', "%$keyword%")
+                                     ->orWhere('title', 'like', "%$keyword%");
+                        }
+                    });
+                });
             }
 
             $query->orderBy('posted_date', 'DESC');

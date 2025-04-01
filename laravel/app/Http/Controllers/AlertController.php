@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\StateAlertMail;
 use App\Mail\FederalAlertMail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+
 
 class AlertController extends Controller
 {
@@ -226,7 +228,12 @@ class AlertController extends Controller
 	{
 	    $data = $request->validate([
 	    	'user_id' => 'required',
-	        'alert_title' => 'required',
+	        'alert_title' => [
+	            'required',
+	            Rule::unique('alerts')->where(function ($query) use ($request) {
+	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
+	            }),
+	        ],
 	        'frequency' => 'required',
 	        'region' => 'required',
 	        'posted_date' => 'sometimes|nullable',
@@ -1147,22 +1154,23 @@ class AlertController extends Controller
 		                }
 
 		                $state_query->where(function ($q) use ($keywords) {
-		                    foreach ($keywords as $keyword) {
-		                        $q->orWhere('tender_no', $keyword)
-		                          ->orWhere('tender_number', $keyword)
-		                          ->orWhere('description', $keyword);
-		                    }
-		                });
-
-		                if (!$state_query->count()) {
-		                    $state_query->orWhere(function ($q) use ($keywords) {
+		                    // First, exact match within existing filters
+		                    $q->where(function ($subQuery) use ($keywords) {
 		                        foreach ($keywords as $keyword) {
-		                            $q->orWhere('tender_no', 'like', "%$keyword%")
-		                              ->orWhere('tender_number', 'like', "%$keyword%")
-		                              ->orWhere('description', 'like', "%$keyword%");
+		                            $subQuery->orWhere('tender_no', $keyword)
+		                                     ->orWhere('tender_number', $keyword);
 		                        }
 		                    });
-		                }
+
+		                    // Then, broader search within existing filters
+		                    $q->orWhere(function ($subQuery) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $subQuery->orWhere('tender_no', 'like', "%$keyword%")
+		                                     ->orWhere('tender_number', 'like', "%$keyword%")
+		                                     ->orWhere('title', 'like', "%$keyword%");
+		                        }
+		                    });
+		                });
 		            }
 		            $state_query->orderBy('posted_date', 'DESC');
 		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
@@ -1197,41 +1205,42 @@ class AlertController extends Controller
 						$federal_query->whereIn('category_id', $alert_categories);
 					}
 
-					$alert_naics = AlertNaics::where('alert_id', $alert->alert_id)->pluck('alert_naics_id')->toArray();
+					$alert_naics = AlertNaics::where('alert_id', $alert->alert_id)->pluck('naics_id')->toArray();
 					if(!empty($alert_naics)){
 						$federal_query->whereIn('naics_id', $alert_naics);
 					}
 
-					$alert_psc = AlertPsc::where('alert_id', $alert->alert_id)->pluck('alert_psc_id')->toArray();
+					$alert_psc = AlertPsc::where('alert_id', $alert->alert_id)->pluck('psc_id')->toArray();
 					if(!empty($alert_psc)){
 						$federal_query->whereIn('psc_id', $alert_psc);
 					}
 					
-					$alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
-					if (!empty($alert_keywords)) {
-		                if (is_string($alert_keywords)) {
-		                    $keywords = array_map('trim', explode(',', $alert_keywords));
+					$federal_alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
+					if (!empty($federal_alert_keywords)) {
+		                if (is_string($federal_alert_keywords)) {
+		                    $keywords = array_map('trim', explode(',', $federal_alert_keywords));
 		                } else {
-		                    $keywords = array_map('trim', $alert_keywords);
+		                    $keywords = array_map('trim', $federal_alert_keywords);
 		                }
 
 		                $federal_query->where(function ($q) use ($keywords) {
-		                    foreach ($keywords as $keyword) {
-		                        $q->orWhere('tender_no', $keyword)
-		                          ->orWhere('tender_number', $keyword)
-		                          ->orWhere('description', $keyword);
-		                    }
-		                });
-
-		                if (!$federal_query->count()) {
-		                    $federal_query->orWhere(function ($q) use ($keywords) {
+		                    // First, exact match within existing filters
+		                    $q->where(function ($subQuery) use ($keywords) {
 		                        foreach ($keywords as $keyword) {
-		                            $q->orWhere('tender_no', 'like', "%$keyword%")
-		                              ->orWhere('tender_number', 'like', "%$keyword%")
-		                              ->orWhere('description', 'like', "%$keyword%");
+		                            $subQuery->orWhere('tender_no', $keyword)
+		                                     ->orWhere('tender_number', $keyword);
 		                        }
 		                    });
-		                }
+
+		                    // Then, broader search within existing filters
+		                    $q->orWhere(function ($subQuery) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $subQuery->orWhere('tender_no', 'like', "%$keyword%")
+		                                     ->orWhere('tender_number', 'like', "%$keyword%")
+		                                     ->orWhere('title', 'like', "%$keyword%");
+		                        }
+		                    });
+		                });
 		            }
 		            $federal_query->orderBy('posted_date', 'DESC');
 		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
