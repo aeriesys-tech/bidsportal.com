@@ -1768,6 +1768,7 @@
                     .then(function (response) {
                         vm.state_agencies = response.data;
                         vm.sorted_state_agencies = vm.state_agencies;
+                        console.log('meta state', localStorage.getItem("meta_state"))
                         if (vm.$store.getters.user) {
                             vm.getStateFilters();
                         }
@@ -1782,6 +1783,10 @@
                         } else if (localStorage.getItem("meta_state")) {
                             vm.meta = JSON.parse(localStorage.getItem("meta_state"));
                         }
+                        if(!vm.tags.length && vm.meta.keywords.length){
+                            vm.tags = vm.meta.keywords
+                        }
+                        console.log('tags', vm.tags)
                     })
                     .catch(function (error) {
                         vm.errors = error.response.data.errors;
