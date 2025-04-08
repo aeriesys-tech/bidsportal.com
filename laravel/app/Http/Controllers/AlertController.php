@@ -1008,6 +1008,7 @@ class AlertController extends Controller
 	    try{
 		    AlertKeyword::where('alert_id', $alert->alert_id)->delete();
 		    FederalAlertNotice::where('alert_id', $alert->alert_id)->delete();
+		    StateAlertNotice::where('alert_id', $alert->alert_id)->delete();
 		    AlertNaics::where('alert_id', $alert->alert_id)->delete();
 		    AlertPsc::where('alert_id', $alert->alert_id)->delete();
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
