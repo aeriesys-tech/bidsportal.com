@@ -217,17 +217,17 @@ export default {
                             selected_pscs.push(psc_id)
                         }
                     } else {
-                        let naics = selected_pscs.filter(function (element) {
+                        let psc = selected_pscs.filter(function (element) {
                             return element != psc_id
                         })
-                        selected_pscs = naics
+                        selected_pscs = psc
                     }
                 } else {
                     if (psc_id) {
                         selected_pscs.push(psc_id)
                     }
                 }
-                this.$store.dispatch("setSelectedNaics", selected_pscs)
+                this.$store.dispatch("setSelectedPscs", selected_pscs)
             }
         }
     },
