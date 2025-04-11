@@ -56,7 +56,8 @@ export default createStore({
 			show_bidsearch: null
 		},
 		is_all_naics: false,
-		is_all_pscs: false
+		is_all_pscs: false,
+		naics_parent_id:[]
 	},
 
 	mutations: {
@@ -173,6 +174,9 @@ export default createStore({
 		},
 		setBidsDetails(state, bidsdetails) {
 			state.bidsdetails = bidsdetails
+		},
+		setNaicsParentId(state, naics_parent_id){
+			state.naics_parent_id = naics_parent_id
 		}
 	},
 
@@ -290,6 +294,9 @@ export default createStore({
 		bidsdetails(state) {
 			return state.bidsdetails
 		},
+		naics_parent_id(state){
+			return state.naics_parent_id
+		}
 	},
 
 	actions: {
@@ -411,6 +418,10 @@ export default createStore({
 		},
 		async setCartProducts(context, cart) {
 			await context.commit("setCartProducts", cart);
+		},
+
+		async setNaicsParentId(context, cart){
+			await context.commit("setNaicsParentId", cart)
 		},
 
 		auth(context, payload) {

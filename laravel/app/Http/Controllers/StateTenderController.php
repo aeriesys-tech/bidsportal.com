@@ -54,9 +54,6 @@ class StateTenderController extends Controller
             if (!empty($request->search)) 
             {
                 $query->where('tender_no', 'like', '%'.$request->search.'%');
-                // $searchQuery = $request->search . '*';  
-                // $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
-                //     ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
             }
 
             if ($request->keyword == 'notice_name') {
@@ -73,18 +70,11 @@ class StateTenderController extends Controller
             }
         } else {
 
-            if (isset($request->status)) {
-                if ($request->status === 'All') {
-                } elseif ($request->status === 'Active') {
-                    $query->where('status', true);
-                } elseif ($request->status === 'Inactive') {
-                    $query->where('status', false);
-                }
-            }
-            
             if ($request->active && $request->expired) {
-                $query->whereDate('expiry_date', '>=', now()->toDateString())
-                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+                $query->where(function ($q) use ($request) {
+                    $q->whereDate('expiry_date', '>=', now()->toDateString())
+                    ->orWhereDate('expiry_date', '<', now()->toDateString());
+                });
             } elseif ($request->active) {
                 $query->whereDate('expiry_date', '>=', now()->toDateString());
             } elseif ($request->expired) {
@@ -108,6 +98,23 @@ class StateTenderController extends Controller
             if($request->response_from_date && $request->response_to_date){
                 $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
             }
+
+            // $query->where(function ($q) use ($request) {
+            //     if (!empty($request->state_notices)) {
+            //         $q->orWhereIn('state_notice_id', $request->state_notices);
+            //     }
+            //     if(!empty($request->categories)){
+            //         $q->orWhereIn('category_id', $request->categories);
+            //     }
+
+            //     if (!empty($request->states)) {
+            //         $q->orWhereIn('state_id', $request->states);
+            //     }
+
+            //     if (!empty($request->state_agencies)) {
+            //         $q->orWhereIn('state_agency_id', $request->state_agencies);
+            //     }
+            // });
 
             if(!empty($request->state_notices)){
                 $query->whereIn('state_notice_id', $request->state_notices);
