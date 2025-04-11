@@ -19,6 +19,7 @@ use ZipArchive;
 use Auth;
 use App\Models\FederalOfficeAddress;
 use App\Models\FederalContact;
+use App\Models\Naics;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
@@ -128,8 +129,10 @@ class FederalTenderController extends Controller
             }
         }else{
             if ($request->active && $request->expired) {
-                $query->whereDate('expiry_date', '>=', now()->toDateString())
-                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+                $query->where(function ($q) use ($request) {
+                    $q->whereDate('expiry_date', '>=', now()->toDateString())
+                    ->orWhereDate('expiry_date', '<', now()->toDateString());
+                });
             } elseif ($request->active) {
                 $query->whereDate('expiry_date', '>=', now()->toDateString());
             } elseif ($request->expired) {
@@ -159,11 +162,15 @@ class FederalTenderController extends Controller
             }
 
             if(!empty($request->naics)){
-                $query->whereIn('naics_id', $request->naics);
+                $child_naics_ids  = Naics::whereIn('naics_parent_id', $request->naics)->pluck('naics_id')->toArray();
+                $all_naics_ids = array_unique(array_merge($request->naics, $child_naics_ids));
+                $query->whereIn('naics_id', $all_naics_ids);
             }
 
             if(!empty($request->pscs)){
-                $query->whereIn('psc_id', $request->pscs);
+                $child_psc_ids = Psc::whereIn('psc_parent_id', $request->pscs)->pluck('psc_id')->toArray();
+                $all_psc_ids = array_unique(array_merge($request->pscs, $child_psc_ids)); 
+                $query->whereIn('psc_id', $all_psc_ids);
             }
 
             if(!empty($request->set_asides)){
@@ -178,32 +185,6 @@ class FederalTenderController extends Controller
                 $query->whereIn('federal_agency_id', $request->federal_agencies);
             }
 
-            // if (!empty($request->keywords)) {
-            //     if (is_string($request->keywords)) {
-            //         $keywords = array_map('trim', explode(',', $request->keywords));
-            //     } else {
-            //         $keywords = array_map('trim', $request->keywords);
-            //     }
-
-            //     // Exact match first
-            //     $query->where(function ($q) use ($keywords) {
-            //         foreach ($keywords as $keyword) {
-            //             $q->orWhere('tender_no', $keyword)
-            //               ->orWhere('tender_number', $keyword);
-            //         }
-            //     });
-
-            //     // Check if exact match found, else perform broader search
-            //     if (!$query->count()) {
-            //         $query->orWhere(function ($q) use ($keywords) {
-            //             foreach ($keywords as $keyword) {
-            //                 $q->orWhere('tender_no', 'like', "%$keyword%")
-            //                   ->orWhere('tender_number', 'like', "%$keyword%")
-            //                   ->orWhere('title', 'like', "%$keyword%");
-            //             }
-            //         });
-            //     }
-            // }
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
                     $keywords = array_map('trim', explode(',', $request->keywords));

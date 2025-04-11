@@ -100,8 +100,8 @@ class AlertController extends Controller
 	        'response_to_date' => 'sometimes|nullable',
 	        'federal_notices' => 'required|array',
 	        'states' => 'required|array',
-	        'naics' => 'required|array',
-	        'pscs' => 'required|array',
+	        'naics' => 'sometimes|nullable|array',
+	        'pscs' => 'sometimes|nullable|array',
 	        'set_asides' => 'required|array',
 	        'federal_agencies' => 'sometimes|nullable|array',
 	        'keywords' => 'required|array', 
@@ -781,7 +781,12 @@ class AlertController extends Controller
 
 	    $data = $request->validate([
 	    	'user_id' => 'required',
-	        'alert_title' => 'required',
+	        'alert_title' => [
+	            'required',
+	            Rule::unique('alerts')->where(function ($query) use ($request) {
+	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
+	            }),
+	        ],
 	        'frequency' => 'required',
 	        'region' => 'required',
 	        'posted_date' => 'sometimes|nullable',
@@ -792,8 +797,8 @@ class AlertController extends Controller
 	        'response_to_date' => 'sometimes|nullable',
 	        'federal_notices' => 'required|array',
 	        'states' => 'required|array',
-	        'naics' => 'required|array',
-	        'pscs' => 'required|array',
+	        'naics' => 'sometimes|nullable|array',
+	        'pscs' => 'sometimes|nullable|array',
 	        'set_asides' => 'required|array',
 	        'federal_agencies' => 'sometimes|nullable|array',
 	        'keywords' => 'required|array', 
@@ -801,30 +806,21 @@ class AlertController extends Controller
 	    ]);
 
 	    	try{
-		        $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
-		        	$que->whereIn('keyword', $request->keywords);
-		        })->where('user_id', $request->user_id)->first();
-	 			
-		        if (!$alert){
-			        $alert = Alert::create([
-			            'user_id' => $request->user_id,
-					    'alert_title' => $request->alert_title,
-					    'region' => $request->region,
-					    'frequency' => $request->frequency,
-					    'posted_date' => $request->posted_date ?: null,
-					    'active' => $request->active ?: null,
-					    'expired' => $request->expired ?: null,
-					    'posted_from_date' => $request->posted_from_date ?: null,
-					    'posted_to_date' => $request->posted_to_date ?: null,
-					    'response_date' => $request->response_date ?: null,
-					    'response_from_date' => $request->response_from_date ?: null,
-					    'response_to_date' => $request->response_to_date ?: null,
-					    'status' => true
-			        ]);
-			    }else {
-	                // Delete previous associations if the filter already exists
-	                $this->deleteAssociations($alert);
-	            }
+		        $alert = Alert::create([
+		            'user_id' => $request->user_id,
+				    'alert_title' => $request->alert_title,
+				    'region' => $request->region,
+				    'frequency' => $request->frequency,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null,
+				    'status' => true
+		        ]);
 
 		        // Handle the related data associations
 		        if ($request->has('keywords')) {
@@ -896,8 +892,14 @@ class AlertController extends Controller
 	public function updateAlerts(Request $request)
 	{
 	    $data = $request->validate([
+	    	'alert_id' => 'required',
 	    	'user_id' => 'required',
-	        'alert_title' => 'required',
+	        'alert_title' => [
+            'required',
+            	Rule::unique('alerts')->where(function ($query) use ($request) {
+	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
+	            })->ignore($request->alert_id, 'alert_id')
+		    ],
 	        'frequency' => 'required',
 	        'region' => 'required',
 	        'posted_date' => 'sometimes|nullable',
@@ -908,8 +910,8 @@ class AlertController extends Controller
 	        'response_to_date' => 'sometimes|nullable',
 	        'federal_notices' => 'required|array',
 	        'states' => 'required|array',
-	        'naics' => 'required|array',
-	        'pscs' => 'required|array',
+	        'naics' => 'sometimes|nullable|array',
+	        'pscs' => 'sometimes|nullable|array',
 	        'set_asides' => 'required|array',
 	        'federal_agencies' => 'sometimes|nullable|array',
 	        'keywords' => 'required|array', 
@@ -1120,6 +1122,7 @@ class AlertController extends Controller
 		foreach ($users as $key => $user) {
 			$active_user = User::where('status', 1)->where('user_id', $user['user_id'])->first();
 			if($active_user){
+				// $active_user->email = 'ajit@aeriesys.com';
 
 				//State Alerts
 				$state_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'State')->where('frequency', 'like', 'Daily')->get();
@@ -1175,8 +1178,8 @@ class AlertController extends Controller
 		            }
 		            $state_query->orderBy('posted_date', 'DESC');
 		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
-		            if($active_user->email){
-			            Log::info($active_user->email);
+		            if($active_user->email && count($state_tenders) > 0){
+			            // Log::info($active_user->email);
 	            		Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
 	            	}
 				}
@@ -1245,8 +1248,8 @@ class AlertController extends Controller
 		            }
 		            $federal_query->orderBy('posted_date', 'DESC');
 		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
-		            if($active_user->email){
-			            Log::info($active_user->email);
+		            if($active_user->email && count($federal_tenders) > 0){
+			            // Log::info($active_user->email);
 	            		Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
 	            	}
 

@@ -282,7 +282,7 @@
                                     <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">NAICS
-                                                Code: <span class="text-danger">*</span></label><br />
+                                                Code: </label><br />
                                             <span v-if="errors.naics" style="color: #dc3545;margin-top:-10px">{{
                                                 errors.naics[0] }}<br /></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
@@ -355,7 +355,7 @@
                                     <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">PSC
-                                                Code:<span class="text-danger">*</span></label><br />
+                                                Code: </label><br />
                                             <span v-if="errors.pscs" style="color: #dc3545;margin-top:-10px">{{
                                                 errors.pscs[0] }}<br /></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
@@ -1006,6 +1006,8 @@ export default {
                     .then(function (response) {
                         vm.isLoading=false
                         vm.$store.dispatch("success", "Alert is added successfully");
+                        vm.$store.dispatch("setSelectedNaics", null)
+                        vm.$store.dispatch("setSelectedPscs", null)
                         vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {

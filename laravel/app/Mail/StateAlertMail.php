@@ -47,7 +47,7 @@ class StateAlertMail extends Mailable
 
 
         return $this->view('emails.StateAlertMail', compact('bids','user','request', 'images', 'app_url', 'alert'))
-        // ->cc('support@bidsportal.com')
+        ->cc('support@bidsportal.com')
         ->subject('BidsPortal ::'.$alert->alert_title);
     }
 }
