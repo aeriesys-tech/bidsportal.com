@@ -91,21 +91,21 @@ class StateTenderImport implements ToCollection
                 })->first();
                 $state_id = $state->state_id ?? null;
 
-                // if (in_array($tender_no, $this->existing_tender_nos)) {
-                //     if($tender_no){
-                //         DuplicateStateTender::updateOrCreate([
-                //             'tender_no' => $tender_no,
-                //             'posted_date' => $posted_date,
-                //             'title' => $title,
-                //             'tender_url' => $tender_url
-                //         ]);
-                //     }
-                //     continue;
-                // }
-                // if($title && $tender_no){
-                //     $sitemap_url = "/bids/state-opportunities/".$title."-".$tender_no;
-                //     $this->submitToGoogle($sitemap_url);
-                // }
+                if (in_array($tender_no, $this->existing_tender_nos)) {
+                    if($tender_no){
+                        DuplicateStateTender::updateOrCreate([
+                            'tender_no' => $tender_no,
+                            'posted_date' => $posted_date,
+                            'title' => $title,
+                            'tender_url' => $tender_url
+                        ]);
+                    }
+                    continue;
+                }
+                if($title && $tender_no){
+                    $sitemap_url = "/bids/state-opportunities/".$title."-".$tender_no;
+                    $this->submitToGoogle($sitemap_url);
+                }
 
                 $country = Country::where('country_code', 'US')->first();
                 $description = (!empty($row[12]) ? $row[12] : '') . (!empty($row[13]) ? ' ' . $row[13] : '');
