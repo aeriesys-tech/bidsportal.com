@@ -1180,7 +1180,7 @@ class AlertController extends Controller
 		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
 		            if($active_user->email && count($state_tenders) > 0){
 			            // Log::info($active_user->email);
-	            		// Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
+	            		Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
 	            	}
 				}
 
@@ -1250,7 +1250,7 @@ class AlertController extends Controller
 		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
 		            if($active_user->email && count($federal_tenders) > 0){
 			            // Log::info($active_user->email);
-	            		// Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
+	            		Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
 	            	}
 
 				}
