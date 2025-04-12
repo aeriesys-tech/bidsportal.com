@@ -1122,7 +1122,7 @@ class AlertController extends Controller
 		foreach ($users as $key => $user) {
 			$active_user = User::where('status', 1)->where('user_id', $user['user_id'])->first();
 			if($active_user){
-				$active_user->email = 'ajit@aeriesys.com';
+				// $active_user->email = 'ajit@aeriesys.com';
 
 				//State Alerts
 				$state_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'State')->where('frequency', 'like', 'Daily')->get();
@@ -1250,7 +1250,7 @@ class AlertController extends Controller
 		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
 		            if($active_user->email && count($federal_tenders) > 0){
 			            // Log::info($active_user->email);
-	            		// Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
+	            		Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
 	            	}
 
 				}
