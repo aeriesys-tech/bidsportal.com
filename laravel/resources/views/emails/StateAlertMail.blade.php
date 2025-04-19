@@ -46,6 +46,7 @@
             }
         </style>
     </head>
+<<<<<<< HEAD
     <body align="center">
         <div class="max-w-4xl mx-auto p-4 font-sans"
         style="max-width: 65rem; margin-left: auto; margin-right: auto; font-family: ' SF Pro Display', system-ui, sans-serif;">
@@ -482,6 +483,10 @@
         </div>
     </div>
         <!-- <center style="background-color: #eee; width: 100%;" align="center">
+=======
+    <body style="background: #eee;" align="center">
+        <center style="background-color: #eee; width: 100%;" align="center">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             <div style="background-color: #eee; width: 100%;" align="center">
                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
                     <tbody>
@@ -736,6 +741,10 @@
                     </tbody>
                 </table>
             </div>
+<<<<<<< HEAD
         </center> -->
+=======
+        </center>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
     </body>
 </html>

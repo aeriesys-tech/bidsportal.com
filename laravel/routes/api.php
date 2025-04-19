@@ -52,7 +52,10 @@ Route::post("updateStateBids", [StateTenderController::class,'updateStateBids'])
 Route::get("updateStateBidsManual", [StateTenderController::class,'updateStateBidsManual']);
 Route::post("forgotPassword",[AuthController::class,'forgotPassword']);
 Route::post("resetPassword",[AuthController::class,'resetPassword']);
+<<<<<<< HEAD
 Route::post("uploadStateExcelFile",[StateTenderController::class,'uploadStateExcelFile']);
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 Route::get('generateSubscriptionPdf/{user_id}', [UserPaymentController::class, 'generateSubscriptionPdf']);
 Route::post("login", [AuthController::class,'login']);
@@ -176,8 +179,11 @@ Route::middleware(['api'])->group(function ($router) {
 	Route::post("getUser",[UserController::class,'getUser']);
 	Route::post("getUsers",[UserController::class,'getUsers']);
 	Route::post("updateUser",[UserController::class,'updateUser']);
+<<<<<<< HEAD
 	Route::post("confirmEmail",[UserController::class,'confirmEmail']);
 	Route::post("deleteUser",[UserController::class,'deleteUser']);
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 	Route::post("adminLogout",[AdminController::class,'adminLogout']);
 

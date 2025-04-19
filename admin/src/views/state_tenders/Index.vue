@@ -2,10 +2,13 @@
     <div class="container-fluid pb-3">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="main-title mb-2">State Tender</h2>
+<<<<<<< HEAD
             <!-- <div class="col-md-3">
                 <input type="file" class="form-control form-control-sm" :class="{'is-invalid': upload_excel.errors?.file}" @change="getExcelFile($event)" ref="excel_file" />
                 <button class="btn btn-secondary btn-sm mb-2 me-2 mt-2" @click="uploadExcelFile()">Upload Excel</button>
             </div> -->
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             <div>
                 <button v-if="tender_delete.delete_tenders.length" class="btn btn-danger mb-2 me-2" @click="deleteTenders()">Delete Bid</button>
                 <router-link to="/add_state_tender" class="btn btn-primary mb-2">Add State Bid</router-link>
@@ -333,11 +336,15 @@
                 agency: {
                     agency_name: "",
                 },
+<<<<<<< HEAD
                 errors:[],
                 upload_excel: {
                     file: "",
                     errors: [],
                 },
+=======
+                errors:[]
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             };
         },
         computed:{
@@ -361,10 +368,13 @@
         },
 
         methods: {
+<<<<<<< HEAD
             getExcelFile(e) {
                 let vm = this;
                 vm.upload_excel.file = e.target.files[0];
             },
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             updateAgencyName(agency_id, tender){
                 tender.state_agency_id = agency_id
                 let vm = this
@@ -437,6 +447,7 @@
                 }
             },
 
+<<<<<<< HEAD
             uploadExcelFile(){
                 let vm = this;
                 let loader = vm.$loading.show();
@@ -459,6 +470,8 @@
                     });
             },
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             deleteTenders() {
                 let vm = this;
                 if (confirm("Are you sure you want to delete?")) {

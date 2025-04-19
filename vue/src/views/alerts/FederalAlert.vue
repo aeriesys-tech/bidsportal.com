@@ -282,7 +282,11 @@
                                     <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">NAICS
+<<<<<<< HEAD
                                                 Code: </label><br />
+=======
+                                                Code: <span class="text-danger">*</span></label><br />
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                             <span v-if="errors.naics" style="color: #dc3545;margin-top:-10px">{{
                                                 errors.naics[0] }}<br /></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
@@ -355,7 +359,11 @@
                                     <div>
                                         <div class="col-md-8">
                                             <label class="form-label" style="font-size: 20px; font-weight: 600;">PSC
+<<<<<<< HEAD
                                                 Code: </label><br />
+=======
+                                                Code:<span class="text-danger">*</span></label><br />
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                             <span v-if="errors.pscs" style="color: #dc3545;margin-top:-10px">{{
                                                 errors.pscs[0] }}<br /></span>
                                             <div class="d-flex gap-2 gap-sm-4 flex-wrap">
@@ -1006,8 +1014,11 @@ export default {
                     .then(function (response) {
                         vm.isLoading=false
                         vm.$store.dispatch("success", "Alert is added successfully");
+<<<<<<< HEAD
                         vm.$store.dispatch("setSelectedNaics", null)
                         vm.$store.dispatch("setSelectedPscs", null)
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                         vm.$router.push("/bids/alerts");
                     })
                     .catch(function (error) {

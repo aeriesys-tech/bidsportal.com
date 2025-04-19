@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\UserSubscription;
 use App\Models\SubscriptionPlan;
 
+<<<<<<< HEAD
 use App\Models\Alert;
 use App\Models\AlertKeyword;
 use App\Models\FederalAlertNotice;
@@ -61,6 +62,8 @@ use App\Models\UserInternationalInterest;
 use App\Models\UserPayment;
 
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 class UserController extends Controller
 {
     public function getUser(Request $request){
@@ -213,6 +216,7 @@ class UserController extends Controller
             }
         }
     }
+<<<<<<< HEAD
 
     public function confirmEmail(Request $request){
         $data = $request->validate([
@@ -317,4 +321,6 @@ class UserController extends Controller
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
     }
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 }

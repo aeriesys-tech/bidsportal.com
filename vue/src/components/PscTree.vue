@@ -217,17 +217,28 @@ export default {
                             selected_pscs.push(psc_id)
                         }
                     } else {
+<<<<<<< HEAD
                         let psc = selected_pscs.filter(function (element) {
                             return element != psc_id
                         })
                         selected_pscs = psc
+=======
+                        let naics = selected_pscs.filter(function (element) {
+                            return element != psc_id
+                        })
+                        selected_pscs = naics
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                     }
                 } else {
                     if (psc_id) {
                         selected_pscs.push(psc_id)
                     }
                 }
+<<<<<<< HEAD
                 this.$store.dispatch("setSelectedPscs", selected_pscs)
+=======
+                this.$store.dispatch("setSelectedNaics", selected_pscs)
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             }
         }
     },

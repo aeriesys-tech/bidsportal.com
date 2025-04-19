@@ -435,7 +435,11 @@
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.state_notice?.notice_name }}</li>
                                                 <li class="nav-item">
                                                     <img class="small w-15px me-1" src="../../assets/icons/bidnumber.svg" />
+<<<<<<< HEAD
                                                     <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;"> {{ state_tender.tender_no}}</span>
+=======
+                                                    <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px); color: #696969;"> {{ state_tender.tender_no}}</span>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                     <span v-else> {{ state_tender.tender_no}}</span>
                                                 </li>
                                                 <li class="nav-item"><img class="small w-15px me-1" src="../../assets/icons/posteddate.svg" />{{ state_tender.opening_date_parsed }} &nbsp;<span>{{ state_tender.time_ago }} </span></li>
@@ -458,7 +462,11 @@
                                                     <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
                                                         <p
                                                             class="limited-text"
+<<<<<<< HEAD
                                                             style="filter: blur(3px); color: #696969; text-align: justify; user-select: none; pointer-events: none;"
+=======
+                                                            style="filter: blur(3px); color: #696969; text-align: justify;"
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                             v-html="state_tender.description"
                                                             v-if="state_tender.description !== '0' && state_tender.description !== '-'"
                                                         ></p>
@@ -474,7 +482,11 @@
                                                     <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                         <li class="nav-item text-primary">
                                                             <i class="bi bi-patch-check-fill text-primary me-2"></i>
+<<<<<<< HEAD
                                                             <span style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;" v-if="(!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid'))">
+=======
+                                                            <span style="filter: blur(3px); color: #696969;" v-if="(!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid'))">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                 {{state_tender.state_agency?.state_agency_name }}
                                                             </span>
                                                             <span v-else style="color: rgb(86, 84, 109);">{{state_tender.state_agency?.state_agency_name }}</span>
@@ -529,7 +541,11 @@
                                                                 <div class="row m-0">
                                                                     <div class="column" style="margin-left: 21px;">
                                                                         <div v-if="$store.getters.user">
+<<<<<<< HEAD
                                                                             <span style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+=======
+                                                                            <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                                 {{ state_tender.tender_no }}
                                                                             </span>
                                                                             <span v-else>
@@ -543,7 +559,11 @@
                                                                         </div>
                                                                         <div v-else>
                                                                             <span >
+<<<<<<< HEAD
                                                                                 <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" @click="tenderDetails(state_tender)">
+=======
+                                                                                <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228)" @click="tenderDetails(state_tender)">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                                     {{ state_tender.tender_no }}
                                                                                 </a>
                                                                             </span>
@@ -569,11 +589,19 @@
 
                                                                 </div>
                                                                 <div v-else>
+<<<<<<< HEAD
                                                                     <a style="filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold; user-select: none; pointer-events: none;" href="javascript:void(0)" @click="tenderDetails(state_tender)">
                                                                         <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
                                                                     </a>
                                                                 </div>
                                                                 <span class="txt-gray" style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+=======
+                                                                    <a style="filter: blur(3px); color: rgb(57, 112, 228); font-weight: bold;" href="javascript:void(0)" @click="tenderDetails(state_tender)">
+                                                                        <div class="truncate-text" v-html="highlight(state_tender.title)"></div>
+                                                                    </a>
+                                                                </div>
+                                                                <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                     {{ state_tender.state_agency?.state_agency_name }}
                                                                 </span>
                                                                 <span class="txt-gray" v-else>{{ state_tender.state_agency?.state_agency_name }}</span>
@@ -1233,6 +1261,7 @@
                     } else {
                         this.share_state_tender.state_tenders = [];
                         this.modal.share_tender = true;
+<<<<<<< HEAD
                     }
                 } else {
                     if (this.$store.getters.user) {
@@ -1240,6 +1269,15 @@
                     } else {
                         this.modal.login = true;
                     }
+=======
+                    }
+                } else {
+                    if (this.$store.getters.user) {
+                        this.modal.subscribe = true;
+                    } else {
+                        this.modal.login = true;
+                    }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                 }
             },
 
@@ -1452,7 +1490,11 @@
                 if (this.$store.getters.user && this.$store.getters.user.subscription == "valid") {
                     this.$store.commit("setStateTender", state_tender);
                     this.$store.commit("setFilters", this.meta);
+<<<<<<< HEAD
                     this.$router.push("state-opportunities/" + state_tender.title.replace(/[\s/]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "") + "-" + state_tender.tender_no);
+=======
+                    this.$router.push("state-opportunities/" + state_tender.title.replace(/ /g, "-") + "-" + state_tender.tender_no);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                 } else {
                     if (this.$store.getters.user) {
                         this.modal.subscribe = true;
@@ -1768,7 +1810,10 @@
                     .then(function (response) {
                         vm.state_agencies = response.data;
                         vm.sorted_state_agencies = vm.state_agencies;
+<<<<<<< HEAD
                         console.log('meta state', localStorage.getItem("meta_state"))
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                         if (vm.$store.getters.user) {
                             vm.getStateFilters();
                         }
@@ -1782,9 +1827,12 @@
                             vm.tags = vm.meta.keywords;
                         } else if (localStorage.getItem("meta_state")) {
                             vm.meta = JSON.parse(localStorage.getItem("meta_state"));
+<<<<<<< HEAD
                         }
                         if(!vm.tags.length && vm.meta.keywords.length){
                             vm.tags = vm.meta.keywords
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                         }
                         console.log('tags', vm.tags)
                     })

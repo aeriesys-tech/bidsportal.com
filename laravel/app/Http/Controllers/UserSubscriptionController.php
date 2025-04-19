@@ -22,7 +22,11 @@ class UserSubscriptionController extends Controller
 
     public function getActiveSubscription(Request $request)
     {
+<<<<<<< HEAD
     	$user_subscription = UserSubscription::where('user_id', $request->user_id)->where('active_status', 'like', 'active')->orderBy('created_at', 'desc')->first();
+=======
+    	$user_subscription = UserSubscription::where('user_id', $request->user_id)->orderBy('created_at', 'desc')->first();
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
         if($user_subscription){
         	return new UserSubscriptionResource($user_subscription);
         }else{
@@ -34,7 +38,10 @@ class UserSubscriptionController extends Controller
     	$data = $request->validate([
     		'user_id' => 'required'
     	]);
+<<<<<<< HEAD
         //test
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
     	UserSubscription::where('user_id', $request->user_id)->where('active_status', 'like', 'active')->update([ 
             'active_status' => 'inactive'
         ]);

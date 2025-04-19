@@ -32,5 +32,9 @@ Route::get("sendStateAlertMails",[AlertController::class,'sendStateAlertMails'])
 Route::get("updateFederalApi",[FederalTenderController::class,'updateFederalApi']);
 Route::get("updateAttachments",[FederalTenderController::class,'updateAttachments']);
 Route::get("updateDescription",[FederalTenderController::class,'updateDescription']);
+<<<<<<< HEAD
 Route::get("updateUserSubscription",[UserController::class,'updateUserSubscription']);
 Route::get("deletetodayStateTenders",[StateTenderController::class,'deletetodayStateTenders']);
+=======
+Route::get("updateUserSubscription",[UserController::class,'updateUserSubscription']);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc

@@ -543,7 +543,11 @@
                                                         private_tender.private_notice?.notice_name }}</li>
                                             <li class="nav-item"><img class="small w-15px me-1"
                                                     src="../../assets/icons/bidnumber.svg" />
+<<<<<<< HEAD
                                                     <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;"> {{ private_tender.tender_no}}</span>
+=======
+                                                    <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')" style="filter: blur(3px);color: #696969;"> {{ private_tender.tender_no}}</span>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                    <span v-else>{{ private_tender.tender_no }}</span>
                                             </li>
                                             <li class="nav-item"><img class="small w-15px me-1"
@@ -563,7 +567,11 @@
                                         <ul class="list-group list-group-borderless small mb-0 mt-2">
                                             <li class="list-group-item d-flex text-success p-0">
                                                  <span v-if="!this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+<<<<<<< HEAD
                                                      <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify; user-select: none; pointer-events: none;"
+=======
+                                                     <p class="limited-text" style="filter: blur(3px);color: #696969; text-align: justify;"
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                     v-html="private_tender.description"
                                                     v-if="private_tender.description != '0' && private_tender.description != '-'">
                                                 </p>
@@ -583,7 +591,11 @@
                                                 <ul class="nav nav-divider small mt-3" style="color: #595d6e;">
                                                     <li class="nav-item text-primary">
                                                         <i class="bi bi-patch-check-fill text-primary me-2"></i>
+<<<<<<< HEAD
                                                         <span style="filter: blur(3px);color: #696969; user-select: none; pointer-events: none;" v-if="this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+=======
+                                                        <span style="filter: blur(3px);color: #696969;" v-if="this.$store.getters.user || (this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">{{ private_tender.private_agency?.private_agency_name}}</span>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                         <span v-else style="color: rgb(86, 84, 109);">{{private_tender.private_agency?.private_agency_name }}</span>
                                                     </li>
 
@@ -651,7 +663,11 @@
                                                             <div class="row">
                                                                 <div class="column" style="margin-left: 21px;">
                                                                     <div v-if="$store.getters.user">
+<<<<<<< HEAD
                                                                         <span style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+=======
+                                                                        <span style="filter: blur(3px); color: rgb(57, 112, 228);" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                             {{ private_tender.tender_no }}
                                                                         </span>
                                                                         <span v-else>
@@ -662,7 +678,11 @@
                                                                     </div>
                                                                     <div v-else>
                                                                         <span>
+<<<<<<< HEAD
                                                                             <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228); user-select: none; pointer-events: none;" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+=======
+                                                                            <a href="javascript:void(0)" style="filter: blur(3px); color: rgb(57, 112, 228);" @click="tenderDetails(private_tender)">{{ private_tender.tender_no }}</a>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -688,7 +708,11 @@
                                                                         <div class="truncate-text" v-html="highlight(private_tender.title)"></div>
                                                                     </a>
                                                                 </div>
+<<<<<<< HEAD
                                                             <span class="txt-gray" style="filter: blur(3px); color: #696969; user-select: none; pointer-events: none;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+=======
+                                                            <span class="txt-gray" style="filter: blur(3px); color: #696969;" v-if="(this.$store.getters.user && this.$store.getters.user.subscription !== 'valid')">
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                                 {{ private_tender.private_agency?.private_agency_name}}
                                                             </span>
                                                             <span class="txt-gray" v-else>{{ private_tender.private_agency?.private_agency_name}}</span>
@@ -1602,8 +1626,12 @@ export default {
             if(this.$store.getters.user && this.$store.getters.user.subscription == 'valid'){
                 this.$store.commit("setPrivateTender", private_tender)
                 this.$store.commit("setFilters", this.meta)
+<<<<<<< HEAD
                 this.$router.push("private-commercial/" + private_tender.title.replace(/[\s/]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "") + "-" + private_tender.tender_no);
                 // this.$router.push("private-commercial/" + private_tender.title.replace(/ /g, "-") + "-" + private_tender.tender_no)
+=======
+                this.$router.push("private-commercial/" + private_tender.title.replace(/ /g, "-") + "-" + private_tender.tender_no)
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             }else{
                 if(this.$store.getters.user){
                     this.modal.subscribe = true

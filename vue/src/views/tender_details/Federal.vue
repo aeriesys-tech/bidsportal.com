@@ -107,7 +107,11 @@
                                                         <h6 class="fw-normal mb-0">Contracting Office Address:</h6>
                                                         <p>
                                                             {{ federal_tender.federal_office_address.city }}<span v-if="federal_tender.federal_office_address.city">, </span>
+<<<<<<< HEAD
                                                             <span>{{ federal_tender.federal_office_address.state + ', ' + federal_tender.federal_office_address.country }}</span>
+=======
+                                                            <span>{{ federal_tender.federal_office_address.state + '' + federal_tender.federal_office_address.country }}</span>
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                         </p>
                                                     </div>
                                                 </div>

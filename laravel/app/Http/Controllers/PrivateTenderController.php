@@ -98,7 +98,12 @@ class PrivateTenderController extends Controller
             $query->where(function ($q) use ($keywords) {
                 foreach ($keywords as $keyword) {
                     $q->orWhere('tender_no', $keyword)
+<<<<<<< HEAD
                       ->orWhere('tender_number', $keyword);
+=======
+                      ->orWhere('tender_number', $keyword)
+                      ->orWhere('description', $keyword);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                 }
             });
 
@@ -108,7 +113,11 @@ class PrivateTenderController extends Controller
                     foreach ($keywords as $keyword) {
                         $q->orWhere('tender_no', 'like', "%$keyword%")
                           ->orWhere('tender_number', 'like', "%$keyword%")
+<<<<<<< HEAD
                           ->orWhere('title', 'like', "%$keyword%");
+=======
+                          ->orWhere('description', 'like', "%$keyword%");
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                     }
                 });
             }

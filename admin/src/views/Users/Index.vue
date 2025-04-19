@@ -110,8 +110,11 @@
                                                 <i v-else class="fas fa-sort"></i>
                                             </span>
                                         </th>
+<<<<<<< HEAD
                                         <th class="text-center">Confirm Email</th>
                                         <th class="text-center">Delete User</th>
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,12 +135,17 @@
                                         <td>{{ user.state }}</td>
                                         <td>{{ user.pin_code }}</td>
                                         <td class="text-center">
+<<<<<<< HEAD
                                             <a href="#" class="text-success me-2" @click.prevent="toggleUser(user)"> 
+=======
+                                            <a href="javascript:void(0)" class="text-success me-2" @click="toggleUser(user)"> 
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                                 <span :class="['badge', user.status == 1 ? 'badge-success' : 'badge-warning']">
                                                     {{ user.status == 1 ? 'Active' : 'Inactive' }}
                                                 </span>
                                             </a>
                                         </td>
+<<<<<<< HEAD
                                         <td class="text-center">
                                             <span v-if="user.confirm_email">
                                                 {{ user.confirm_email }}
@@ -149,6 +157,8 @@
                                         <td class="text-center">
                                             <a href="#" class="text-danger" @click.prevent="deleteUser(user)"><i class="ri-delete-bin-6-line fs-18 lh-1"></i></a>
                                         </td>
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                                     </tr>
                                 </tbody>
                             </table>
@@ -212,6 +222,7 @@
                 }
 
                 if(confirm_user){
+<<<<<<< HEAD
                     let loader = vm.$loading.show();
                     vm.$store
                         .dispatch("post", { uri: "toggleUser", data: user })
@@ -221,6 +232,14 @@
                         })
                         .catch(function (error) {
                             loader.hide()
+=======
+                    vm.$store
+                        .dispatch("post", { uri: "toggleUser", data: user })
+                        .then((response) => {
+                            vm.index()
+                        })
+                        .catch(function (error) {
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                             vm.errors = error.response.data.errors;
                             vm.$store.dispatch("error", error.response.data.message);
                         });
@@ -229,11 +248,17 @@
 
             index() {
                 let vm = this;
+<<<<<<< HEAD
                 let loader = vm.$loading.show();
                 vm.$store
                     .dispatch("post", { uri: "paginateActiveUsers", data: vm.meta })
                     .then((response) => {
                         loader.hide()
+=======
+                vm.$store
+                    .dispatch("post", { uri: "paginateActiveUsers", data: vm.meta })
+                    .then((response) => {
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                         vm.users = response.data.data;
                         vm.meta.totalRows = response.data.meta.total;
                         vm.meta.lastPage = response.data.meta.last_page;
@@ -242,11 +267,15 @@
                         vm.meta.maxPage = vm.meta.lastPage >= 3 ? 3 : vm.meta.lastPage;
                     })
                     .catch(function (error) {
+<<<<<<< HEAD
                         loader.hide()
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
                         vm.errors = error.response.data.errors;
                         vm.$store.dispatch("error", error.response.data.message);
                     });
             },
+<<<<<<< HEAD
 
             confirmEmail(user) {
                 if(confirm('Are you sure you want to Confirm Email ?')){
@@ -286,6 +315,8 @@
                 }
             },
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             search() {
                 let vm = this;
                 vm.meta.page = 1;

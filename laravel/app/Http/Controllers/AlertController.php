@@ -29,8 +29,11 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\StateAlertMail;
 use App\Mail\FederalAlertMail;
 use Illuminate\Support\Facades\Log;
+<<<<<<< HEAD
 use Illuminate\Validation\Rule;
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 class AlertController extends Controller
 {
@@ -100,8 +103,13 @@ class AlertController extends Controller
 	        'response_to_date' => 'sometimes|nullable',
 	        'federal_notices' => 'required|array',
 	        'states' => 'required|array',
+<<<<<<< HEAD
 	        'naics' => 'sometimes|nullable|array',
 	        'pscs' => 'sometimes|nullable|array',
+=======
+	        'naics' => 'required|array',
+	        'pscs' => 'required|array',
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        'set_asides' => 'required|array',
 	        'federal_agencies' => 'sometimes|nullable|array',
 	        'keywords' => 'required|array', 
@@ -228,12 +236,16 @@ class AlertController extends Controller
 	{
 	    $data = $request->validate([
 	    	'user_id' => 'required',
+<<<<<<< HEAD
 	        'alert_title' => [
 	            'required',
 	            Rule::unique('alerts')->where(function ($query) use ($request) {
 	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
 	            }),
 	        ],
+=======
+	        'alert_title' => 'required',
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        'frequency' => 'required',
 	        'region' => 'required',
 	        'posted_date' => 'sometimes|nullable',
@@ -289,6 +301,7 @@ class AlertController extends Controller
 	                AlertState::updateOrCreate(
 	                    ['alert_id' => $alert->alert_id, 'state_id' => $state]
 	                );
+<<<<<<< HEAD
 	            }
 	        }
 
@@ -300,6 +313,19 @@ class AlertController extends Controller
 	            }
 	        }
 
+=======
+	            }
+	        }
+
+	        if ($request->has('categories')) {
+	            foreach ($request->categories as $category) {
+	                AlertCategory::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'category_id' => $category]
+	                );
+	            }
+	        }
+
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        if ($request->has('state_notices')) {
 	            foreach ($request->state_notices as $notice) {
 	                StateAlertNotice::updateOrCreate(
@@ -592,6 +618,8 @@ class AlertController extends Controller
 	    } catch (\Exception $e) {
             return response()->json(['error' => 'Error while updating alert', 'details' => $e->getMessage()], 500);
         }
+<<<<<<< HEAD
+=======
 	}
 
 	public function updateInternationalAlerts(Request $request)
@@ -774,6 +802,193 @@ class AlertController extends Controller
 	    } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
+	}
+
+	public function updateInternationalAlerts(Request $request)
+	{
+	    $data = $request->validate([
+	    	'alert_id' => 'required',
+	    	'user_id' => 'required',
+	        'alert_title' => 'required',
+	        'frequency' => 'required',
+	        'region' => 'required',
+	        'posted_date' => 'sometimes|nullable',
+	        'posted_from_date' => 'sometimes|nullable',
+	        'posted_to_date' => 'sometimes|nullable',
+	        'response_date' => 'sometimes|nullable',
+	        'response_from_date' => 'sometimes|nullable',
+	        'response_to_date' => 'sometimes|nullable',
+	        'international_notices' => 'required|array',
+	        'states' => 'required|array',
+	        'categories' => 'sometimes|nullable|array',
+	        'international_agencies' => 'sometimes|nullable|array',
+	        'keywords' => 'required|array', 
+	        'statuses' => 'sometimes|nullable|array'
+	    ]);
+    	try{
+	        $alert_update = Alert::where('alert_id', $request->alert_id)->first();
+	        if ($alert_update){
+		        $alert = $alert_update->update([
+		            'user_id' => $request->user_id,
+				    'alert_title' => $request->alert_title,
+				    'region' => $request->region,
+				    'frequency' => $request->frequency,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null,
+				    'status' => true
+		        ]);
+		        $this->deleteInternationalAssociations($alert_update);
+
+
+		        // Handle the related data associations
+		        if ($request->has('keywords')) {
+		            foreach ($request->keywords as $keyword) {
+		                AlertKeyword::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'keyword' => $keyword]
+		                );
+		            }
+		        }
+
+		        if ($request->has('states')) {
+		            foreach ($request->states as $state) {
+		                AlertState::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'state_id' => $state]
+		                );
+		            }
+		        }
+
+		        if ($request->has('categories')) {
+		            foreach ($request->categories as $category) {
+		                AlertCategory::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'category_id' => $category]
+		                );
+		            }
+		        }
+
+		        if ($request->has('international_notices')) {
+		            foreach ($request->international_notices as $notice) {
+		                InternationalAlertNotice::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'international_notice_id' => $notice]
+		                );
+		            }
+		        }
+
+		        if ($request->has('international_agencies')) {
+		            foreach ($request->international_agencies as $agency) {
+		                InternationalAlertAgency::updateOrCreate(
+		                    ['alert_id' => $request->alert_id, 'international_agency_id' => $agency]
+		                );
+		            }
+		        }
+	        	return $alert;
+	        }
+	    } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while updating alert', 'details' => $e->getMessage()], 500);
+        }
+	}
+
+	public function addInternationalAlerts(Request $request)
+	{
+<<<<<<< HEAD
+=======
+
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
+	    $data = $request->validate([
+	    	'user_id' => 'required',
+	        'alert_title' => 'required',
+	        'frequency' => 'required',
+	        'region' => 'required',
+	        'posted_date' => 'sometimes|nullable',
+	        'posted_from_date' => 'sometimes|nullable',
+	        'posted_to_date' => 'sometimes|nullable',
+	        'response_date' => 'sometimes|nullable',
+	        'response_from_date' => 'sometimes|nullable',
+	        'response_to_date' => 'sometimes|nullable',
+	        'international_notices' => 'required|array',
+	        'states' => 'required|array',
+	        'categories' => 'sometimes|nullable|array',
+	        'international_agencies' => 'sometimes|nullable|array',
+	        'keywords' => 'required|array', 
+	        'statuses' => 'sometimes|nullable|array'
+	    ]);
+    	try{
+	        $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
+	        	$que->whereIn('keyword', $request->keywords);
+	        })->where('user_id', $request->user_id)->first();
+ 
+	        if (!$alert){
+		        $alert = Alert::create([
+		            'user_id' => $request->user_id,
+				    'alert_title' => $request->alert_title,
+				    'region' => $request->region,
+				    'frequency' => $request->frequency,
+				    'posted_date' => $request->posted_date ?: null,
+				    'active' => $request->active ?: null,
+				    'expired' => $request->expired ?: null,
+				    'posted_from_date' => $request->posted_from_date ?: null,
+				    'posted_to_date' => $request->posted_to_date ?: null,
+				    'response_date' => $request->response_date ?: null,
+				    'response_from_date' => $request->response_from_date ?: null,
+				    'response_to_date' => $request->response_to_date ?: null,
+				    'status' => true
+		        ]);
+		    }else {
+                // Delete previous associations if the filter already exists
+                $this->deleteInternationalAssociations($alert);
+            }
+
+	        // Handle the related data associations
+	        if ($request->has('keywords')) {
+	            foreach ($request->keywords as $keyword) {
+	                AlertKeyword::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'keyword' => $keyword]
+	                );
+	            }
+	        }
+	        
+	        if ($request->has('states')) {
+	            foreach ($request->states as $state) {
+	                AlertState::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'state_id' => $state]
+	                );
+	            }
+	        }
+
+	        if ($request->has('categories')) {
+	            foreach ($request->categories as $category) {
+	                AlertCategory::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'category_id' => $category]
+	                );
+	            }
+	        }
+
+	        if ($request->has('international_notices')) {
+	            foreach ($request->international_notices as $notice) {
+	                InternationalAlertNotice::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'international_notice_id' => $notice]
+	                );
+	            }
+	        }
+
+	        if ($request->has('international_agencies')) {
+	            foreach ($request->international_agencies as $agency) {
+	                InternationalAlertAgency::updateOrCreate(
+	                    ['alert_id' => $alert->alert_id, 'international_agency_id' => $agency]
+	                );
+	            }
+	        }
+
+	        return $alert;
+	    } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
+        }
 	}
 
 	public function createAlerts(Request $request)
@@ -806,6 +1021,7 @@ class AlertController extends Controller
 	    ]);
 
 	    	try{
+<<<<<<< HEAD
 		        $alert = Alert::create([
 		            'user_id' => $request->user_id,
 				    'alert_title' => $request->alert_title,
@@ -821,6 +1037,32 @@ class AlertController extends Controller
 				    'response_to_date' => $request->response_to_date ?: null,
 				    'status' => true
 		        ]);
+=======
+		        $alert = Alert::whereHas('AlertKeywords', function($que) use($request){
+		        	$que->whereIn('keyword', $request->keywords);
+		        })->where('user_id', $request->user_id)->first();
+	 			
+		        if (!$alert){
+			        $alert = Alert::create([
+			            'user_id' => $request->user_id,
+					    'alert_title' => $request->alert_title,
+					    'region' => $request->region,
+					    'frequency' => $request->frequency,
+					    'posted_date' => $request->posted_date ?: null,
+					    'active' => $request->active ?: null,
+					    'expired' => $request->expired ?: null,
+					    'posted_from_date' => $request->posted_from_date ?: null,
+					    'posted_to_date' => $request->posted_to_date ?: null,
+					    'response_date' => $request->response_date ?: null,
+					    'response_from_date' => $request->response_from_date ?: null,
+					    'response_to_date' => $request->response_to_date ?: null,
+					    'status' => true
+			        ]);
+			    }else {
+	                // Delete previous associations if the filter already exists
+	                $this->deleteAssociations($alert);
+	            }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 		        // Handle the related data associations
 		        if ($request->has('keywords')) {
@@ -892,6 +1134,7 @@ class AlertController extends Controller
 	public function updateAlerts(Request $request)
 	{
 	    $data = $request->validate([
+<<<<<<< HEAD
 	    	'alert_id' => 'required',
 	    	'user_id' => 'required',
 	        'alert_title' => [
@@ -900,6 +1143,10 @@ class AlertController extends Controller
 	                return $query->where('user_id', $request->user_id)->where('region', $request->region);
 	            })->ignore($request->alert_id, 'alert_id')
 		    ],
+=======
+	    	'user_id' => 'required',
+	        'alert_title' => 'required',
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        'frequency' => 'required',
 	        'region' => 'required',
 	        'posted_date' => 'sometimes|nullable',
@@ -1018,6 +1265,8 @@ class AlertController extends Controller
 		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
 		    FederalAlertAgency::where('alert_id', $alert->alert_id)->delete();
 		    return true;
+<<<<<<< HEAD
+=======
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
@@ -1033,11 +1282,30 @@ class AlertController extends Controller
 		    AlertState::where('alert_id', $alert->alert_id)->delete();
 		    StateAlertAgency::where('alert_id', $alert->alert_id)->delete();
 		    return true;
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 		} catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
         }
 	}
 
+<<<<<<< HEAD
+	private function deleteStateAssociations($alert)
+	{
+	    // Delete all existing associated records for this alert
+	    try{
+		    AlertKeyword::where('alert_id', $alert->alert_id)->delete();
+		    StateAlertNotice::where('alert_id', $alert->alert_id)->delete();
+		    AlertCategory::where('alert_id', $alert->alert_id)->delete();
+		    AlertState::where('alert_id', $alert->alert_id)->delete();
+		    StateAlertAgency::where('alert_id', $alert->alert_id)->delete();
+		    return true;
+		} catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong', 'details' => $e->getMessage()], 500);
+        }
+	}
+
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	private function deletePrivateAssociations($alert)
 	{
 	    // Delete all existing associated records for this alert
@@ -1122,7 +1390,10 @@ class AlertController extends Controller
 		foreach ($users as $key => $user) {
 			$active_user = User::where('status', 1)->where('user_id', $user['user_id'])->first();
 			if($active_user){
+<<<<<<< HEAD
 				// $active_user->email = 'ajit@aeriesys.com';
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 				//State Alerts
 				$state_alerts = Alert::where('user_id', $user['user_id'])->where('region', 'like', 'State')->where('frequency', 'like', 'Daily')->get();
@@ -1158,6 +1429,7 @@ class AlertController extends Controller
 		                }
 
 		                $state_query->where(function ($q) use ($keywords) {
+<<<<<<< HEAD
 		                    // First, exact match within existing filters
 		                    $q->where(function ($subQuery) use ($keywords) {
 		                        foreach ($keywords as $keyword) {
@@ -1180,6 +1452,29 @@ class AlertController extends Controller
 		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
 		            if($active_user->email && count($state_tenders) > 0){
 			            // Log::info($active_user->email);
+=======
+		                    foreach ($keywords as $keyword) {
+		                        $q->orWhere('tender_no', $keyword)
+		                          ->orWhere('tender_number', $keyword)
+		                          ->orWhere('description', $keyword);
+		                    }
+		                });
+
+		                if (!$state_query->count()) {
+		                    $state_query->orWhere(function ($q) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $q->orWhere('tender_no', 'like', "%$keyword%")
+		                              ->orWhere('tender_number', 'like', "%$keyword%")
+		                              ->orWhere('description', 'like', "%$keyword%");
+		                        }
+		                    });
+		                }
+		            }
+		            $state_query->orderBy('posted_date', 'DESC');
+		            $state_tenders = $state_query->with('StateNotice')->take(5)->get();
+		            if($active_user->email){
+			            Log::info($active_user->email);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	            		Mail::to($active_user->email)->send(new StateAlertMail($state_tenders, $user, [], $alert));
 	            	}
 				}
@@ -1209,16 +1504,25 @@ class AlertController extends Controller
 						$federal_query->whereIn('category_id', $alert_categories);
 					}
 
+<<<<<<< HEAD
 					$alert_naics = AlertNaics::where('alert_id', $alert->alert_id)->pluck('naics_id')->toArray();
+=======
+					$alert_naics = AlertNaics::where('alert_id', $alert->alert_id)->pluck('alert_naics_id')->toArray();
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 					if(!empty($alert_naics)){
 						$federal_query->whereIn('naics_id', $alert_naics);
 					}
 
+<<<<<<< HEAD
 					$alert_psc = AlertPsc::where('alert_id', $alert->alert_id)->pluck('psc_id')->toArray();
+=======
+					$alert_psc = AlertPsc::where('alert_id', $alert->alert_id)->pluck('alert_psc_id')->toArray();
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 					if(!empty($alert_psc)){
 						$federal_query->whereIn('psc_id', $alert_psc);
 					}
 					
+<<<<<<< HEAD
 					$federal_alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
 					if (!empty($federal_alert_keywords)) {
 		                if (is_string($federal_alert_keywords)) {
@@ -1250,6 +1554,38 @@ class AlertController extends Controller
 		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
 		            if($active_user->email && count($federal_tenders) > 0){
 			            // Log::info($active_user->email);
+=======
+					$alert_keywords = AlertKeyword::where('alert_id', $alert->alert_id)->pluck('keyword')->toArray();
+					if (!empty($alert_keywords)) {
+		                if (is_string($alert_keywords)) {
+		                    $keywords = array_map('trim', explode(',', $alert_keywords));
+		                } else {
+		                    $keywords = array_map('trim', $alert_keywords);
+		                }
+
+		                $federal_query->where(function ($q) use ($keywords) {
+		                    foreach ($keywords as $keyword) {
+		                        $q->orWhere('tender_no', $keyword)
+		                          ->orWhere('tender_number', $keyword)
+		                          ->orWhere('description', $keyword);
+		                    }
+		                });
+
+		                if (!$federal_query->count()) {
+		                    $federal_query->orWhere(function ($q) use ($keywords) {
+		                        foreach ($keywords as $keyword) {
+		                            $q->orWhere('tender_no', 'like', "%$keyword%")
+		                              ->orWhere('tender_number', 'like', "%$keyword%")
+		                              ->orWhere('description', 'like', "%$keyword%");
+		                        }
+		                    });
+		                }
+		            }
+		            $federal_query->orderBy('posted_date', 'DESC');
+		            $federal_tenders = $federal_query->with('FederalNotice')->take(5)->get();
+		            if($active_user->email){
+			            Log::info($active_user->email);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	            		Mail::to($active_user->email)->send(new FederalAlertMail($federal_tenders, $user, [], $alert));
 	            	}
 

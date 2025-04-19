@@ -89,8 +89,12 @@ class StateTenderDetailResource extends JsonResource
             'state_contacts' => $this->StateContacts,
             'status' => $this->status?true:false,
             'primary_address' => $primary_address,
+<<<<<<< HEAD
             'secondary_address' => $secondary_address,
             'contracting_office_address' => $this->contracting_office_address
+=======
+            'secondary_address' => $secondary_address
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
         ];
     }
 }

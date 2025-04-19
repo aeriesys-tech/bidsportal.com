@@ -8,7 +8,11 @@ export default createStore({
 		baseUrl: 'https://bidsportal.com/',
 		appUrl: 'https://bidsportal.com/#/',
 		// baseUrl: 'http://localhost/bidsportal_new/laravel/public/',
+<<<<<<< HEAD
 		// appUrl: 'http://localhost:8081/#/',
+=======
+		// appUrl: 'http://localhost:8080/#/',
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 		token: null,
 		user: null,
 		cart: [],
@@ -56,8 +60,12 @@ export default createStore({
 			show_bidsearch: null
 		},
 		is_all_naics: false,
+<<<<<<< HEAD
 		is_all_pscs: false,
 		naics_parent_id:[]
+=======
+		is_all_pscs: false
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	},
 
 	mutations: {
@@ -174,9 +182,12 @@ export default createStore({
 		},
 		setBidsDetails(state, bidsdetails) {
 			state.bidsdetails = bidsdetails
+<<<<<<< HEAD
 		},
 		setNaicsParentId(state, naics_parent_id){
 			state.naics_parent_id = naics_parent_id
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 		}
 	},
 
@@ -415,6 +426,7 @@ export default createStore({
 
 		async setToken(context, payload) {
 			await context.commit('setToken', payload);
+<<<<<<< HEAD
 		},
 		async setCartProducts(context, cart) {
 			await context.commit("setCartProducts", cart);
@@ -422,6 +434,11 @@ export default createStore({
 
 		async setNaicsParentId(context, cart){
 			await context.commit("setNaicsParentId", cart)
+=======
+		},
+		async setCartProducts(context, cart) {
+			await context.commit("setCartProducts", cart);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 		},
 
 		auth(context, payload) {

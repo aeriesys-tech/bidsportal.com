@@ -57,6 +57,7 @@ class StateFilterController extends Controller
 
         if($state_filter){
         	return response()->json(['message' => 'Same filter already exists'], 422);
+<<<<<<< HEAD
 
         }else{
         	$state_filter = StateFilter::create([
@@ -88,6 +89,39 @@ class StateFilterController extends Controller
 	            }
 	        }
 
+=======
+
+        }else{
+        	$state_filter = StateFilter::create([
+	            'user_id' => $request->user_id,
+			    'state_filter_name' => $request->state_filter_name,
+			    'posted_date' => $request->posted_date ?: null,
+			    'active' => $request->active ?: null,
+			    'expired' => $request->expired ?: null,
+			    'posted_from_date' => $request->posted_from_date ?: null,
+			    'posted_to_date' => $request->posted_to_date ?: null,
+			    'response_date' => $request->response_date ?: null,
+			    'response_from_date' => $request->response_from_date ?: null,
+			    'response_to_date' => $request->response_to_date ?: null
+	        ]);
+
+	        if ($request->has('keywords')) {
+	            foreach ($request->keywords as $keyword) {
+	                StateFilterKeyword::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'keyword' => $keyword]
+	                );
+	            }
+	        }
+
+	        if ($request->has('state_notices')) {
+	            foreach ($request->state_notices as $notice) {
+	                StateFilterNotice::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_notice_id' => $notice]
+	                );
+	            }
+	        }
+
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        if ($request->has('states')) {
 	            foreach ($request->states as $state) {
 	                StateFilterState::updateOrCreate(
@@ -160,6 +194,7 @@ class StateFilterController extends Controller
 	                StateFilterKeyword::updateOrCreate(
 	                    ['state_filter_id' => $state_filter->state_filter_id, 'keyword' => $keyword]
 	                );
+<<<<<<< HEAD
 	            }
 	        }
 
@@ -171,6 +206,19 @@ class StateFilterController extends Controller
 	            }
 	        }
 
+=======
+	            }
+	        }
+
+	        if ($request->has('state_notices')) {
+	            foreach ($request->state_notices as $notice) {
+	                StateFilterNotice::updateOrCreate(
+	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_notice_id' => $notice]
+	                );
+	            }
+	        }
+
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        if ($request->has('states')) {
 	            foreach ($request->states as $state) {
 	                StateFilterState::updateOrCreate(
@@ -185,6 +233,7 @@ class StateFilterController extends Controller
 	                    ['state_filter_id' => $state_filter->state_filter_id, 'state_agency_id' => $agency]
 	                );
 	            }
+<<<<<<< HEAD
 	        }
 	        if ($request->has('categories')) {
 	            foreach ($request->categories as $category) {
@@ -192,6 +241,8 @@ class StateFilterController extends Controller
 	                    ['state_filter_id' => $state_filter->state_filter_id, 'category_id' => $category]
 	                );
 	            }
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 	        }
 	        return $state_filter;
 		}else{

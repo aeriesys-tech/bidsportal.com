@@ -47,7 +47,11 @@ class FederalAlertMail extends Mailable
 
 
         return $this->view('emails.FederalAlertMail', compact('bids','user','request', 'images', 'app_url', 'alert'))
+<<<<<<< HEAD
         // ->cc('support@bidsportal.com')
+=======
+        ->cc('support@bidsportal.com')
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
         ->subject('BidsPortal ::'.$alert->alert_title);
     }
 }

@@ -54,6 +54,12 @@ class StateTenderController extends Controller
             if (!empty($request->search)) 
             {
                 $query->where('tender_no', 'like', '%'.$request->search.'%');
+<<<<<<< HEAD
+=======
+                // $searchQuery = $request->search . '*';  
+                // $query->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery])
+                //     ->orderByRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC, state_tender_id DESC", [$searchQuery]);
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             }
 
             if ($request->keyword == 'notice_name') {
@@ -70,11 +76,26 @@ class StateTenderController extends Controller
             }
         } else {
 
+<<<<<<< HEAD
             if ($request->active && $request->expired) {
                 $query->where(function ($q) use ($request) {
                     $q->whereDate('expiry_date', '>=', now()->toDateString())
                     ->orWhereDate('expiry_date', '<', now()->toDateString());
                 });
+=======
+            if (isset($request->status)) {
+                if ($request->status === 'All') {
+                } elseif ($request->status === 'Active') {
+                    $query->where('status', true);
+                } elseif ($request->status === 'Inactive') {
+                    $query->where('status', false);
+                }
+            }
+            
+            if ($request->active && $request->expired) {
+                $query->whereDate('expiry_date', '>=', now()->toDateString())
+                  ->orWhereDate('expiry_date', '<', now()->toDateString());
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             } elseif ($request->active) {
                 $query->whereDate('expiry_date', '>=', now()->toDateString());
             } elseif ($request->expired) {
@@ -99,6 +120,7 @@ class StateTenderController extends Controller
                 $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
             }
 
+<<<<<<< HEAD
             // $query->where(function ($q) use ($request) {
             //     if (!empty($request->state_notices)) {
             //         $q->orWhereIn('state_notice_id', $request->state_notices);
@@ -116,6 +138,8 @@ class StateTenderController extends Controller
             //     }
             // });
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             if(!empty($request->state_notices)){
                 $query->whereIn('state_notice_id', $request->state_notices);
             }
@@ -133,6 +157,7 @@ class StateTenderController extends Controller
             }
 
             
+<<<<<<< HEAD
             // if (!empty($request->keywords)) {
             //     if (is_string($request->keywords)) {
             //         $keywords = array_map('trim', explode(',', $request->keywords));
@@ -160,6 +185,8 @@ class StateTenderController extends Controller
             //     }
             // }
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             if (!empty($request->keywords)) {
                 if (is_string($request->keywords)) {
                     $keywords = array_map('trim', explode(',', $request->keywords));
@@ -167,6 +194,7 @@ class StateTenderController extends Controller
                     $keywords = array_map('trim', $request->keywords);
                 }
 
+<<<<<<< HEAD
                 $query->where(function ($q) use ($keywords) {
                     // First, exact match within existing filters
                     $q->where(function ($subQuery) use ($keywords) {
@@ -185,6 +213,27 @@ class StateTenderController extends Controller
                         }
                     });
                 });
+=======
+                // Exact match first
+                $query->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $keyword) {
+                        $q->orWhere('tender_no', $keyword)
+                          ->orWhere('tender_number', $keyword)
+                          ->orWhere('description', $keyword);
+                    }
+                });
+
+                // Check if exact match found, else perform broader search
+                if (!$query->count()) {
+                    $query->orWhere(function ($q) use ($keywords) {
+                        foreach ($keywords as $keyword) {
+                            $q->orWhere('tender_no', 'like', "%$keyword%")
+                              ->orWhere('tender_number', 'like', "%$keyword%")
+                              ->orWhere('description', 'like', "%$keyword%");
+                        }
+                    });
+                }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             }
 
             $query->orderBy('posted_date', 'DESC');
@@ -286,6 +335,7 @@ class StateTenderController extends Controller
             if(!empty($request->states)){
                 $query->whereIn('state_id', $request->states);
             }
+<<<<<<< HEAD
 
             if(!empty($request->state_agencies)){
                 $query->whereIn('state_agency_id', $request->state_agencies);
@@ -516,6 +566,248 @@ class StateTenderController extends Controller
         }
 
         $query->orderBy('state_tender_id', 'DESC');
+=======
+
+            if(!empty($request->state_agencies)){
+                $query->whereIn('state_agency_id', $request->state_agencies);
+            }
+
+            // if (!empty($request->keywords)) {
+            //     if (is_string($request->keywords)) {
+            //         $keywords = array_map('trim', explode(',', $request->keywords));
+            //     } else {
+            //         $keywords = array_map('trim', $request->keywords);
+            //     }
+
+            //     $searchQuery = implode(' ', $keywords);
+
+            //     // Start building the query
+            //     $query->where(function ($subQuery) use ($searchQuery) {
+            //         // Check for exact match in title or tender_no
+            //         $subQuery->where('title', '=', $searchQuery)
+            //                  ->orWhere('tender_no', '=', $searchQuery);
+            //     });
+
+            //     // Use relevant matches only if there are no exact matches
+            //     $query->orWhere(function ($subQuery) use ($searchQuery, $keywords) {
+            //         $subQuery->whereRaw("NOT EXISTS (
+            //             SELECT 1 FROM state_tenders 
+            //             WHERE title = ? OR tender_no = ?
+            //         )", [$searchQuery, $searchQuery])
+            //         ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+            //         // Fallback to LIKE for short keywords
+            //         foreach ($keywords as $keyword) {
+            //             if (strlen($keyword) < 4) {
+            //                 $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+            //                          ->orWhere('title', 'LIKE', "%{$keyword}%");
+            //             }
+            //         }
+            //     });
+
+            //     // Order the results to prioritize exact matches
+            //     $query->orderByRaw("
+            //         CASE 
+            //             WHEN title = ? THEN 1
+            //             WHEN tender_no = ? THEN 1
+            //             ELSE 2
+            //         END, 
+            //         MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+            //         state_tender_id DESC
+            //     ", [$searchQuery, $searchQuery, $searchQuery]);
+            // }
+            if (!empty($request->keywords)) {
+                if (is_string($request->keywords)) {
+                    $keywords = array_map('trim', explode(',', $request->keywords));
+                } else {
+                    $keywords = array_map('trim', $request->keywords);
+                }
+
+                $searchQuery = implode(' ', $keywords);
+                $normalizedSearchQuery = str_replace('-', '', $searchQuery); // Remove hyphens from input
+
+                $query->where(function ($subQuery) use ($searchQuery, $normalizedSearchQuery, $keywords) {
+                    $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                             ->orWhereRaw("REPLACE(title, '-', '') = ?", [$normalizedSearchQuery]);
+
+                    // Use relevant matches only if there are no exact matches
+                    $subQuery->orWhereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$searchQuery]);
+
+                    // Fallback to LIKE for short keywords
+                    foreach ($keywords as $keyword) {
+                        $normalizedKeyword = str_replace('-', '', $keyword);
+                        if (strlen($normalizedKeyword) < 4) {
+                            $subQuery->orWhereRaw("REPLACE(tender_no, '-', '') LIKE ?", ["%{$normalizedKeyword}%"])
+                                     ->orWhereRaw("REPLACE(title, '-', '') LIKE ?", ["%{$normalizedKeyword}%"]);
+                        }
+                    }
+                });
+
+                // Order the results to prioritize exact matches
+                $query->orderByRaw("
+                    CASE 
+                        WHEN REPLACE(title, '-', '') = ? THEN 1
+                        WHEN REPLACE(tender_no, '-', '') = ? THEN 1
+                        ELSE 2
+                    END, 
+                    MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+                    state_tender_id DESC
+                ", [$normalizedSearchQuery, $normalizedSearchQuery, $searchQuery]);
+            }
+
+
+            $query->orderBy('state_tender_id', 'DESC');
+        }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
+        $state_tenders = $query->paginate($request->per_page); 
+        return StateTenderResource::collection($state_tenders);
+    }
+
+<<<<<<< HEAD
+    public function paginateInactiveStateTenders(Request $request)
+=======
+    public function updateStateTenderNumber(){
+        StateTender::whereNotNull('tender_no')->update([
+            'tender_number' => DB::raw("REPLACE(tender_no, '-', '')")
+        ]);
+    }
+
+    public function getTotalCount(){
+        $counts = StateTender::selectRaw("
+            COUNT(*) as total_bids,
+            SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_bids,
+            SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_bids
+        ")->first();
+
+        $auto_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'auto')
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        $manual_approved_today = StateTender::where('status', 1)->where('upload_type', 'like', 'manual')
+            ->whereBetween('posted_date', [date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59')])
+            ->count();
+
+        return response()->json([
+            'total_bids' => $counts->total_bids,
+            'active' => $counts->active_bids,
+            'pending' => $counts->inactive_bids,
+            'auto_approved_today' => $auto_approved_today,
+            'manual_approved_today' => $manual_approved_today
+        ]);
+    }
+
+    public function paginateStateTenders1(Request $request)
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
+    {
+        $request->validate([
+            'order_by' => 'required',
+            'per_page' => 'required|numeric'
+        ]);
+        $query = StateTender::query();
+<<<<<<< HEAD
+        $query->where('status', 0);
+=======
+
+        if (isset($request->status)) {
+            if ($request->status === 'All') {
+            } elseif ($request->status === 'Active') {
+                $query->where('status', true);
+            } elseif ($request->status === 'Inactive') {
+                $query->where('status', false);
+            }
+        }
+        
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
+        if ($request->active && $request->expired) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString())
+              ->orWhereDate('expiry_date', '<', now()->toDateString());
+        } elseif ($request->active) {
+            $query->whereDate('expiry_date', '>=', now()->toDateString());
+        } elseif ($request->expired) {
+            $query->whereDate('expiry_date', '<', now()->toDateString());
+        }
+
+        if($request->posted_date && $request->posted_date != 'custom'){
+            $previous_date = Carbon::now()->sub(CarbonInterval::createFromDateString($request->posted_date))->format('Y-m-d');
+            $query->whereDate('posted_date', '>=', $previous_date);
+        }
+
+        if($request->posted_from_date && $request->posted_to_date){
+            $query->whereDate('posted_date', '>=', $request->posted_from_date)->whereDate('posted_date', '<=', $request->posted_to_date);
+        }
+
+        if($request->response_date && $request->response_date != 'custom'){
+            $next_date = Carbon::now()->add(CarbonInterval::createFromDateString($request->response_date))->format('Y-m-d');
+            $query->whereDate('expiry_date', '<=', $next_date);
+        }
+
+        if($request->response_from_date && $request->response_to_date){
+            $query->whereDate('expiry_date', '>=', $request->response_from_date)->whereDate('expiry_date', '<=', $request->response_to_date);
+        }
+
+        if(!empty($request->state_notices)){
+            $query->whereIn('state_notice_id', $request->state_notices);
+        }
+
+        if(!empty($request->states)){
+            $query->whereIn('state_id', $request->states);
+        }
+
+        if(!empty($request->state_agencies)){
+            $query->whereIn('state_agency_id', $request->state_agencies);
+        }
+
+        if (!empty($request->keywords)) {
+<<<<<<< HEAD
+=======
+            if (is_string($request->keywords)) {
+                $keywords = array_map('trim', explode(',', $request->keywords));
+            } else {
+                $keywords = array_map('trim', $request->keywords);
+            }
+
+            $searchQuery = implode(' ', $keywords);
+
+            // Normalize the search query by removing hyphens
+            $normalizedSearchQuery = str_replace('-', '', $searchQuery);
+
+            // Start building the query
+            $query->where(function ($subQuery) use ($normalizedSearchQuery, $searchQuery) {
+                // Normalize the tender_no field in the database and compare
+                $subQuery->whereRaw("REPLACE(tender_no, '-', '') = ?", [$normalizedSearchQuery])
+                         ->orWhere('title', '=', $searchQuery);
+            });
+
+            // Use relevant matches only if there are no exact matches
+            $query->orWhere(function ($subQuery) use ($normalizedSearchQuery, $keywords) {
+                $subQuery->whereRaw("NOT EXISTS (
+                        SELECT 1 FROM state_tenders 
+                        WHERE REPLACE(tender_no, '-', '') = ?
+                    )", [$normalizedSearchQuery])
+                    ->whereRaw("MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$normalizedSearchQuery]);
+
+                // Fallback to LIKE for short keywords
+                foreach ($keywords as $keyword) {
+                    if (strlen($keyword) < 4) {
+                        $subQuery->orWhere('tender_no', 'LIKE', "%{$keyword}%")
+                                 ->orWhere('title', 'LIKE', "%{$keyword}%");
+                    }
+                }
+            });
+
+            // Order the results to prioritize exact matches
+            $query->orderByRaw("
+                CASE 
+                    WHEN REPLACE(tender_no, '-', '') = ? THEN 1
+                    WHEN title = ? THEN 1
+                    ELSE 2
+                END, 
+                MATCH(tender_no, title) AGAINST(? IN NATURAL LANGUAGE MODE) DESC,
+                state_tender_id DESC
+            ", [$normalizedSearchQuery, $searchQuery, $normalizedSearchQuery]);
+        }
+
+        $query->orderBy('state_tender_id', 'DESC');
         $state_tenders = $query->paginate($request->per_page); 
         return StateTenderResource::collection($state_tenders);
     }
@@ -568,6 +860,7 @@ class StateTenderController extends Controller
         }
 
         if (!empty($request->keywords)) {
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
             if (is_string($request->keywords)) {
                 $keywords = array_map('trim', explode(',', $request->keywords));
             } else {
@@ -811,6 +1104,7 @@ class StateTenderController extends Controller
         }
     }
 
+<<<<<<< HEAD
     public function uploadStateExcelFile(Request $request)
     {
         $data = $request->validate([
@@ -843,6 +1137,8 @@ class StateTenderController extends Controller
         return StateTender::whereIn('state_tender_id', $state_tenders)->delete();
     }
 
+=======
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
 
     public function updateStateBidsManual(Request $request)
@@ -862,6 +1158,15 @@ class StateTenderController extends Controller
                      Excel::import(new StateTenderImport($folderPath, $folder), $file);
                 }
             }
+<<<<<<< HEAD
+=======
+            
+            // $today = Carbon::today();
+            // $state_attachments = StateAttachment::whereNull('attachment_size')->where('attachment_date', $request->folder)->get();
+            // foreach ($state_attachments as $state_attachment) {
+            //     UpdateFileSize::dispatch($state_attachment);
+            // }
+>>>>>>> 398cfda8168c8c0dd008c8351ff486428ba935fc
 
             return response()->json([
                 'message' => 'Data imported successfully'
